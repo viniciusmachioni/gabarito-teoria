@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTTP &amp; redes · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s10">
+    <div class="week-head"><span class="week-num">B5</span><h2>Bônus: HTTP, redes &amp; como a web funciona</h2></div>
+      <div class="week-meta">~5h &middot; a pergunta clássica: &ldquo;o que acontece quando você digita uma URL?&rdquo;</div>
+
+    <p class="intro">Todo o resto deste guia acontece EM CIMA disto. Você já mexe com CSP, cookies e headers todo dia &mdash; esta seção é sobre o transporte por baixo: DNS, TCP, TLS, e as regras do protocolo que carrega tudo isso.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w11-1"><label for="w11-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O caminho completo: DNS resolve o domínio, TCP abre a conexão, TLS negocia segurança, HTTP finalmente pede a página</span></label></li>
+      <li class="item"><input type="checkbox" id="w11-2"><label for="w11-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Métodos e status HTTP &mdash; a diferença real entre 401 e 403, entre 301 e 308</span></label></li>
+      <li class="item"><input type="checkbox" id="w11-3"><label for="w11-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">TLS/HTTPS &mdash; o que o handshake garante, e o que ele NÃO garante (um phishing pode ter certificado válido)</span></label></li>
+      <li class="item"><input type="checkbox" id="w11-4"><label for="w11-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">TCP vs. UDP &mdash; por que HTTP escolheu um por décadas, e por que HTTP/3 mudou</span></label></li>
+      <li class="item"><input type="checkbox" id="w11-5"><label for="w11-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">HTTP/1.1 vs. HTTP/2 vs. HTTP/3 &mdash; o problema real que cada versão resolveu (não só &ldquo;é mais rápido&rdquo;)</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" target="_blank" rel="noopener">MDN &mdash; Overview of HTTP</a></div><div class="r-note">A referência canônica do protocolo &mdash; comece por aqui antes de qualquer blog de terceiro.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>P&aacute;gina de vis&atilde;o geral, leitura linear. &Eacute; a base pros outros quatro links desta se&ccedil;&atilde;o &mdash; comece por ela.</div><div class="r-src">developer.mozilla.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status" target="_blank" rel="noopener">MDN &mdash; HTTP response status codes</a></div><div class="r-note">Todo código de status com o significado exato &mdash; leia pelo menos a faixa 4xx e 5xx inteira uma vez.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~15 min agora</span><strong>N&atilde;o decore os 60+ c&oacute;digos.</strong> Saiba de cor estes: 200/201/204; 301 vs. 302 vs. 307/308; 400/401/403/404/409/422/429; 500/502/503/504. A distin&ccedil;&atilde;o que mais cai &eacute; <strong>401 (n&atilde;o sei quem voc&ecirc; &eacute;) vs. 403 (sei, e voc&ecirc; n&atilde;o pode)</strong>.</div><div class="r-src">developer.mozilla.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP" target="_blank" rel="noopener">MDN &mdash; Evolution of HTTP</a></div><div class="r-note">De HTTP/0.9 a HTTP/3, com o problema específico que motivou cada versão nova.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Leia pelo <em>problema</em> que cada vers&atilde;o resolveu: head-of-line blocking no 1.1, multiplexing no 2, QUIC sobre UDP no 3. Se voc&ecirc; contar essa hist&oacute;ria em tr&ecirc;s frases, a pergunta est&aacute; respondida.</div><div class="r-src">developer.mozilla.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">What is DNS?</a></div><div class="r-note">Explicação clara e visual de como um domínio vira um IP &mdash; parte do Learning Center gratuito da Cloudflare.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>P&aacute;gina curta. Fique com a cadeia <strong>recursivo &rarr; root &rarr; TLD &rarr; autoritativo</strong> e com o papel do TTL no cache.</div><div class="r-src">cloudflare.com/learning &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/" target="_blank" rel="noopener">What happens in a TLS handshake?</a></div><div class="r-note">O passo a passo de como navegador e servidor combinam uma conexão segura antes de trocar qualquer dado.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~12 min</span>Leia o passo a passo numerado do handshake TLS 1.2 e, logo depois, o bloco sobre <strong>o que muda no TLS 1.3</strong> (1-RTT). &Eacute; essa compara&ccedil;&atilde;o que perguntam, n&atilde;o o detalhe das cifras.</div><div class="r-src">cloudflare.com/learning &middot; gratuito</div></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; src/lib/auth/rate-limit-login.ts</div>
+      <div class="ammo-body">
+        <p>Do comentário real sobre o rate limit de login:</p>
+        <pre><code>/**
+ * Dois baldes porque são dois ataques diferentes:
+ * - por E-MAIL: força-bruta contra uma conta específica;
+ * - por IP: credential stuffing, muitos e-mails testados
+ *   de uma origem só.
+ *
+ * Limitação conhecida e aceita: rate limit por IP é
+ * contornável por rotação de IP, e o balde "desconhecido"
+ * (nenhum header de proxy presente) junta gente diferente.
+ */</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> &ldquo;o IP do cliente&rdquo; não é um dado confiável por padrão &mdash; ele vem de um header HTTP (<code>X-Forwarded-For</code>) que depende de que proxy está na frente (a Vercel, no seu caso), e um cliente mal-intencionado pode tentar forjar esse header direto. Reconhecer essa limitação DE PROPÓSITO, em vez de fingir que rate limit por IP é perfeito, é exatamente o tipo de nuance que diferencia pleno de júnior numa entrevista sobre segurança de rede.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>Diferença entre 401 e 403 &mdash; um exemplo de cada no seu próprio backend?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>401 Unauthorized</strong> &eacute;, apesar do nome, &ldquo;n&atilde;o sei quem voc&ecirc; &eacute;&rdquo;: credencial ausente, inv&aacute;lida ou expirada. Formalmente deve vir com o header <code>WWW-Authenticate</code>. A a&ccedil;&atilde;o certa do cliente &eacute; autenticar &mdash; mandar pro login resolve.</p>
+<p><strong>403 Forbidden</strong> &eacute; &ldquo;sei exatamente quem voc&ecirc; &eacute;, e mesmo assim n&atilde;o pode&rdquo;. Repetir o login n&atilde;o muda nada.</p>
+<p>No seu backend: request sem cookie de sess&atilde;o numa Server Action protegida &rarr; <strong>401</strong>. Usu&aacute;ria autenticada tentando abrir uma <code>StudySession</code> de outra pessoa (D109) &rarr; <strong>403</strong>.</p>
+<p>Ressalva que vale ponto: em recurso de outro dono, muita gente prefere devolver <strong>404</strong> em vez de 403 &mdash; porque 403 confirma que aquele ID existe, e isso j&aacute; &eacute; vazamento de informa&ccedil;&atilde;o (d&aacute; pra enumerar).</p></div>
+          </details>
+        </li>
+        <li>O que o TLS garante, e o que ele NÃO garante (um site de phishing pode ter certificado válido)?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>Garante tr&ecirc;s coisas:</strong> confidencialidade (ningu&eacute;m no caminho l&ecirc;), integridade (ningu&eacute;m altera sem que voc&ecirc; detecte) e autenticidade <em>do dom&iacute;nio</em> &mdash; voc&ecirc; est&aacute; falando com quem controla aquele nome DNS.</p>
+<p><strong>N&atilde;o garante nada</strong> sobre a honestidade do dono do dom&iacute;nio, sobre a seguran&ccedil;a do site, sobre como o servidor guarda seus dados, nem sobre o que acontece depois que a conex&atilde;o termina.</p>
+<p>Por isso <code>banco-seguro-atendimento.com</code> com cadeado verde &eacute; phishing perfeitamente v&aacute;lido do ponto de vista do TLS: um certificado DV s&oacute; prova <strong>controle do dom&iacute;nio</strong>, sai em segundos e &eacute; gratuito. O cadeado nunca significou &ldquo;site confi&aacute;vel&rdquo; &mdash; significa &ldquo;canal cifrado at&eacute; <em>este</em> nome&rdquo;. Foi por entender isso errado em massa que os navegadores pararam de mostrar &ldquo;Seguro&rdquo; ao lado da URL.</p></div>
+          </details>
+        </li>
+        <li>Por que confiar cegamente no header <code>X-Forwarded-For</code> pra saber o IP real do cliente é perigoso?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque &eacute; um <strong>header</strong> &mdash; texto arbitr&aacute;rio que o cliente escreve. Qualquer um manda <code>X-Forwarded-For: 1.2.3.4</code> e, se voc&ecirc; l&ecirc; o primeiro valor sem pensar, contorna rate limit por IP, ban, geolocaliza&ccedil;&atilde;o, allowlist e log de auditoria (que passa a apontar pro inocente).</p>
+<p>O correto &eacute; confiar apenas no valor <em>acrescentado pelo seu proxy mais externo</em>: contar da direita pra esquerda, pulando exatamente N proxies confi&aacute;veis &mdash; porque tudo que est&aacute; &agrave; esquerda pode ter sido forjado pelo cliente e simplesmente repassado adiante.</p>
+<p>Melhor ainda: usar o header que a pr&oacute;pria plataforma sobrescreve e controla na borda (a Vercel e a Cloudflare fazem isso). Regra geral: <strong>header de rede s&oacute; vale se um componente confi&aacute;vel o escreveu</strong> &mdash; e voc&ecirc; precisa saber qual &eacute; esse componente.</p></div>
+          </details>
+        </li>
+        <li>O que muda de fato entre HTTP/1.1 e HTTP/2 numa página com 40 recursos (imagens, JS, CSS)?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Em <strong>HTTP/1.1</strong>, cada conex&atilde;o transporta uma requisi&ccedil;&atilde;o por vez (head-of-line blocking) e o navegador abre ~6 conex&otilde;es por origem: os 40 recursos entram numa fila de 6 em 6. Foi da&iacute; que nasceram os hacks da &eacute;poca &mdash; sprites de imagem, concatena&ccedil;&atilde;o de bundles, inline de CSS cr&iacute;tico e domain sharding.</p>
+<p>Em <strong>HTTP/2</strong> tudo multiplexa numa <em>&uacute;nica</em> conex&atilde;o TCP, com streams paralelos, prioriza&ccedil;&atilde;o e compress&atilde;o de header (HPACK, que importa muito quando 40 requests repetem os mesmos cookies). Os 40 recursos viajam concorrentes &mdash; e os hacks de 1.1 viram contraproducentes: um bundle gigante impede cache granular e sharding s&oacute; multiplica handshakes.</p>
+<p>O que HTTP/2 <strong>n&atilde;o</strong> resolve: o head-of-line blocking do pr&oacute;prio <strong>TCP</strong>. Um pacote perdido segura todos os streams, porque o TCP entrega em ordem. &Eacute; exatamente isso que o HTTP/3 resolve, trocando TCP por QUIC sobre UDP, onde cada stream se recupera sozinho.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b04-typescript.html"><div class="dir">&larr; anterior</div><div class="t">TypeScript de verdade</div></a>
+    <a class="next" href="b06-oauth.html"><div class="dir">próxima &rarr;</div><div class="t">OAuth &amp; autenticação federada</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

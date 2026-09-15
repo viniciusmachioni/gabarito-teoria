@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concorrência · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s4">
+    <div class="week-head"><span class="week-num">04</span><h2>Concorrência: SO, event loop, filas e tempo real</h2></div>
+      <div class="week-meta">~10h &middot; a parte que você disse ter menos base</div>
+
+    <p class="intro">Não precisa virar especialista em sistemas operacionais. Precisa saber: por que Node é &ldquo;single-threaded&rdquo; e mesmo assim não trava; o que uma fila garante e o que ela NÃO garante; e reconhecer uma race condition quando ela morde seu próprio negócio &mdash; o que, aliás, já aconteceu no Gabarita.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w4-1"><label for="w4-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Processos vs. threads, troca de contexto, escalonamento &mdash; o vocabulário de sistema operacional</span></label></li>
+      <li class="item"><input type="checkbox" id="w4-2"><label for="w4-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Locks, race condition e deadlock &mdash; com exemplo fora do banco de dados também</span></label></li>
+      <li class="item"><input type="checkbox" id="w4-3"><label for="w4-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Node.js: um thread pra JS + <code>libuv</code> com thread pool pra I/O &mdash; por que &ldquo;single-threaded&rdquo; é meia-verdade</span></label></li>
+      <li class="item"><input type="checkbox" id="w4-4"><label for="w4-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Filas de mensagens: at-least-once vs. exactly-once, idempotência, e por que retry sem cuidado duplica efeito</span></label></li>
+      <li class="item"><input type="checkbox" id="w4-5"><label for="w4-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tempo real: polling vs. long polling vs. Server-Sent Events vs. WebSocket &mdash; trade-offs de cada um</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">Operating Systems: Three Easy Pieces</a></div><div class="r-note">Livro universitário completo e gratuito. Não leia inteiro &mdash; foque nos capítulos de &ldquo;Concurrency&rdquo; (locks, condition variables, deadlock). É denso, mas é a referência real, não um resumo raso.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~2h</span>O livro tem 50+ cap&iacute;tulos &mdash; voc&ecirc; quer <strong>s&oacute; a Parte II (Concurrency)</strong>, e dentro dela cinco PDFs de 15&ndash;20 p&aacute;ginas: <strong>26</strong> (Concurrency: An Introduction), <strong>28</strong> (Locks), <strong>30</strong> (Condition Variables), <strong>32</strong> (Common Concurrency Bugs &mdash; a resposta pronta pra deadlock) e <strong>33</strong> (Event-based Concurrency, que &eacute; literalmente o event loop). Pule o resto.</div><div class="r-src">pages.cs.wisc.edu &middot; Remzi &amp; Andrea Arpaci-Dusseau, gratuito</div><details class="leitura" data-id="04-concorrencia--pages-cs-wisc-edu-remzi-ostep"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Concorrência trava quando dois fluxos de execução compartilham memória sem coordenação. Lock é o remédio mais simples; condition variable é o que evita <em>polling</em> enquanto espera; e os bugs reais têm um catálogo pequeno e reconhecível — não é aleatório, é padrão.</p>
+
+<h5>Cap. 26 — Concorrência: o problema</h5>
+<ul>
+<li>Uma <strong>race condition</strong> acontece quando o resultado depende da ordem de escalonamento entre threads, e essa ordem não é garantida. O caso canônico: <code>saldo++</code> não é atômico — é <em>load, add, store</em> em três instruções, e outra thread pode entrar no meio.</li>
+<li><strong>Seção crítica</strong> é o trecho de código que acessa o recurso compartilhado. As três propriedades que uma solução precisa: <strong>exclusão mútua</strong> (só uma thread por vez), <strong>progresso</strong> (quem quer entrar eventualmente entra) e <strong>espera limitada</strong> (ninguém espera pra sempre enquanto outros furam a fila).</li>
+</ul>
+
+<h5>Cap. 28 — Locks</h5>
+<ul>
+<li>Um lock começa livre; <code>lock()</code> trava (e bloqueia se já estiver travado); <code>unlock()</code> libera. O hardware precisa de uma instrução atômica de verdade — <code>test-and-set</code> ou <code>compare-and-swap</code> — porque nem <code>lock</code> em software puro escapa da mesma race condition que ele tenta resolver.</li>
+<li><strong>Spin lock</strong>: a thread fica num laço checando o lock. Simples e correto, mas desperdiça CPU — só faz sentido quando a espera é curtíssima (locks dentro do próprio kernel, por exemplo).</li>
+<li>Lock de verdade (o que uma linguagem de aplicação usa) combina spin curto com <strong>colocar a thread pra dormir</strong> e o sistema operacional a acorda quando o lock libera — é o papel de uma <em>queue</em> de threads bloqueadas.</li>
+</ul>
+
+<h5>Cap. 30 — Condition variables</h5>
+<ul>
+<li>Lock sozinho resolve exclusão mútua, não "espera por uma condição" (ex.: fila vazia, buffer cheio). <strong>Condition variable</strong> é uma fila de threads dormindo até alguém sinalizar.</li>
+<li>Padrão: <code>lock(); while (!condição) wait(cv, lock); … ; unlock();</code> — sempre em <strong>laço</strong>, nunca <code>if</code>, porque entre o <code>signal</code> e a thread acordar, outra pode ter mudado o estado de novo (<em>spurious wakeup</em> ou condição roubada por um terceiro).</li>
+<li>É o mecanismo por trás de fila produtor-consumidor: produtor sinaliza "tem item", consumidor sinaliza "tem espaço" — sem isso, o consumidor faria <em>busy-wait</em> gastando CPU à toa.</li>
+</ul>
+
+<h5>Cap. 32 — Bugs comuns de concorrência (o catálogo)</h5>
+<div class="tbl"><table>
+<tr><th>Categoria</th><th>O que é</th></tr>
+<tr><td><strong>Atomicity violation</strong></td><td>Duas operações deveriam ser atômicas juntas e não são — outra thread intercala no meio.</td></tr>
+<tr><td><strong>Order violation</strong></td><td>Código assume que A roda antes de B, mas nada garante isso (ex.: usar um objeto antes de ele ser inicializado por outra thread).</td></tr>
+<tr><td><strong>Deadlock</strong></td><td>Espera circular: T1 tem A e quer B, T2 tem B e quer A. As quatro condições necessárias: exclusão mútua, posse-e-espera, sem preempção, espera circular — <strong>quebrar qualquer uma</strong> evita o deadlock.</td></tr>
+</table></div>
+<p>Prevenção prática de deadlock: <strong>ordem total</strong> de aquisição de locks (sempre travar A antes de B, em todo lugar do código) é a técnica mais usada. <code>trylock()</code> com timeout e recuo é a alternativa quando ordem total não é viável.</p>
+
+<h5>Cap. 33 — Concorrência baseada em eventos</h5>
+<p>A alternativa a threads: um <strong>laço de eventos</strong> único que processa um evento por vez e nunca bloqueia — I/O usa chamadas não bloqueantes ou <code>select</code>/<code>epoll</code> pra saber quando algo está pronto. Ganha-se: sem race condition dentro do laço (só uma coisa roda por vez), sem custo de troca de contexto entre threads. Perde-se: uma chamada bloqueante ou um cálculo longo trava <em>tudo</em>, e o código vira uma cadeia de callbacks (ou, hoje, <code>async/await</code> por cima do mesmo modelo). <strong>É literalmente o event loop do Node e do navegador.</strong></p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">pages.cs.wisc.edu</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick" target="_blank" rel="noopener">The Node.js Event Loop</a></div><div class="r-note">Documentação oficial do Node sobre as fases do event loop (timers, poll, check...) &mdash; mais preciso que 90% dos posts de blog sobre o tema.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>P&aacute;gina &uacute;nica. O que tem que ficar: o diagrama das <strong>fases</strong> (timers &rarr; pending &rarr; poll &rarr; check &rarr; close) e as duas se&ccedil;&otilde;es finais, <code>process.nextTick()</code> vs. <code>setImmediate()</code>.</div><div class="r-src">nodejs.org &middot; oficial</div><details class="leitura" data-id="04-concorrencia--nodejs-org-learn-asynchronous-work-event-loop-timers-and-nexttick"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Node é uma thread rodando seu JavaScript mais a <strong>libuv</strong>, que tem um thread pool pra I/O de arquivo e DNS e usa o kernel pra I/O de rede. O event loop tem fases nomeadas, cada uma com sua fila — não é só "microtask vs. macrotask" do navegador.</p>
+
+<h5>As fases, em ordem</h5>
+<div class="tbl"><table>
+<tr><th>Fase</th><th>O que roda ali</th></tr>
+<tr><td><strong>timers</strong></td><td>callbacks de <code>setTimeout</code>/<code>setInterval</code> cujo tempo já passou</td></tr>
+<tr><td><strong>pending callbacks</strong></td><td>alguns callbacks de I/O adiados de um ciclo anterior (erros de TCP, por exemplo)</td></tr>
+<tr><td><strong>poll</strong></td><td>busca novos eventos de I/O e executa os callbacks prontos; é onde o loop passa a maior parte do tempo</td></tr>
+<tr><td><strong>check</strong></td><td>callbacks de <code>setImmediate</code></td></tr>
+<tr><td><strong>close callbacks</strong></td><td>ex.: <code>socket.on('close', …)</code></td></tr>
+</table></div>
+<p>Entre <strong>cada</strong> callback (não só entre fases), Node drena a fila de microtasks (<code>Promise</code>) e a de <code>process.nextTick</code>.</p>
+
+<h5><code>process.nextTick()</code> vs. <code>setImmediate()</code></h5>
+<ul>
+<li><code>process.nextTick(fn)</code> roda <strong>antes</strong> de qualquer fase do loop continuar — tem prioridade até maior que Promise. Uso abusivo (recursão de nextTick) pode <em>faminar</em> o I/O, porque a fila nunca esvazia pro loop seguir.</li>
+<li><code>setImmediate(fn)</code> roda na fase <strong>check</strong>, depois da fase poll do mesmo ciclo. Dentro de um callback de I/O, <code>setImmediate</code> sempre executa antes de um <code>setTimeout(fn, 0)</code> — fora de I/O, a ordem entre os dois não é garantida (depende de quanto tempo levou pra entrar no loop).</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> "Node não é single-threaded no sentido absoluto — o JavaScript roda numa thread só, mas I/O de disco e DNS usam o thread pool da libuv, e I/O de rede é assíncrono no kernel. É por isso que uma leitura de arquivo não trava requisições HTTP simultâneas, mas um <code>JSON.parse</code> gigante trava, sim."</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick" target="_blank" rel="noopener">nodejs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop" target="_blank" rel="noopener">MDN &mdash; Concurrency model</a></div><div class="r-note">Complementa o do Node com a visão do lado do navegador &mdash; útil pra contrastar os dois em entrevista.</div><div class="r-scope"><span class="r-tag t-part">Passar o olho &middot; ~8 min</span>Voc&ecirc; j&aacute; leu esta p&aacute;gina na Semana 1 &mdash; aqui &eacute; rele&ecirc;-la contrastando com o Node: mesma ideia de fila, agendador diferente. Oito minutos, n&atilde;o mais.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+      <li><div class="r-title"><a href="https://rxdb.info/articles/websockets-sse-polling-webrtc-webtransport.html" target="_blank" rel="noopener">WebSockets vs. SSE vs. Polling vs. WebRTC</a></div><div class="r-note">Comparação técnica e atual das opções de tempo real, com quando usar cada uma &mdash; direto ao ponto.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia a <strong>tabela comparativa</strong> e as se&ccedil;&otilde;es de <strong>WebSocket</strong> e <strong>SSE</strong> &mdash; as duas op&ccedil;&otilde;es reais no seu caso. Pule WebRTC e WebTransport, a menos que a vaga cite explicitamente.</div><div class="r-src">rxdb.info</div><details class="leitura" data-id="04-concorrencia--rxdb-info-articles-websockets-sse-polling-webrtc-webtransport-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Quatro formas de manter cliente e servidor em sincronia, cada uma com um trade-off diferente entre simplicidade, direção do fluxo e overhead de infraestrutura.</p>
+
+<div class="tbl"><table>
+<tr><th></th><th>Direção</th><th>Protocolo</th><th>Reconecta sozinho</th><th>Passa por proxy/CDN sem drama</th></tr>
+<tr><td><strong>Polling</strong></td><td>cliente pergunta</td><td>HTTP normal, repetido</td><td>trivial</td><td>sim</td></tr>
+<tr><td><strong>Long polling</strong></td><td>cliente pergunta, servidor segura a resposta</td><td>HTTP</td><td>manual</td><td>sim</td></tr>
+<tr><td><strong>SSE</strong></td><td>servidor → cliente, só</td><td>HTTP (<code>text/event-stream</code>)</td><td><strong>automático</strong>, com <code>Last-Event-ID</code></td><td>sim</td></tr>
+<tr><td><strong>WebSocket</strong></td><td>bidirecional</td><td>seu próprio (upgrade do HTTP)</td><td>manual</td><td>precisa de suporte explícito</td></tr>
+</table></div>
+
+<h5>Quando cada um vence</h5>
+<ul>
+<li><strong>Polling</strong>: mais simples de implementar e depurar; desperdiça requisição quando nada mudou. Aceitável pra atualização pouco frequente.</li>
+<li><strong>SSE</strong>: a escolha certa quando o fluxo é <strong>só do servidor pro cliente</strong> — progresso de job, notificação, feed. Reconecta sozinho, é HTTP puro (funciona atrás de qualquer proxy corporativo), e o navegador limita a ~6 conexões SSE por domínio em HTTP/1.1 (HTTP/2 resolve isso multiplexando).</li>
+<li><strong>WebSocket</strong>: necessário quando o cliente também <strong>envia</strong> continuamente (chat, colaboração em tempo real, jogo). Overhead de infraestrutura maior: load balancer precisa de sticky session ou um pub/sub compartilhado entre instâncias, e a conexão persistente consome um socket do servidor o tempo todo.</li>
+</ul>
+<p>O erro comum é escolher WebSocket "porque é mais moderno" pra um caso puramente unidirecional — aí você herda a complexidade bidirecional (reconexão manual, mensagens perdidas na desconexão) sem precisar dela.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://rxdb.info/articles/websockets-sse-polling-webrtc-webtransport.html" target="_blank" rel="noopener">rxdb.info</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">System Design Primer</a></div><div class="r-note">Repositório gratuito e extremamente conhecido &mdash; as seções sobre filas, cache e escalabilidade horizontal encaixam direto no que você já construiu com pg-boss.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~25 min aqui</span>O reposit&oacute;rio &eacute; enorme e volta inteiro no b&ocirc;nus B1. <strong>Nesta semana leia s&oacute; tr&ecirc;s blocos</strong>: <em>Asynchronism</em> (message queues, back pressure), <em>Availability patterns</em> e <em>Consistency patterns</em>.</div><div class="r-src">GitHub &middot; donnemartin, gratuito</div><details class="leitura" data-id="04-concorrencia--github-com-donnemartin-system-design-primer"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Três blocos do repositório que conversam direto com concorrência: filas de mensagens como <em>back pressure</em>, e os padrões de disponibilidade e consistência que toda fila e todo serviço replicado precisam escolher.</p>
+
+<h5>Asynchronism</h5>
+<ul>
+<li><strong>Message queue</strong>: produtor publica, consumidor processa quando puder. Desacopla o pico de chegada do ritmo de processamento — é <em>back pressure</em>: em vez do serviço cair sob carga, o trabalho espera na fila.</li>
+<li><strong>Task queue</strong>: variante focada em rodar trabalho pesado fora do caminho crítico do request (gerar relatório, mandar e-mail, processar imagem).</li>
+<li><strong>Back pressure</strong> de verdade também significa ter um limite: uma fila sem limite de tamanho só transforma "serviço caiu" em "memória do broker estourou" mais tarde.</li>
+</ul>
+
+<h5>Availability patterns</h5>
+<ul>
+<li><strong>Fail-over</strong> ativo-passivo: uma réplica assume se a principal cai (heartbeat detecta a falha). Ativo-ativo: todas atendem tráfego, mais capacidade, mais complexidade de consistência.</li>
+<li><strong>Replicação</strong> é a base de disponibilidade — mas replicar significa decidir consistência (próximo tópico).</li>
+</ul>
+
+<h5>Consistency patterns</h5>
+<div class="tbl"><table>
+<tr><th>Padrão</th><th>Garante</th></tr>
+<tr><td>Weak consistency</td><td>leitura pode não ver a escrita mais recente (ex.: chamada de voz — melhor perder um pacote que esperar)</td></tr>
+<tr><td>Eventual consistency</td><td>réplicas convergem <em>depois de um tempo</em> sem nova escrita (DNS, cache, e-mail)</td></tr>
+<tr><td>Strong consistency</td><td>toda réplica vê a mesma coisa imediatamente após a escrita (sistema financeiro, sequência de arquivos)</td></tr>
+</table></div>
+<p>É a mesma lâmina do CAP theorem (System design, bônus B1): fila e réplica são onde essa escolha vira código, não só slide.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">github.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; src/lib/queue/pg-boss.ts</div>
+      <div class="ammo-body">
+        <p>Comentário real explicando por que você mudou o timeout default de um job:</p>
+        <pre><code>/**
+ * O default do pg-boss são 15 minutos antes de abortar o handler e
+ * reenfileirar o job. Pra extração de uma prova isso é curto: quando
+ * a API de IA degrada, um lote sozinho fica minutos pendurado.
+ * Em 04/08, duas provas foram mortas no meio com "handler execution
+ * exceeded 900000ms" e REEXTRAÍDAS DO ZERO — cota de IA queimada por
+ * um lote que só estava lento, não quebrado.
+ */</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> isso é retry + timeout de fila na prática, com um bug real que custou dinheiro (cota de IA). E tem uma segunda história de concorrência ainda melhor guardada em <code>entitlements.ts</code>: <code>cotaRestante()</code> existe porque checar &ldquo;pode responder 1 questão?&rdquo; questão-a-questão deixava uma conta grátis com 19 respostas entregar um simulado de 200 inteiro — um bug clássico de checar-e-usar (TOCTOU) na regra de negócio, corrigido validando o LOTE inteiro numa transação. É um exemplo perfeito de race condition fora do banco de dados.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>&ldquo;Node é single-threaded&rdquo; &mdash; o que exatamente roda numa única thread, e o que não?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>O que roda numa thread s&oacute; &eacute; <strong>o seu JavaScript</strong>: o event loop e os callbacks. Ponto.</p>
+<p>N&atilde;o s&atilde;o single-thread: o <em>thread pool</em> da libuv (fs, dns, zlib, cripto pesada &mdash; 4 threads por padr&atilde;o, ajust&aacute;vel por <code>UV_THREADPOOL_SIZE</code>), o I/O de rede (delegado ao kernel via epoll/kqueue, sem thread nenhuma) e o GC/JIT do V8.</p>
+<p>A conclus&atilde;o que vale a pergunta: <strong>concorr&ecirc;ncia de I/O &eacute; alt&iacute;ssima, paralelismo de CPU &eacute; zero</strong> sem <code>worker_threads</code> ou <code>cluster</code>. Um la&ccedil;o de 2 segundos calculando algo trava todos os usu&aacute;rios daquele processo, n&atilde;o s&oacute; quem pediu.</p></div>
+          </details>
+        </li>
+        <li>Você processa um job duas vezes porque o worker caiu antes de confirmar. Como se proteger disso sem mudar a fila?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Voc&ecirc; n&atilde;o conserta isso na fila &mdash; praticamente toda fila entrega <strong>at-least-once</strong> de prop&oacute;sito, porque a alternativa (at-most-once) perde job. A prote&ccedil;&atilde;o mora no consumidor: <strong>torne o efeito idempotente</strong>.</p>
+<p>Dois caminhos concretos: (1) gravar uma chave de idempot&ecirc;ncia com <code>UNIQUE</code> <em>na mesma transa&ccedil;&atilde;o</em> do efeito, de modo que a segunda execu&ccedil;&atilde;o esbarre na constraint e vire no-op; (2) desenhar o efeito pra ser naturalmente repet&iacute;vel &mdash; <code>UPSERT</code> em vez de <code>INSERT</code>, &ldquo;definir estado = pago&rdquo; em vez de &ldquo;incrementar saldo&rdquo;.</p>
+<p>Frase de fechamento: <em>exactly-once n&atilde;o existe na entrega; existe no efeito</em>.</p></div>
+          </details>
+        </li>
+        <li>Me dá um exemplo de race condition que você já causou ou corrigiu, fora de banco de dados.
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Exemplos fortes, todos fora de banco:</p>
+<p><strong>Fetch fora de ordem:</strong> o usu&aacute;rio digita na busca, dispara uma requisi&ccedil;&atilde;o por tecla, e a resposta do termo <em>antigo</em> chega depois da do novo e sobrescreve a tela. Corre&ccedil;&atilde;o: <code>AbortController</code> ou uma flag de cancelamento no cleanup do efeito.</p>
+<p><strong>Duplo clique no submit:</strong> dois cliques r&aacute;pidos disparam duas Server Actions. Corre&ccedil;&atilde;o: desabilitar o bot&atilde;o via <code>useTransition</code> <em>mais</em> idempot&ecirc;ncia no servidor &mdash; s&oacute; a UI n&atilde;o basta, porque o cliente n&atilde;o &eacute; confi&aacute;vel.</p>
+<p>A resposta boa descreve <em>o sintoma que o usu&aacute;rio viu</em>, n&atilde;o s&oacute; o nome do problema.</p></div>
+          </details>
+        </li>
+        <li>Quando SSE é melhor que WebSocket, e quando é o contrário?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>SSE ganha</strong> quando o fluxo &eacute; unidirecional servidor&rarr;cliente: notifica&ccedil;&atilde;o, progresso de job, streaming de tokens de LLM, feed ao vivo. &Eacute; HTTP puro &mdash; passa por proxy, CDN e firewall corporativo sem tratamento especial, reconecta sozinho e retoma pelo <code>Last-Event-ID</code>, e voc&ecirc; n&atilde;o mant&eacute;m um protocolo &agrave; parte.</p>
+<p><strong>WebSocket ganha</strong> com tr&aacute;fego bidirecional de alta frequ&ecirc;ncia (chat, colabora&ccedil;&atilde;o em documento, jogo, presen&ccedil;a) ou dados bin&aacute;rios, onde o overhead de header de cada mensagem HTTP importaria.</p>
+<p>Pegadinha cl&aacute;ssica do SSE: em HTTP/1.1 o navegador limita a ~6 conex&otilde;es por origem, e cada aba com um stream aberto consome uma. Em HTTP/2 isso deixa de doer, porque tudo multiplexa numa conex&atilde;o s&oacute;.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="03-postgresql.html"><div class="dir">&larr; anterior</div><div class="t">PostgreSQL</div></a>
+    <a class="next" href="05-seguranca-historia.html"><div class="dir">próxima &rarr;</div><div class="t">Segurança &amp; a história do projeto</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

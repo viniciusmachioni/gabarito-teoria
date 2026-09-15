@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>System design · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s6">
+    <div class="week-head"><span class="week-num">B1</span><h2>Bônus: system design</h2></div>
+      <div class="week-meta">~6h &middot; o Gabarita hoje é uma instância só &mdash; e a pergunta de entrevista é sempre &ldquo;e se não fosse?&rdquo;</div>
+
+    <p class="intro">O norte do próprio projeto é virar SaaS multi-tenant. Você não precisa operar escala de verdade pra falar disso numa entrevista &mdash; precisa entender as poucas ideias que toda pergunta de &ldquo;projete um sistema&rdquo; reaproveita, e notar que várias delas já apareceram em miniatura nas suas próprias decisões de arquitetura.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w6-1"><label for="w6-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Escalabilidade horizontal vs. vertical &mdash; e por que serverless (Vercel) já empurra você pra horizontal, sem escolha</span></label></li>
+      <li class="item"><input type="checkbox" id="w6-2"><label for="w6-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Cache em camadas (CDN, aplicação, banco) &mdash; a mesma ideia do <code>relationJoins</code>, só que entre serviços em vez de dentro de uma query</span></label></li>
+      <li class="item"><input type="checkbox" id="w6-3"><label for="w6-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CAP theorem &mdash; o trade-off entre consistência e disponibilidade quando a rede particiona</span></label></li>
+      <li class="item"><input type="checkbox" id="w6-4"><label for="w6-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Sharding e particionamento &mdash; o que fazer quando &ldquo;um Postgres só&rdquo; para de aguentar</span></label></li>
+      <li class="item"><input type="checkbox" id="w6-5"><label for="w6-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Rate limiting &mdash; a versão &ldquo;em escala&rdquo; do que <code>cotaRestante()</code> e <code>podeGerarPorIA()</code> já fazem por usuário</span></label></li>
+      <li class="item"><input type="checkbox" id="w6-6"><label for="w6-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Estimativa &ldquo;de guardanapo&rdquo;: calcular QPS, armazenamento e banda de cabeça antes de desenhar qualquer coisa</span></label></li>
+      <li class="item"><input type="checkbox" id="w6-7"><label for="w6-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Load balancing &mdash; e por que serviço sem estado (stateless) é o que torna escalar horizontalmente trivial</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">System Design Primer</a></div><div class="r-note">O ponto de partida padrão da indústria pra system design, gratuito e organizado por tópico &mdash; comece pelas seções de cache, load balancing e sharding.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~3h</span>Ignore o &ldquo;study guide&rdquo; do topo e leia direto, nesta ordem: <strong>CAP</strong>, <em>Consistency &amp; Availability patterns</em>, <strong>DNS / CDN / Load balancer / Reverse proxy</strong>, <strong>Cache</strong>, <strong>Asynchronism</strong> e <strong>Database</strong> (replica&ccedil;&atilde;o, sharding, federa&ccedil;&atilde;o). As <em>system design questions</em> resolvidas no fim s&atilde;o exerc&iacute;cio &mdash; abra uma por semana, n&atilde;o todas de uma vez.</div><div class="r-src">GitHub &middot; donnemartin, gratuito</div></li>
+      <li><div class="r-title"><a href="https://highscalability.com/" target="_blank" rel="noopener">High Scalability</a></div><div class="r-note">Blog com estudos de caso reais de como empresas de verdade escalaram (ou quebraram) &mdash; melhor que teoria abstrata pra ter exemplo concreto na manga.</div><div class="r-scope"><span class="r-tag t-ref">Navegar, n&atilde;o ler &middot; ~40 min</span>N&atilde;o &eacute; livro, &eacute; arquivo de blog &mdash; n&atilde;o d&aacute; pra &ldquo;terminar&rdquo;. Escolha <strong>dois</strong> estudos de caso da s&eacute;rie &ldquo;<em>X</em> Architecture&rdquo; e leia esses dois inteiros. O valor &eacute; ter um exemplo concreto na manga, n&atilde;o cobrir o site.</div><div class="r-src">highscalability.com &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.freecodecamp.org/news/understanding-the-cap-theorem-consistency-availability-and-partition-tolerance-in-system-design" target="_blank" rel="noopener">Understanding the CAP Theorem</a></div><div class="r-note">Explicação acessível e completa, com exemplo de banco de cada lado do trade-off.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Artigo &uacute;nico e did&aacute;tico. Se voc&ecirc; s&oacute; for ler uma coisa sobre CAP, &eacute; esta &mdash; e leia esta <strong>antes</strong> da pr&oacute;xima.</div><div class="r-src">freecodecamp.org &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://mwhittaker.github.io/blog/an_illustrated_proof_of_the_cap_theorem/" target="_blank" rel="noopener">An Illustrated Proof of the CAP Theorem</a></div><div class="r-note">Versão mais rigorosa, com diagrama, pra quando a explicação de blog não bastar.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curto, com diagramas, e s&oacute; faz sentido depois do anterior. O ganho &eacute; conseguir <em>provar</em> o teorema em vez de s&oacute; cit&aacute;-lo &mdash; &eacute; o que separa a resposta decorada da entendida.</div><div class="r-src">mwhittaker.github.io &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.youtube.com/@ByteByteGo" target="_blank" rel="noopener">ByteByteGo (YouTube)</a></div><div class="r-note">Canal gratuito com vídeos curtos e visuais sobre exatamente estes temas &mdash; bom pra revisar no trajeto até uma entrevista.</div><div class="r-scope"><span class="r-tag t-ref">Assistir avulso &middot; 8&ndash;15 min por v&iacute;deo</span>N&atilde;o &eacute; pra maratonar o canal. Use como revis&atilde;o: um v&iacute;deo do t&oacute;pico que voc&ecirc; acabou de ler. Comece por &ldquo;CAP theorem&rdquo;, &ldquo;Caching strategies&rdquo; e &ldquo;Load balancing algorithms&rdquo;.</div><div class="r-src">YouTube &middot; gratuito</div></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; CLAUDE.md &mdash; interfaces abstraídas</div>
+      <div class="ammo-body">
+        <p>Você já documentou o próprio instinto de system design, sem chamar assim:</p>
+        <pre><code>AIProvider (src/lib/ai)  — impl atual: Gemini Flash — futuro: outro provider
+Scheduler  (src/lib/study) — impl atual: SM-2       — futuro: FSRS
+Queue      (src/lib/queue) — impl atual: pg-boss    — futuro: BullMQ+Redis
+
+"Sem construir tudo de largada — YAGNI por fase — mas nunca
+fechar portas que custem caro reabrir."</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> isso é a resposta pronta pra &ldquo;como você equilibra construir rápido com deixar espaço pra escalar depois?&rdquo; &mdash; você isolou os três pontos que mais mudam (provedor de IA, algoritmo de repetição, infraestrutura de fila) atrás de uma interface, sem pagar o custo de implementar as alternativas agora. E &ldquo;pg-boss sobre o próprio Postgres, sem Redis&rdquo; é uma escolha real de menos infra vs. menos escala &mdash; defensável enquanto o número de usuários for o que é hoje, com um ponto claro de troca já identificado.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>Seu worker de geração por IA hoje só roda local, num Docker Compose. Pra virar produção com vários usuários gerando ao mesmo tempo, o que muda pra escalar horizontalmente?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Seis mudan&ccedil;as, na ordem em que doem:</p>
+<p><strong>1. Worker vira stateless</strong> &mdash; nada em mem&oacute;ria ou disco local; estado vai pro Postgres ou pra armazenamento de objetos, sen&atilde;o duas r&eacute;plicas divergem.<br>
+<strong>2. A fila precisa suportar N consumidores</strong> sem entregar o mesmo job duas vezes: no Postgres isso &eacute; <code>SELECT &hellip; FOR UPDATE SKIP LOCKED</code>, que &eacute; exatamente o que o pg-boss faz por baixo.<br>
+<strong>3. Job idempotente + retry com backoff exponencial + DLQ</strong> pro que falha sempre.<br>
+<strong>4. O gargalo muda de lugar:</strong> n&atilde;o &eacute; CPU, &eacute; a cota da API de IA. Precisa de limite de concorr&ecirc;ncia por worker e rate limiting global.<br>
+<strong>5. Ciclo de vida:</strong> health check, e <em>graceful shutdown</em> que termina o job em voo antes de morrer (sen&atilde;o todo deploy gera reprocessamento).<br>
+<strong>6. Autoscaling pelo tamanho da fila</strong>, n&atilde;o por CPU &mdash; worker de IA fica ocioso esperando rede, e a CPU nunca sobe.</p></div>
+          </details>
+        </li>
+        <li>Em que ponto &ldquo;pg-boss sobre Postgres&rdquo; para de fazer sentido, e o que você trocaria?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Para de fazer sentido quando a fila passa a <strong>competir com a carga transacional pelo mesmo banco</strong>: taxa alta de enqueue/dequeue gera muita tupla morta e press&atilde;o de autovacuum bem na tabela mais quente; ou quando voc&ecirc; precisa de <em>fan-out</em> (v&aacute;rios consumidores independentes lendo a mesma mensagem), reten&ccedil;&atilde;o longa com replay, ou lat&ecirc;ncia de entrega abaixo de milissegundos.</p>
+<p>Ordem de grandeza pra citar sem medo: at&eacute; alguns milhares de jobs por minuto num banco saud&aacute;vel, Postgres &eacute; &oacute;timo &mdash; e voc&ecirc; economiza uma pe&ccedil;a de infraestrutura, um ponto de falha e um sistema de permiss&otilde;es.</p>
+<p>Depois disso: <strong>Redis + BullMQ</strong> (mesma linguagem, simples, lat&ecirc;ncia baixa), <strong>SQS</strong> (gerenciado, DLQ e retry de f&aacute;brica) ou <strong>Kafka</strong> se o requisito real for log dur&aacute;vel com replay e v&aacute;rios consumidores com offsets pr&oacute;prios &mdash; Kafka n&atilde;o &eacute; uma fila, &eacute; um log.</p></div>
+          </details>
+        </li>
+        <li>O Postgres da Vercel/Neon tem réplica de leitura defasada por alguns segundos. Isso fere consistência ou disponibilidade, no vocabulário do CAP?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Cuidado com a armadilha: <strong>CAP fala do comportamento durante uma parti&ccedil;&atilde;o de rede</strong>. R&eacute;plica ass&iacute;ncrona defasada sem parti&ccedil;&atilde;o nenhuma n&atilde;o &eacute; o caso que o CAP descreve. O vocabul&aacute;rio certo aqui &eacute; <strong>PACELC</strong>: <em>else</em> (sem parti&ccedil;&atilde;o), o sistema trocou <strong>Consist&ecirc;ncia por Lat&ecirc;ncia</strong>.</p>
+<p>Se o entrevistador insistir em CAP: na leitura &eacute; um sistema <em>AP</em> &mdash; dispon&iacute;vel e eventualmente consistente.</p>
+<p>Mas o que realmente importa &eacute; o sintoma: quebra o <strong>read-your-own-writes</strong>. A usu&aacute;ria salva a resposta, a tela recarrega da r&eacute;plica e o dado dela &ldquo;sumiu&rdquo;. A corre&ccedil;&atilde;o padr&atilde;o &eacute; rotear pra prim&aacute;ria as leituras logo ap&oacute;s uma escrita daquele usu&aacute;rio (sticky reads por sess&atilde;o), n&atilde;o aumentar timeout.</p></div>
+          </details>
+        </li>
+        <li>De cabeça: se 1.000 alunas fizessem uma prova de 100 questões ao mesmo tempo, quantas linhas de <code>Attempt</code> isso grava de uma vez?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>100.000 linhas</strong> &mdash; 1.000 &times; 100. Mas a conta n&atilde;o &eacute; a pergunta; o que se mede &eacute; o que voc&ecirc; faz com ela.</p>
+<p>100 mil <code>INSERT</code>s individuais s&atilde;o invi&aacute;veis (round-trip por linha). O desenho certo &eacute; um <code>createMany</code> em lote <em>por prova</em>, dentro de uma transa&ccedil;&atilde;o por aluna, com a valida&ccedil;&atilde;o de cota acontecendo antes da escrita &mdash; que &eacute; exatamente a D101.</p>
+<p>E vale dizer o que voc&ecirc; <strong>n&atilde;o</strong> faria: uma transa&ccedil;&atilde;o &uacute;nica cobrindo as 1.000 alunas. Lock longo, risco de timeout, e um erro numa aluna desfaz o trabalho de todas. Granularidade de transa&ccedil;&atilde;o &eacute; decis&atilde;o de design, n&atilde;o detalhe.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="05-seguranca-historia.html"><div class="dir">&larr; anterior</div><div class="t">Segurança &amp; a história do projeto</div></a>
+    <a class="next" href="b02-ia-agentes.html"><div class="dir">próxima &rarr;</div><div class="t">IA, agentes &amp; harnesses</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

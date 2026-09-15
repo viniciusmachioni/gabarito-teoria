@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Next.js &amp; Tailwind · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s2">
+    <div class="week-head"><span class="week-num">02</span><h2>Next.js &amp; Tailwind: renderização e cache</h2></div>
+      <div class="week-meta">~8h &middot; o que roda onde, e quando</div>
+
+    <p class="intro">Next.js parece mágica até você entender que é só a composição deliberada de umas poucas ideias: onde cada componente executa, quantas vezes, e o que fica em cache entre requisições. Seu próprio middleware de CSP já te ensinou uma parte disso na marra.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w2-1"><label for="w2-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">SSR vs. SSG vs. ISR vs. streaming &mdash; o espectro completo, não só &ldquo;client vs. server&rdquo;</span></label></li>
+      <li class="item"><input type="checkbox" id="w2-2"><label for="w2-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">React Server Components: o que nunca chega ao bundle do cliente, e o custo real de um &ldquo;use client&rdquo;</span></label></li>
+      <li class="item"><input type="checkbox" id="w2-3"><label for="w2-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As camadas de cache do App Router (fetch, Data Cache, Full Route Cache, Router Cache) e como invalidar cada uma</span></label></li>
+      <li class="item"><input type="checkbox" id="w2-4"><label for="w2-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Runtime Edge vs. Node.js &mdash; por que <code>node:crypto</code> não existe num, e o que isso implica pra qualquer lib que você importe</span></label></li>
+      <li class="item"><input type="checkbox" id="w2-5"><label for="w2-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Utility-first CSS: o argumento original do Tailwind contra &ldquo;separação de concerns&rdquo; clássica</span></label></li>
+      <li class="item"><input type="checkbox" id="w2-6"><label for="w2-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tailwind v4 CSS-first (<code>@theme</code>): design tokens como custom properties, e por que isso matou o <code>tailwind.config.js</code></span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://nextjs.org/learn" target="_blank" rel="noopener">nextjs.org/learn</a></div><div class="r-note">Curso interativo oficial e gratuito. Faça o módulo do App Router mesmo já sabendo Next &mdash; ele nomeia conceitos que você usa sem saber o nome.</div><div class="r-scope"><span class="r-tag t-full">Fazer, n&atilde;o ler &middot; ~3h</span>&Eacute; curso com c&oacute;digo, n&atilde;o texto. Pule os cap&iacute;tulos 1&ndash;3 (setup, CSS, fontes) e o 6 (banco). O n&uacute;cleo pra entrevista &eacute; <strong>7 a 12</strong>: Fetching Data &rarr; Static and Dynamic Rendering &rarr; <strong>Streaming</strong> &rarr; <strong>Partial Prerendering</strong> &rarr; Search and Pagination &rarr; Mutating Data.</div><div class="r-src">nextjs.org &middot; oficial, Vercel</div><details class="leitura" data-id="02-nextjs-tailwind--nextjs-org-learn"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O curso constrói um dashboard financeiro com App Router. Os capítulos 7 a 12 são o que importa pra entrevista: onde buscar dados, estático vs. dinâmico, streaming, PPR, estado na URL e mutação com Server Actions.</p>
+
+<h5>Cap. 7 — Fetching data</h5>
+<ul>
+<li>Server Components podem ser <code>async</code> e buscar dados <strong>direto</strong> (ORM, SQL, SDK), sem criar uma rota de API só pra isso — o segredo nunca vai pro navegador.</li>
+<li><strong>Waterfall</strong>: <code>await a(); await b();</code> faz <code>b</code> esperar <code>a</code> sem precisar. Se forem independentes, <code>await Promise.all([a(), b()])</code>.</li>
+<li>Waterfall às vezes é desejado (b depende do resultado de a) — o erro é ter sem querer.</li>
+</ul>
+
+<h5>Cap. 8 — Static and dynamic rendering</h5>
+<ul>
+<li><strong>Estático</strong>: renderizado em build (ou ao revalidar) e servido de cache/CDN. Rápido e barato, mas igual pra todo mundo.</li>
+<li><strong>Dinâmico</strong>: renderizado a cada request. Necessário quando depende de quem pede ou do momento: <code>cookies()</code>, <code>headers()</code>, <code>searchParams</code>, dados em tempo real.</li>
+<li>No modo dinâmico, <strong>a página é tão lenta quanto a busca mais lenta</strong> — o que motiva o capítulo seguinte.</li>
+</ul>
+
+<h5>Cap. 9 — Streaming</h5>
+<ul>
+<li>Streaming quebra a resposta em pedaços: a casca sai na hora e as partes lentas chegam depois, cada uma substituindo seu fallback.</li>
+<li><code>loading.tsx</code> = um <code>&lt;Suspense&gt;</code> em volta da página inteira (nível de rota).</li>
+<li><code>&lt;Suspense fallback={&lt;Skeleton/&gt;}&gt;</code> em volta de um componente específico dá granularidade: mova a busca de dados <strong>pra dentro</strong> do componente lento, não a deixe no topo da página.</li>
+<li>Route groups — pastas entre parênteses, como <code>(overview)</code> — limitam o alcance de um <code>loading.tsx</code> sem mudar a URL.</li>
+<li>Onde colocar a fronteira: onde faz sentido pro usuário ver chegar junto. Fronteira demais produz efeito pipoca; de menos, espera longa.</li>
+</ul>
+
+<h5>Cap. 10 — Partial Prerendering</h5>
+<p>PPR combina os dois mundos na <strong>mesma rota</strong>: tudo que é estático é pré-renderizado como casca, e os trechos dinâmicos (envoltos em <code>Suspense</code>) viram “buracos” preenchidos por streaming no request. Na versão atual do Next isso vem pelo modelo de <em>Cache Components</em> (ver o recurso de cache logo abaixo).</p>
+
+<h5>Cap. 11 — Search and pagination</h5>
+<ul>
+<li>O estado de busca e página mora na <strong>URL</strong> (<code>?query=ana&amp;page=2</code>): dá pra compartilhar e favoritar, funciona com SSR e o botão voltar funciona.</li>
+<li>No cliente: <code>useSearchParams</code>, <code>usePathname</code> e <code>useRouter().replace(...)</code>, com <strong>debounce</strong> pra não disparar uma navegação por tecla.</li>
+<li>No servidor: a página recebe <code>searchParams</code> e busca os dados já filtrados.</li>
+</ul>
+
+<h5>Cap. 12 — Mutating data</h5>
+<pre><code>// actions.ts
+'use server';
+export async function criarFatura(formData: FormData) {
+  const dados = Schema.parse(Object.fromEntries(formData)); // valide SEMPRE no servidor
+  await db.fatura.create({ data: dados });
+  revalidatePath('/dashboard/faturas');   // invalida o cache da listagem
+  redirect('/dashboard/faturas');
+}
+// &lt;form action={criarFatura}&gt;…&lt;/form&gt;</code></pre>
+<ul>
+<li>Server Action é uma função que roda no servidor, chamável a partir de um formulário ou de código cliente; o framework cria o endpoint POST.</li>
+<li>Para editar, passe o id com <code>criarFatura.bind(null, id)</code> — não num campo escondido que o usuário pode alterar sem checagem.</li>
+<li>Capítulos seguintes: <code>error.tsx</code> (fronteira de erro), <code>notFound()</code>, e validação com <code>useActionState</code> devolvendo erros por campo.</li>
+<li>Toda Server Action é um endpoint público: <strong>autentique e autorize dentro dela</strong>, mesmo que a página já esteja protegida.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/learn" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://nextjs.org/docs/app/getting-started/server-and-client-components" target="_blank" rel="noopener">Server and Client Components</a></div><div class="r-note">A referência direta sobre a fronteira client/server &mdash; leia isto antes de qualquer blog post de terceiro sobre o assunto.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~25 min</span>P&aacute;gina longa, mas &eacute; a mais importante da semana. Preste aten&ccedil;&atilde;o especial em <strong>quando usar cada um</strong>, em <strong>passar dados atrav&eacute;s da fronteira</strong> (serializa&ccedil;&atilde;o) e em <strong>interleaving</strong> (Server dentro de Client via <code>children</code>). N&atilde;o decore a API &mdash; decore onde fica a fronteira.</div><div class="r-src">nextjs.org/docs &middot; oficial</div><details class="leitura" data-id="02-nextjs-tailwind--nextjs-org-docs-app-getting-started-server-and-client-components"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Por padrão tudo é Server Component. <code>'use client'</code> marca uma fronteira: daquele arquivo pra baixo (imports), o código também vai pro bundle do navegador. Decore onde fica a fronteira e o que pode atravessá-la.</p>
+
+<h5>Quando usar cada um</h5>
+<div class="tbl"><table>
+<tr><th>Client Component</th><th>Server Component</th></tr>
+<tr><td>Estado e event handlers (<code>useState</code>, <code>onClick</code>)</td><td>Buscar dados perto da fonte</td></tr>
+<tr><td>Efeitos e ciclo de vida</td><td>Usar segredos (chaves de API, tokens)</td></tr>
+<tr><td>APIs do navegador (<code>localStorage</code>, <code>window</code>, geolocalização)</td><td>Reduzir o JavaScript enviado</td></tr>
+<tr><td>Hooks customizados que dependem dos itens acima</td><td>Melhorar o primeiro paint e fazer streaming</td></tr>
+</table></div>
+
+<h5>Como funciona por baixo</h5>
+<ol>
+<li><strong>No servidor</strong>, o React renderiza os Server Components num formato compacto chamado <strong>RSC Payload</strong> (a árvore renderizada, os lugares onde entram Client Components e as props deles). O Next usa isso mais os Client Components pra pré-renderizar HTML.</li>
+<li><strong>No cliente</strong>, o HTML aparece logo (ainda sem interatividade); o RSC Payload reconcilia a árvore; o JavaScript <strong>hidrata</strong> os Client Components.</li>
+<li><strong>Navegações seguintes</strong>: o RSC Payload é pré-carregado e cacheado, e Client Components renderizam só no cliente, sem HTML do servidor.</li>
+</ol>
+
+<h5>A fronteira</h5>
+<ul>
+<li><code>'use client'</code> no topo de um arquivo faz dele e de <strong>tudo que ele importa</strong> parte do bundle cliente. Coloque a diretiva o mais <strong>baixo</strong> possível: extraia o botão interativo, não marque o layout inteiro.</li>
+<li>Não dá pra <strong>importar</strong> um Server Component dentro de um arquivo cliente. Dá pra <strong>passar</strong> como <code>children</code> ou outra prop — é o <em>interleaving</em>:</li>
+</ul>
+<pre><code>// Modal é 'use client'; Carrinho é Server Component
+&lt;Modal&gt;
+  &lt;Carrinho /&gt;   {/* renderizado no servidor, encaixado no slot */}
+&lt;/Modal&gt;</code></pre>
+
+<h5>O que atravessa a fronteira</h5>
+<ul>
+<li>Props de Server → Client precisam ser <strong>serializáveis pelo React</strong>: primitivos, objetos e arrays simples, <code>Date</code>, <code>Map</code>, <code>Set</code>, Promises. Funções comuns e instâncias de classe não passam — exceto <strong>Server Actions</strong>, que atravessam como referência.</li>
+<li>Uma Promise pode ser passada e lida no cliente com <code>use(promise)</code>, dentro de <code>Suspense</code>: a busca começa no servidor e o componente cliente espera por ela.</li>
+</ul>
+
+<h5>Detalhes que caem em entrevista</h5>
+<ul>
+<li><strong>Context</strong> não existe em Server Components. Crie um provider cliente que recebe <code>children</code> e renderize-o o mais fundo possível.</li>
+<li><strong>Lib de terceiros</strong> que usa hooks mas não tem <code>'use client'</code>: reexporte num arquivo seu marcado como cliente.</li>
+<li><strong>Envenenamento de ambiente</strong>: <code>import 'server-only'</code> faz o build falhar se um módulo com segredo for importado no cliente. Só variáveis <code>NEXT_PUBLIC_*</code> vão pro bundle.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/docs/app/getting-started/server-and-client-components" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/migrating-to-cache-components" target="_blank" rel="noopener">Guides: Cache Components &amp; &ldquo;use cache&rdquo;</a></div><div class="r-note">O modelo de cache atual explicado pelo próprio time &mdash; útil mesmo se o Gabarita não usa isso ainda, porque cai em entrevista.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia s&oacute; a parte conceitual: o que muda no modelo de cache, <code>use cache</code>, <code>cacheLife</code> e <code>cacheTag</code>. <strong>Pare quando come&ccedil;ar o passo a passo de migra&ccedil;&atilde;o</strong> &mdash; voc&ecirc; n&atilde;o vai migrar nada agora.</div><div class="r-src">nextjs.org/docs &middot; oficial</div><details class="leitura" data-id="02-nextjs-tailwind--nextjs-org-docs-app-guides-migrating-to-cache-components"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">No modelo novo (Next 16, <code>cacheComponents: true</code>), <strong>nada é cacheado por padrão</strong>. Você marca o que pode ser cacheado com <code>'use cache'</code>, define por quanto tempo com <code>cacheLife</code> e como invalidar com <code>cacheTag</code>. O que não é cacheado precisa estar dentro de <code>Suspense</code>.</p>
+
+<h5>O modelo mental</h5>
+<ul>
+<li>Antes, o App Router tentava adivinhar o que era estático e havia várias camadas implícitas. O modelo de Cache Components troca isso por <strong>opt-in explícito</strong>.</li>
+<li>Dado sem cache que é acessado fora de uma fronteira <code>Suspense</code> gera erro de build — o framework obriga você a decidir: ou cacheia, ou mostra fallback enquanto chega. O resultado é PPR por padrão: casca estática + buracos dinâmicos.</li>
+</ul>
+
+<h5><code>'use cache'</code></h5>
+<pre><code>async function listarEspecialidades() {
+  'use cache';
+  cacheLife('hours');           // perfil: seconds, minutes, hours, days, weeks, max
+  cacheTag('especialidades');   // rótulo pra invalidar
+  return db.especialidade.findMany();
+}</code></pre>
+<ul>
+<li>Pode ir no topo de um arquivo, de um componente ou de uma função.</li>
+<li>A <strong>chave do cache</strong> é derivada dos argumentos e dos valores capturados — por isso eles precisam ser serializáveis.</li>
+<li>APIs de request (<code>cookies()</code>, <code>headers()</code>) não podem ser lidas <em>dentro</em> de um escopo cacheado: leia fora e passe o valor como argumento (e aí ele vira parte da chave).</li>
+<li><code>cacheLife</code> também aceita objeto com <code>stale</code>, <code>revalidate</code> e <code>expire</code>.</li>
+</ul>
+
+<h5>Invalidação</h5>
+<ul>
+<li><code>revalidateTag('especialidades', 'max')</code> — marca como velho e serve o antigo enquanto regenera (stale-while-revalidate). Bom pra webhook e job.</li>
+<li><code>updateTag('especialidades')</code> — dentro de Server Action, expira na hora pra quem escreveu ver a própria escrita (read-your-own-writes).</li>
+<li><code>revalidatePath</code> continua existindo pra invalidar por rota.</li>
+</ul>
+
+<h5>O que isso substitui</h5>
+<p>Configs de segmento como <code>export const dynamic</code>, <code>revalidate</code> e <code>fetchCache</code> deixam de ser o caminho; <code>unstable_cache</code> vira <code>'use cache'</code>.</p>
+
+<h5>Pra contrastar em entrevista: o modelo anterior</h5>
+<div class="tbl"><table>
+<tr><th>Camada</th><th>Onde</th><th>O que guardava</th></tr>
+<tr><td>Request Memoization</td><td>Servidor, durante um render</td><td>Deduplica o mesmo <code>fetch</code> na árvore</td></tr>
+<tr><td>Data Cache</td><td>Servidor, persistente</td><td>Resultado de <code>fetch</code> entre requests e deploys</td></tr>
+<tr><td>Full Route Cache</td><td>Servidor</td><td>HTML + RSC Payload de rotas estáticas</td></tr>
+<tr><td>Router Cache</td><td>Navegador</td><td>RSC Payload de rotas visitadas</td></tr>
+</table></div>
+<p>O Next 15 já tinha mudado os padrões (fetch e GET de route handler sem cache por padrão), e o 16 tornou o opt-in explícito. Saber contar essa evolução mostra que você acompanha o framework, e não só decorou uma versão.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/docs/app/guides/migrating-to-cache-components" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://tailwindcss.com/docs" target="_blank" rel="noopener">tailwindcss.com/docs</a></div><div class="r-note">A seção sobre configuração via CSS (<code>@theme</code>) explica exatamente o modelo que o Gabarita usa em <code>globals.css</code>.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~30 min agora</span><strong>N&atilde;o leia a refer&ecirc;ncia de utilit&aacute;rios</strong> &mdash; ela &eacute; dicion&aacute;rio. Leia agora s&oacute; tr&ecirc;s p&aacute;ginas conceituais: <em>Styling with utility classes</em>, <em>Theme variables</em> e <em>Functions &amp; directives</em> (<code>@theme</code>, <code>@apply</code>). O resto se consulta quando aparecer.</div><div class="r-src">tailwindcss.com &middot; oficial</div><details class="leitura" data-id="02-nextjs-tailwind--tailwindcss-com-docs"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Utilitários trocam “inventar nome de classe e escrever CSS” por “compor classes restritas a um design system”. Na v4 o design system é declarado em CSS com <code>@theme</code>, e cada token vira ao mesmo tempo utilitário e variável CSS.</p>
+
+<h5>Styling with utility classes</h5>
+<ul>
+<li><strong>Por que não inline style</strong>: utilitário tem restrição de escala (você escolhe entre <code>p-4</code> e <code>p-6</code>, não inventa 17px), tem estados (<code>hover:</code>, <code>focus-visible:</code>, <code>disabled:</code>), responsividade (<code>md:</code>), dark mode (<code>dark:</code>) e seletores que <code>style=""</code> não alcança.</li>
+<li><strong>Variantes empilham</strong>: <code>dark:md:hover:bg-slate-700</code>.</li>
+<li><strong>Valores arbitrários</strong> quando o design pede exceção: <code>top-[117px]</code>, <code>bg-[#316ff6]</code>, <code>grid-cols-[1fr_auto]</code>.</li>
+<li><strong>Duplicação</strong> se resolve no template (componente React, loop), não criando classes CSS. <code>@apply</code> é exceção, não estratégia.</li>
+<li><strong>Conflito</strong>: se um elemento tem <code>p-2</code> e <code>p-4</code>, vence quem vem <em>depois no CSS gerado</em>, não na ordem do atributo. Não aplique as duas; escolha uma condicionalmente (ou use um utilitário como <code>tailwind-merge</code>).</li>
+</ul>
+
+<h5>Theme variables (<code>@theme</code>)</h5>
+<pre><code>@import "tailwindcss";
+
+@theme {
+  --color-marca-500: oklch(0.62 0.14 160);
+  --font-display: "IBM Plex Sans", sans-serif;
+  --breakpoint-3xl: 120rem;
+}
+/* gera bg-marca-500, text-marca-500, font-display, 3xl:…
+   e expõe var(--color-marca-500) pra qualquer CSS */</code></pre>
+<ul>
+<li>Cada <strong>namespace</strong> gera uma família: <code>--color-*</code>, <code>--font-*</code>, <code>--text-*</code>, <code>--spacing</code>, <code>--breakpoint-*</code>, <code>--radius-*</code>, <code>--shadow-*</code>, <code>--animate-*</code>.</li>
+<li>Pra substituir a paleta padrão inteira: <code>--color-*: initial;</code> e declare só as suas.</li>
+<li><strong>Por que <code>@theme</code> e não <code>:root</code></strong>: <code>:root</code> só cria variável; <code>@theme</code> cria variável <em>e</em> utilitário. Precisa estar no topo do arquivo, sem aninhamento.</li>
+<li>Os tokens existem em runtime: trocar tema ou densidade é redefinir variáveis num seletor.</li>
+</ul>
+
+<h5>Functions &amp; directives</h5>
+<div class="tbl"><table>
+<tr><th>Diretiva</th><th>Pra quê</th></tr>
+<tr><td><code>@import "tailwindcss"</code></td><td>Carrega o framework</td></tr>
+<tr><td><code>@theme</code></td><td>Declara tokens</td></tr>
+<tr><td><code>@source</code></td><td>Aponta arquivos que a detecção automática não encontra (ex.: pacote de UI em <code>node_modules</code>)</td></tr>
+<tr><td><code>@utility</code></td><td>Cria utilitário próprio que funciona com variantes</td></tr>
+<tr><td><code>@variant</code> / <code>@custom-variant</code></td><td>Usa ou define variante (ex.: dark mode por classe)</td></tr>
+<tr><td><code>@apply</code></td><td>Aplica utilitários dentro de CSS escrito à mão</td></tr>
+<tr><td><code>@reference</code></td><td>Importa o tema sem duplicar CSS (CSS Modules, <code>&lt;style&gt;</code> de Vue/Svelte)</td></tr>
+<tr><td><code>--alpha()</code>, <code>--spacing()</code></td><td>Funções: opacidade de uma cor, múltiplos da escala</td></tr>
+</table></div>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://tailwindcss.com/docs" target="_blank" rel="noopener">tailwindcss.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://adamwathan.me/css-utility-classes-and-separation-of-concerns/" target="_blank" rel="noopener">CSS Utility Classes and &ldquo;Separation of Concerns&rdquo;</a></div><div class="r-note">O post do criador do Tailwind que justifica a abordagem inteira &mdash; a resposta pronta pra &ldquo;por que não CSS Modules?&rdquo;.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Post &uacute;nico, leitura corrida. &Eacute; argumento, n&atilde;o refer&ecirc;ncia: leia pelo racioc&iacute;nio (a ordem em que ele desmonta a obje&ccedil;&atilde;o), n&atilde;o pra decorar.</div><div class="r-src">adamwathan.me &middot; criador do Tailwind</div><details class="leitura" data-id="02-nextjs-tailwind--adamwathan-me-css-utility-classes-and-separation-of-concerns"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">“Separação de responsabilidades” entre HTML e CSS é ilusão: sempre existe uma dependência. A escolha real é a <strong>direção</strong> dela — e utility-first escolhe o HTML depender de um CSS reutilizável.</p>
+
+<h5>A trajetória em fases</h5>
+<ol>
+<li><strong>CSS “semântico”</strong>: <code>.author-bio</code> com seletores aninhados espelhando a estrutura (<code>.author-bio &gt; h2</code>). O HTML fica “limpo”, mas o CSS agora depende da estrutura do HTML — mudou a marcação, quebrou o estilo.</li>
+<li><strong>Desacoplar com BEM</strong> (<code>.author-bio__image</code>): menos frágil, mas as classes ainda são nomeadas pelo <em>conteúdo</em>. Quando surge um card de artigo com a mesma cara, você duplica CSS ou usa <code>@extend</code>/mixins.</li>
+<li><strong>A virada</strong>: o nome pelo conteúdo tornava o HTML reestilizável, mas o CSS não reaproveitável. Nomear pela <em>aparência/função</em> (<code>.media-card</code>) inverte: CSS reaproveitável, HTML precisa mudar pra mudar o visual. Nenhuma das duas é “separação” — são dependências em direções opostas.</li>
+<li><strong>Componentes agnósticos + variações</strong>: <code>.card</code>, <code>.card--large</code>, <code>.card--muted</code>… as variações explodem, e cada pequena diferença vira uma decisão de nomenclatura.</li>
+<li><strong>Utilitários</strong> (<code>.text-center</code>, <code>.mb-4</code>) pras pequenas variações, e depois <strong>utility-first</strong>: construir tudo com utilitários e extrair componente só quando um padrão realmente se repete — no template, não no CSS.</li>
+</ol>
+
+<h5>O que se ganha</h5>
+<ul>
+<li><strong>Consistência</strong>: uma escala fechada de espaçamento, cor e tipo impede os 37 tons de cinza.</li>
+<li><strong>Menos decisões</strong>: você não inventa nomes nem abre o arquivo CSS pra cada ajuste.</li>
+<li><strong>CSS para de crescer</strong>: feature nova reutiliza classes existentes em vez de adicionar regras.</li>
+<li><strong>Mudança local</strong>: alterar um utilitário num elemento não afeta nada em outro lugar.</li>
+</ul>
+
+<h5>Objeções respondidas</h5>
+<ul>
+<li><em>“É inline style.”</em> Não: inline não tem restrição de escala, estados, media queries nem pseudo-elementos.</li>
+<li><em>“HTML fica feio.”</em> É uma troca consciente: a complexidade sai de um CSS global difícil de apagar e vai pra um lugar visível e local. A duplicação se resolve extraindo componente de UI.</li>
+</ul>
+<p><strong>Resposta pra “por que não CSS Modules?”:</strong> CSS Modules resolve escopo (colisão de nomes), não resolve consistência nem crescimento do CSS; Tailwind resolve os dois com uma escala compartilhada. E dá pra combinar quando precisar.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://adamwathan.me/css-utility-classes-and-separation-of-concerns/" target="_blank" rel="noopener">adamwathan.me</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; src/lib/security/csp.ts</div>
+      <div class="ammo-body">
+        <p>Comentário real do seu código, no módulo que monta a CSP:</p>
+        <pre><code>/**
+ * Este módulo é carregado pelo MIDDLEWARE, que roda no runtime edge:
+ * nada de `node:crypto` aqui (`createHash` não existe lá).
+ * `crypto.getRandomValues` e `btoa` são globais nos dois runtimes.
+ */
+export function gerarNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return btoa(String.fromCharCode(...bytes));
+}</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> é um exemplo real e específico de &ldquo;runtime Edge tem uma API diferente do Node&rdquo; &mdash; a maioria dos candidatos só repete a frase de decoreba. E o motivo de toda rota do Gabarita ser dinâmica (o layout raiz lê <code>headers()</code> pra pegar o nonce) é outro exemplo direto de renderização estática vs. dinâmica na prática, com uma consequência real: página pré-renderizada serviria HTML sem nonce, e a CSP bloquearia o próprio app &mdash; tela branca em silêncio.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>Diferença entre um Server Component e um Client Component &mdash; o que cada um NUNCA pode fazer?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>Server Component nunca pode</strong> ter estado ou ciclo de vida (<code>useState</code>, <code>useEffect</code>), registrar event handler (<code>onClick</code>) nem tocar em API de navegador (<code>window</code>, <code>localStorage</code>) &mdash; ele roda uma vez, no servidor, e n&atilde;o vai pro bundle do cliente.</p>
+<p><strong>Client Component nunca pode</strong> acessar diretamente banco, segredo ou sistema de arquivos: tudo que ele importa &eacute; enviado ao navegador, ent&atilde;o uma chave de API ali &eacute; uma chave vazada.</p>
+<p>Corre&ccedil;&atilde;o que vale ponto: &ldquo;Client&rdquo; n&atilde;o quer dizer &ldquo;s&oacute; no cliente&rdquo;. No primeiro request ele tamb&eacute;m &eacute; renderizado no servidor (SSR) e depois hidrata. O que a diretiva marca &eacute; a <em>fronteira</em> a partir da qual o c&oacute;digo vai tamb&eacute;m pro bundle.</p></div>
+          </details>
+        </li>
+        <li>Você chama <code>headers()</code> ou <code>cookies()</code> num layout raiz. O que isso faz com o resto da árvore de rotas, e por quê?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>S&atilde;o <strong>APIs din&acirc;micas</strong>: o resultado depende do request, ent&atilde;o a rota n&atilde;o pode ser pr&eacute;-renderizada em build nem servida do Full Route Cache. Chamado no layout raiz, isso vale pra <strong>toda a &aacute;rvore abaixo</strong> &mdash; o app inteiro passa a renderizar por request.</p>
+<p>&Eacute; exatamente o custo consciente do nonce de CSP no Gabarita, e a resposta honesta &eacute; dizer que foi uma troca deliberada: sem isso a p&aacute;gina pr&eacute;-renderizada serviria HTML com um nonce velho e a pr&oacute;pria CSP bloquearia o app. Com Cache Components / PPR d&aacute; pra isolar a parte din&acirc;mica numa fronteira de <code>Suspense</code> e manter a casca est&aacute;tica.</p></div>
+          </details>
+        </li>
+        <li>ISR: o que exatamente é revalidado, e o que os outros usuários veem enquanto isso acontece?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Revalida <strong>aquela rota gerada</strong> (a entrada dela no Full Route Cache), n&atilde;o o app inteiro. O comportamento &eacute; <em>stale-while-revalidate</em>: o primeiro request depois do prazo ainda recebe a vers&atilde;o antiga e dispara a regenera&ccedil;&atilde;o em segundo plano; quem chega depois recebe a nova.</p>
+<p>Ou seja, ningu&eacute;m fica esperando um build &mdash; e se a regenera&ccedil;&atilde;o falhar, a vers&atilde;o antiga continua sendo servida em vez de virar erro. Vale citar o par de invalida&ccedil;&atilde;o sob demanda: <code>revalidatePath</code> / <code>revalidateTag</code>, para quando o gatilho &eacute; um evento e n&atilde;o o rel&oacute;gio.</p></div>
+          </details>
+        </li>
+        <li>Por que o Tailwind v4 não precisa mais escanear seu <code>tailwind.config.js</code> em JS?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque na v4 a configura&ccedil;&atilde;o <strong>mora no pr&oacute;prio CSS</strong>, via <code>@theme</code>: os tokens do design system viram custom properties nativas. O motor (reescrito em Rust) n&atilde;o precisa carregar e avaliar um m&oacute;dulo JavaScript pra descobrir sua paleta e sua escala de espa&ccedil;amento, e a descoberta dos arquivos de conte&uacute;do passou a ser autom&aacute;tica.</p>
+<p>A consequ&ecirc;ncia pr&aacute;tica que ningu&eacute;m menciona em entrevista: os tokens passam a existir <em>em runtime</em>, no navegador. Trocar tema, escopo ou densidade vira CSS puro &mdash; algo que um objeto JS compilado em build nunca permitiu.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="01-javascript-react.html"><div class="dir">&larr; anterior</div><div class="t">JavaScript &amp; React</div></a>
+    <a class="next" href="03-postgresql.html"><div class="dir">próxima &rarr;</div><div class="t">PostgreSQL</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Histórias do Gabarita · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="historias">
+    <div class="week-head"><h2 style="font-size:22px;">Como contar a história do Gabarita numa entrevista</h2></div>
+    <p class="intro">Você documentou cada decisão difícil no <code>DECISOES.md</code> enquanto ela acontecia &mdash; isso é praticamente um roteiro de entrevista pronto. Cada card abaixo é uma decisão real, reescrita no formato Situação / Decisão / Por quê / Resultado. Pratique dizendo em voz alta, não só lendo.</p>
+
+    <div class="star-grid">
+      <div class="star-card">
+        <span class="d-tag">D101</span>
+        <h4>Cota por questão, não por &ldquo;pode responder?&rdquo;</h4>
+        <div class="star-row"><div class="k">Situação</div><div class="v">Conta grátis tinha 20 questões de trial. A checagem original era um booleano por questão respondida.</div></div>
+        <div class="star-row"><div class="k">Decisão</div><div class="v">Criei <code>cotaRestante()</code>, que devolve um número, e passei a validar o LOTE inteiro (a prova toda) contra ele numa transação, antes de gravar qualquer resposta.</div></div>
+        <div class="star-row"><div class="k">Por quê</div><div class="v">Com o booleano, 1 questão de cota liberava a entrega de um simulado de 200 &mdash; um erro clássico de checar-e-usar (TOCTOU) na regra de negócio, não no banco.</div></div>
+        <div class="star-row"><div class="k">Resultado</div><div class="v">O trial agora recusa lotes acima da cota restante, sem truncar (truncar revelaria o gabarito de tudo) &mdash; e questão em branco não gasta cota nem revela resposta.</div></div>
+      </div>
+
+      <div class="star-card">
+        <span class="d-tag">D104</span>
+        <h4>Um usuário pode ter várias assinaturas no Stripe</h4>
+        <div class="star-row"><div class="k">Situação</div><div class="v">Cancelar e reassinar cria uma linha nova de assinatura no Stripe. Meu schema tinha <code>userId</code> único em <code>Subscription</code>, e o webhook retornava 500 na segunda assinatura.</div></div>
+        <div class="star-row"><div class="k">Decisão</div><div class="v">Removi a unicidade e passei a derivar <code>planId</code> do CONJUNTO de assinaturas do usuário, recalculado dentro da própria transação de escrita.</div></div>
+        <div class="star-row"><div class="k">Por quê</div><div class="v">Um evento <code>deleted</code> atrasado da assinatura antiga não pode rebaixar quem já tem uma nova ativa &mdash; e o Stripe reentrega webhook que falhou, então o bug se repetia pra sempre.</div></div>
+        <div class="star-row"><div class="k">Resultado</div><div class="v">Quem cancela e reassina volta a ficar Pro de verdade, e o histórico de assinaturas antigas fica preservado como auditoria.</div></div>
+      </div>
+
+      <div class="star-card">
+        <span class="d-tag">D107</span>
+        <h4>Trocar a senha precisa derrubar toda sessão aberta</h4>
+        <div class="star-row"><div class="k">Situação</div><div class="v">Sessão é JWT de 30 dias sem rotação. Trocar a senha não invalidava sessões já emitidas &mdash; um cookie vazado continuava valendo por até um mês.</div></div>
+        <div class="star-row"><div class="k">Decisão</div><div class="v">Adicionei um carimbo (<code>credenciaisAlteradasEm</code>) que entra no token no login e é reconferido contra o banco em toda guarda de rota.</div></div>
+        <div class="star-row"><div class="k">Por quê</div><div class="v">Não usei o <code>iat</code> do próprio JWT porque o Auth.js reemite o cookie periodicamente, renovando o <code>iat</code> &mdash; uma sessão comprometida escaparia da comparação de tempo.</div></div>
+        <div class="star-row"><div class="k">Resultado</div><div class="v">Trocar a senha derruba imediatamente qualquer outra sessão aberta, sem nenhuma consulta extra &mdash; o carimbo viaja no mesmo <code>select</code> que já lia papel/plano.</div></div>
+      </div>
+
+      <div class="star-card">
+        <span class="d-tag">D109</span>
+        <h4>Nem toda tabela por usuário tem uma coluna de dono</h4>
+        <div class="star-row"><div class="k">Situação</div><div class="v"><code>SessionResponse</code> e <code>StudySessionItem</code> não têm <code>userId</code> próprio &mdash; dependem de <code>StudySession</code>. Uma varredura de segurança achou uma função vazando dado entre sessões de usuários diferentes.</div></div>
+        <div class="star-row"><div class="k">Decisão</div><div class="v">Toda função que recebe <code>(userId, sessionId)</code> prova posse NA MESMA consulta (<code>where: sessionId, session: userId</code>), nunca em duas etapas.</div></div>
+        <div class="star-row"><div class="k">Por quê</div><div class="v">Guarda de página confirma quem é a pessoa, nunca de quem é a sessão &mdash; se a checagem de posse vivesse só nas páginas, uma Server Action nova herdaria a falha por acidente.</div></div>
+        <div class="star-row"><div class="k">Resultado</div><div class="v">Um teste por função (não por tela) trava a invariante pra sempre &mdash; a próxima função nasce com o teste, não com a suposição de que &ldquo;quem chama já confere&rdquo;.</div></div>
+      </div>
+
+      <div class="star-card">
+        <span class="d-tag">D111</span>
+        <h4>CSP com nonce por request, montada no middleware</h4>
+        <div class="star-row"><div class="k">Situação</div><div class="v">Precisava de <code>script-src</code> restrito sem liberar <code>unsafe-inline</code>, mas o Next injeta o payload RSC como script inline diferente a cada resposta.</div></div>
+        <div class="star-row"><div class="k">Decisão</div><div class="v">Nonce gerado por request no middleware (runtime edge), não hash fixo em config &mdash; e todo layout raiz lê <code>headers()</code>, o que torna toda rota dinâmica de propósito.</div></div>
+        <div class="star-row"><div class="k">Por quê</div><div class="v">Hash só serve pra script cujo texto é conhecido de antemão. <code>strict-dynamic</code> propaga a confiança do script com nonce pros chunks que ele carrega, exatamente como o Next carrega JS.</div></div>
+        <div class="star-row"><div class="k">Resultado</div><div class="v">Dois testes de fumaça (<code>fumaca:csp</code>, <code>fumaca:csrf</code>) travam isso em runtime real, porque um teste unitário isolado passaria verde com a página inteira em branco.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b19-processo-seletivo.html"><div class="dir">&larr; anterior</div><div class="t">O processo seletivo, aqui e lá fora</div></a>
+    <a class="next" href="pratica.html"><div class="dir">próxima &rarr;</div><div class="t">Onde se testar</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fundamentos soltos · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s12">
+    <div class="week-head"><span class="week-num">B7</span><h2>Bônus: fundamentos soltos</h2></div>
+      <div class="week-meta">~5h &middot; pontas clássicas de entrevista que não couberam num tema só</div>
+
+    <p class="intro">Onze tópicos que aparecem soltos em entrevista técnica e não mereciam uma seção inteira cada um &mdash; só o suficiente pra não ser pego de surpresa, com um link direto pra cada um. Isto virou um cardápio grande de propósito: não é pra estudar tudo antes da próxima entrevista, é pra ter onde procurar quando um tema específico aparecer numa vaga.</p>
+
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w8-1"><label for="w8-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Complexidade (Big-O) &amp; estruturas de dados</strong> &mdash; pilha, fila, hash map, árvore. Ainda cai em entrevista, mesmo pra quem nunca vai inverter uma árvore binária no trabalho. <a href="https://www.bigocheatsheet.com/" target="_blank" rel="noopener">bigocheatsheet.com</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-2"><label for="w8-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Docker &amp; containers</strong> &mdash; imagem vs. container, camadas, por que seu <code>docker-compose.yml</code> sobe três serviços isolados (web, worker, Postgres). <a href="https://docs.docker.com/get-started/docker-overview/" target="_blank" rel="noopener">docs.docker.com</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-3"><label for="w8-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Pirâmide de testes &amp; por que TDD escreve o teste antes</strong> &mdash; o mesmo princípio que a skill Superpowers já te obriga a seguir no projeto. <a href="https://martinfowler.com/bliki/TestPyramid.html" target="_blank" rel="noopener">martinfowler.com</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-4"><label for="w8-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Design de API REST &amp; idempotência</strong> &mdash; por que reenviar o mesmo webhook do Stripe duas vezes não pode duplicar o efeito (você já resolveu isso na prática, com D104). <a href="https://stripe.com/blog/idempotency" target="_blank" rel="noopener">stripe.com/blog</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-5"><label for="w8-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Princípios SOLID</strong>, pelo menos de nome &mdash; o &ldquo;S&rdquo; (responsabilidade única) é basicamente por que você tem <code>AIProvider</code>, <code>Scheduler</code> e <code>Queue</code> como interfaces separadas em vez de um <code>utils.ts</code> gigante. <a href="https://en.wikipedia.org/wiki/SOLID" target="_blank" rel="noopener">wikipedia.org/SOLID</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-6"><label for="w8-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Git além do básico</strong> &mdash; rebase vs. merge, <code>git bisect</code> pra achar o commit que quebrou algo, cherry-pick. <a href="https://learngitbranching.js.org/" target="_blank" rel="noopener">learngitbranching.js.org</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-7"><label for="w8-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Observabilidade</strong> &mdash; logs estruturados, métricas e tracing distribuído: os &ldquo;três pilares&rdquo; que substituem &ldquo;olhar print de console em produção&rdquo;. <a href="https://opentelemetry.io/docs/concepts/observability-primer/" target="_blank" rel="noopener">opentelemetry.io</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-8"><label for="w8-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>CI/CD &amp; estratégias de deploy</strong> &mdash; blue-green, canary, rollback: como reduzir o risco de cada deploy. <a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">martinfowler.com</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-9"><label for="w8-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Acessibilidade (a11y)</strong> &mdash; HTML semântico, ARIA, navegação por teclado: a base que Tailwind não te dá de graça. <a href="https://web.dev/learn/accessibility/welcome" target="_blank" rel="noopener">web.dev/learn</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-10"><label for="w8-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>GraphQL vs. REST vs. gRPC</strong> &mdash; três jeitos de desenhar uma API, e por que Server Actions do Next.js meio que evitam essa escolha toda. <a href="https://graphql.org/learn/" target="_blank" rel="noopener">graphql.org/learn</a></span></label></li>
+      <li class="item"><input type="checkbox" id="w8-11"><label for="w8-11"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><strong>Programação funcional básica</strong> &mdash; função pura, imutabilidade, por que <code>array.map</code> em vez de <code>for</code> mutando: o espírito por trás de boa parte do React moderno. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Pure_function" target="_blank" rel="noopener">MDN &mdash; Pure function</a></span></label></li>
+    </ul>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b06-oauth.html"><div class="dir">&larr; anterior</div><div class="t">OAuth &amp; autenticação federada</div></a>
+    <a class="next" href="b08-algoritmos.html"><div class="dir">próxima &rarr;</div><div class="t">Algoritmos &amp; LeetCode</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

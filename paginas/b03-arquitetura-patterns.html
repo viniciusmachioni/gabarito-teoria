@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arquitetura &amp; design patterns · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s8">
+    <div class="week-head"><span class="week-num">B3</span><h2>Bônus: arquitetura &amp; design patterns</h2></div>
+      <div class="week-meta">~6h &middot; código que funciona &ne; código organizado pra crescer</div>
+
+    <p class="intro">Você já organiza o Gabarita em camadas sem ter parado pra nomear isso. Esta seção dá nome ao que você já faz por instinto &mdash; e ensina a reconhecer quando NÃO aplicar um padrão é a decisão certa, que é metade do que separa pleno de júnior aqui.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w9-1"><label for="w9-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Monolito vs. microsserviços &mdash; o trade-off real, e por que &ldquo;monolito modular primeiro&rdquo; é o conselho mais repetido por quem já migrou dos dois lados</span></label></li>
+      <li class="item"><input type="checkbox" id="w9-2"><label for="w9-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Domain-Driven Design, o suficiente pra conversar: linguagem ubíqua, bounded context, entidade vs. value object</span></label></li>
+      <li class="item"><input type="checkbox" id="w9-3"><label for="w9-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Clean/Hexagonal architecture &mdash; por que separar regra de negócio de framework importa quando o framework muda de versão (ou de vez)</span></label></li>
+      <li class="item"><input type="checkbox" id="w9-4"><label for="w9-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Repository pattern &mdash; centralizar acesso a dado num lugar só, em vez de espalhar consulta ao banco pelos componentes</span></label></li>
+      <li class="item"><input type="checkbox" id="w9-5"><label for="w9-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Padrões GoF do dia a dia: Strategy, Factory, Observer, Decorator &mdash; reconhecer, não decorar os 23 originais</span></label></li>
+      <li class="item"><input type="checkbox" id="w9-6"><label for="w9-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Débito técnico &mdash; quando vale refatorar, quando vale reescrever, e quando vale só anotar e seguir</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://refactoring.guru/design-patterns" target="_blank" rel="noopener">Refactoring Guru &mdash; Design Patterns</a></div><div class="r-note">O catálogo mais didático que existe pros padrões GoF, com diagrama e exemplo de código pra cada um &mdash; navegue pelos que aparecem na lista acima.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~1h30 no total</span><strong>N&atilde;o leia os 22 padr&otilde;es.</strong> Leia o texto curto &ldquo;What&rsquo;s a design pattern?&rdquo; e depois s&oacute; os seis que aparecem em entrevista: <strong>Strategy</strong>, <strong>Factory Method</strong>, <strong>Observer</strong>, <strong>Adapter</strong>, <strong>Decorator</strong> e <strong>Singleton</strong> (este pra saber <em>criticar</em>). ~10 min cada.</div><div class="r-src">refactoring.guru &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://martinfowler.com/bliki/MonolithFirst.html" target="_blank" rel="noopener">MonolithFirst</a></div><div class="r-note">O artigo que Martin Fowler escreveu depois de ver times sofrerem com microsserviços cedo demais &mdash; ainda é a resposta mais defensável em entrevista.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~8 min</span>Um post de blog curto. Leitura &uacute;nica, sem recorte.</div><div class="r-src">martinfowler.com &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://blog.cleancoder.com/uncle-bob/2011/11/22/Clean-Architecture.html" target="_blank" rel="noopener">The Clean Architecture</a></div><div class="r-note">O post original de &ldquo;Uncle Bob&rdquo; Robert Martin &mdash; a fonte de onde vem praticamente todo diagrama de &ldquo;camadas concêntricas&rdquo; que você já viu.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Post curto. O que precisa ficar &eacute; <strong>a regra de depend&ecirc;ncia</strong> (depend&ecirc;ncias sempre apontam pra dentro) e como se inverte o fluxo na fronteira. Os nomes das quatro camadas s&atilde;o secund&aacute;rios.</div><div class="r-src">blog.cleancoder.com &middot; Robert C. Martin, gratuito</div></li>
+      <li><div class="r-title"><a href="https://martinfowler.com/bliki/DomainDrivenDesign.html" target="_blank" rel="noopener">Domain-Driven Design</a></div><div class="r-note">Resumo curto e direto do vocabulário de DDD, sem precisar ler o livro de 500 páginas do Eric Evans.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~5 min</span>&Eacute; um verbete, n&atilde;o um artigo &mdash; cabe em cinco minutos. Se quiser puxar mais, siga s&oacute; dois links de dentro: <em>Ubiquitous Language</em> e <em>Bounded Context</em>.</div><div class="r-src">martinfowler.com &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.freecodecamp.org/news/a-quick-introduction-to-clean-architecture-990c014448d2/" target="_blank" rel="noopener">A Quick Introduction to Clean Architecture</a></div><div class="r-note">Versão mais acessível, com exemplo de código, pra quem quer ver a ideia aplicada antes de ler o texto original.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Leia <strong>depois</strong> do post do Uncle Bob, como tradu&ccedil;&atilde;o pr&aacute;tica com c&oacute;digo. Se o original j&aacute; fez sentido sozinho, <strong>pule este</strong> &mdash; &eacute; redundante de prop&oacute;sito.</div><div class="r-src">freecodecamp.org &middot; gratuito</div></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; estrutura de pastas do Gabarita</div>
+      <div class="ammo-body">
+        <p>Sem ter desenhado com o nome, a árvore de pastas já segue a regra da Clean Architecture:</p>
+        <pre><code>src/app         → rotas Next.js — só orquestra: chama lib, devolve resposta
+src/components  → UI, sem regra de negócio
+src/lib         → toda regra de negócio, sem saber que existe
+                   um Next.js por cima
+src/types       → tipos compartilhados</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> a camada de framework (<code>app/</code>) depende da camada de domínio (<code>lib/</code>), nunca o contrário &mdash; é a resposta pronta pra &ldquo;como você organiza um projeto pra ele não virar espaguete conforme cresce?&rdquo;. E as interfaces <code>AIProvider</code>/<code>Scheduler</code>/<code>Queue</code> que você já citou na Semana de system design são Strategy pattern com outro nome: cada uma tem uma implementação hoje e pode ganhar outra sem mexer em quem a chama.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>Qual a diferença prática entre Strategy e Factory? Um exemplo de cada, seu ou não.
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>Strategy</strong> &eacute; sobre comportamento intercambi&aacute;vel: uma interface, v&aacute;rias implementa&ccedil;&otilde;es, e o chamador troca sem saber qual est&aacute; usando. <strong>Factory</strong> &eacute; sobre cria&ccedil;&atilde;o: encapsular a decis&atilde;o de <em>qual</em> objeto instanciar, pra que o chamador n&atilde;o precise conhecer as classes concretas.</p>
+<p>No seu pr&oacute;prio c&oacute;digo: <code>AIProvider</code> como interface, com o pipeline chamando <code>provider.gerar()</code> sem saber se &eacute; Anthropic ou outro &mdash; isso &eacute; Strategy. A fun&ccedil;&atilde;o que l&ecirc; a vari&aacute;vel de ambiente e devolve o provider certo &eacute; a Factory.</p>
+<p>Elas quase sempre andam juntas, e &eacute; justamente isso que confunde: <strong>a Factory escolhe a Strategy</strong>. Uma responde &ldquo;como o comportamento varia&rdquo;, a outra &ldquo;quem decide qual vem&rdquo;.</p></div>
+          </details>
+        </li>
+        <li>Por que &ldquo;monolito modular primeiro&rdquo; costuma ser melhor conselho que &ldquo;já nasce em microsserviços&rdquo;?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque microsservi&ccedil;os trocam um problema f&aacute;cil &mdash; chamada de fun&ccedil;&atilde;o, que ou funciona ou lan&ccedil;a &mdash; por v&aacute;rios dif&iacute;ceis: rede n&atilde;o confi&aacute;vel, transa&ccedil;&atilde;o distribu&iacute;da (adeus ACID, ol&aacute; saga), versionamento de contrato, deploy coordenado e observabilidade distribu&iacute;da.</p>
+<p>E voc&ecirc; paga esse pre&ccedil;o <strong>antes de saber onde as fronteiras reais est&atilde;o</strong>. Essa &eacute; a parte que decide a resposta: fronteira errada dentro de um monolito &eacute; um refactor de uma tarde; fronteira errada entre dois servi&ccedil;os &eacute; uma migra&ccedil;&atilde;o com janela de manuten&ccedil;&atilde;o.</p>
+<p>O conselho do Fowler (<em>MonolithFirst</em>) n&atilde;o &eacute; &ldquo;monolito pra sempre&rdquo;: &eacute; comece modular, com fronteiras internas expl&iacute;citas, me&ccedil;a onde d&oacute;i de verdade &mdash; escala independente, time independente, isolamento de falha &mdash; e extraia <strong>s&oacute; esse peda&ccedil;o</strong>.</p></div>
+          </details>
+        </li>
+        <li>O que é bounded context, e por que dois times podem ter uma definição diferente da mesma palavra (&ldquo;Cliente&rdquo;, por exemplo)?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>Bounded context</strong> &eacute; o limite dentro do qual um modelo e sua linguagem t&ecirc;m um significado &uacute;nico e consistente.</p>
+<p>Dois times divergem sobre &ldquo;Cliente&rdquo; porque n&atilde;o est&atilde;o falando da mesma coisa: em Vendas, Cliente &eacute; um lead com funil, origem e probabilidade de fechar; em Faturamento, &eacute; um CNPJ com endere&ccedil;o fiscal, regime tribut&aacute;rio e limite de cr&eacute;dito. Mesmo nome, conceitos diferentes.</p>
+<p>A tentativa de fazer <em>um</em> modelo can&ocirc;nico de Cliente pra empresa inteira &eacute; exatamente o que produz aquela tabela de 80 colunas onde metade &eacute; sempre nula e ningu&eacute;m pode remover nada. A sa&iacute;da do DDD &eacute; o contr&aacute;rio: <strong>modelos separados por contexto</strong>, cada um coerente internamente, e um mapeamento expl&iacute;cito entre eles (context map) na fronteira.</p></div>
+          </details>
+        </li>
+        <li>Me dá um exemplo de débito técnico que você assumiu de propósito, e um que te mordeu depois.
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>O que est&aacute; sendo medido &eacute; se voc&ecirc; distingue <strong>d&eacute;bito deliberado de descuido</strong>. Formato que funciona: &ldquo;assumi X de prop&oacute;sito porque precisava validar Y antes de investir; registrei onde estava e qual seria o gatilho pra pagar&rdquo;.</p>
+<p><strong>Deliberado, do Gabarita:</strong> o worker de IA rodando s&oacute; local via Docker Compose. N&atilde;o h&aacute; usu&aacute;rio em escala ainda, o custo de montar infra de fila gerenciada n&atilde;o se pagaria, e o caminho de sa&iacute;da &eacute; conhecido (worker stateless + SKIP LOCKED).</p>
+<p><strong>O que mordeu:</strong> o <code>userId</code> &uacute;nico em <code>Subscription</code> (D104). N&atilde;o foi decis&atilde;o consciente, foi uma suposi&ccedil;&atilde;o de modelagem nunca questionada &mdash; &ldquo;um usu&aacute;rio, uma assinatura&rdquo;. S&oacute; apareceu em produ&ccedil;&atilde;o, como webhook do Stripe retornando 500 <em>pra sempre</em>, porque o Stripe reentrega o que falha. D&eacute;bito silencioso &eacute; pior que o assumido justamente por isso: voc&ecirc; n&atilde;o escolhe quando ele cobra.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b02-ia-agentes.html"><div class="dir">&larr; anterior</div><div class="t">IA, agentes &amp; harnesses</div></a>
+    <a class="next" href="b04-typescript.html"><div class="dir">próxima &rarr;</div><div class="t">TypeScript de verdade</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

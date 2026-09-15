@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acessibilidade &amp; HTML semântico · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s16">
+  <div class="week-head"><span class="week-num">B11</span><h2>Bônus: acessibilidade &amp; HTML semântico</h2></div>
+  <div class="week-meta">~6h &middot; a base que Tailwind não te dá de graça, e que vaga de fora cobra de verdade</div>
+  <p class="intro">Fora do Brasil, acessibilidade não é opcional em vaga sênior de front-end &mdash; é pergunta de entrevista e às vezes exercício prático. HTML semântico resolve boa parte de graça; o resto é ARIA aplicado com cuidado (o "não use ARIA" da primeira regra da APG é mais literal do que parece) e testar de verdade com teclado e leitor de tela.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w16-1"><label for="w16-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">HTML semântico primeiro: <code>&lt;button&gt;</code> em vez de <code>&lt;div onClick&gt;</code> já dá foco, teclado e role de graça &mdash; ARIA é pra preencher a lacuna, não pra substituir a tag certa</span></label></li>
+    <li class="item"><input type="checkbox" id="w16-2"><label for="w16-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As quatro regras da WAI-ARIA Authoring Practices &mdash; a primeira é literalmente &ldquo;não use ARIA&rdquo; quando um elemento nativo resolve</span></label></li>
+    <li class="item"><input type="checkbox" id="w16-3"><label for="w16-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Gerenciamento de foco em SPA: mover foco ao trocar de rota, prender foco (focus trap) num modal, e devolver foco ao fechar</span></label></li>
+    <li class="item"><input type="checkbox" id="w16-4"><label for="w16-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Live regions (<code>aria-live</code>) &mdash; como anunciar uma mudança assíncrona (toast, resultado de busca) pra quem usa leitor de tela, sem spam</span></label></li>
+    <li class="item"><input type="checkbox" id="w16-5"><label for="w16-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Contraste e WCAG 2.2: os níveis A/AA/AAA, a taxa de contraste mínima de texto, e o que realmente é exigido por lei em cada mercado</span></label></li>
+    <li class="item"><input type="checkbox" id="w16-6"><label for="w16-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Testar de verdade: navegar só de teclado (Tab, Shift+Tab, Esc, setas) e rodar um leitor de tela (VoiceOver, NVDA) por 10 minutos na sua própria tela</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://www.w3.org/WAI/ARIA/apg/practices/" target="_blank" rel="noopener">ARIA Authoring Practices Guide</a></div><div class="r-note">A referência oficial de padrões de componente acessível (modal, combobox, tabs, menu) com exemplo funcional de cada um.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia "Reading order" no topo (as regras gerais) e depois só os padrões de componente que você constrói de verdade: Dialog (Modal), Combobox, Tabs. O resto é consulta pra quando construir aquele componente.</div><div class="r-src">w3.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions" target="_blank" rel="noopener">MDN — ARIA live regions</a></div><div class="r-note">Como e quando usar <code>aria-live="polite"</code> vs. <code>"assertive"</code>, e os papéis com live region embutida (<code>status</code>, <code>alert</code>).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página média, direto ao ponto — o exemplo de chat/notificação é o caso mais comum no dia a dia.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://web.dev/learn/accessibility/welcome" target="_blank" rel="noopener">web.dev — Learn Accessibility</a></div><div class="r-note">Curso curto em módulos: semântica, foco, ARIA, cor e contraste, formulários.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~1h</span>Faça os módulos Semantics, Focus e Forms. Cor/contraste e mídia podem ficar pra depois se o tempo apertar.</div><div class="r-src">web.dev &middot; Google</div></li>
+    <li><div class="r-title"><a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener">WCAG 2.2 — Quick Reference</a></div><div class="r-note">A lista completa de critérios de sucesso, filtrável por nível (A/AA/AAA).</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~20 min agora</span>Filtre por nível AA (o exigido na maioria das leis) e passe o olho pelos títulos. Não leia o texto normativo inteiro — é referência jurídica, não prosa.</div><div class="r-src">w3.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://www.a11yproject.com/checklist/" target="_blank" rel="noopener">The A11Y Project — Checklist</a></div><div class="r-note">Checklist prática, organizada por tipo de verificação (estrutura, teclado, formulário, mídia).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curta e acionável — dá pra usar literalmente como checklist de PR.</div><div class="r-src">a11yproject.com</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; formulário &amp; modal do Gabarita</div>
+    <div class="ammo-body">
+      <p>Se o Gabarita tem algum modal (confirmação de exclusão de sessão, por exemplo) ou formulário de erro em tempo real, você já resolveu foco (abrir → mover foco pro modal; fechar → devolver pro elemento que abriu) e mensagem de erro anunciada. Se ainda não, é a lacuna mais rápida de fechar antes de uma entrevista de front-end fora do Brasil: <code>role="dialog"</code> + <code>aria-modal="true"</code> + focus trap + <code>Esc</code> fecha.</p>
+      <p class="why"><strong>Por que isso importa:</strong> "me mostra um componente acessível que você fez" é pergunta comum em loop de front-end sênior no exterior &mdash; e é rara a resposta que vai além de "usei um componente de biblioteca que já é acessível".</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Por que <code>&lt;div onClick={fn}&gt;Enviar&lt;/div&gt;</code> é pior que <code>&lt;button onClick={fn}&gt;Enviar&lt;/button&gt;</code>, mesmo com o mesmo visual?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>A <code>div</code> não recebe foco por Tab, não tem <code>role="button"</code> implícito (leitor de tela não anuncia que é clicável), e não responde a Enter/Espaço &mdash; tudo isso vem de graça com <code>&lt;button&gt;</code>. Replicar manualmente (<code>tabIndex="0"</code>, <code>role="button"</code>, handler de teclado pra Enter e Espaço) é mais código pra chegar no que o elemento nativo já fazia.</p></div>
+        </details>
+      </li>
+      <li>Um modal abre por cima da página. O que precisa acontecer com o foco, na abertura e no fechamento?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Na abertura: mover o foco <strong>pra dentro</strong> do modal (geralmente no primeiro elemento focável ou no título) e <strong>prender</strong> o Tab dentro dele (focus trap), senão quem navega por teclado sai pro conteúdo atrás, que está visualmente coberto. No fechamento: devolver o foco pro elemento que abriu o modal &mdash; sem isso, o foco &ldquo;some&rdquo; ou volta pro topo da página, desorientando quem navega por teclado ou leitor de tela.</p></div>
+        </details>
+      </li>
+      <li>Você adiciona um toast de sucesso que desaparece em 3s. Sem nada de ARIA, quem usa leitor de tela percebe?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Não, a menos que o toast já esteja no DOM quando a página carrega e mude de conteúdo dentro de uma <strong>live region</strong>. Um elemento inserido puro no DOM não é anunciado automaticamente. A correção: <code>role="status"</code> (tem <code>aria-live="polite"</code> implícito) num container que já existe, e você só atualiza o texto dele &mdash; <code>aria-live="assertive"</code> só pra erro crítico, porque ele interrompe o que o leitor de tela estava lendo.</p></div>
+        </details>
+      </li>
+      <li>Qual é a diferença prática entre WCAG nível A, AA e AAA?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>A é o mínimo (barreiras graves). <strong>AA é o padrão de mercado e o exigido pela maioria das leis</strong> (ADA nos EUA via jurisprudência, EAA na Europa, LBI no Brasil) &mdash; contraste 4.5:1 pra texto normal, navegável por teclado, formulário com label. AAA é o nível mais rigoroso e a própria W3C recomenda <strong>não</strong> exigi-lo pro site inteiro, porque alguns critérios (contraste 7:1, sem áudio automático nenhum) são inviáveis pra certos tipos de conteúdo.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b10-testes.html"><div class="dir">&larr; anterior</div><div class="t">Testes &amp; qualidade</div></a>
+    <a class="next" href="b12-css.html"><div class="dir">próxima &rarr;</div><div class="t">CSS moderno &amp; layout</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O navegador por dentro &amp; performance · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s18">
+  <div class="week-head"><span class="week-num">B13</span><h2>Bônus: o navegador por dentro &amp; performance de front-end</h2></div>
+  <div class="week-meta">~7h &middot; o que acontece entre o HTML chegar e a tela ficar pronta</div>
+  <p class="intro">Core Web Vitals (Semana 5) te dão o <em>o quê</em> medir. Esta seção é o <em>por quê</em>: o caminho de renderização do navegador, onde JavaScript custa mais do que parece, e as técnicas concretas &mdash; code splitting, otimização de imagem e fonte &mdash; que movem essas métricas de verdade.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w18-1"><label for="w18-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O caminho crítico de renderização: parse do HTML → DOM, parse do CSS → CSSOM, os dois juntam no render tree, layout, paint, composite</span></label></li>
+    <li class="item"><input type="checkbox" id="w18-2"><label for="w18-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Por que CSS é "render-blocking" e <code>&lt;script&gt;</code> sem <code>defer</code>/<code>async</code> também &mdash; e o que <code>defer</code> muda de verdade</span></label></li>
+    <li class="item"><input type="checkbox" id="w18-3"><label for="w18-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Reflow (layout) vs. repaint vs. composite &mdash; por que animar <code>transform</code>/<code>opacity</code> é "de graça" e animar <code>width</code>/<code>top</code> não é</span></label></li>
+    <li class="item"><input type="checkbox" id="w18-4"><label for="w18-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Code splitting &amp; lazy loading: <code>import()</code> dinâmico, <code>React.lazy</code>, e a decisão de onde cortar o bundle sem virar cascata de requests</span></label></li>
+    <li class="item"><input type="checkbox" id="w18-5"><label for="w18-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Imagem moderna: formatos (AVIF/WebP), <code>srcset</code>/<code>sizes</code> pra resolução certa por dispositivo, <code>loading="lazy"</code> e o custo de imagem sem dimensão explícita</span></label></li>
+    <li class="item"><input type="checkbox" id="w18-6"><label for="w18-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Fonte web: FOUT vs. FOIT, <code>font-display</code>, e por que pré-carregar a fonte crítica evita o "pulo" de layout</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://web.dev/articles/critical-rendering-path" target="_blank" rel="noopener">web.dev — Critical Rendering Path</a></div><div class="r-note">O passo a passo desde bytes de HTML até pixels na tela, com o papel de cada etapa (DOM, CSSOM, render tree, layout, paint).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Base pra tudo o mais nesta seção &mdash; comece por aqui.</div><div class="r-src">web.dev &middot; Google</div></li>
+    <li><div class="r-title"><a href="https://web.dev/articles/optimize-fcp" target="_blank" rel="noopener">web.dev — Optimize FCP / render-blocking resources</a></div><div class="r-note">Por que CSS bloqueia o primeiro paint por padrão, e como <code>defer</code>/<code>async</code> mudam o comportamento de script.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Foque na explicação de defer vs. async vs. nenhum dos dois &mdash; a diferença de quando cada um executa em relação ao parse do HTML.</div><div class="r-src">web.dev &middot; Google</div></li>
+    <li><div class="r-title"><a href="https://csstriggers.com/" target="_blank" rel="noopener">CSS Triggers</a></div><div class="r-note">Tabela de qual propriedade CSS dispara layout, paint ou só composite quando muda.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~10 min agora</span>Veja que <code>transform</code> e <code>opacity</code> disparam só "Composite" &mdash; é por isso que são as propriedades seguras pra animar a 60fps.</div><div class="r-src">csstriggers.com</div></li>
+    <li><div class="r-title"><a href="https://web.dev/articles/reduce-javascript-payloads-with-code-splitting" target="_blank" rel="noopener">web.dev — Code splitting</a></div><div class="r-note">Import dinâmico, split por rota vs. por componente, e o trade-off entre poucos bundles grandes e muitos pequenos.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Leitura direta, com exemplo de código.</div><div class="r-src">web.dev &middot; Google</div></li>
+    <li><div class="r-title"><a href="https://web.dev/learn/images" target="_blank" rel="noopener">web.dev — Learn Images</a></div><div class="r-note">Curso curto: formatos modernos, responsividade de imagem (<code>srcset</code>, <code>sizes</code>, <code>&lt;picture&gt;</code>), lazy loading nativo.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Faça os módulos de formato e de responsive images. Os de compressão avançada e vídeo podem ficar de fora.</div><div class="r-src">web.dev &middot; Google</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; a imagem/ícone gerado por IA no Gabarita</div>
+    <div class="ammo-body">
+      <p>Se o Gabarita serve imagem gerada dinamicamente (avatar, ilustração de card) pelo componente <code>&lt;Image&gt;</code> do Next, você já ganha otimização automática de formato e <code>srcset</code> &mdash; o ponto de entrevista é saber <strong>explicar</strong> o que o componente faz por trás (gera variantes, serve AVIF/WebP quando o navegador suporta, calcula <code>sizes</code>) em vez de só "eu uso o componente de imagem do Next".</p>
+      <p class="why"><strong>Por que isso importa:</strong> "eu uso a lib" é resposta de pleno; "a lib faz X, Y, Z, e eu configuro width/height pra evitar CLS" é resposta de sênior.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Por que um <code>&lt;script&gt;</code> no <code>&lt;head&gt;</code> sem <code>defer</code> nem <code>async</code> atrasa a primeira pintura da página?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>O parser do HTML, ao encontrar o <code>&lt;script&gt;</code>, <strong>para de construir o DOM</strong>, baixa o arquivo (se for externo) e executa antes de continuar &mdash; porque o script pode usar <code>document.write</code> e mudar o próprio HTML que está sendo parseado. <code>defer</code> baixa em paralelo e executa só depois do HTML inteiro parseado, na ordem declarada; <code>async</code> baixa em paralelo e executa assim que pronto, fora de ordem.</p></div>
+        </details>
+      </li>
+      <li>Animar <code>left</code> e animar <code>transform: translateX()</code> parecem visualmente iguais. Por que um trava em telas fracas e o outro não?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><code>left</code> muda a posição no fluxo do documento &mdash; dispara <strong>layout</strong> (recalcular posição de tudo ao redor) a cada frame, seguido de paint. <code>transform</code> não afeta o layout: o navegador só move a camada já pintada na fase de <strong>composite</strong>, que costuma rodar na GPU. Por isso <code>transform</code>/<code>opacity</code> são as propriedades seguras pra animação suave.</p></div>
+        </details>
+      </li>
+      <li>Uma rota tem um editor de texto rico que pesa 300kb de JavaScript, usado por 5% dos usuários. Qual a técnica certa?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>Code splitting por componente</strong>: <code>import()</code> dinâmico (ou <code>React.lazy</code>) carregando o editor só quando ele de fato aparece na tela &mdash; ao abrir um modal de edição, por exemplo, não no carregamento inicial da rota. Os outros 95% dos usuários nunca baixam esse JavaScript.</p></div>
+        </details>
+      </li>
+      <li>Um texto pisca de uma fonte genérica pra sua fonte customizada meio segundo depois (FOUT). Como reduzir o "pulo" de layout que isso causa?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Pré-carregar a fonte crítica com <code>&lt;link rel="preload" as="font"&gt;</code> reduz o atraso até ela chegar. Pra reduzir o <em>pulo</em> em si: escolher uma fonte de fallback com métricas (largura média de caractere) parecidas com a final, ou usar <code>size-adjust</code>/<code>font-display: optional</code> quando um pulo mínimo é aceitável. <code>font-display: swap</code> evita texto invisível (FOIT) mas não evita o pulo &mdash; troca um problema pelo outro.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b12-css.html"><div class="dir">&larr; anterior</div><div class="t">CSS moderno &amp; layout</div></a>
+    <a class="next" href="b14-frontend-system-design.html"><div class="dir">próxima &rarr;</div><div class="t">Front-end system design</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<section class="week" id="s20">
+  <div class="week-head"><span class="week-num">B15</span><h2>Bônus: React avançado &amp; estado no cliente</h2></div>
+  <div class="week-meta">~6h &middot; o que mudou desde que você aprendeu hooks</div>
+  <p class="intro">A Semana 1 cobre os modelos mentais de fundo (fiber, reconciliação, closures). Esta seção é o React <em>de 2026</em>: o Compiler tirando a necessidade de memoização manual na maioria dos casos, e a distinção entre estado de servidor (dado que já existe em algum lugar) e estado de cliente (UI local) &mdash; a fonte de mais bug de sincronização do que qualquer outra decisão de arquitetura de front-end.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w20-1"><label for="w20-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">React Compiler: memoização automática por padrão &mdash; o que ele resolve, e por que <code>useMemo</code>/<code>useCallback</code> manuais ainda existem</span></label></li>
+    <li class="item"><input type="checkbox" id="w20-2"><label for="w20-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Estado de servidor vs. estado de cliente: por que usar <code>useState</code> pra dado de API cria bug de cache que uma lib de data-fetching já resolveu</span></label></li>
+    <li class="item"><input type="checkbox" id="w20-3"><label for="w20-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">TanStack Query (ou SWR): stale-while-revalidate, invalidação por chave, refetch em foco/reconexão &mdash; o que ganha ao trocar <code>useEffect</code> + <code>fetch</code> por isso</span></label></li>
+    <li class="item"><input type="checkbox" id="w20-4"><label for="w20-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><code>use()</code> e <code>useActionState</code>: ler uma Promise direto no render (com Suspense) e o novo ciclo de formulário com Server Actions no App Router</span></label></li>
+    <li class="item"><input type="checkbox" id="w20-5"><label for="w20-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Formulário não controlado + validação no <code>onSubmit</code>/servidor como padrão default &mdash; e quando controlado (cada tecla em estado) ainda vale o custo</span></label></li>
+    <li class="item"><input type="checkbox" id="w20-6"><label for="w20-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição sobre configuração: por que um componente com 15 props booleanas é sinal de que faltou compor com <code>children</code>/slots</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://react.dev/learn/react-compiler" target="_blank" rel="noopener">React Compiler</a></div><div class="r-note">O que o compilador faz (memoiza automaticamente componentes e valores), as regras que seu código precisa seguir (Regras do React) pra ele funcionar, e o que ainda escapa dele.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Página de introdução, direta. O ponto central: o compiler não substitui entender <em>por que</em> um re-render acontece, só a mecânica de evitá-lo.</div><div class="r-src">react.dev &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://tanstack.com/query/latest/docs/framework/react/overview" target="_blank" rel="noopener">TanStack Query — Overview</a></div><div class="r-note">Por que "estado de servidor" merece uma ferramenta própria: cache, staleness, refetch automático, deduplicação de requisição.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia Overview e Important Defaults (o que <code>staleTime</code>/<code>gcTime</code> significam de verdade). Pule mutations e SSR integration se não usar agora.</div><div class="r-src">tanstack.com &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">React — use()</a></div><div class="r-note">A API que lê uma Promise ou Context condicionalmente dentro do render, integrada com Suspense.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página de referência, mas com exemplos suficientes pra entender o padrão sem precisar de mais nada.</div><div class="r-src">react.dev &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noopener">React DOM — Server Actions &amp; form hooks</a></div><div class="r-note"><code>useActionState</code>, <code>useFormStatus</code> e o novo ciclo de submissão de formulário integrado ao App Router.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia esta e a página de <code>useActionState</code> linkada nela. É o substituto moderno de "estado de loading manual + try/catch" num formulário.</div><div class="r-src">react.dev &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://www.patterns.dev/react/compound-pattern/" target="_blank" rel="noopener">Patterns.dev — Compound Components</a></div><div class="r-note">O padrão que resolve "componente com 15 props" trocando configuração por composição — cada peça vira um subcomponente que compartilha estado via Context.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Exemplo curto de código, o mesmo padrão por trás de Radix/shadcn.</div><div class="r-src">patterns.dev</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; fluxo de resposta do quiz</div>
+    <div class="ammo-body">
+      <p>A tela de questão já é um bom exemplo de <strong>estado de cliente</strong> puro (seleção, "já respondeu", placar) &mdash; nenhuma dessas informações vem de servidor nem precisa de cache. Vale nomear explicitamente a distinção na entrevista: "isso aqui não é estado de servidor, é estado de UI efêmero, por isso está num <code>useState</code> simples e não numa lib de data-fetching" mostra que a escolha foi deliberada, não a única ferramenta que você conhece.</p>
+      <p class="why"><strong>Por que isso importa:</strong> usar TanStack Query pra tudo (inclusive estado que nunca toca servidor) é um anti-padrão comum — reconhecer a diferença é o que separa "sei usar a lib" de "sei quando ela se aplica".</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Com o React Compiler ativo, você ainda precisa escrever <code>useMemo</code> manualmente?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Raramente, mas não nunca. O compiler memoiza automaticamente componentes e valores que seguem as <strong>Regras do React</strong> (sem mutação fora de render, sem efeito colateral no corpo do componente). Código que quebra essas regras pode não ser otimizado com segurança, e o compiler prefere <em>não</em> memoizar a memoizar errado. <code>useMemo</code> manual continua útil pra um cálculo caro que o compiler não consegue provar seguro, ou fora de componentes/hooks (ex.: num módulo utilitário).</p></div>
+        </details>
+      </li>
+      <li>Você busca uma lista com <code>useEffect</code> + <code>fetch</code> + <code>useState</code>. Ao trocar de aba e voltar, o dado está desatualizado. O que uma lib como TanStack Query resolve aqui que o seu código não resolve sozinho?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Ela sabe que aquele dado é <strong>estado de servidor</strong>: tem uma noção de "ficou velho" (<code>staleTime</code>) e refetch automático em eventos como foco de janela ou reconexão de rede, sem você escrever esse código à mão. Também deduplica: duas partes da tela pedindo o mesmo dado ao mesmo tempo disparam <strong>uma</strong> requisição, não duas. <code>useEffect</code> manual replica isso, mas cada regra vira mais código pra manter.</p></div>
+        </details>
+      </li>
+      <li>Um componente <code>&lt;Card variant hasIcon hasFooter isCompact showBadge …&gt;</code> tem 15 props booleanas controlando o que renderiza. Qual é o cheiro, e a alternativa?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>É <strong>configuração</strong> onde caberia <strong>composição</strong>: cada combinação de booleanos vira um caminho condicional a mais dentro do componente, e testar tudo vira combinatória. A alternativa é <em>compound components</em>: <code>&lt;Card&gt;&lt;Card.Icon/&gt;&lt;Card.Body/&gt;&lt;Card.Footer/&gt;&lt;/Card&gt;</code> &mdash; quem usa decide o que existe simplesmente incluindo ou não a peça, sem prop nenhuma pra isso.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>

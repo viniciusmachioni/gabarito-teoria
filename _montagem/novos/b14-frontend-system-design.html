@@ -1,0 +1,58 @@
+<section class="week" id="s19">
+  <div class="week-head"><span class="week-num">B14</span><h2>Bônus: front-end system design</h2></div>
+  <div class="week-meta">~7h &middot; a entrevista que só vaga de front tem &mdash; e que o B1 (system design geral) não cobre</div>
+  <p class="intro">Quando a vaga é de front-end sênior, "desenhe um sistema" costuma virar "desenhe um autocomplete", "desenhe um feed infinito" ou "desenhe um editor colaborativo" &mdash; problemas de estado, rede e renderização no <strong>cliente</strong>, não de banco e balanceador. O framework RADIO organiza a resposta do mesmo jeito que CAP/estimativa organizam o B1.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w19-1"><label for="w19-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O framework RADIO: Requirements, Architecture, Data model, Interface, Optimizations &mdash; a estrutura de resposta, não só o conteúdo</span></label></li>
+    <li class="item"><input type="checkbox" id="w19-2"><label for="w19-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Autocomplete/typeahead: debounce vs. throttle, cancelar requisição obsoleta (race condition de rede), e cache local do que já foi digitado</span></label></li>
+    <li class="item"><input type="checkbox" id="w19-3"><label for="w19-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Feed infinito: paginação por cursor vs. offset, e virtualização de lista (renderizar só o que está visível) pra não afundar o DOM</span></label></li>
+    <li class="item"><input type="checkbox" id="w19-4"><label for="w19-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Atualização otimista: mudar a UI antes da resposta do servidor, e como desfazer (rollback) quando o servidor discorda</span></label></li>
+    <li class="item"><input type="checkbox" id="w19-5"><label for="w19-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Suporte a offline no cliente: fila de ações pendentes, <code>navigator.onLine</code>/evento de reconexão, e o que sincronizar primeiro ao voltar</span></label></li>
+    <li class="item"><input type="checkbox" id="w19-6"><label for="w19-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Componentização pra reuso real: prop drilling vs. composição com <code>children</code>, e quando extrair um componente compartilhado vale o acoplamento que isso cria</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://www.greatfrontend.com/system-design" target="_blank" rel="noopener">GreatFrontEnd — Front End System Design</a></div><div class="r-note">O guia mais completo especificamente de front-end system design, com o framework RADIO e estudos de caso (autocomplete, feed de notícias, chat).</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~1h</span>Leia a introdução ao framework RADIO e dois estudos de caso completos (Autocomplete e News Feed). O resto do catálogo é consulta antes de cada entrevista específica.</div><div class="r-src">greatfrontend.com</div></li>
+    <li><div class="r-title"><a href="https://web.dev/articles/virtualize-long-lists-react-window" target="_blank" rel="noopener">web.dev — Virtualize large lists</a></div><div class="r-note">Por que renderizar 10 mil itens no DOM trava o navegador, e como uma lista virtualizada renderiza só o que está visível na janela.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curto, com o raciocínio de custo por nó de DOM.</div><div class="r-src">web.dev &middot; Google</div></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortController" target="_blank" rel="noopener">MDN — AbortController</a></div><div class="r-note">Cancelar uma requisição em andamento &mdash; a ferramenta certa pra resolver a corrida clássica do autocomplete (a resposta da letra "a" chega depois da resposta de "ab").</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta, exemplo direto com <code>fetch</code>.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates" target="_blank" rel="noopener">TanStack Query — Optimistic Updates</a></div><div class="r-note">O padrão de atualização otimista com rollback explícito quando a mutação falha, num código real (não pseudo-código).</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Foque no fluxo <code>onMutate</code> → <code>onError</code> (rollback) → <code>onSettled</code> (revalidar). É o mesmo padrão mesmo fora do TanStack Query.</div><div class="r-src">tanstack.com &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://www.patterns.dev/" target="_blank" rel="noopener">Patterns.dev</a></div><div class="r-note">Padrões de UI e de renderização (compound components, render props, ilhas, streaming SSR) com exemplo de código curto cada um.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~30 min agora</span>Passe o olho pela seção de Component Patterns. Volte a um padrão específico quando ele aparecer numa entrevista ou numa decisão real de projeto.</div><div class="r-src">patterns.dev</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; busca/filtro de questões do Gabarita</div>
+    <div class="ammo-body">
+      <p>Se o Gabarita tem busca ou filtro de questões por matéria, ele já resolve metade de um exercício de autocomplete: debounce da digitação, e a decisão de filtrar client-side (dado já carregado) vs. bater no servidor a cada tecla. Vale a pena nomear explicitamente qual dos dois você escolheu e por quê &mdash; volume de dados é o critério que decide.</p>
+      <p class="why"><strong>Por que isso importa:</strong> ter um exemplo real de decisão client-side vs. servidor, com o critério explícito, é exatamente o que RADIO pede na etapa de Optimizations.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Num campo de autocomplete, o usuário digita rápido "a", "ab", "abc". As três requisições saem, mas a resposta de "a" chega <em>depois</em> da de "abc". O que aparece na tela sem tratamento nenhum?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>A lista de sugestões de <strong>"a"</strong> sobrescreve a de "abc" só porque chegou por último &mdash; uma condição de corrida clássica de rede. Correção: <code>AbortController</code> cancelando a requisição anterior a cada nova tecla, ou guardar um número de sequência e ignorar resposta que não é da requisição mais recente.</p></div>
+        </details>
+      </li>
+      <li>Qual a diferença entre paginação por <em>offset</em> e por <em>cursor</em>, e por que feed infinito quase sempre usa cursor?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Offset (<code>LIMIT 20 OFFSET 100</code>) pede "a página 6"; se um item for inserido ou removido antes dessa posição enquanto o usuário rola, a lista <strong>duplica ou pula</strong> itens. Cursor pede "os 20 itens depois deste id/timestamp específico" &mdash; estável mesmo com inserção concorrente, porque a referência é um item real, não uma posição numérica. Em feed que atualiza em tempo real (posts novos chegando), offset quebra na prática.</p></div>
+        </details>
+      </li>
+      <li>Por que renderizar uma lista de 5.000 itens direto no DOM trava a rolagem, mesmo em uma máquina razoável?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Cada nó de DOM tem custo de memória e de layout/paint &mdash; 5.000 nós reais custam muito mais que 20 visíveis. <strong>Virtualização</strong> (react-window, TanStack Virtual) renderiza só os itens dentro (e perto) da janela visível, trocando os nós conforme o usuário rola, mantendo o DOM sempre pequeno independente do tamanho da lista.</p></div>
+        </details>
+      </li>
+      <li>Um "curtir" precisa parecer instantâneo. Você faz atualização otimista e o servidor rejeita (ex.: post já foi deletado). Como desfazer sem confundir o usuário?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Guardar o <strong>estado anterior</strong> antes de aplicar a mudança otimista (snapshot), reverter pra ele no erro, e mostrar uma mensagem curta explicando o que aconteceu &mdash; nunca reverter em silêncio, porque o usuário viu o like acontecer e vai estranhar ele sumir sem explicação. É exatamente o par <code>onMutate</code> (snapshot + aplica) / <code>onError</code> (reverte) do TanStack Query, mesmo escrito à mão.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>

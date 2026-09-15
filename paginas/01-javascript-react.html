@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript &amp; React · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s1">
+    <div class="week-head"><span class="week-num">01</span><h2>JavaScript &amp; React: os modelos mentais</h2></div>
+    <div class="week-meta">~8h &middot; base pra tudo que vem depois</div>
+    <p class="intro">Você usa hooks corretamente há anos por instinto. Esta semana é sobre nomear <em>por que</em> eles funcionam assim &mdash; call stack, closures, e o que realmente acontece quando o React &ldquo;re-renderiza&rdquo;. É a pergunta mais comum de entrevista de pleno e a que mais separa quem só usa de quem entende.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w1-1"><label for="w1-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Call stack, event loop, microtasks vs. macrotasks &mdash; por que JS nunca trava em duas coisas ao mesmo tempo</span></label></li>
+      <li class="item"><input type="checkbox" id="w1-2"><label for="w1-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Closures &amp; escopo léxico &mdash; e o clássico bug da &ldquo;closure obsoleta&rdquo; num useEffect</span></label></li>
+      <li class="item"><input type="checkbox" id="w1-3"><label for="w1-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Virtual DOM, reconciliação, keys &mdash; o que o React realmente compara num re-render</span></label></li>
+      <li class="item"><input type="checkbox" id="w1-4"><label for="w1-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Fiber: por que renderizar virou um trabalho interruptível (e o que isso destrava)</span></label></li>
+      <li class="item"><input type="checkbox" id="w1-5"><label for="w1-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As &ldquo;regras dos hooks&rdquo; não são estilo &mdash; são consequência de como o React guarda estado numa lista ligada por fiber</span></label></li>
+      <li class="item"><input type="checkbox" id="w1-6"><label for="w1-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">State local vs. Context vs. store externo &mdash; quando cada um é a escolha certa, e por que Context não é &ldquo;Redux de graça&rdquo;</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://react.dev/learn" target="_blank" rel="noopener">react.dev/learn</a></div><div class="r-note">A documentação oficial reescrita do zero em torno de modelos mentais, não de API. Comece por &ldquo;Describing the UI&rdquo; e &ldquo;Managing State&rdquo;.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~2h30</span>N&atilde;o leia o site todo. S&atilde;o duas trilhas do menu esquerdo: <strong>Describing the UI</strong> e <strong>Managing State</strong>, inteiras. De <em>Escape Hatches</em>, leia s&oacute; <em>You Might Not Need an Effect</em> e <em>Synchronizing with Effects</em>. Pule <em>Installation</em> e <em>Adding Interactivity</em> &mdash; voc&ecirc; j&aacute; faz isso de olhos fechados.</div><div class="r-src">react.dev &middot; oficial</div><details class="leitura" data-id="01-javascript-react--react-dev-learn"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">React é UI como função do estado. Componentes são funções puras que descrevem a tela; estado é um snapshot por render; efeitos existem só pra sincronizar com o que está <em>fora</em> do React.</p>
+
+<h5>Describing the UI — componentes, props, listas, pureza</h5>
+<ul>
+<li><strong>Componente</strong> é uma função que devolve JSX. Nome com maiúscula (<code>&lt;Perfil /&gt;</code>) é componente; minúscula (<code>&lt;div&gt;</code>) é tag do DOM.</li>
+<li><strong>JSX</strong>: um único elemento raiz (ou <code>&lt;&gt;…&lt;/&gt;</code>), toda tag fechada, atributos em camelCase (<code>className</code>, <code>onClick</code>). Chaves <code>{}</code> abrem uma “janela” pra JavaScript.</li>
+<li><strong>Props</strong> descem do pai pro filho e são <em>somente leitura</em>. <code>children</code> é só uma prop com o conteúdo aninhado — é o que permite compor layouts sem acoplar.</li>
+<li><strong>Renderização condicional</strong>: <code>cond ? a : b</code>, <code>cond &amp;&amp; a</code> ou <code>return null</code>. Pegadinha: <code>{lista.length &amp;&amp; &lt;Lista/&gt;}</code> renderiza o número <code>0</code> quando a lista está vazia — use <code>lista.length &gt; 0 &amp;&amp;</code>.</li>
+<li><strong>Listas e key</strong>: a key identifica o item entre irmãos. Precisa ser estável e única entre irmãos; não gere com <code>Math.random()</code> no render (remonta tudo todo render) e evite índice quando a lista reordena, insere ou remove.</li>
+<li><strong>Pureza</strong>: mesmo input → mesmo JSX, e nada de mutar variável que existia antes do render. O <code>StrictMode</code> renderiza duas vezes em desenvolvimento justamente pra expor impureza. Efeito colateral vai em event handler; só em último caso em <code>useEffect</code>.</li>
+</ul>
+
+<h5>Managing State — como estruturar estado</h5>
+<p>A doc propõe pensar <strong>declarativamente</strong>: liste os estados visuais possíveis (vazio, digitando, enviando, sucesso, erro), o que dispara cada transição, e só então represente isso com o mínimo de estado. Cinco regras de estrutura que caem em code review sênior:</p>
+<ol>
+<li><strong>Agrupe</strong> o que sempre muda junto (<code>{x, y}</code> num estado só).</li>
+<li><strong>Evite contradições</strong>: <code>isSending</code> + <code>isSent</code> permite o impossível “enviando e enviado”. Troque por <code>status: 'typing' | 'sending' | 'sent'</code>.</li>
+<li><strong>Evite redundância</strong>: se dá pra calcular a partir de props/estado (<code>nomeCompleto</code>), calcule no render.</li>
+<li><strong>Evite duplicação</strong>: guarde <code>selectedId</code>, não uma cópia do objeto selecionado (que dessincroniza quando a lista muda).</li>
+<li><strong>Evite aninhamento profundo</strong>: normalize (objeto por id + arrays de ids), como num banco.</li>
+</ol>
+<p><strong>Compartilhar estado</strong> = <em>lifting state up</em>: sobe pro ancestral comum e desce por props. Componente <strong>controlado</strong> recebe o valor por prop; <strong>não controlado</strong> guarda o próprio.</p>
+<p><strong>Preservar e resetar</strong>: o estado mora na <em>posição</em> da árvore, não no componente. Mesmo tipo na mesma posição preserva o estado; tipo diferente destrói; mudar a <code>key</code> força reset (ex.: <code>&lt;Chat key={contatoId} /&gt;</code> zera o rascunho ao trocar de contato).</p>
+<p><strong>Reducer</strong> (<code>useReducer</code>) concentra transições num lugar só e precisa ser puro. <strong>Context</strong> resolve prop drilling, mas antes dele tente passar props ou compor com <code>children</code>. Reducer + Context é o padrão de escala da própria doc.</p>
+
+<h5>Synchronizing with Effects</h5>
+<ul>
+<li>Efeito serve pra <strong>sincronizar com sistema externo</strong> (conexão, API do navegador, widget não-React). Roda <em>depois</em> do commit na tela.</li>
+<li>O array de dependências diz <em>com quais valores</em> sincronizar; o React recria o efeito quando algum muda.</li>
+<li>O <strong>cleanup</strong> desfaz o que o efeito fez (desconectar, remover listener). Em dev, o StrictMode monta → desmonta → monta de novo pra provar que seu cleanup existe.</li>
+<li>Buscar dados num efeito exige tratar corrida:</li>
+</ul>
+<pre><code>useEffect(() =&gt; {
+  let ignorar = false;
+  buscar(termo).then(r =&gt; { if (!ignorar) setResultado(r); });
+  return () =&gt; { ignorar = true; };   // resposta antiga chega depois? é descartada
+}, [termo]);</code></pre>
+
+<h5>You Might Not Need an Effect — os casos em que NÃO usar</h5>
+<div class="tbl"><table>
+<tr><th>Situação</th><th>Em vez de efeito</th></tr>
+<tr><td>Derivar dado pra exibir (filtrar, somar)</td><td>Calcule no render; <code>useMemo</code> só se for caro</td></tr>
+<tr><td>Resetar todo o estado quando uma prop muda</td><td>Passe <code>key</code></td></tr>
+<tr><td>Ajustar parte do estado quando prop muda</td><td>Derive no render (ou guarde o id, não o objeto)</td></tr>
+<tr><td>Lógica causada por um clique/submit</td><td>No event handler</td></tr>
+<tr><td>Cadeia de efeitos que se disparam</td><td>Calcule tudo no handler, numa passada</td></tr>
+<tr><td>Avisar o pai de uma mudança</td><td>Chame o callback do pai no mesmo handler</td></tr>
+<tr><td>Assinar store externa</td><td><code>useSyncExternalStore</code></td></tr>
+</table></div>
+<p>Regra mental: se o código roda <em>porque o usuário fez algo</em>, é handler; se roda <em>porque o componente apareceu na tela</em> e precisa ficar em sincronia com algo externo, é efeito.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://react.dev/learn" target="_blank" rel="noopener">react.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://overreacted.io/a-complete-guide-to-useeffect/" target="_blank" rel="noopener">A Complete Guide to useEffect</a></div><div class="r-note">Dan Abramov (core team do React) explica por que closures obsoletas existem e como parar de lutar contra o array de dependências.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~45 min</span>Post &uacute;nico, longo, e vale cada par&aacute;grafo. Se o tempo apertar: leia de <em>&ldquo;Each Render Has Its Own Props and State&rdquo;</em> at&eacute; <em>&ldquo;So What Do I Do About Stale Closures?&rdquo;</em> &mdash; esse miolo &eacute; a resposta da pergunta de entrevista.</div><div class="r-src">overreacted.io &middot; Dan Abramov</div><details class="leitura" data-id="01-javascript-react--overreacted-io-a-complete-guide-to-useeffect"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Cada render é uma fotografia: tem suas próprias props, estado, handlers e efeitos. <code>useEffect</code> não é ciclo de vida — é sincronização. E dependências mentirosas são a origem de quase todo bug.</p>
+
+<h5>Cada render tem seus próprios valores</h5>
+<p><code>count</code> não é uma variável que “muda”: em cada render ele é uma <strong>constante</strong> diferente. Quando você escreve <code>setTimeout(() =&gt; alert(count), 3000)</code> e clica três vezes rápido, aparecem três alertas com 1, 2 e 3 — cada handler fechou (closure) sobre o <code>count</code> do render em que nasceu. Isso não é bug do React, é JavaScript.</p>
+<p>O mesmo vale pro efeito: a função passada a <code>useEffect</code> é <em>outra</em> a cada render e enxerga os valores daquele render. Se você realmente precisa do valor mais recente dentro de um callback antigo, use um <code>useRef</code> e leia <code>ref.current</code> — sabendo que está saindo do modelo de snapshot.</p>
+
+<h5>Cleanup acontece depois, com valores antigos</h5>
+<p>Sequência real ao mudar de <code>id: 10</code> pra <code>id: 20</code>: o React renderiza a UI com 20, o navegador pinta, <strong>então</strong> roda o cleanup do efeito anterior (que ainda enxerga 10) e depois o efeito novo (com 20). Por isso o cleanup “sabe” o que desfazer.</p>
+
+<h5>Sincronização, não ciclo de vida</h5>
+<p>Pare de perguntar “quando isso roda?” (montagem, atualização). Pergunte “com quais valores este efeito precisa estar sincronizado?”. O resultado deve ser o mesmo se o componente montasse já com os valores finais ou se chegasse neles depois de dez atualizações.</p>
+
+<h5>Não minta sobre dependências</h5>
+<pre><code>// bug: count fica congelado em 0, o contador para em 1
+useEffect(() =&gt; {
+  const id = setInterval(() =&gt; setCount(count + 1), 1000);
+  return () =&gt; clearInterval(id);
+}, []);</code></pre>
+<p>Duas estratégias honestas:</p>
+<ol>
+<li><strong>Incluir a dependência</strong> (<code>[count]</code>) — funciona, mas recria o intervalo a cada tick.</li>
+<li><strong>Fazer o efeito precisar de menos</strong>: <code>setCount(c =&gt; c + 1)</code> não lê <code>count</code>, então <code>[]</code> vira verdade. Quando a próxima atualização depende de <em>outro</em> estado ou de props, use <code>useReducer</code>: o efeito só faz <code>dispatch({type: 'tick'})</code> e o reducer lê o que precisar. <code>dispatch</code> tem identidade estável — o autor chama isso de “modo trapaça” dos hooks.</li>
+</ol>
+
+<h5>Funções como dependência</h5>
+<ul>
+<li>Função usada <em>só</em> pelo efeito → declare <strong>dentro</strong> do efeito.</li>
+<li>Função que não usa nada do componente → mova pra <strong>fora</strong> dele.</li>
+<li>Função que precisa ser passada adiante e usada em efeitos → <code>useCallback</code> com dependências corretas, e ela entra no array.</li>
+</ul>
+
+<h5>Condição de corrida em fetch</h5>
+<p>Requisições não voltam na ordem em que saíram. A flag de cancelamento no cleanup (<code>let didCancel = false</code>) ou um <code>AbortController</code> impede que a resposta velha sobrescreva a nova. O próprio texto já apontava pra onde isso foi: buscar dados em bibliotecas e frameworks (Suspense, React Query, Server Components), não em efeitos escritos à mão.</p>
+
+<p><strong>Frase de entrevista:</strong> “closure obsoleta é o efeito enxergando o snapshot de um render antigo porque o array de dependências mentiu; a correção não é desligar o lint, é fazer o efeito depender de menos”.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://overreacted.io/a-complete-guide-to-useeffect/" target="_blank" rel="noopener">overreacted.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://overreacted.io/react-as-a-ui-runtime/" target="_blank" rel="noopener">React as a UI Runtime</a></div><div class="r-note">O texto que muda como você enxerga render, reconciliação e efeitos &mdash; leitura densa, mas é a que aparece em entrevista de nível sênior.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Denso demais pra ler linear no primeiro passe. V&aacute; direto nas se&ccedil;&otilde;es <strong>Reconciliation</strong>, <strong>Inversion of Control</strong>, <strong>State</strong>, <strong>Consistency</strong> e <strong>Hooks</strong>. As primeiras se&ccedil;&otilde;es (Host Tree, Instances, Elements) s&atilde;o vocabul&aacute;rio &mdash; passe o olho e siga.</div><div class="r-src">overreacted.io &middot; Dan Abramov</div><details class="leitura" data-id="01-javascript-react--overreacted-io-react-as-a-ui-runtime"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">React é um runtime: você descreve a árvore, ele decide quando chamar seus componentes, compara com a árvore anterior e aplica o mínimo no host (DOM). Quase todo comportamento “estranho” sai dessa inversão de controle.</p>
+
+<h5>Vocabulário (passe rápido)</h5>
+<ul>
+<li><strong>Host tree</strong>: a árvore real que o React controla (DOM, views nativas). <strong>Host instances</strong>: os nós dela.</li>
+<li><strong>Renderer</strong>: quem sabe falar com o host (<code>react-dom</code>, <code>react-native</code>).</li>
+<li><strong>React element</strong>: objeto leve e imutável que <em>descreve</em> um nó (<code>{type: 'button', props: {...}}</code>). Você não muda um element; cria outro.</li>
+</ul>
+
+<h5>Reconciliation</h5>
+<p>Ao renderizar de novo, o React compara a árvore nova com a anterior. Regra central: <strong>se o tipo (e a key) é o mesmo na mesma posição, reaproveita o host instance</strong> e só atualiza props; se o tipo muda, destrói e recria (perdendo estado e foco).</p>
+<p>Por isso condicionais preservam posição: <code>{mostrar ? &lt;Aviso/&gt; : null}</code> deixa um “buraco” no lugar do <code>Aviso</code>, e o <code>&lt;input&gt;</code> seguinte continua sendo o mesmo, sem perder o que foi digitado. Em listas dinâmicas a posição não basta — a <strong>key</strong> diz que o item é o mesmo mesmo em outra posição.</p>
+
+<h5>Inversion of control</h5>
+<p>Você nunca chama <code>Formulario()</code>; você devolve <code>&lt;Formulario/&gt;</code> e o React decide quando chamar. Isso permite:</p>
+<ul>
+<li>Componentes terem <strong>estado local</strong> ligado à posição na árvore.</li>
+<li>O <strong>tipo</strong> do componente participar da reconciliação.</li>
+<li><strong>Adiar ou priorizar</strong> trabalho (concurrent rendering).</li>
+<li><strong>Avaliação preguiçosa</strong>: <code>&lt;Comentarios/&gt;</code> dentro de uma condição falsa nunca executa.</li>
+</ul>
+
+<h5>Consistency — render vs. commit</h5>
+<p>O React separa <strong>render</strong> (calcular a árvore nova — pode ser interrompido, não deve ter efeito colateral) de <strong>commit</strong> (aplicar as mudanças no host de uma vez, sem ceder no meio). Assim o usuário nunca vê uma tela meio atualizada.</p>
+
+<h5>State, batching e memoização</h5>
+<ul>
+<li>Vários <code>setState</code> no mesmo evento viram <strong>um</strong> render (batching). Com o React 18+, isso vale também dentro de promises e timeouts.</li>
+<li>O React não faz assinatura granular por campo (como sistemas de observables): ele re-renderiza o componente e deixa você otimizar com <code>memo</code>/<code>useMemo</code>. É uma troca deliberada — modelo simples por padrão, otimização onde medir.</li>
+</ul>
+
+<h5>Hooks</h5>
+<p>Estado vive numa lista ligada no fiber do componente, indexada pela <strong>ordem de chamada</strong>. Daí a regra de não chamar hook em condição. Context funciona como <em>escopo dinâmico</em>: o valor vem de quem está acima na árvore no momento do render, não de onde o código foi escrito. Efeitos rodam depois do commit, e custom hooks são só funções que compõem hooks.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://overreacted.io/react-as-a-ui-runtime/" target="_blank" rel="noopener">overreacted.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://github.com/acdlite/react-fiber-architecture" target="_blank" rel="noopener">react-fiber-architecture</a></div><div class="r-note">Documento escrito por quem implementou o Fiber. Curto, técnico, sem enrolação &mdash; é literalmente a resposta pronta pra &ldquo;o que é Fiber?&rdquo;.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>&Eacute; um README curto, cabe numa sentada. Se quiser s&oacute; a resposta de bolso: <strong>What is a fiber</strong>, <strong>Structure of a fiber</strong> e <strong>Render phase / Commit phase</strong>. Ignore os v&iacute;deos de 1h listados em &ldquo;Prerequisites&rdquo;.</div><div class="r-src">GitHub &middot; acdlite (Andrew Clark, React core)</div><details class="leitura" data-id="01-javascript-react--github-com-acdlite-react-fiber-architecture"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Fiber é a reimplementação do algoritmo de reconciliação (React 16) cujo objetivo é <strong>renderização incremental</strong>: quebrar o trabalho em pedaços, pausar, priorizar, retomar ou descartar.</p>
+
+<h5>O problema</h5>
+<p>O reconciliador antigo (“stack reconciler”) percorria a árvore recursivamente e não podia parar no meio: uma atualização grande travava a thread principal e engolia frames de animação e digitação. Nem toda atualização tem a mesma urgência — uma animação importa mais que dados que chegaram da rede.</p>
+
+<h5>O que é um fiber</h5>
+<p>Uma <strong>unidade de trabalho</strong> e, ao mesmo tempo, um <strong>frame de pilha virtual</strong>. Em vez de usar a call stack do JavaScript (que não dá pra pausar), o React mantém sua própria estrutura, que ele percorre num laço e pode interromper quando o frame acabar.</p>
+
+<h5>Estrutura de um fiber</h5>
+<ul>
+<li><code>type</code> e <code>key</code> — o mesmo papel dos elements; decidem se o fiber pode ser reaproveitado.</li>
+<li><code>child</code>, <code>sibling</code>, <code>return</code> — ponteiros que formam a árvore como lista ligada (<code>return</code> é o pai, “pra onde voltar”).</li>
+<li><code>pendingProps</code> e <code>memoizedProps</code> — se forem iguais, o trabalho daquele fiber pode ser pulado.</li>
+<li>prioridade do trabalho pendente (hoje modelada como <em>lanes</em>).</li>
+<li><code>alternate</code> — cada fiber tem um par: a árvore <strong>current</strong> (o que está na tela) e a <strong>work-in-progress</strong> (o que está sendo calculado). É <em>double buffering</em>: quando termina, troca-se a referência.</li>
+<li><code>output</code> / efeitos — o que precisa ser aplicado no host.</li>
+</ul>
+
+<h5>Duas fases</h5>
+<div class="tbl"><table>
+<tr><th>Render (reconciliação)</th><th>Commit</th></tr>
+<tr><td>Constrói a work-in-progress, compara, marca efeitos</td><td>Aplica mutações no DOM, roda layout effects e depois efeitos</td></tr>
+<tr><td><strong>Interrompível</strong>, pode ser descartada e refeita</td><td><strong>Síncrona</strong>, não para no meio</td></tr>
+<tr><td>Não pode ter efeito colateral</td><td>É onde efeito colateral acontece</td></tr>
+</table></div>
+
+<h5>O que isso destrava hoje</h5>
+<p><code>useTransition</code>/<code>startTransition</code> (marcar atualização como não urgente, que pode ser interrompida por digitação), <code>useDeferredValue</code>, <code>Suspense</code> para dados e streaming de Server Components, e hidratação seletiva. Todos dependem de o render ser pausável.</p>
+<p><strong>Resposta de bolso:</strong> “Fiber transformou a renderização numa lista ligada de unidades de trabalho que o React percorre num laço próprio; como não usa a call stack, pode pausar, priorizar e descartar trabalho na fase de render, e só o commit é atômico.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://github.com/acdlite/react-fiber-architecture" target="_blank" rel="noopener">github.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop" target="_blank" rel="noopener">MDN &mdash; The event loop</a></div><div class="r-note">Referência canônica de call stack, task queue e microtask queue, com os diagramas certos.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>P&aacute;gina curta. O que precisa ficar: <em>stack / queue / heap</em>, <strong>run-to-completion</strong>, <strong>zero delays</strong> (por que <code>setTimeout(fn, 0)</code> n&atilde;o roda em 0ms) e <strong>never blocking</strong>.</div><div class="r-src">developer.mozilla.org &middot; oficial</div><details class="leitura" data-id="01-javascript-react--developer-mozilla-org-en-us-docs-web-javascript-event-loop"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Uma thread executa seu JavaScript; o trabalho chega por filas; cada tarefa roda até o fim (run-to-completion). Microtasks são drenadas inteiras entre uma tarefa e a próxima.</p>
+
+<h5>As três peças</h5>
+<ul>
+<li><strong>Stack</strong>: frames de função em execução. Chamou, empilha; retornou, desempilha.</li>
+<li><strong>Heap</strong>: onde os objetos vivem (região de memória sem ordem).</li>
+<li><strong>Queue</strong>: filas de mensagens/tarefas esperando a pilha esvaziar. (A MDN atual usa o vocabulário da especificação: cada <em>agent</em> tem sua pilha, heap e fila de <em>jobs</em>.)</li>
+</ul>
+
+<h5>O laço</h5>
+<pre><code>while (fila.aguardarMensagem()) {
+  fila.processarProximaMensagem();   // roda até o fim, sem ser interrompida
+}</code></pre>
+
+<h5>Run-to-completion</h5>
+<p>Uma tarefa nunca é interrompida por outra. Vantagem: dentro de uma função você não precisa de lock — nada muda seus dados no meio. Custo: uma tarefa longa <strong>trava tudo</strong>, inclusive a pintura da tela e a resposta a cliques (é daí que vem INP ruim e o aviso “a página não está respondendo”).</p>
+
+<h5>Zero delay não é zero</h5>
+<p><code>setTimeout(fn, 0)</code> significa “enfileire <code>fn</code> assim que possível, <em>depois</em> que a pilha esvaziar”. O atraso é um mínimo, não uma garantia. Navegadores ainda impõem ~4 ms em timers muito aninhados e reduzem timers em abas em segundo plano.</p>
+
+<h5>Microtasks</h5>
+<p>Callbacks de Promise (<code>then</code>/<code>await</code>), <code>queueMicrotask</code> e <code>MutationObserver</code> vão pra fila de microtasks, que é <strong>esvaziada por completo</strong> ao fim de cada tarefa, antes da próxima tarefa e antes de renderizar. Uma microtask que agenda outra microtask também roda antes — dá pra travar a página assim.</p>
+<pre><code>console.log('1');
+setTimeout(() =&gt; console.log('4'), 0);          // tarefa
+Promise.resolve().then(() =&gt; console.log('3'));  // microtask
+console.log('2');
+// 1, 2, 3, 4</code></pre>
+
+<h5>No navegador, entre tarefas: renderização</h5>
+<p>Após uma tarefa e suas microtasks, o navegador pode rodar <code>requestAnimationFrame</code>, recalcular estilo, layout e pintar (tipicamente a cada ~16,7 ms numa tela de 60 Hz). Por isso quebrar trabalho em várias tarefas deixa a página responsiva.</p>
+
+<h5>Nunca bloquear</h5>
+<p>I/O (rede, timers, eventos) é tratado por callbacks e eventos, então esperar uma resposta não ocupa a thread. Web Workers e iframes têm <em>seus próprios</em> event loops e conversam com <code>postMessage</code>.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop" target="_blank" rel="noopener">developer.mozilla.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; src/lib/study/scheduler + fluxo de questão</div>
+      <div class="ammo-body">
+        <p>A tela de questão do Gabarita tem um fluxo <code>selecionar &rarr; confirmar &rarr; corrigir</code> (D85). Isso é uma máquina de estados simples vivendo em <code>useState</code>: cada clique é uma transição, e o React só re-renderiza a alternativa que muda de estado &mdash; não a tela inteira. Numa entrevista, é o gancho perfeito pra falar de reconciliação sem decorar teoria solta: você já implementou.</p>
+        <p class="why"><strong>Por que isso importa:</strong> entrevistador pergunta &ldquo;me conta um componente com estado complicado que você fez&rdquo; &mdash; você já tem um exemplo real, não um TodoList de tutorial.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>Por que <code>console.log</code> dentro de um <code>setTimeout</code> só roda depois que todo o código síncrono termina, mesmo com delay 0?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><code>setTimeout</code> n&atilde;o agenda &ldquo;rode agora&rdquo;, ele <strong>enfileira um macrotask</strong>. O event loop s&oacute; puxa da fila de tarefas quando a call stack est&aacute; vazia &mdash; ent&atilde;o delay 0 significa &ldquo;o mais cedo poss&iacute;vel <em>depois</em> que todo o c&oacute;digo s&iacute;ncrono terminar&rdquo;, n&atilde;o &ldquo;imediatamente&rdquo;.</p>
+<p>O detalhe que separa a resposta boa da decorada: <code>Promise.then</code> e <code>queueMicrotask</code> v&atilde;o pra fila de <strong>microtasks</strong>, que &eacute; drenada inteira ao fim de cada tarefa, antes do pr&oacute;ximo macrotask. Por isso um <code>.then</code> criado depois de um <code>setTimeout(&hellip;, 0)</code> ainda roda primeiro.</p></div>
+          </details>
+        </li>
+        <li>O que é uma closure obsoleta (&ldquo;stale closure&rdquo;) e como ela se manifesta num <code>useEffect</code> sem array de dependências correto?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Uma fun&ccedil;&atilde;o criada durante um render <strong>captura as vari&aacute;veis daquele render</strong> (escopo l&eacute;xico). Se o array de depend&ecirc;ncias n&atilde;o lista o que ela l&ecirc;, o React n&atilde;o recria o efeito &mdash; e ele continua rodando a vers&atilde;o antiga, enxergando o valor congelado no render em que nasceu.</p>
+<p>Caso cl&aacute;ssico: <code>useEffect(() =&gt; { const id = setInterval(() =&gt; setCount(count + 1), 1000); &hellip; }, [])</code>. O <code>count</code> ali &eacute; sempre <code>0</code>, ent&atilde;o o contador trava em 1. Sa&iacute;das: incluir a depend&ecirc;ncia, usar a forma de atualiza&ccedil;&atilde;o (<code>setCount(c =&gt; c + 1)</code>) que n&atilde;o precisa ler o valor, ou guardar o valor mut&aacute;vel num <code>useRef</code>.</p></div>
+          </details>
+        </li>
+        <li>Duas listas de itens são iguais, mas você trocou a <code>key</code> de índice pra id. O que muda no re-render, e por quê?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>A reconcilia&ccedil;&atilde;o compara os filhos posi&ccedil;&atilde;o a posi&ccedil;&atilde;o, casando por <strong>(tipo, key)</strong>. Com <code>key</code> de &iacute;ndice, inserir ou remover no meio desloca todo mundo: o React acha que o item da posi&ccedil;&atilde;o 2 continua sendo &ldquo;o item 2&rdquo; e apenas <em>atualiza as props</em> dele &mdash; o DOM e o estado interno (texto digitado num input, foco, anima&ccedil;&atilde;o em curso) ficam grudados na posi&ccedil;&atilde;o, n&atilde;o no dado.</p>
+<p>Com <code>id</code> est&aacute;vel, o React reconhece que &eacute; o <em>mesmo</em> elemento em outro lugar: move o n&oacute; do DOM e preserva o estado do componente. B&ocirc;nus: trocar a key de prop&oacute;sito &eacute; a forma idiom&aacute;tica de <strong>resetar</strong> um componente.</p></div>
+          </details>
+        </li>
+        <li>Por que você não pode chamar um hook dentro de um <code>if</code>?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque o React n&atilde;o guarda hooks por nome &mdash; guarda por <strong>ordem de chamada</strong>, numa lista ligada pendurada no fiber daquele componente. O primeiro <code>useState</code> do render &eacute; o slot 1, o segundo &eacute; o slot 2, e assim por diante.</p>
+<p>Um <code>if</code> (ou um <code>return</code> antecipado, ou um loop de tamanho vari&aacute;vel) muda essa ordem entre um render e outro: o valor que era do <code>useState</code> vai parar no slot do <code>useEffect</code>, e voc&ecirc; recebe estado trocado ou um erro de &ldquo;rendered fewer hooks than expected&rdquo;. N&atilde;o &eacute; conven&ccedil;&atilde;o de estilo, &eacute; consequ&ecirc;ncia direta da estrutura de dados.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="next" href="02-nextjs-tailwind.html"><div class="dir">próxima &rarr;</div><div class="t">Next.js &amp; Tailwind</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IA, agentes &amp; harnesses · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s7">
+    <div class="week-head"><span class="week-num">B2</span><h2>Bônus: IA, agentes de código &amp; harnesses</h2></div>
+      <div class="week-meta">~5h &middot; o tópico mais novo da lista &mdash; e o que menos tem &ldquo;10 anos de experiência&rdquo; te separando de qualquer entrevistador</div>
+
+    <p class="intro">Você usou um agente de codificação pra construir a parte prática do Gabarita inteira. Isso não é um atalho a esconder &mdash; é uma habilidade que virou pauta normal de entrevista em 2026. Esta semana é sobre nomear o que aconteceu por baixo dos panos, e perceber que boa parte do que você já faz (como escreve o <code>CLAUDE.md</code>) já é a prática que a indústria está batizando agora de &ldquo;context engineering&rdquo;.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w7-1"><label for="w7-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Vocabulário mínimo de LLM: token, janela de contexto, embedding, temperatura</span></label></li>
+      <li class="item"><input type="checkbox" id="w7-2"><label for="w7-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">RAG (retrieval-augmented generation) &mdash; por que existe: o modelo não sabe o que não estava no treino, e não devia inventar</span></label></li>
+      <li class="item"><input type="checkbox" id="w7-3"><label for="w7-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O que é um <em>harness</em> (Claude Code e afins) &mdash; a diferença entre o modelo e a camada que dá ferramentas, memória e loop pra ele</span></label></li>
+      <li class="item"><input type="checkbox" id="w7-4"><label for="w7-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O loop agentic (raciocinar &rarr; chamar ferramenta &rarr; observar resultado &rarr; repetir) e por que ele é diferente de um chatbot de pergunta-resposta</span></label></li>
+      <li class="item"><input type="checkbox" id="w7-5"><label for="w7-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Prompt engineering básico: system prompt vs. prompt do usuário, saída estruturada, poucos exemplos (few-shot)</span></label></li>
+      <li class="item"><input type="checkbox" id="w7-6"><label for="w7-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Avaliar código gerado por IA sem confiar cegamente &mdash; validação estrutural em vez de achismo</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">Building Effective Agents</a></div><div class="r-note">O artigo da própria Anthropic sobre padrões de agente (workflow vs. agente de verdade, quando cada um vale a complexidade). A melhor visão geral conceitual que existe hoje.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~25 min</span>Artigo &uacute;nico. O n&uacute;cleo &eacute; a distin&ccedil;&atilde;o <strong>workflow vs. agente</strong> e os cinco padr&otilde;es de workflow (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer). Saber nomear os cinco j&aacute; &eacute; a resposta.</div><div class="r-src">anthropic.com/engineering &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://simonwillison.net/guides/agentic-engineering-patterns/how-coding-agents-work/" target="_blank" rel="noopener">How coding agents work</a></div><div class="r-note">Explica exatamente o que você observou usando um agente pra codar &mdash; loop de ferramentas, contexto, e por que ele &ldquo;parece&rdquo; entender o projeto.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Leitura corrida, sem se&ccedil;&atilde;o pra pular. &Eacute; a descri&ccedil;&atilde;o t&eacute;cnica do que voc&ecirc; observou na pr&aacute;tica &mdash; leia com o Gabarita na cabe&ccedil;a, marcando o que bate.</div><div class="r-src">simonwillison.net &middot; Simon Willison, gratuito</div></li>
+      <li><div class="r-title"><a href="https://simonwillison.net/guides/agentic-engineering-patterns/what-is-agentic-engineering/" target="_blank" rel="noopener">What is agentic engineering?</a></div><div class="r-note">Vocabulário atualizado (2026) pra nomear o que virou a sua rotina de desenvolvimento no último ano.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~12 min</span>Curto, e &eacute; vocabul&aacute;rio. Se os termos forem novos pra voc&ecirc;, <strong>leia este antes</strong> do item acima.</div><div class="r-src">simonwillison.net &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">Prompt engineering overview</a></div><div class="r-note">Documentação oficial da Anthropic sobre como estruturar um prompt &mdash; a base teórica de algo que você já pratica todo dia sem o nome formal.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~30 min</span>N&atilde;o leia todas as subp&aacute;ginas. Leia a <em>overview</em> e depois s&oacute; tr&ecirc;s t&eacute;cnicas: <strong>be clear and direct</strong>, <strong>use XML tags</strong> e <strong>chain of thought</strong>. O restante &eacute; refer&ecirc;ncia pra quando precisar.</div><div class="r-src">docs.claude.com &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://docs.claude.com/en/docs/agent-sdk/overview" target="_blank" rel="noopener">Agent SDK overview</a></div><div class="r-note">Como um harness é montado por dentro (ferramentas, permissões, loop) &mdash; útil pra desmistificar a &ldquo;caixa preta&rdquo; que você usou pra construir o Gabarita.</div><div class="r-scope"><span class="r-tag t-part">Passar o olho &middot; ~15 min</span>S&oacute; a p&aacute;gina de overview: o que &eacute; o loop, o que s&atilde;o tools e como funcionam permiss&otilde;es. <strong>N&atilde;o entre na refer&ecirc;ncia de API</strong> a menos que v&aacute; construir um harness de verdade.</div><div class="r-src">docs.claude.com &middot; oficial, gratuito</div></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; geração por IA no Gabarita</div>
+      <div class="ammo-body">
+        <p>Do seu próprio <code>CLAUDE.md</code>, sobre o gate de qualidade da IA:</p>
+        <pre><code>`ai_generated` passa por um GATE AUTOMÁTICO ESTRUTURAL (Zod —
+exatamente 1 alternativa correta, campos válidos) antes de
+persistir; não há 2ª chamada de IA auditando conteúdo clínico.</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> é a resposta perfeita pra &ldquo;como você garante que código/conteúdo gerado por IA está correto?&rdquo; &mdash; você não confia no &ldquo;parece certo&rdquo;, valida a estrutura de forma determinística (Zod), do mesmo jeito que <code>resolveTaxonomy</code> resolve o vocabulário da IA contra uma lista fechada em vez de aceitar o que ela inventar. E tem uma segunda resposta pronta, sobre VOCÊ como operador de agente: o <code>CLAUDE.md</code> que você mantém &mdash; com decisões numeradas (D101, D104...) e o porquê de cada uma &mdash; é gerenciamento de contexto pra agente na prática. Chame isso pelo nome numa entrevista: você não &ldquo;deixou a IA fazer tudo&rdquo;, você desenhou o contexto e as guardas que fizeram um agente produzir código correto.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>O que é a janela de contexto de um LLM, e o que normalmente acontece quando ela estoura no meio de uma tarefa longa?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>&Eacute; o teto de tokens que o modelo enxerga numa &uacute;nica chamada &mdash; prompt de sistema, hist&oacute;rico, ferramentas e a resposta, tudo somado. N&atilde;o &eacute; mem&oacute;ria: &eacute; <strong>campo de vis&atilde;o</strong>. Entre uma chamada e outra o modelo n&atilde;o lembra de nada; quem carrega o hist&oacute;rico &eacute; o harness.</p>
+<p>Quando estoura numa tarefa longa, o harness normalmente <strong>trunca ou resume o come&ccedil;o</strong> &mdash; e o come&ccedil;o &eacute; onde estavam as instru&ccedil;&otilde;es e as decis&otilde;es j&aacute; tomadas. O sintoma: o agente passa a repetir trabalho j&aacute; feito, contradiz uma escolha anterior ou &ldquo;esquece&rdquo; uma restri&ccedil;&atilde;o que voc&ecirc; deu no in&iacute;cio.</p>
+<p>Por isso agentes s&eacute;rios compactam contexto e mant&ecirc;m o que &eacute; essencial em <strong>arquivo</strong> &mdash; um <code>DECISOES.md</code> vale mais que 200 mensagens de hist&oacute;rico, porque pode ser relido sob demanda em vez de ocupar espa&ccedil;o permanente.</p></div>
+          </details>
+        </li>
+        <li>Qual a diferença entre o modelo (o LLM em si) e o harness (o agente que você usou pra codar)?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>O <strong>modelo</strong> &eacute;, na pr&aacute;tica, uma fun&ccedil;&atilde;o de texto pra texto. Ele n&atilde;o l&ecirc; arquivo, n&atilde;o roda comando, n&atilde;o acessa rede e n&atilde;o lembra de nada entre chamadas. Quando ele &ldquo;usa uma ferramenta&rdquo;, tudo o que ele faz &eacute; <em>emitir um pedido estruturado</em>.</p>
+<p>O <strong>harness</strong> &eacute; o programa em volta: monta o prompt, declara quais ferramentas existem, executa de fato o comando que o modelo pediu, devolve o resultado, controla o loop de parada, gerencia a janela de contexto e aplica permiss&otilde;es.</p>
+<p>A tese que vale dizer em voz alta: <strong>boa parte da diferen&ccedil;a entre usar IA bem e mal est&aacute; no harness, n&atilde;o no modelo</strong> &mdash; mesmo modelo, harness diferente, resultado incompar&aacute;vel.</p></div>
+          </details>
+        </li>
+        <li>Por que seu pipeline de geração valida a saída da IA com Zod em vez de confiar direto no JSON que ela devolve?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque a sa&iacute;da de um LLM &eacute; <strong>texto plaus&iacute;vel, n&atilde;o um contrato</strong>. Mesmo com JSON mode ou sa&iacute;da estruturada, a resposta pode vir com campo faltando, um enum inventado, n&uacute;mero como string ou uma alternativa a mais do que a quest&atilde;o devia ter.</p>
+<p>Validar na borda transforma &ldquo;erro silencioso que corrompe o banco e s&oacute; aparece tr&ecirc;s semanas depois&rdquo; em <strong>falha alta, cedo e no lugar certo</strong> &mdash; onde d&aacute; pra tentar de novo, registrar o payload e seguir. De quebra, <code>z.infer</code> te d&aacute; o tipo TypeScript da mesma fonte de verdade.</p>
+<p>Enquadramento que fecha: <em>o modelo &eacute; um input n&atilde;o confi&aacute;vel</em>. Voc&ecirc; n&atilde;o confiaria num formul&aacute;rio de usu&aacute;rio sem validar; n&atilde;o h&aacute; motivo pra confiar mais numa gera&ccedil;&atilde;o.</p></div>
+          </details>
+        </li>
+        <li>O que é RAG, e por que ele reduziria alucinação numa pergunta sobre uma diretriz médica específica?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>RAG</strong> (Retrieval-Augmented Generation): antes de perguntar ao modelo, voc&ecirc; <em>busca</em> os trechos relevantes numa base sua &mdash; normalmente busca vetorial/sem&acirc;ntica (<code>pgvector</code> resolve dentro do pr&oacute;prio Postgres), muitas vezes h&iacute;brida com busca lexical e um reranker &mdash; e injeta esses trechos no prompt.</p>
+<p>Reduz alucina&ccedil;&atilde;o porque o modelo passa a responder <strong>a partir de um texto presente no contexto</strong>, e n&atilde;o do que ele &ldquo;acha que lembra&rdquo; do treino. E voc&ecirc; pode exigir cita&ccedil;&atilde;o da fonte, o que torna a resposta audit&aacute;vel em vez de confi&aacute;vel por f&eacute;.</p>
+<p>Numa diretriz m&eacute;dica isso &eacute; decisivo por tr&ecirc;s motivos: o conte&uacute;do &eacute; espec&iacute;fico demais pra estar bem memorizado, muda com o tempo (o treino tem data de corte) e o custo de inventar &eacute; alto.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b01-system-design.html"><div class="dir">&larr; anterior</div><div class="t">System design</div></a>
+    <a class="next" href="b03-arquitetura-patterns.html"><div class="dir">próxima &rarr;</div><div class="t">Arquitetura &amp; design patterns</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PostgreSQL · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s3">
+    <div class="week-head"><span class="week-num">03</span><h2>PostgreSQL: MVCC, índices e pooling</h2></div>
+      <div class="week-meta">~10h &middot; a semana com mais retorno em entrevista</div>
+
+    <p class="intro">&ldquo;Por que Postgres e não MySQL&rdquo; é pergunta certa em entrevista de pleno+. A resposta boa não é preferência &mdash; é entender como cada um resolve concorrência e o que isso custa. Seu <code>schema.prisma</code> já tem as respostas escritas em comentário; falta só o contexto pra explicar por que elas estão ali.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w3-1"><label for="w3-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Modelo relacional e normalização &mdash; e quando denormalizar de propósito é a decisão certa</span></label></li>
+      <li class="item"><input type="checkbox" id="w3-2"><label for="w3-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">ACID e níveis de isolamento &mdash; o que &ldquo;read committed&rdquo; (o default do Postgres) garante e o que NÃO garante</span></label></li>
+      <li class="item"><input type="checkbox" id="w3-3"><label for="w3-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MVCC: como o Postgres deixa leitura e escrita acontecerem ao mesmo tempo sem travar</span></label></li>
+      <li class="item"><input type="checkbox" id="w3-4"><label for="w3-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Índices B-tree, ordem de colunas num índice composto, e quando um índice é ignorado pelo planner</span></label></li>
+      <li class="item"><input type="checkbox" id="w3-5"><label for="w3-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><code>EXPLAIN ANALYZE</code> &mdash; ler um plano de query, achar um seq scan escondido</span></label></li>
+      <li class="item"><input type="checkbox" id="w3-6"><label for="w3-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Connection pooling: por que uma conexão Postgres é cara, e transaction mode vs. session mode no PgBouncer</span></label></li>
+      <li class="item"><input type="checkbox" id="w3-7"><label for="w3-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Postgres vs. MySQL: a diferença real de implementação do MVCC (versões antigas + VACUUM vs. undo log), e quando o MySQL ainda vence</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://www.postgresql.org/docs/current/mvcc.html" target="_blank" rel="noopener">Cap. 13 &mdash; Concurrency Control</a></div><div class="r-note">A documentação oficial do Postgres sobre MVCC, direto da fonte. Densa, mas é a que ninguém lê e todo mundo devia.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Do cap&iacute;tulo 13 leia <strong>13.1 (Introduction)</strong> e <strong>13.3 (Explicit Locking)</strong> at&eacute; entender locks de linha &mdash; 13.2 tem entrada pr&oacute;pria logo abaixo. Pule 13.4, 13.5 e 13.6 no primeiro passe.</div><div class="r-src">postgresql.org/docs &middot; oficial</div><details class="leitura" data-id="03-postgresql--postgresql-org-docs-current-mvcc-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O Postgres controla concorrência com <strong>MVCC</strong>: cada comando enxerga uma fotografia consistente dos dados, então leitura não bloqueia escrita e escrita não bloqueia leitura. Lock explícito existe pra quando a fotografia não basta — e cada comando DDL pega um lock que você precisa conhecer.</p>
+
+<h5>13.1 — Introdução: o que o MVCC promete</h5>
+<ul>
+<li>Cada transação vê um <strong>snapshot</strong> dos dados como estavam num momento, independentemente do que outras transações estão escrevendo agora. Ninguém lê dado pela metade.</li>
+<li>A consequência prática que cai em entrevista: <strong>um <code>SELECT</code> comum nunca espera um <code>UPDATE</code></strong>, e vice-versa. Em bancos baseados só em lock, relatório longo trava escrita.</li>
+<li>Pro nível mais forte (Serializable) o Postgres usa <strong>SSI</strong> (Serializable Snapshot Isolation): em vez de travar, detecta padrões perigosos e aborta uma das transações.</li>
+<li>Lock de tabela e de linha continuam disponíveis pra quem precisa de controle explícito, além de <em>advisory locks</em> definidos pela aplicação.</li>
+</ul>
+
+<h5>13.3 — Locks de tabela: o que cada comando pega</h5>
+<p>Os modos têm nomes enganosos (quase todos dizem “row” mas são de <em>tabela</em>). O que importa é saber quais conflitam:</p>
+<div class="tbl"><table>
+<tr><th>Modo</th><th>Quem pega</th><th>Bloqueia</th></tr>
+<tr><td><code>ACCESS SHARE</code></td><td><code>SELECT</code></td><td>só <code>ACCESS EXCLUSIVE</code></td></tr>
+<tr><td><code>ROW EXCLUSIVE</code></td><td><code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td><td>modos de <code>SHARE</code> pra cima (ex.: <code>CREATE INDEX</code> sem CONCURRENTLY)</td></tr>
+<tr><td><code>SHARE UPDATE EXCLUSIVE</code></td><td><code>VACUUM</code>, <code>ANALYZE</code>, <code>CREATE INDEX CONCURRENTLY</code></td><td>a si mesmo e modos mais fortes — não bloqueia escrita comum</td></tr>
+<tr><td><code>SHARE</code></td><td><code>CREATE INDEX</code></td><td>escritas (<code>ROW EXCLUSIVE</code>)</td></tr>
+<tr><td><code>ACCESS EXCLUSIVE</code></td><td>maior parte dos <code>ALTER TABLE</code>, <code>DROP</code>, <code>TRUNCATE</code>, <code>VACUUM FULL</code></td><td><strong>tudo</strong>, inclusive <code>SELECT</code></td></tr>
+</table></div>
+<p><strong>A armadilha de produção:</strong> um <code>ALTER TABLE</code> que espera na fila por <code>ACCESS EXCLUSIVE</code> faz todo <code>SELECT</code> que chega <em>depois</em> dele esperar também. Uma migration “instantânea” atrás de uma transação longa derruba o site. Por isso migration séria usa <code>SET lock_timeout</code> e tenta de novo, e cria índice com <code>CONCURRENTLY</code>.</p>
+
+<h5>13.3 — Locks de linha</h5>
+<ul>
+<li><code>SELECT … FOR UPDATE</code>: trava as linhas pra quem também quer alterá-las ou travá-las. <strong>Não bloqueia leitura comum</strong> — MVCC continua valendo.</li>
+<li><code>FOR NO KEY UPDATE</code> (o que um <code>UPDATE</code> que não mexe em chave pega), <code>FOR SHARE</code> e <code>FOR KEY SHARE</code> (o que uma FK pega na linha referenciada) são versões mais fracas, pra reduzir conflito.</li>
+<li><code>NOWAIT</code> falha na hora se a linha estiver travada; <code>SKIP LOCKED</code> pula as linhas travadas — é a base de fila sobre Postgres (Semana 4).</li>
+</ul>
+
+<h5>Deadlock e advisory lock</h5>
+<ul>
+<li>Deadlock: T1 trava A e espera B; T2 trava B e espera A. O Postgres detecta (após <code>deadlock_timeout</code>) e <strong>aborta uma</strong> com erro — a aplicação precisa estar pronta pra repetir.</li>
+<li>Prevenção clássica: <strong>sempre adquirir locks na mesma ordem</strong> (ex.: ordenar ids antes de atualizar várias linhas).</li>
+<li><strong>Advisory locks</strong> travam um número que só a sua aplicação entende (“só um worker roda o job 42”). Existem por <em>sessão</em> (<code>pg_advisory_lock</code>, precisa soltar explicitamente) e por <em>transação</em> (<code>pg_advisory_xact_lock</code>, solta no commit). O de sessão quebra atrás de pooler em transaction mode.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.postgresql.org/docs/current/mvcc.html" target="_blank" rel="noopener">postgresql.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 &mdash; Transaction Isolation</a></div><div class="r-note">Read committed, repeatable read, serializable &mdash; com exemplos concretos de anomalia em cada nível.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~25 min</span>&Eacute; a subse&ccedil;&atilde;o que mais cai. Leia os quatro n&iacute;veis na ordem e n&atilde;o pule os exemplos de anomalia &mdash; principalmente <strong>lost update</strong> e <strong>write skew</strong> em 13.2.3 (Serializable).</div><div class="r-src">postgresql.org/docs &middot; oficial</div><details class="leitura" data-id="03-postgresql--postgresql-org-docs-current-transaction-iso-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Isolamento é o quanto uma transação enxerga das outras. O Postgres implementa três níveis de fato (Read Committed, Repeatable Read, Serializable); o default, Read Committed, <strong>não</strong> te protege de lost update feito na aplicação nem de write skew.</p>
+
+<h5>Os quatro fenômenos</h5>
+<ul>
+<li><strong>Dirty read</strong>: ler o que outra transação ainda não commitou.</li>
+<li><strong>Nonrepeatable read</strong>: ler a mesma linha duas vezes e ver valores diferentes (alguém commitou no meio).</li>
+<li><strong>Phantom read</strong>: repetir uma consulta com filtro e aparecer/sumir linha.</li>
+<li><strong>Serialization anomaly</strong>: o resultado de transações concorrentes não bate com <em>nenhuma</em> ordem serial delas.</li>
+</ul>
+
+<div class="tbl"><table>
+<tr><th>Nível (no Postgres)</th><th>Dirty</th><th>Nonrepeatable</th><th>Phantom</th><th>Anomalia</th></tr>
+<tr><td>Read Uncommitted</td><td colspan="4">se comporta igual a Read Committed</td></tr>
+<tr><td>Read Committed (default)</td><td>não</td><td>possível</td><td>possível</td><td>possível</td></tr>
+<tr><td>Repeatable Read</td><td>não</td><td>não</td><td>não (mais forte que o padrão SQL exige)</td><td>possível</td></tr>
+<tr><td>Serializable</td><td>não</td><td>não</td><td>não</td><td>não</td></tr>
+</table></div>
+
+<h5>Read Committed, em detalhe</h5>
+<ul>
+<li>Cada <strong>comando</strong> vê um snapshot tirado no início daquele comando. Dois <code>SELECT</code>s na mesma transação podem ver dados diferentes.</li>
+<li>Num <code>UPDATE</code> que esbarra numa linha sendo alterada por outra transação, ele espera; quando a outra commita, <strong>reavalia o <code>WHERE</code> na versão nova</strong> da linha e segue. Por isso <code>UPDATE contas SET saldo = saldo - 10 WHERE id = 1</code> é seguro.</li>
+<li>O que <strong>não</strong> é seguro: ler na aplicação e escrever o valor calculado (<code>SELECT saldo</code> → calcula → <code>UPDATE … SET saldo = 90</code>). Duas execuções simultâneas geram <strong>lost update</strong>: uma sobrescreve a outra.</li>
+</ul>
+<p>Correções do lost update, da mais simples pra mais cara: fazer a conta dentro do <code>UPDATE</code>; <code>SELECT … FOR UPDATE</code> antes de ler; coluna de <code>versao</code> (lock otimista: <code>UPDATE … WHERE id = 1 AND versao = 7</code> e checar linhas afetadas); ou subir o isolamento e repetir em caso de falha.</p>
+
+<h5>Repeatable Read</h5>
+<ul>
+<li>O snapshot é tirado no <strong>primeiro comando da transação</strong> e vale até o fim: tudo que ela lê é consistente entre si.</li>
+<li>Se ela tenta alterar uma linha que outra transação alterou e commitou depois do snapshot, recebe <code>could not serialize access due to concurrent update</code>. <strong>A aplicação precisa repetir a transação inteira</strong> — não só o comando.</li>
+</ul>
+
+<h5>Serializable e write skew</h5>
+<p>Write skew é a anomalia que nenhum lock de linha pega sozinho, porque as transações escrevem em linhas <em>diferentes</em>. O exemplo clássico: a regra é “pelo menos um médico de plantão”. Dois médicos, ao mesmo tempo, verificam que há dois de plantão e cada um se tira. Ambos leram “2”, ambos escreveram em linhas distintas, e o hospital fica sem ninguém.</p>
+<p>A documentação mostra o mesmo padrão com somas: T1 soma os valores da classe 1 e insere o resultado na classe 2; T2 soma a classe 2 e insere na classe 1. Em Repeatable Read ambas commitam; em <strong>Serializable</strong>, o SSI percebe a dependência circular e aborta uma com erro <code>40001</code> (<code>serialization_failure</code>).</p>
+<ul>
+<li>Serializable no Postgres <strong>não trava mais</strong> — ele aborta mais. O custo é tratar retry em todo lugar.</li>
+<li>Recomendações da doc pra quem usa: transações curtas, declarar <code>READ ONLY</code> quando for, e não deixar conexão parada dentro de transação.</li>
+<li>Alternativas sem subir o nível: constraint no banco (<code>UNIQUE</code>, <code>EXCLUDE</code>), materializar o conflito numa linha que todos travam, ou <code>FOR UPDATE</code> no conjunto lido.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Read Committed protege cada comando, não a transação; lost update na aplicação e write skew passam direto. Resolvo com UPDATE atômico, lock otimista ou Serializable com retry, dependendo do custo do conflito.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">postgresql.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://use-the-index-luke.com/" target="_blank" rel="noopener">Use The Index, Luke</a></div><div class="r-note">Livro gratuito inteiro sobre indexação e performance de SQL, com exemplos que valem pra qualquer banco relacional. O melhor recurso único desta semana.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~2h</span>O livro inteiro d&aacute; ~6h; pra entrevista bastam tr&ecirc;s cap&iacute;tulos: <strong>1. Anatomy of an SQL Index</strong>, <strong>2. The Where Clause</strong> (com aten&ccedil;&atilde;o em <em>Functions</em> e <em>Bind Parameters</em>) e <strong>3. Performance and Scalability</strong>. <em>Clustering Data</em> se sobrar tempo; pule <em>Insert, Delete and Update</em>.</div><div class="r-src">use-the-index-luke.com &middot; Markus Winand, gratuito</div><details class="leitura" data-id="03-postgresql--use-the-index-luke-com"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Índice B-tree é uma árvore rasa mais uma lista ligada de folhas. Ele fica lento não pela profundidade, mas por percorrer muitas folhas e ir muitas vezes na tabela. Quase todo “índice ignorado” é um <code>WHERE</code> escrito de um jeito que o banco não consegue casar com a ordem do índice.</p>
+
+<h5>Cap. 1 — Anatomia de um índice</h5>
+<ul>
+<li>As <strong>folhas</strong> guardam os valores indexados em ordem, cada um apontando pra linha na tabela, e são ligadas entre si (lista duplamente ligada) — é isso que permite varrer uma faixa.</li>
+<li>Acima delas, os nós de <strong>ramo</strong> formam uma árvore balanceada. Mesmo com milhões de linhas a profundidade é de 4 ou 5 níveis: descer é barato (logarítmico).</li>
+<li>Uma busca por índice tem três passos: <strong>descer a árvore</strong>, <strong>seguir a cadeia de folhas</strong> enquanto houver valores que casam, e <strong>buscar cada linha na tabela</strong>. Os dois últimos é que podem ser caros — um índice que casa 50 mil linhas faz 50 mil acessos à tabela.</li>
+<li>O mito do “índice degenerado que precisa ser reconstruído” quase nunca é a causa: o problema costuma ser o passo 2 ou 3.</li>
+</ul>
+
+<h5>Cap. 2 — A cláusula WHERE</h5>
+<p><strong>Índice composto</strong>: <code>(a, b)</code> é ordenado primeiro por <code>a</code>, e só dentro de cada <code>a</code> por <code>b</code>. Consequências:</p>
+<ul>
+<li>Serve pra <code>WHERE a = ?</code> e pra <code>WHERE a = ? AND b = ?</code>. <strong>Não serve bem</strong> pra <code>WHERE b = ?</code> sozinho (não há faixa contígua de <code>b</code>).</li>
+<li>Regra de ouro pra ordem das colunas: <strong>igualdade primeiro, faixa por último</strong>. Em <code>WHERE status = 'ativo' AND criado_em &gt; …</code>, o índice certo é <code>(status, criado_em)</code>: a igualdade fixa um trecho e a faixa é varrida ali dentro.</li>
+<li>Um índice composto bem escolhido substitui vários índices de uma coluna só — e cada índice a mais custa em escrita.</li>
+</ul>
+<p><strong>Funções escondem a coluna</strong>: <code>WHERE lower(email) = ?</code> não usa índice em <code>email</code>, porque o índice está ordenado por <code>email</code>, não por <code>lower(email)</code>. Solução: índice de expressão, <code>CREATE INDEX ON usuarios (lower(email))</code>. A função precisa ser determinística (no Postgres, <code>IMMUTABLE</code>).</p>
+<p><strong>Condições ofuscadas</strong> que matam índice sem ninguém perceber:</p>
+<ul>
+<li>Data: <code>WHERE date(criado_em) = '2026-09-15'</code> → troque por faixa: <code>criado_em &gt;= '2026-09-15' AND criado_em &lt; '2026-09-16'</code>.</li>
+<li>Tipos misturados: comparar coluna texto com número força conversão.</li>
+<li><code>LIKE '%termo'</code> com curinga no início não usa B-tree; só o pedaço antes do primeiro curinga vira faixa. Busca textual pede outro tipo de índice (trigram/GIN, full-text).</li>
+<li>“Lógica esperta”: <code>WHERE (:filtro IS NULL OR coluna = :filtro)</code> gera um plano genérico ruim pra todos os casos. Monte o SQL só com os filtros usados.</li>
+</ul>
+<p><strong>Bind parameters</strong> (<code>$1</code> em vez de concatenar valor): protegem contra SQL injection e permitem reaproveitar plano. O custo: o planner não vê o valor e não usa o histograma. No Postgres, um prepared statement passa a usar <em>plano genérico</em> depois de algumas execuções se ele não for pior que os específicos — raramente é problema, mas explica aquele caso em que a mesma query é rápida no console e lenta na aplicação.</p>
+<p><strong>Índice parcial</strong> (<code>CREATE INDEX … WHERE processado = false</code>) indexa só as linhas que interessam — perfeito pra fila, onde a imensa maioria já foi processada.</p>
+
+<h5>Cap. 3 — Performance e escalabilidade</h5>
+<ul>
+<li>Uma query com índice mal escolhido parece ótima com pouco dado e piora conforme a tabela cresce. Teste com volume realista, não com o banco de desenvolvimento.</li>
+<li><strong>Hardware não conserta query ruim</strong>: mais máquinas aumentam vazão (mais queries ao mesmo tempo), não diminuem o tempo de uma query. Escalar horizontalmente um banco pra esconder um seq scan só multiplica o custo.</li>
+<li>Latência de rede entra na conta: muitas idas e voltas pequenas (o N+1 do ORM) custam mais que uma consulta maior.</li>
+</ul>
+
+<h5>Se sobrar tempo — Clustering data</h5>
+<p><strong>Index-only scan</strong>: se todas as colunas que a query precisa estão no índice, o banco nem vai na tabela. No Postgres dá pra incluir colunas só pra isso: <code>CREATE INDEX ON pedidos (cliente_id) INCLUDE (total)</code>. E o <em>clustering factor</em>: linhas vizinhas no índice e espalhadas na tabela custam um acesso a disco cada.</p>
+
+<h5>Como verificar em vez de supor</h5>
+<pre><code>EXPLAIN (ANALYZE, BUFFERS)
+SELECT * FROM questoes WHERE materia_id = 3 AND criado_em &gt; now() - interval '7 days';
+-- procure: Seq Scan em tabela grande, "Rows Removed by Filter" alto,
+-- estimativa (rows=) muito diferente do real (actual rows=)</code></pre>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://use-the-index-luke.com/" target="_blank" rel="noopener">use-the-index-luke.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://www.pgbouncer.org/features.html" target="_blank" rel="noopener">PgBouncer &mdash; Features</a></div><div class="r-note">Documentação oficial dos modos de pooling. Leia isso e depois releia o <code>datasource db</code> do seu <code>schema.prisma</code> &mdash; vai fazer sentido total.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~10 min</span>S&oacute; a tabela de <strong>pooling modes</strong> (session / transaction / statement) e a lista logo abaixo do que <strong>quebra</strong> em transaction mode: prepared statements, advisory locks, <code>SET</code> de sess&atilde;o. &Eacute; exatamente isso que justifica o <code>pgbouncer=true</code> da sua connection string.</div><div class="r-src">pgbouncer.org &middot; oficial</div><details class="leitura" data-id="03-postgresql--pgbouncer-org-features-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Conexão Postgres é cara (um processo por conexão), e ambiente serverless abre muitas. O PgBouncer mantém poucas conexões reais e empresta a muitos clientes. Em <strong>transaction mode</strong> você ganha escala e perde tudo que depende de sessão.</p>
+
+<h5>Por que existe</h5>
+<ul>
+<li>O Postgres cria um <strong>processo do sistema operacional</strong> por conexão, com memória própria. O limite padrão é ~100 conexões, e subir muito piora o desempenho de todas.</li>
+<li>Em serverless (Vercel, Lambda), cada instância fria abre conexões novas. Sem pooler, um pico de tráfego vira “too many connections”.</li>
+</ul>
+
+<h5>Os três modos</h5>
+<div class="tbl"><table>
+<tr><th>Modo</th><th>A conexão real volta pro pool quando…</th><th>Serve pra</th></tr>
+<tr><td><strong>session</strong></td><td>o cliente desconecta</td><td>compatibilidade total; pouca economia</td></tr>
+<tr><td><strong>transaction</strong></td><td>a transação termina</td><td>o modo que resolve serverless; o mais usado</td></tr>
+<tr><td><strong>statement</strong></td><td>cada comando termina</td><td>raro; proíbe transação com vários comandos</td></tr>
+</table></div>
+
+<h5>O que quebra em transaction mode</h5>
+<p>Entre uma transação e outra, o seu cliente pode cair em outra conexão real. Então tudo que é <strong>estado de sessão</strong> fica na conexão errada ou some:</p>
+<ul>
+<li><code>SET</code>/<code>RESET</code> de parâmetros de sessão (use <code>SET LOCAL</code>, que vale só dentro da transação);</li>
+<li><code>LISTEN</code>/<code>NOTIFY</code> do lado de quem escuta;</li>
+<li><strong>advisory locks de sessão</strong>;</li>
+<li>tabelas temporárias que sobrevivem à transação e cursores <code>WITH HOLD</code>;</li>
+<li><strong>prepared statements</strong> criados em SQL (<code>PREPARE</code>). Versões recentes do PgBouncer (1.21+) suportam prepared statements do protocolo em transaction mode com <code>max_prepared_statements</code>; antes disso, drivers e ORMs precisavam desligá-los.</li>
+</ul>
+
+<h5>Ligando ao seu projeto</h5>
+<ul>
+<li>O <code>?pgbouncer=true</code> na connection string do Prisma existe exatamente por causa dos prepared statements: avisa o client que ele está atrás de um pooler em transaction mode.</li>
+<li><strong>Migration vai pela conexão direta</strong> (<code>directUrl</code>), nunca pela porta do pooler: migration usa lock de sessão, DDL longo e às vezes comando fora de transação.</li>
+<li>Resposta de entrevista: “pooler em transaction mode pra aplicação, conexão direta pra migration e pra qualquer coisa que dependa de sessão”.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.pgbouncer.org/features.html" target="_blank" rel="noopener">pgbouncer.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries" target="_blank" rel="noopener">Prisma &mdash; Relation queries</a></div><div class="r-note">Cobre <code>relationLoadStrategy</code> (join vs. query) &mdash; o mesmo preview feature que você ativou pra matar N+1 nas telas de estudo.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~20 min</span>V&aacute; direto em <strong>Nested reads</strong> (<code>include</code> vs. <code>select</code>), <strong>Relation count</strong> e a caixa sobre o problema <strong>N+1</strong>. Pule <em>Nested writes</em> e a refer&ecirc;ncia de filtros &mdash; isso se consulta com a doc aberta ao lado do c&oacute;digo.</div><div class="r-src">prisma.io/docs &middot; oficial</div><details class="leitura" data-id="03-postgresql--prisma-io-docs-orm-prisma-client-queries-relation-queries"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Ler relações no Prisma é escolher <strong>o que</strong> vem (<code>include</code> vs. <code>select</code>) e <strong>como</strong> vem (uma query com join ou várias queries). O N+1 aparece quando você busca relação dentro de um laço em vez de pedir tudo de uma vez.</p>
+
+<h5>Nested reads</h5>
+<ul>
+<li><code>include: { respostas: true }</code> traz a entidade com <strong>todos os campos escalares</strong> mais a relação.</li>
+<li><code>select: { id: true, titulo: true, respostas: { select: { correta: true } } }</code> traz <strong>só o que você pediu</strong>, inclusive dentro da relação. Não dá pra usar <code>select</code> e <code>include</code> no mesmo nível.</li>
+<li>Regra prática: <code>select</code> em listagens e respostas de API (menos dado, e você não vaza campo sensível por acidente); <code>include</code> quando realmente precisa do objeto inteiro.</li>
+</ul>
+
+<h5>Como a relação é carregada</h5>
+<ul>
+<li><code>relationLoadStrategy: 'join'</code>: <strong>uma query só</strong>, com o banco montando o JSON aninhado (LATERAL JOIN + agregação). Menos idas e voltas — é o que o preview feature <code>relationJoins</code> habilita.</li>
+<li><code>relationLoadStrategy: 'query'</code>: uma query por tabela, juntadas na aplicação. Pode ser melhor quando o join multiplicaria linhas demais.</li>
+<li>O paralelo com cache em camadas: decidir onde o “join” acontece (banco ou aplicação) é o mesmo trade-off de latência de rede vs. trabalho no servidor.</li>
+</ul>
+
+<h5>Contagem de relação</h5>
+<pre><code>prisma.materia.findMany({
+  select: { nome: true, _count: { select: { questoes: true } } },
+});</code></pre>
+<p>Conta no banco em vez de trazer todas as questões pra contar em JavaScript.</p>
+
+<h5>O problema N+1</h5>
+<pre><code>// N+1: 1 query pras sessões + 1 query por sessão
+const sessoes = await prisma.sessao.findMany();
+for (const s of sessoes) {
+  s.itens = await prisma.item.findMany({ where: { sessaoId: s.id } });
+}
+// correto: uma leitura aninhada
+const sessoes = await prisma.sessao.findMany({ include: { itens: true } });</code></pre>
+<ul>
+<li>O Prisma agrupa automaticamente chamadas de <code>findUnique</code> feitas no mesmo tick (tipo DataLoader) — por isso resolvers GraphQL com <code>findUnique</code> não explodem. <code>findMany</code> em laço não tem essa ajuda.</li>
+<li>Filtros por relação (<code>some</code>, <code>every</code>, <code>none</code>) viram subconsulta no banco, não laço na aplicação.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries" target="_blank" rel="noopener">prisma.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://www.bytebase.com/blog/postgres-vs-mysql/" target="_blank" rel="noopener">PostgreSQL vs MySQL (2026)</a></div><div class="r-note">Comparação atual e honesta, sem promover nenhum dos dois &mdash; boa pra formar sua própria opinião defensável.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~12 min</span>Passe o olho na tabela comparativa e leia com aten&ccedil;&atilde;o s&oacute; <strong>MVCC / replica&ccedil;&atilde;o</strong> e <strong>tipos de dados (JSONB)</strong>. Isto &eacute; muni&ccedil;&atilde;o de resposta, n&atilde;o mat&eacute;ria de estudo.</div><div class="r-src">bytebase.com/blog</div><details class="leitura" data-id="03-postgresql--bytebase-com-blog-postgres-vs-mysql"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Os dois são ótimos. A diferença que vale citar em entrevista é de <strong>implementação</strong>: onde cada um guarda as versões antigas das linhas, como replica e como lida com conexões — e daí saem os casos em que o MySQL ainda é a melhor escolha.</p>
+
+<h5>MVCC: heap com versões vs. undo log</h5>
+<div class="tbl"><table>
+<tr><th></th><th>PostgreSQL</th><th>MySQL (InnoDB)</th></tr>
+<tr><td>UPDATE</td><td>escreve uma <strong>nova versão</strong> da linha na tabela; a antiga fica como tupla morta</td><td>altera <strong>no lugar</strong> e guarda a versão anterior no <em>undo log</em></td></tr>
+<tr><td>Limpeza</td><td><code>VACUUM</code>/autovacuum recolhe tuplas mortas; se atrasar, <em>bloat</em></td><td>thread de <em>purge</em> limpa o undo log</td></tr>
+<tr><td>Índices num UPDATE</td><td>nova versão pode exigir atualizar todos os índices (exceto HOT update)</td><td>índices secundários apontam pra PK; menos escrita em índice</td></tr>
+<tr><td>Organização</td><td>tabela sem ordem (heap)</td><td>tabela <strong>ordenada pela PK</strong> (clustered index)</td></tr>
+</table></div>
+<p>Consequência famosa: tabelas muito atualizadas, com muitos índices, sofrem mais <em>write amplification</em> no Postgres — um dos motivos citados na migração do Uber pra MySQL em 2016. Do outro lado, a PK clusterizada do InnoDB faz UUID aleatório como chave primária fragmentar a tabela.</p>
+
+<h5>Replicação e operação</h5>
+<ul>
+<li><strong>Postgres</strong>: replicação física por WAL (streaming, réplica idêntica byte a byte) e replicação lógica por publicação/assinatura.</li>
+<li><strong>MySQL</strong>: replicação lógica pelo binlog, madura há muito tempo, com ecossistema forte de sharding e operação (Vitess, PlanetScale).</li>
+<li>Conexões: Postgres usa processo por conexão (precisa de pooler cedo); MySQL usa thread por conexão, mais barata.</li>
+</ul>
+
+<h5>Tipos e recursos</h5>
+<ul>
+<li>Postgres: <strong>JSONB</strong> indexável com GIN, arrays, ranges, tipos e extensões (PostGIS, <code>pgvector</code>), <strong>DDL transacional</strong>, índices parciais e de expressão, constraints ricas (<code>EXCLUDE</code>).</li>
+<li>MySQL 8 fechou boa parte da distância em SQL (CTE, window functions, JSON), mas DDL ainda faz commit implícito: uma migration de vários comandos não volta inteira.</li>
+</ul>
+
+<h5>Quando o MySQL ainda vence</h5>
+<ul>
+<li>Carga web simples e muito lida, com muitas conexões e réplicas de leitura.</li>
+<li>Tabelas largas com atualização intensa e muitos índices.</li>
+<li>Time e ferramentas já dominam MySQL, ou a escala pede sharding pronto (Vitess).</li>
+</ul>
+<p><strong>Resposta de bolso:</strong> “Escolhi Postgres por DDL transacional, JSONB e extensões; sei que pago em VACUUM e em conexões — por isso tenho pooler e olho autovacuum. Se o problema fosse um volume enorme de updates em tabela larga com muitos índices, o MySQL seria uma escolha defensável.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.bytebase.com/blog/postgres-vs-mysql/" target="_blank" rel="noopener">bytebase.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; prisma/schema.prisma</div>
+      <div class="ammo-body">
+        <p>Do topo do seu schema, palavra por palavra:</p>
+        <pre><code>generator client {
+  provider        = "prisma-client-js"
+  // relationJoins: LATERAL JOIN numa query só, no lugar do
+  // default do Prisma (uma query POR relação). Em produção cada
+  // query é uma viagem Vercel↔Neon — vale segundos nas telas de estudo.
+  previewFeatures = ["relationJoins"]
+}
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")   // pooled (pgbouncer)
+  directUrl = env("DIRECT_URL")     // direct — migrate precisa de
+}                                    // advisory lock, que não passa
+                                     // confiável pelo PgBouncer</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> isso é literalmente o problema clássico de N+1 e o de pooling em transaction mode, os dois na mesma tela &mdash; e você não copiou de um artigo, resolveu na prática. Some a isso os índices compostos do schema (ex.: <code>@@index([status, especialidadeId])</code>) pra falar de leftmost-prefix com um exemplo seu.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>Duas transações leem a mesma linha e uma atualiza. A outra ainda enxerga o valor antigo até fazer commit &mdash; por quê, em MVCC?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque o Postgres <strong>n&atilde;o sobrescreve a linha</strong>. Um <code>UPDATE</code> escreve uma <em>nova vers&atilde;o</em> da tupla e marca a antiga com o <code>xmax</code> da transa&ccedil;&atilde;o que a substituiu. Cada transa&ccedil;&atilde;o carrega um <em>snapshot</em> (quais txids j&aacute; estavam commitados quando ela come&ccedil;ou) e s&oacute; enxerga as vers&otilde;es vis&iacute;veis nesse snapshot.</p>
+<p>Da&iacute; o slogan do MVCC: <strong>leitor nunca bloqueia escritor, escritor nunca bloqueia leitor</strong>. O pre&ccedil;o &eacute; lixo: tuplas mortas que o <code>autovacuum</code> precisa recolher. Se ele n&atilde;o d&aacute; conta, voc&ecirc; paga em <em>bloat</em>, &iacute;ndices inchados e, no limite, risco de wraparound de txid.</p></div>
+          </details>
+        </li>
+        <li>Você tem um índice em <code>(status, especialidadeId)</code>. Uma query filtra só por <code>especialidadeId</code>. O índice ajuda?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Pela regra do <strong>prefixo mais &agrave; esquerda</strong>, n&atilde;o do jeito que voc&ecirc; quer. A &aacute;rvore B est&aacute; ordenada primeiro por <code>status</code>; sem esse campo no filtro, n&atilde;o existe faixa cont&iacute;gua pra percorrer.</p>
+<p>O Postgres <em>pode</em> ainda usar o &iacute;ndice &mdash; com <code>status</code> tendo pouqu&iacute;ssimos valores distintos, um bitmap scan ou skip scan &agrave;s vezes compensa &mdash; mas voc&ecirc; n&atilde;o deveria contar com isso. O &iacute;ndice confi&aacute;vel &eacute; <code>(especialidadeId, status)</code>, ou um s&oacute; de <code>especialidadeId</code>. E a frase que fecha a resposta: &ldquo;eu n&atilde;o chuto isso, eu rodo <code>EXPLAIN (ANALYZE, BUFFERS)</code> e leio o plano&rdquo;.</p></div>
+          </details>
+        </li>
+        <li>Por que rodar uma migration através de um pooler em transaction mode pode travar ou falhar silenciosamente?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Em <em>transaction mode</em> (PgBouncer, o pooler da Neon/Supabase), cada transa&ccedil;&atilde;o pode cair numa conex&atilde;o de backend diferente &mdash; <strong>n&atilde;o existe sess&atilde;o est&aacute;vel</strong>. Tudo que &eacute; por sess&atilde;o se perde ou se aplica na conex&atilde;o errada: prepared statements, <code>SET</code>/<code>search_path</code>, advisory locks de sess&atilde;o, temp tables.</p>
+<p>Migrations dependem justamente disso: pegam lock, rodam DDL longo, &agrave;s vezes fora de uma transa&ccedil;&atilde;o (<code>CREATE INDEX CONCURRENTLY</code>). Resultado: trava, estoura timeout ou aplica pela metade. A regra operacional &eacute; simples &mdash; <strong>app pela porta do pooler, migration pela conex&atilde;o direta</strong>.</p></div>
+          </details>
+        </li>
+        <li>Dê um cenário real onde você escolheria MySQL em vez de Postgres.
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Cen&aacute;rios leg&iacute;timos: a hospedagem ou o produto s&oacute; suportam MySQL bem (WordPress, boa parte do shared hosting); o time j&aacute; opera MySQL h&aacute; anos e sabe fazer failover &agrave;s 3h da manh&atilde;; ou voc&ecirc; precisa de sharding horizontal massivo com Vitess/PlanetScale, onde o ecossistema &eacute; maduro no MySQL e n&atilde;o no Postgres.</p>
+<p>A resposta madura &eacute; dizer que <strong>a escolha raramente &eacute; t&eacute;cnica pura, &eacute; operacional</strong>. E a&iacute; voc&ecirc; lista o que pesa a favor do Postgres quando n&atilde;o h&aacute; amarra: tipos ricos (JSONB, arrays, ranges), &iacute;ndices GIN/GiST/parciais/por express&atilde;o, CTEs e window functions maduras, extens&otilde;es (pgvector, PostGIS) e &mdash; o que mais salva a pele &mdash; <strong>DDL transacional</strong>: uma migration que falha no meio faz rollback em vez de deixar o schema num estado indefinido.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="02-nextjs-tailwind.html"><div class="dir">&larr; anterior</div><div class="t">Next.js &amp; Tailwind</div></a>
+    <a class="next" href="04-concorrencia.html"><div class="dir">próxima &rarr;</div><div class="t">Concorrência</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

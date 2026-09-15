@@ -1,0 +1,59 @@
+<section class="week" id="s15">
+  <div class="week-head"><span class="week-num">B10</span><h2>Bônus: testes &amp; qualidade</h2></div>
+  <div class="week-meta">~6h &middot; a diferença entre "funciona na minha máquina" e "funciona"</div>
+  <p class="intro">Você já segue TDD no Gabarita (bloco B7 menciona a skill Superpowers). Esta seção é sobre o vocabulário e as ferramentas que uma entrevista sênior espera: testar comportamento em vez de implementação, simular rede sem simular demais, e não deixar um teste instável (<em>flaky</em>) minar a confiança do time inteiro no CI.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w15-1"><label for="w15-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Testing Library: testar o que o usuário vê e clica, não o estado interno do componente &mdash; por que <code>getByRole</code> vem antes de <code>getByTestId</code></span></label></li>
+    <li class="item"><input type="checkbox" id="w15-2"><label for="w15-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Mock, stub, spy e fake &mdash; nomes diferentes pra graus diferentes de substituir uma dependência, e quando cada um é apropriado</span></label></li>
+    <li class="item"><input type="checkbox" id="w15-3"><label for="w15-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MSW (Mock Service Worker): interceptar a chamada de rede em vez de mockar o cliente HTTP &mdash; o mesmo teste serve pro app real</span></label></li>
+    <li class="item"><input type="checkbox" id="w15-4"><label for="w15-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Playwright: E2E de verdade, auto-espera em vez de <code>sleep</code>, e por que rodar em paralelo por padrão muda como você escreve teste</span></label></li>
+    <li class="item"><input type="checkbox" id="w15-5"><label for="w15-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Teste instável (flaky): as causas mais comuns &mdash; condição de corrida no teste, dependência de ordem, tempo real em vez de fake timers</span></label></li>
+    <li class="item"><input type="checkbox" id="w15-6"><label for="w15-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Cobertura de código: o que o número mede de verdade (linhas executadas) e o que ele não mede (se a asserção era a certa)</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://testing-library.com/docs/guiding-principles" target="_blank" rel="noopener">Testing Library — Guiding Principles</a></div><div class="r-note">O manifesto por trás da biblioteca: "quanto mais seus testes se parecem com o jeito que o software é usado, mais confiança eles dão".</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta, praticamente um parágrafo — mas é a peça que explica por que a biblioteca não tem <code>shallow render</code> nem seletor por classe CSS.</div><div class="r-src">testing-library.com &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener">About Queries — Priority</a></div><div class="r-note">A ordem de prioridade de seletor: role/label/text antes de test-id.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia a lista de prioridade e o porquê de cada nível. Pule a referência completa de cada query — isso é consulta.</div><div class="r-src">testing-library.com &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://mswjs.io/docs/" target="_blank" rel="noopener">Mock Service Worker</a></div><div class="r-note">Intercepta a requisição na camada de rede (Service Worker no navegador, interceptor no Node) — o componente não sabe que está sendo testado.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia Getting Started e Mocking Responses. A parte de browser integration só importa se for usar em desenvolvimento, não só em teste.</div><div class="r-src">mswjs.io &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://playwright.dev/docs/best-practices" target="_blank" rel="noopener">Playwright — Best Practices</a></div><div class="r-note">Auto-espera, seletores resilientes, isolamento entre testes — os hábitos que separam suíte confiável de suíte flaky.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Página de práticas, direta ao ponto. Preste atenção em "Don't test third-party dependencies" e "Use web first assertions".</div><div class="r-src">playwright.dev &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://kentcdodds.com/blog/write-tests" target="_blank" rel="noopener">Write tests. Not too many. Mostly integration.</a></div><div class="r-note">O argumento clássico do Kent C. Dodds contra a pirâmide clássica de testes: o "troféu de testes", com mais peso em integração do que em unitário puro.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Post único, leitura corrida — a tese central é o gráfico do troféu.</div><div class="r-src">kentcdodds.com</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; suíte de testes do Gabarita</div>
+    <div class="ammo-body">
+      <p>Os testes de fumaça <code>fumaca:csp</code> e <code>fumaca:csrf</code> citados no bloco de Segurança são um exemplo de teste que roda contra o app <strong>real</strong>, não uma unidade isolada — exatamente porque CSP e CSRF só existem de verdade em runtime, com headers de resposta reais. Um teste unitário do componente passaria verde com a página inteira quebrada.</p>
+      <p class="why"><strong>Por que isso importa:</strong> mostra que você escolhe o nível de teste pelo que pode quebrar de verdade, não por hábito — a resposta "eu testo tudo com unitário" é a que menos impressiona num painel sênior.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Por que a Testing Library recomenda <code>getByRole('button', { name: /enviar/i })</code> em vez de <code>getByTestId('btn-enviar')</code>?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Porque <code>role</code> e texto acessível são o que um usuário (e um leitor de tela) realmente percebe &mdash; testar por eles prova, de quebra, que o elemento é <strong>acessível</strong>. Um <code>data-testid</code> passa mesmo se o botão virar uma <code>&lt;div&gt;</code> sem semântica nenhuma.</p>
+<p><code>testId</code> ainda é válido como último recurso, quando não há role/label/texto estável &mdash; mas não como primeira escolha.</p></div>
+        </details>
+      </li>
+      <li>Qual a diferença entre mockar o módulo do cliente HTTP e usar MSW pra simular a resposta da API?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Mockar o módulo (ex.: <code>jest.mock('axios')</code>) substitui a <strong>implementação</strong> &mdash; o teste nunca exercita o código real de serialização, headers, tratamento de erro HTTP. O MSW intercepta na <strong>camada de rede</strong>: o app faz uma requisição de verdade, que é interceptada antes de sair da máquina. O mesmo handler de mock serve tanto pro teste quanto pra rodar a aplicação localmente sem backend.</p></div>
+        </details>
+      </li>
+      <li>Seu teste E2E passa localmente e falha de vez em quando no CI. Antes de aumentar o timeout, o que checar?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Aumentar timeout mascara a causa em vez de resolvê-la. Suspeitos mais comuns: <strong>dependência de ordem</strong> entre testes (um deixa estado que o próximo assume), <strong>condição de corrida</strong> no próprio teste (clicar antes de um elemento assíncrono aparecer &mdash; corrigido com espera baseada em condição, não em tempo fixo), e <strong>recurso compartilhado</strong> entre execuções paralelas (mesmo usuário de teste, mesmo dado de seed).</p></div>
+        </details>
+      </li>
+      <li>"Cobertura de 95%" garante o quê, exatamente?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Garante que 95% das <strong>linhas</strong> foram executadas durante os testes &mdash; nada sobre se a asserção testou a coisa certa. Um teste que chama a função e não checa o resultado conta como cobertura. Cobertura é um sinal de "o que nunca foi testado", útil pra achar buraco óbvio; não é uma métrica de qualidade do teste em si.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>

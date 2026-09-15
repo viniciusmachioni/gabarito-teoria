@@ -1,0 +1,103 @@
+<article data-href="https://pages.cs.wisc.edu/~remzi/OSTEP/">
+<p class="tldr">Concorrência trava quando dois fluxos de execução compartilham memória sem coordenação. Lock é o remédio mais simples; condition variable é o que evita <em>polling</em> enquanto espera; e os bugs reais têm um catálogo pequeno e reconhecível — não é aleatório, é padrão.</p>
+
+<h5>Cap. 26 — Concorrência: o problema</h5>
+<ul>
+<li>Uma <strong>race condition</strong> acontece quando o resultado depende da ordem de escalonamento entre threads, e essa ordem não é garantida. O caso canônico: <code>saldo++</code> não é atômico — é <em>load, add, store</em> em três instruções, e outra thread pode entrar no meio.</li>
+<li><strong>Seção crítica</strong> é o trecho de código que acessa o recurso compartilhado. As três propriedades que uma solução precisa: <strong>exclusão mútua</strong> (só uma thread por vez), <strong>progresso</strong> (quem quer entrar eventualmente entra) e <strong>espera limitada</strong> (ninguém espera pra sempre enquanto outros furam a fila).</li>
+</ul>
+
+<h5>Cap. 28 — Locks</h5>
+<ul>
+<li>Um lock começa livre; <code>lock()</code> trava (e bloqueia se já estiver travado); <code>unlock()</code> libera. O hardware precisa de uma instrução atômica de verdade — <code>test-and-set</code> ou <code>compare-and-swap</code> — porque nem <code>lock</code> em software puro escapa da mesma race condition que ele tenta resolver.</li>
+<li><strong>Spin lock</strong>: a thread fica num laço checando o lock. Simples e correto, mas desperdiça CPU — só faz sentido quando a espera é curtíssima (locks dentro do próprio kernel, por exemplo).</li>
+<li>Lock de verdade (o que uma linguagem de aplicação usa) combina spin curto com <strong>colocar a thread pra dormir</strong> e o sistema operacional a acorda quando o lock libera — é o papel de uma <em>queue</em> de threads bloqueadas.</li>
+</ul>
+
+<h5>Cap. 30 — Condition variables</h5>
+<ul>
+<li>Lock sozinho resolve exclusão mútua, não "espera por uma condição" (ex.: fila vazia, buffer cheio). <strong>Condition variable</strong> é uma fila de threads dormindo até alguém sinalizar.</li>
+<li>Padrão: <code>lock(); while (!condição) wait(cv, lock); … ; unlock();</code> — sempre em <strong>laço</strong>, nunca <code>if</code>, porque entre o <code>signal</code> e a thread acordar, outra pode ter mudado o estado de novo (<em>spurious wakeup</em> ou condição roubada por um terceiro).</li>
+<li>É o mecanismo por trás de fila produtor-consumidor: produtor sinaliza "tem item", consumidor sinaliza "tem espaço" — sem isso, o consumidor faria <em>busy-wait</em> gastando CPU à toa.</li>
+</ul>
+
+<h5>Cap. 32 — Bugs comuns de concorrência (o catálogo)</h5>
+<div class="tbl"><table>
+<tr><th>Categoria</th><th>O que é</th></tr>
+<tr><td><strong>Atomicity violation</strong></td><td>Duas operações deveriam ser atômicas juntas e não são — outra thread intercala no meio.</td></tr>
+<tr><td><strong>Order violation</strong></td><td>Código assume que A roda antes de B, mas nada garante isso (ex.: usar um objeto antes de ele ser inicializado por outra thread).</td></tr>
+<tr><td><strong>Deadlock</strong></td><td>Espera circular: T1 tem A e quer B, T2 tem B e quer A. As quatro condições necessárias: exclusão mútua, posse-e-espera, sem preempção, espera circular — <strong>quebrar qualquer uma</strong> evita o deadlock.</td></tr>
+</table></div>
+<p>Prevenção prática de deadlock: <strong>ordem total</strong> de aquisição de locks (sempre travar A antes de B, em todo lugar do código) é a técnica mais usada. <code>trylock()</code> com timeout e recuo é a alternativa quando ordem total não é viável.</p>
+
+<h5>Cap. 33 — Concorrência baseada em eventos</h5>
+<p>A alternativa a threads: um <strong>laço de eventos</strong> único que processa um evento por vez e nunca bloqueia — I/O usa chamadas não bloqueantes ou <code>select</code>/<code>epoll</code> pra saber quando algo está pronto. Ganha-se: sem race condition dentro do laço (só uma coisa roda por vez), sem custo de troca de contexto entre threads. Perde-se: uma chamada bloqueante ou um cálculo longo trava <em>tudo</em>, e o código vira uma cadeia de callbacks (ou, hoje, <code>async/await</code> por cima do mesmo modelo). <strong>É literalmente o event loop do Node e do navegador.</strong></p>
+</article>
+
+<article data-href="https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick">
+<p class="tldr">Node é uma thread rodando seu JavaScript mais a <strong>libuv</strong>, que tem um thread pool pra I/O de arquivo e DNS e usa o kernel pra I/O de rede. O event loop tem fases nomeadas, cada uma com sua fila — não é só "microtask vs. macrotask" do navegador.</p>
+
+<h5>As fases, em ordem</h5>
+<div class="tbl"><table>
+<tr><th>Fase</th><th>O que roda ali</th></tr>
+<tr><td><strong>timers</strong></td><td>callbacks de <code>setTimeout</code>/<code>setInterval</code> cujo tempo já passou</td></tr>
+<tr><td><strong>pending callbacks</strong></td><td>alguns callbacks de I/O adiados de um ciclo anterior (erros de TCP, por exemplo)</td></tr>
+<tr><td><strong>poll</strong></td><td>busca novos eventos de I/O e executa os callbacks prontos; é onde o loop passa a maior parte do tempo</td></tr>
+<tr><td><strong>check</strong></td><td>callbacks de <code>setImmediate</code></td></tr>
+<tr><td><strong>close callbacks</strong></td><td>ex.: <code>socket.on('close', …)</code></td></tr>
+</table></div>
+<p>Entre <strong>cada</strong> callback (não só entre fases), Node drena a fila de microtasks (<code>Promise</code>) e a de <code>process.nextTick</code>.</p>
+
+<h5><code>process.nextTick()</code> vs. <code>setImmediate()</code></h5>
+<ul>
+<li><code>process.nextTick(fn)</code> roda <strong>antes</strong> de qualquer fase do loop continuar — tem prioridade até maior que Promise. Uso abusivo (recursão de nextTick) pode <em>faminar</em> o I/O, porque a fila nunca esvazia pro loop seguir.</li>
+<li><code>setImmediate(fn)</code> roda na fase <strong>check</strong>, depois da fase poll do mesmo ciclo. Dentro de um callback de I/O, <code>setImmediate</code> sempre executa antes de um <code>setTimeout(fn, 0)</code> — fora de I/O, a ordem entre os dois não é garantida (depende de quanto tempo levou pra entrar no loop).</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> "Node não é single-threaded no sentido absoluto — o JavaScript roda numa thread só, mas I/O de disco e DNS usam o thread pool da libuv, e I/O de rede é assíncrono no kernel. É por isso que uma leitura de arquivo não trava requisições HTTP simultâneas, mas um <code>JSON.parse</code> gigante trava, sim."</p>
+</article>
+
+<article data-href="https://rxdb.info/articles/websockets-sse-polling-webrtc-webtransport.html">
+<p class="tldr">Quatro formas de manter cliente e servidor em sincronia, cada uma com um trade-off diferente entre simplicidade, direção do fluxo e overhead de infraestrutura.</p>
+
+<div class="tbl"><table>
+<tr><th></th><th>Direção</th><th>Protocolo</th><th>Reconecta sozinho</th><th>Passa por proxy/CDN sem drama</th></tr>
+<tr><td><strong>Polling</strong></td><td>cliente pergunta</td><td>HTTP normal, repetido</td><td>trivial</td><td>sim</td></tr>
+<tr><td><strong>Long polling</strong></td><td>cliente pergunta, servidor segura a resposta</td><td>HTTP</td><td>manual</td><td>sim</td></tr>
+<tr><td><strong>SSE</strong></td><td>servidor → cliente, só</td><td>HTTP (<code>text/event-stream</code>)</td><td><strong>automático</strong>, com <code>Last-Event-ID</code></td><td>sim</td></tr>
+<tr><td><strong>WebSocket</strong></td><td>bidirecional</td><td>seu próprio (upgrade do HTTP)</td><td>manual</td><td>precisa de suporte explícito</td></tr>
+</table></div>
+
+<h5>Quando cada um vence</h5>
+<ul>
+<li><strong>Polling</strong>: mais simples de implementar e depurar; desperdiça requisição quando nada mudou. Aceitável pra atualização pouco frequente.</li>
+<li><strong>SSE</strong>: a escolha certa quando o fluxo é <strong>só do servidor pro cliente</strong> — progresso de job, notificação, feed. Reconecta sozinho, é HTTP puro (funciona atrás de qualquer proxy corporativo), e o navegador limita a ~6 conexões SSE por domínio em HTTP/1.1 (HTTP/2 resolve isso multiplexando).</li>
+<li><strong>WebSocket</strong>: necessário quando o cliente também <strong>envia</strong> continuamente (chat, colaboração em tempo real, jogo). Overhead de infraestrutura maior: load balancer precisa de sticky session ou um pub/sub compartilhado entre instâncias, e a conexão persistente consome um socket do servidor o tempo todo.</li>
+</ul>
+<p>O erro comum é escolher WebSocket "porque é mais moderno" pra um caso puramente unidirecional — aí você herda a complexidade bidirecional (reconexão manual, mensagens perdidas na desconexão) sem precisar dela.</p>
+</article>
+
+<article data-href="https://github.com/donnemartin/system-design-primer">
+<p class="tldr">Três blocos do repositório que conversam direto com concorrência: filas de mensagens como <em>back pressure</em>, e os padrões de disponibilidade e consistência que toda fila e todo serviço replicado precisam escolher.</p>
+
+<h5>Asynchronism</h5>
+<ul>
+<li><strong>Message queue</strong>: produtor publica, consumidor processa quando puder. Desacopla o pico de chegada do ritmo de processamento — é <em>back pressure</em>: em vez do serviço cair sob carga, o trabalho espera na fila.</li>
+<li><strong>Task queue</strong>: variante focada em rodar trabalho pesado fora do caminho crítico do request (gerar relatório, mandar e-mail, processar imagem).</li>
+<li><strong>Back pressure</strong> de verdade também significa ter um limite: uma fila sem limite de tamanho só transforma "serviço caiu" em "memória do broker estourou" mais tarde.</li>
+</ul>
+
+<h5>Availability patterns</h5>
+<ul>
+<li><strong>Fail-over</strong> ativo-passivo: uma réplica assume se a principal cai (heartbeat detecta a falha). Ativo-ativo: todas atendem tráfego, mais capacidade, mais complexidade de consistência.</li>
+<li><strong>Replicação</strong> é a base de disponibilidade — mas replicar significa decidir consistência (próximo tópico).</li>
+</ul>
+
+<h5>Consistency patterns</h5>
+<div class="tbl"><table>
+<tr><th>Padrão</th><th>Garante</th></tr>
+<tr><td>Weak consistency</td><td>leitura pode não ver a escrita mais recente (ex.: chamada de voz — melhor perder um pacote que esperar)</td></tr>
+<tr><td>Eventual consistency</td><td>réplicas convergem <em>depois de um tempo</em> sem nova escrita (DNS, cache, e-mail)</td></tr>
+<tr><td>Strong consistency</td><td>toda réplica vê a mesma coisa imediatamente após a escrita (sistema financeiro, sequência de arquivos)</td></tr>
+</table></div>
+<p>É a mesma lâmina do CAP theorem (System design, bônus B1): fila e réplica são onde essa escolha vira código, não só slide.</p>
+</article>

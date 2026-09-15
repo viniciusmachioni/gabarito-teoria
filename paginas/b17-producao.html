@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Produção: observabilidade &amp; CI/CD · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s22">
+  <div class="week-head"><span class="week-num">B17</span><h2>Bônus: produção &mdash; observabilidade, CI/CD &amp; confiabilidade</h2></div>
+  <div class="week-meta">~6h &middot; o que acontece depois do merge</div>
+  <p class="intro">Escrever a feature é metade do trabalho de sênior; a outra metade é saber se ela está funcionando em produção e ter um jeito seguro de tirá-la do ar rápido quando não está. Esta seção é o vocabulário de operação que separa "sei fazer deploy" de "sei operar o que fiz deploy".</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w22-1"><label for="w22-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os três pilares de observabilidade: logs estruturados, métricas e tracing distribuído &mdash; e qual pergunta cada um responde</span></label></li>
+    <li class="item"><input type="checkbox" id="w22-2"><label for="w22-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">SLI, SLO e error budget &mdash; como transformar "o site tem que estar sempre no ar" numa meta numérica negociável</span></label></li>
+    <li class="item"><input type="checkbox" id="w22-3"><label for="w22-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Feature flags: lançar código desligado, ativar por porcentagem/segmento, e o kill switch como alternativa a rollback de deploy</span></label></li>
+    <li class="item"><input type="checkbox" id="w22-4"><label for="w22-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Estratégias de deploy: blue-green, canary e rolling &mdash; o que cada uma troca entre velocidade de rollback e complexidade de infra</span></label></li>
+    <li class="item"><input type="checkbox" id="w22-5"><label for="w22-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Alertar em sintoma, não em causa &mdash; por que "CPU alta" acorda menos gente à toa do que "latência p99 acima de X"</span></label></li>
+    <li class="item"><input type="checkbox" id="w22-6"><label for="w22-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Postmortem sem culpa (blameless): o formato que separa "o que falhou no processo" de "quem errou" &mdash; e por que isso gera mais informação real</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://opentelemetry.io/docs/concepts/observability-primer/" target="_blank" rel="noopener">OpenTelemetry — Observability Primer</a></div><div class="r-note">A definição dos três pilares e por que "eu tenho logs" não é o mesmo que "eu tenho observabilidade".</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página conceitual curta, vendor-neutra — boa base antes de olhar qualquer ferramenta específica.</div><div class="r-src">opentelemetry.io &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">Google SRE Book — Service Level Objectives</a></div><div class="r-note">O capítulo que define SLI, SLO, SLA e error budget com exemplos numéricos.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia até a seção de error budget — é o conceito que mais aparece em entrevista ("quanto de indisponibilidade vocês toleram por mês, e o que fazem quando estoura").</div><div class="r-src">sre.google &middot; oficial, livro do Google</div></li>
+    <li><div class="r-title"><a href="https://martinfowler.com/articles/feature-toggles.html" target="_blank" rel="noopener">Feature Toggles (aka Feature Flags)</a></div><div class="r-note">Taxonomia de Martin Fowler: release toggle, experiment toggle, ops toggle, permission toggle — cada um com um ciclo de vida diferente.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a introdução e a seção "Categories of Toggles". O resto (implementação, toggle router) é opcional.</div><div class="r-src">martinfowler.com</div></li>
+    <li><div class="r-title"><a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">BlueGreenDeployment</a></div><div class="r-note">Post curto que define o padrão base; de lá segue pros links de canary e rolling deployment.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Curtíssimo — leia este e depois busque "canary release" do mesmo autor pra comparar os dois.</div><div class="r-src">martinfowler.com</div></li>
+    <li><div class="r-title"><a href="https://sre.google/sre-book/postmortem-culture/" target="_blank" rel="noopener">Google SRE Book — Postmortem Culture</a></div><div class="r-note">Por que cultura sem culpa gera relatos mais honestos, e o formato de um postmortem que vira aprendizado real em vez de teatro.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Capítulo curto e muito citado — a frase "we believe that a blameless environment…" é literalmente quotada em entrevista às vezes.</div><div class="r-src">sre.google &middot; oficial, livro do Google</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; testes de fumaça do Gabarita</div>
+    <div class="ammo-body">
+      <p>Os testes de fumaça <code>fumaca:csp</code>/<code>fumaca:csrf</code> (Segurança) são, na prática, um <strong>gate de deploy</strong>: rodam contra o app real depois do build, antes de considerar o deploy saudável. É o mesmo princípio por trás de canary release &mdash; verificar o comportamento real antes de expor todo mundo, só que manual em vez de automático por porcentagem de tráfego.</p>
+      <p class="why"><strong>Por que isso importa:</strong> dá pra responder "como você garante que um deploy não quebrou nada crítico" com um exemplo concreto, em vez de "a gente tem CI".</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual a diferença entre um log estruturado e uma métrica, e por que você não substitui uma pela outra?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Log estruturado registra um <strong>evento específico</strong> com contexto rico (usuário, request id, payload) &mdash; ótimo pra investigar um caso depois que ele aconteceu, caro de agregar em volume alto. Métrica é um <strong>número agregado ao longo do tempo</strong> (latência p99, taxa de erro por minuto) &mdash; barata de guardar e ótima pra alertar e ver tendência, mas sem o contexto de um caso individual. Tracing conecta os dois: segue uma requisição através de vários serviços.</p></div>
+        </details>
+      </li>
+      <li>Sua SLO é 99.9% de disponibilidade por mês. Isso já aconteceu um incidente que consumiu metade do error budget do mês, faltando duas semanas. O que muda na prática?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>O <strong>error budget</strong> é a folga negociada entre confiabilidade e velocidade de lançar coisa nova. Consumido metade, a prática comum (do próprio livro do Google SRE) é desacelerar lançamentos arriscados pelo resto do período e priorizar confiabilidade até o budget renovar &mdash; em vez de continuar arriscando no mesmo ritmo e estourar o SLA combinado com o cliente.</p></div>
+        </details>
+      </li>
+      <li>Por que "alertar quando a CPU passa de 80%" costuma gerar mais alerta inútil do que "alertar quando a latência p99 passa de 2s"?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>CPU alta é uma <strong>causa possível</strong>, não necessariamente um <strong>sintoma que o usuário sente</strong> &mdash; o serviço pode estar em 90% de CPU e respondendo rápido o dia inteiro. Latência (ou taxa de erro) é o que o usuário de fato experimenta. A prática recomendada é alertar no sintoma (o que importa pro usuário) e usar métrica de causa só pra <em>investigar</em> depois que o alerta de sintoma já disparou.</p></div>
+        </details>
+      </li>
+      <li>Um postmortem "sem culpa" (blameless) muda o quê, na prática, em relação a um postmortem comum?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Assume que a pessoa envolvida tomou a melhor decisão possível com a informação que tinha no momento &mdash; o foco vai pro <strong>sistema</strong> que permitiu o erro acontecer (falta de alerta, deploy sem rollback fácil, documentação desatualizada), não pra quem apertou o botão. Na prática isso muda o resultado: as pessoas relatam o que realmente aconteceu, incluindo os próprios erros, porque não tem risco de punição — e é exatamente esse relato completo que permite corrigir a causa raiz.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b16-apis.html"><div class="dir">&larr; anterior</div><div class="t">Design de APIs</div></a>
+    <a class="next" href="b18-senioridade.html"><div class="dir">próxima &rarr;</div><div class="t">Senioridade &amp; comportamental</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

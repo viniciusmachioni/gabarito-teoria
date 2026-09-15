@@ -1,0 +1,52 @@
+<section class="week" id="s23">
+  <div class="week-head"><span class="week-num">B18</span><h2>Bônus: senioridade &amp; comportamental</h2></div>
+  <div class="week-meta">~5h &middot; o que muda de pleno pra sênior não é saber mais coisa</div>
+  <p class="intro">A diferença entre pleno e sênior raramente é conhecimento técnico puro &mdash; é escopo de decisão, comunicação escrita e como você lida com desacordo. Esta seção prepara a rodada comportamental, que em loop de sênior costuma pesar tanto quanto a técnica.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w23-1"><label for="w23-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O que muda de pleno pra sênior, de verdade: escopo de decisão (features → sistema), comunicação escrita e capacidade de dizer "não" com justificativa</span></label></li>
+    <li class="item"><input type="checkbox" id="w23-2"><label for="w23-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Code review construtivo: separar bloqueio ("precisa mudar antes do merge") de sugestão ("considere"), e como discordar sem travar o time</span></label></li>
+    <li class="item"><input type="checkbox" id="w23-3"><label for="w23-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Design doc / RFC: por que escrever a decisão antes de implementar, e o que uma seção de "alternativas consideradas" prova sobre quem escreveu</span></label></li>
+    <li class="item"><input type="checkbox" id="w23-4"><label for="w23-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Mentoria sem microgerenciar: pair programming, perguntar em vez de responder, e deixar alguém errar de um jeito seguro</span></label></li>
+    <li class="item"><input type="checkbox" id="w23-5"><label for="w23-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Conflito técnico: discordar de um tech lead ou de outro sênior sem virar embate de ego &mdash; "discordo e me comprometo" como saída real</span></label></li>
+    <li class="item"><input type="checkbox" id="w23-6"><label for="w23-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Formato STAR de resposta comportamental: Situação, Tarefa, Ação, Resultado &mdash; e por que "Resultado" sem número específico soa vago</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://staffeng.com/guides/what-is-staff-engineering/" target="_blank" rel="noopener">StaffEng — What is Staff Engineering?</a></div><div class="r-note">Will Larson descreve a progressão de escopo entre senioridades — mesmo mirando "staff", o trecho sobre a transição sênior→staff explica bem o que já muda em pleno→sênior.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia a seção sobre os arquétipos e "scope". Não precisa ler o site inteiro (é uma coleção grande).</div><div class="r-src">staffeng.com &middot; Will Larson</div></li>
+    <li><div class="r-title"><a href="https://google.github.io/eng-practices/review/reviewer/" target="_blank" rel="noopener">Google Engineering Practices — Code Review</a></div><div class="r-note">O guia de code review usado internamente no Google: o que bloquear, o que é opinião, como comentar sem ser rude.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia "The Standard of Code Review" e "How to Write Code Review Comments". O resto é sobre navegar o processo interno do Google, menos útil fora dele.</div><div class="r-src">google.github.io &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://www.industrialempathy.com/posts/design-docs-at-google/" target="_blank" rel="noopener">Design Docs at Google</a></div><div class="r-note">O template e o raciocínio por trás de escrever a decisão antes de codar — inclusive a seção de "alternativas consideradas e por que não".</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Post único, com um template ao final que dá pra roubar direto.</div><div class="r-src">industrialempathy.com &middot; ex-Google</div></li>
+    <li><div class="r-title"><a href="https://www.themuse.com/advice/star-interview-method" target="_blank" rel="noopener">The STAR Interview Method</a></div><div class="r-note">O formato de resposta comportamental explicado com exemplo — o mesmo que o Gabarita já usa nas histórias (bloco de STAR).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Curto. O ponto que mais gente erra: "Resultado" precisa de número (tempo, %, quantidade), não "melhorou bastante".</div><div class="r-src">themuse.com</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; as decisões documentadas no DECISOES.md</div>
+    <div class="ammo-body">
+      <p>Cada entrada do <code>DECISOES.md</code> já é, na prática, um design doc em miniatura: contexto, decisão, porquê, resultado. Isso é raro o suficiente pra virar resposta pronta de "me dá um exemplo de decisão técnica difícil que você documentou" &mdash; a maioria dos candidatos improvisa a resposta ali na hora; você tem o registro escrito no momento em que a decisão foi tomada, não reconstruído de memória.</p>
+      <p class="why"><strong>Por que isso importa:</strong> documentar decisão <em>enquanto</em> ela acontece (não depois) é exatamente o hábito que separa "eu decido bem" de "eu decido bem e deixo rastro pra outra pessoa entender depois" &mdash; a segunda é a que sênior precisa provar.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual é a diferença central entre o que se espera de um engenheiro pleno e de um sênior, além de "sabe mais"?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>Escopo de decisão e ambiguidade</strong>: pleno executa bem um problema bem definido; sênior é procurado justamente quando o problema <em>não</em> está bem definido &mdash; precisa decidir o que construir, comunicar o trade-off por escrito, e assumir a consequência da escolha. Conhecimento técnico é necessário mas não é o que diferencia; o diferencial é operar bem com ambiguidade e influenciar decisão além do próprio código.</p></div>
+        </details>
+      </li>
+      <li>Num code review, qual a diferença prática entre marcar um comentário como bloqueante e como sugestão, e por que essa distinção importa pro time?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Bloqueante é "isto precisa mudar antes do merge" (bug, falha de segurança, quebra de contrato); sugestão é "considere isto, mas não travo por causa dela" (estilo, uma alternativa válida). Sem essa distinção explícita, todo comentário vira implicitamente bloqueante &mdash; e revisão fica lenta e desgastante, com autor tendo que negociar cada opinião como se fosse veto.</p></div>
+        </details>
+      </li>
+      <li>Você discorda tecnicamente da decisão de um tech lead, já argumentou e ele decidiu seguir do jeito dele mesmo assim. O que um sênior faz a seguir?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>Discordar e se comprometer</strong> (disagree and commit): registrar a discordância de forma clara uma vez, garantir que a decisão foi tomada com os fatos disponíveis, e então executar a decisão com o mesmo empenho de quem concorda &mdash; sem sabotar passivamente nem reabrir o debate a cada reunião. Reservar essa saída pra decisões onde você realmente discorda, não pra toda decisão que não foi do seu jeito.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>

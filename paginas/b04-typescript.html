@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TypeScript de verdade · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s9">
+    <div class="week-head"><span class="week-num">B4</span><h2>Bônus: TypeScript de verdade</h2></div>
+      <div class="week-meta">~5h &middot; você usa há anos &mdash; hora de nomear o porquê</div>
+
+    <p class="intro">Escrever <code>: string</code> depois de um parâmetro não é a parte difícil. A parte que separa pleno de quem só copia tipo de outro arquivo é entender que TypeScript compara pela FORMA do objeto, não pelo nome do tipo &mdash; e é isso que faz genéricos, narrowing e <code>z.infer</code> fazerem sentido juntos.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w10-1"><label for="w10-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tipagem estrutural (duck typing) vs. nominal &mdash; por que TypeScript compara pela forma, não pelo nome do tipo</span></label></li>
+      <li class="item"><input type="checkbox" id="w10-2"><label for="w10-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Genéricos com restrição (<code>&lt;T extends ...&gt;</code>) &mdash; o que eles resolvem que <code>any</code> não resolve</span></label></li>
+      <li class="item"><input type="checkbox" id="w10-3"><label for="w10-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Union, intersection e narrowing &mdash; como o compilador &ldquo;sabe&rdquo; o tipo depois de um <code>if</code></span></label></li>
+      <li class="item"><input type="checkbox" id="w10-4"><label for="w10-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Derivar tipo de runtime (<code>z.infer</code>) em vez de escrever o tipo duas vezes &mdash; uma fonte de verdade só</span></label></li>
+      <li class="item"><input type="checkbox" id="w10-5"><label for="w10-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Utility types essenciais: <code>Partial</code>, <code>Pick</code>, <code>Omit</code>, <code>Record</code> &mdash; quando cada um evita duplicar uma interface</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://www.typescriptlang.org/docs/handbook/intro.html" target="_blank" rel="noopener">TypeScript Handbook</a></div><div class="r-note">A documentação oficial, reescrita em torno de como o sistema de tipos realmente pensa &mdash; comece pelo básico mesmo já sabendo, os exemplos mudam a intuição.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~2h</span>Leia s&oacute; a trilha <strong>The Handbook</strong>, na ordem: <em>The Basics</em> &rarr; <em>Everyday Types</em> &rarr; <em>Narrowing</em> &rarr; <em>More on Functions</em> &rarr; <em>Object Types</em>. Pule <em>Type Manipulation</em> avan&ccedil;ado (conditional e mapped types) no primeiro passe, e ignore <em>Reference</em> e <em>Tutorials</em> por completo.</div><div class="r-src">typescriptlang.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.typescriptlang.org/docs/handbook/2/generics.html" target="_blank" rel="noopener">Handbook &mdash; Generics</a></div><div class="r-note">Exatamente o padrão que você já usa em <code>selecionarAvisos&lt;T extends CandidatoAviso&gt;</code>, explicado do zero.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~25 min</span>P&aacute;gina m&eacute;dia. Foque em <strong>Generic Constraints</strong> e em <em>&ldquo;Using Type Parameters in Generic Constraints&rdquo;</em> &mdash; &eacute; a&iacute; que mora 90% do erro real de generics no dia a dia.</div><div class="r-src">typescriptlang.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html" target="_blank" rel="noopener">Handbook &mdash; Narrowing</a></div><div class="r-note">Como o compilador estreita um tipo depois de um <code>if</code>, <code>typeof</code> ou <code>in</code> &mdash; a base de qualquer union type útil.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~30 min</span>A p&aacute;gina mais &uacute;til do handbook inteiro. N&atilde;o pule <strong>type predicates</strong> (<code>x is Foo</code>), <strong>discriminated unions</strong> nem o <strong><code>never</code> como checagem de exaustividade</strong> &mdash; os tr&ecirc;s caem em entrevista.</div><div class="r-src">typescriptlang.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html" target="_blank" rel="noopener">Utility Types</a></div><div class="r-note">Referência de <code>Partial</code>, <code>Pick</code>, <code>Omit</code>, <code>Record</code> e companhia, direto da fonte.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~15 min</span>&Eacute; dicion&aacute;rio, n&atilde;o leitura. Passe o olho s&oacute; em <code>Partial</code>, <code>Pick</code>, <code>Omit</code>, <code>Record</code>, <code>ReturnType</code> e <code>Awaited</code>. O resto voc&ecirc; procura no dia em que precisar.</div><div class="r-src">typescriptlang.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://zod.dev/basics" target="_blank" rel="noopener">Zod &mdash; Basic usage</a></div><div class="r-note">A documentação oficial do Zod, a mesma lib que você já usa pros schemas de IA &mdash; a seção sobre <code>z.infer</code> é literalmente o seu padrão de código.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia &ldquo;Basic usage&rdquo; inteiro e depois s&oacute; dois pontos: <code>.safeParse()</code> e a infer&ecirc;ncia de tipo com <code>z.infer</code>. A refer&ecirc;ncia de todos os validadores &eacute; consulta.</div><div class="r-src">zod.dev &middot; oficial, gratuito</div></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; generics reais do seu código</div>
+      <div class="ammo-body">
+        <p>Três exemplos, direto do Gabarita, sem simplificar:</p>
+        <pre><code>// genérico com restrição estrutural
+export function selecionarAvisos&lt;T extends CandidatoAviso&gt;(
+  candidatos: readonly T[]
+): T[] { /* ... */ }
+
+// restrição por interseção de dois tipos
+export function assinaturaVigente&lt;
+  T extends EstadoAssinatura & { createdAt: Date }
+&gt;(estado: T) { /* ... */ }
+
+// tipo derivado do schema de validação, nunca escrito à mão
+export type ExtractedQuestion =
+  z.infer&lt;typeof ExtractedQuestionSchema&gt;;</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> os dois primeiros são genéricos com restrição estrutural (<code>extends</code>) &mdash; a função aceita qualquer tipo, contanto que ele tenha aquele formato, exatamente a definição de tipagem estrutural. O terceiro é o motivo de você nunca ter dois lugares divergentes descrevendo o mesmo dado: o tipo NASCE do schema Zod que já valida o JSON da IA em runtime, então tipo e validação nunca saem de sincronia.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>Por que TypeScript deixa passar um objeto com campos a mais pra uma função que só espera dois campos, mas reclama se faltar um?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque o TypeScript &eacute; <strong>estruturalmente tipado</strong>: um tipo &eacute; compat&iacute;vel com outro se <em>tem pelo menos</em> o que o outro exige. Campos a mais n&atilde;o atrapalham ningu&eacute;m (&eacute; subtipagem por largura); campo faltando quebra a promessa e por isso &eacute; erro.</p>
+<p>A exce&ccedil;&atilde;o que confunde todo mundo &eacute; o <strong>excess property check</strong>: passar um <em>objeto literal</em> direto &mdash; <code>f({ a: 1, b: 2, c: 3 })</code> &mdash; reclama do <code>c</code>. Mas atribua a uma vari&aacute;vel antes e o erro some.</p>
+<p>N&atilde;o &eacute; inconsist&ecirc;ncia: um literal escrito ali na hora, com campo a mais, &eacute; quase sempre erro de digita&ccedil;&atilde;o ou de entendimento da API &mdash; vale avisar. Uma vari&aacute;vel pode ter vindo de qualquer lugar e ser legitimamente mais rica que o par&acirc;metro.</p></div>
+          </details>
+        </li>
+        <li>Quando um genérico com <code>extends</code> é melhor que <code>any</code> ou <code>unknown</code>?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Quando voc&ecirc; precisa <strong>preservar a rela&ccedil;&atilde;o entre entrada e sa&iacute;da</strong>. <code>any</code> desliga a checagem e contamina tudo o que toca; <code>unknown</code> &eacute; seguro mas apaga a informa&ccedil;&atilde;o &mdash; quem chama recebe algo que precisa estreitar de novo.</p>
+<p>O exemplo can&ocirc;nico: <code>function pega&lt;T, K extends keyof T&gt;(obj: T, chave: K): T[K]</code>. Isso devolve exatamente o tipo daquele campo e erra <em>em compila&ccedil;&atilde;o</em> se a chave n&atilde;o existe. Nem <code>any</code> nem <code>unknown</code> conseguem isso.</p>
+<p>Regra pr&aacute;tica que vale citar: um gen&eacute;rico s&oacute; est&aacute; ganhando alguma coisa se o par&acirc;metro de tipo aparecer em <strong>pelo menos dois lugares</strong> (por exemplo entrada e retorno, ou entrada e restri&ccedil;&atilde;o). Se aparece uma vez s&oacute;, ele &eacute; decora&ccedil;&atilde;o &mdash; troque por <code>unknown</code>.</p></div>
+          </details>
+        </li>
+        <li>Por que derivar o tipo do schema Zod é mais seguro que escrever a interface TypeScript separada, do lado?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque a interface escrita &agrave; m&atilde;o e o schema <strong>divergem em sil&ecirc;ncio</strong>. Algu&eacute;m adiciona um campo no schema e o tipo continua o antigo; ou pior, o tipo promete um campo que a valida&ccedil;&atilde;o n&atilde;o garante &mdash; e a&iacute; o TypeScript te d&aacute; confian&ccedil;a em runtime que ele n&atilde;o pode sustentar.</p>
+<p>Com <code>z.infer&lt;typeof schema&gt;</code> existe <strong>uma fonte de verdade</strong>: o schema. Qualquer diverg&ecirc;ncia vira erro de compila&ccedil;&atilde;o em vez de <code>undefined</code> em produ&ccedil;&atilde;o.</p>
+<p>&Eacute; o mesmo princ&iacute;pio de derivar tipos do Prisma em vez de redigitar a tabela em TypeScript. Tipo &eacute; uma <em>proje&ccedil;&atilde;o</em> do contrato, nunca uma segunda c&oacute;pia dele mantida &agrave; m&atilde;o.</p></div>
+          </details>
+        </li>
+        <li>Diferença entre <code>Omit&lt;T, K&gt;</code> e <code>Partial&lt;T&gt;</code> &mdash; quando usar cada um?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><code>Partial&lt;T&gt;</code> mant&eacute;m todos os campos e torna cada um <strong>opcional</strong> &mdash; o tipo certo pra um update parcial (<code>PATCH</code>), onde o cliente manda s&oacute; o que mudou.</p>
+<p><code>Omit&lt;T, K&gt;</code> <strong>remove campos inteiros</strong> &mdash; &ldquo;o mesmo usu&aacute;rio, mas sem <code>senhaHash</code>&rdquo; para o que sai numa API, ou &ldquo;sem <code>id</code>&rdquo;, porque quem cria n&atilde;o fornece.</p>
+<p>A diferen&ccedil;a que importa: <code>Partial</code> <em>enfraquece a garantia</em> (agora tudo pode faltar, e voc&ecirc; precisa tratar todo campo como possivelmente ausente); <code>Omit</code> <em>muda a forma</em> do tipo, e o que sobra continua obrigat&oacute;rio.</p>
+<p>Pegadinha pra citar: <code>Omit</code> n&atilde;o distribui sobre union &mdash; aplicado a <code>A | B</code> ele colapsa nas propriedades comuns. O idiom&aacute;tico &eacute; um helper distributivo: <code>type OmitD&lt;T, K extends keyof any&gt; = T extends any ? Omit&lt;T, K&gt; : never</code>.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b03-arquitetura-patterns.html"><div class="dir">&larr; anterior</div><div class="t">Arquitetura &amp; design patterns</div></a>
+    <a class="next" href="b05-http-redes.html"><div class="dir">próxima &rarr;</div><div class="t">HTTP &amp; redes</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

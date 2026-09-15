@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OAuth &amp; autenticação federada · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="s11">
+    <div class="week-head"><span class="week-num">B6</span><h2>Bônus: autenticação federada &amp; OAuth</h2></div>
+      <div class="week-meta">~4h &middot; você já implementou isso &mdash; falta o nome dos conceitos</div>
+
+    <p class="intro">&ldquo;Entrar com Google&rdquo; parece um botão simples até você ter que decidir o que fazer quando o e-mail do Google já existe no seu banco. Você já tomou essa decisão de propósito no Gabarita &mdash; esta seção nomeia o protocolo por trás dela.</p>
+
+    <h3 class="sub">Tópicos</h3>
+    <ul class="checklist">
+      <li class="item"><input type="checkbox" id="w12-1"><label for="w12-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">OAuth 2.0 &mdash; o que ele resolve (delegar acesso sem compartilhar senha) e o que ele NÃO é (não é autenticação)</span></label></li>
+      <li class="item"><input type="checkbox" id="w12-2"><label for="w12-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">OpenID Connect (OIDC) &mdash; a camada de identidade em cima do OAuth que faz o &ldquo;Entrar com Google&rdquo; te dizer QUEM é a pessoa</span></label></li>
+      <li class="item"><input type="checkbox" id="w12-3"><label for="w12-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Access token vs. refresh token vs. ID token &mdash; pra que serve cada um, e qual prova identidade</span></label></li>
+      <li class="item"><input type="checkbox" id="w12-4"><label for="w12-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O ataque de account takeover via vínculo automático de conta social &mdash; e por que &ldquo;e-mail devolvido pelo provedor&rdquo; sozinho não basta</span></label></li>
+      <li class="item"><input type="checkbox" id="w12-5"><label for="w12-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Onde fica o segredo: client secret nunca no navegador, PKCE pra apps públicas (SPA, mobile)</span></label></li>
+    </ul>
+
+    <h3 class="sub">Onde estudar (grátis)</h3>
+    <ul class="resources">
+      <li><div class="r-title"><a href="https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Cheat_Sheet.html" target="_blank" rel="noopener">OAuth2 Cheat Sheet</a></div><div class="r-note">Os erros mais comuns de implementação, incluindo exatamente o cenário de vínculo de conta que você resolveu.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curto e pr&aacute;tico. N&atilde;o pule tr&ecirc;s pontos: <strong>PKCE</strong>, <strong>valida&ccedil;&atilde;o de <code>redirect_uri</code></strong> e o <strong><code>state</code> contra CSRF</strong>.</div><div class="r-src">cheatsheetseries.owasp.org &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://authjs.dev/getting-started" target="_blank" rel="noopener">Auth.js &mdash; Getting Started</a></div><div class="r-note">A documentação oficial da lib que você já usa &mdash; vale reler agora com o vocabulário OAuth/OIDC formal na cabeça.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~30 min</span>Releia s&oacute; os conceitos, n&atilde;o os guias de instala&ccedil;&atilde;o (voc&ecirc; j&aacute; instalou): <strong>session strategies</strong> (JWT vs. database), <strong>callbacks</strong> (<code>signIn</code>, <code>jwt</code>, <code>session</code>) e <strong>account linking</strong>.</div><div class="r-src">authjs.dev &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.oauth.com/" target="_blank" rel="noopener">OAuth 2.0 Simplified</a></div><div class="r-note">Site gratuito de referência sobre OAuth, escrito por quem edita a própria especificação &mdash; direto ao ponto, sem venda de curso.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~45 min</span>Leia tr&ecirc;s cap&iacute;tulos: <strong>The Authorization Code Flow</strong> (com PKCE), <strong>Access Tokens</strong> e <strong>Refresh Tokens</strong>. Pule tudo sobre <em>construir um servidor de autoriza&ccedil;&atilde;o</em> &mdash; no seu caso voc&ecirc; &eacute; o cliente.</div><div class="r-src">oauth.com &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://auth0.com/blog/oauth-2-0-and-openid-connect-the-professional-guide/" target="_blank" rel="noopener">OAuth 2.0 and OpenID Connect: The Professional Guide</a></div><div class="r-note">Compara os dois protocolos lado a lado &mdash; a leitura certa pra nunca mais confundir &ldquo;autenticar&rdquo; com &ldquo;autorizar&rdquo;.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>O que importa &eacute; a primeira metade: por que OAuth <strong>n&atilde;o</strong> &eacute; autentica&ccedil;&atilde;o e o que o OIDC acrescenta (ID token, <code>/userinfo</code>, escopo <code>openid</code>). A parte final, de produto e Auth0, pode pular.</div><div class="r-src">auth0.com/blog &middot; gratuito</div></li>
+    </ul>
+
+    <div class="ammo">
+      <div class="ammo-head">Munição da sua entrevista &middot; src/lib/auth/decidir-vinculo-google.ts</div>
+      <div class="ammo-body">
+        <p>Sua política de vínculo de conta, comentário e código reais:</p>
+        <pre><code>/**
+ * O Google NUNCA cria conta — só linka a um User que já
+ * existe, e só quando o Google confirma email_verified —
+ * senão é o vetor clássico de account takeover: alguém
+ * registra o e-mail de outra pessoa no Google sem controlar
+ * de fato aquela caixa de entrada.
+ */
+export function decidirVinculoGoogle(input: {
+  existingUser: { id: string } | null;
+  hasGoogleAccount: boolean;
+  emailVerifiedByGoogle: boolean;
+}): "linkar" | "recusar" | "ja-vinculado" {
+  if (input.hasGoogleAccount) return "ja-vinculado";
+  if (!input.existingUser) return "recusar";
+  if (!input.emailVerifiedByGoogle) return "recusar";
+  return "linkar";
+}</code></pre>
+        <p class="why"><strong>Por que isso importa:</strong> <code>allowDangerousEmailAccountLinking: false</code> é o padrão seguro do Auth.js de propósito &mdash; o nome já avisa que ligar contas automaticamente por e-mail é perigoso. Você decidiu o vínculo explicitamente, checando <code>email_verified</code> primeiro. É a resposta pronta pra &ldquo;como você implementaria login social com segurança?&rdquo; &mdash; com o ataque específico que a decisão evita, não só a teoria solta.</p>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+      <ol>
+        <li>OAuth resolve autenticação ou autorização? Por que &ldquo;login com Google&rdquo; tecnicamente usa as duas coisas (OAuth + OIDC)?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>OAuth 2.0 &eacute; autoriza&ccedil;&atilde;o delegada</strong>, n&atilde;o autentica&ccedil;&atilde;o. Ele existe pra dar a um app um token com escopo limitado pra agir em nome do usu&aacute;rio numa API, sem que o usu&aacute;rio entregue a senha. Ele n&atilde;o diz <em>quem</em> o usu&aacute;rio &eacute; &mdash; tratar access token como prova de identidade &eacute; um antipadr&atilde;o cl&aacute;ssico e a origem de v&aacute;rias falhas reais.</p>
+<p><strong>OIDC</strong> (OpenID Connect) &eacute; a camada fina em cima do OAuth que acrescenta identidade: o escopo <code>openid</code>, o endpoint <code>/userinfo</code> e sobretudo o <strong>ID token</strong> &mdash; um JWT com <code>sub</code>, <code>email</code>, <code>email_verified</code>, <code>iss</code>, <code>aud</code>, <code>nonce</code>.</p>
+<p>&ldquo;Login com Google&rdquo; usa os dois porque faz duas coisas: OIDC pra estabelecer <em>quem &eacute;</em>, e OAuth pro token que eventualmente acessa uma API do Google (agenda, contatos) em nome dessa pessoa.</p></div>
+          </details>
+        </li>
+        <li>Por que seu app só vincula uma conta Google a um usuário que JÁ existe, e só se o e-mail vier verificado?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>Porque o e-mail &eacute; o <strong>&uacute;nico elo</strong> entre a conta do provedor e a conta local &mdash; e ele s&oacute; &eacute; confi&aacute;vel se o provedor afirmar que verificou a posse.</p>
+<p>Exigir que a conta <em>j&aacute; exista</em> elimina a cria&ccedil;&atilde;o silenciosa de conta por OAuth e o cen&aacute;rio em que algu&eacute;m &ldquo;reivindica&rdquo; um e-mail ainda n&atilde;o cadastrado, deixando uma conta plantada esperando a v&iacute;tima chegar. Exigir <code>email_verified</code> elimina o takeover direto.</p>
+<p>Em entrevista, o enquadramento certo &eacute; assumir a troca: <strong>menos conveni&ecirc;ncia no cadastro, zero risco de sequestro de conta por v&iacute;nculo autom&aacute;tico</strong>. &Eacute; uma decis&atilde;o de produto defens&aacute;vel &mdash; e mostra que voc&ecirc; sabe que a alternativa &ldquo;vincula sempre que o e-mail bater&rdquo; &eacute; o padr&atilde;o inseguro que muita gente implementa sem perceber.</p></div>
+          </details>
+        </li>
+        <li>O que dá errado se você confiar só no e-mail devolvido pelo provedor, sem checar <code>email_verified</code>?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p><strong>Takeover de conta.</strong> Alguns provedores permitem cadastrar um endere&ccedil;o sem provar posse dele (foi o caso hist&oacute;rico de v&aacute;rios, e ainda acontece em provedores corporativos e inst&acirc;ncias self-hosted).</p>
+<p>O ataque &eacute; direto: o atacante cria no provedor uma conta com o e-mail da v&iacute;tima, clica em &ldquo;entrar com esse provedor&rdquo; no seu app, o seu app faz o match por e-mail &mdash; e ele cai <strong>dentro da conta da v&iacute;tima</strong> sem nunca tocar na senha dela, sem MFA, sem nada.</p>
+<p>Regra: s&oacute; fa&ccedil;a match por e-mail se vier <code>email_verified: true</code>, e <strong>nunca vincule automaticamente contas de provedores diferentes s&oacute; porque o endere&ccedil;o coincide</strong>. Se precisar permitir o v&iacute;nculo, exija que o usu&aacute;rio esteja autenticado na conta local no momento de vincular &mdash; que &eacute; exatamente o que o Gabarita faz.</p></div>
+          </details>
+        </li>
+        <li>Diferença entre access token e ID token &mdash; qual dos dois prova identidade?
+          <details class="ans"><summary>ver resposta</summary>
+            <div class="ans-body"><p>O <strong>ID token</strong> prova identidade. &Eacute; um JWT emitido pelo provedor <em>para o seu app</em> (<code>aud</code> = seu <code>client_id</code>), e voc&ecirc; o valida: assinatura contra o JWKS do provedor, <code>iss</code>, <code>aud</code>, <code>exp</code> e o <code>nonce</code> que voc&ecirc; mandou. S&oacute; depois disso as claims valem alguma coisa.</p>
+<p>O <strong>access token</strong> &eacute; uma credencial de acesso destinada &agrave; API do provedor. Pode at&eacute; ser opaco (sem estrutura leg&iacute;vel), voc&ecirc; n&atilde;o deveria inspecionar, e ele n&atilde;o fala sobre o seu app &mdash; s&oacute; se repassa em <code>Authorization: Bearer</code>.</p>
+<p>O erro cl&aacute;ssico &mdash; e o motivo da pergunta &mdash; &eacute; aceitar um access token como prova de identidade. Como ele n&atilde;o tem <code>aud</code> apontando pro seu app, um token emitido legitimamente pra <em>outro</em> aplicativo seria aceito pelo seu: &eacute; o <strong>confused deputy</strong>. Um app malicioso qualquer, autorizado pela v&iacute;tima pra ler o perfil dela, passa a conseguir entrar como ela no seu sistema.</p></div>
+          </details>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="b05-http-redes.html"><div class="dir">&larr; anterior</div><div class="t">HTTP &amp; redes</div></a>
+    <a class="next" href="b07-fundamentos.html"><div class="dir">próxima &rarr;</div><div class="t">Fundamentos soltos</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

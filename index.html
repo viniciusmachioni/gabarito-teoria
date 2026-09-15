@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O Gabarito da Teoria</title>
+<link rel="icon" href="assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow"><span class="dot"></span>GUIA DE ESTUDO &middot; SENIOR FRONT-END &amp; SOFTWARE ENGINEER &middot; BRASIL E EXTERIOR &middot; CUSTO ZERO</div>
+  <div class="hero-mark">
+    <img src="assets/img/icone.svg" alt="">
+    <h1 class="title">O <em>Gabarito</em> da Teoria</h1>
+  </div>
+  <p class="lede">Você já escreveu autenticação com invalidação de sessão, um scheduler SM-2, uma fila com retry e uma CSP com nonce por request. A parte que falta não é prática &mdash; é <strong>saber nomear e defender</strong> o que você já fez, e preencher os buracos ao redor. Este roteiro usa o próprio Gabarita como estudo de caso, e agora cobre o que uma vaga sênior cobra aqui e lá fora.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="n">24</div><div class="d">blocos: 5 semanas de núcleo, 9 bônus e 10 lacunas de sênior</div></div>
+    <div class="stat"><div class="n" id="stat-total">168</div><div class="d">tópicos, a maioria ancorada no seu código</div></div>
+    <div class="stat"><div class="n">25</div><div class="d">leituras resumidas na própria página &middot; <span id="stat-leituras-lidas">0</span> lidas</div></div>
+  </div>
+
+  <div class="howto">
+    <strong>Como usar:</strong> escolha uma <a href="#trilhas">trilha por vaga</a> ou siga o <a href="#indice">índice</a> na ordem. Cada página tem: os tópicos pra marcar, onde ler &mdash; com o <strong>recorte exato</strong> e, logo abaixo de cada link, um <strong>resumo em português pra ler ali mesmo</strong>, sem pular de site em site &mdash;, um quadro <strong>&ldquo;munição da sua entrevista&rdquo;</strong> e perguntas pra responder em voz alta antes de abrir o gabarito. Reconhecer a resposta ao ler é uma habilidade diferente de produzi-la sob pressão, e só a segunda é avaliada numa entrevista.<br><br>O progresso (tópicos e leituras) fica salvo <strong>só neste navegador</strong>. Pra levar pra outro computador, use o <a href="#backup">backup</a> no fim desta página.
+    <div class="progress-box">
+      <span id="progress-label">carregando&hellip;</span>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="scope-legend">
+    <h4>Como ler as leituras</h4>
+    <p style="margin:0 0 10px;font-size:13.5px;color:var(--ink-soft);font-family:'Source Serif 4',serif;">Nenhum link precisa ser lido de ponta a ponta &mdash; e alguns <em>não devem</em>. Cada recurso traz um selo dizendo o quanto ler e quanto tempo leva. O resumo embutido cobre exatamente esse recorte; o original fica a um clique pra quando você quiser o detalhe.</p>
+    <ul>
+      <li><span class="r-tag t-full">Ler inteiro</span> Texto curto o bastante pra uma sentada.</li>
+      <li><span class="r-tag t-part">Ler trechos</span> Material longo do qual só uma parte interessa agora &mdash; o selo nomeia as seções.</li>
+      <li><span class="r-tag t-ref">Consulta</span> Referência. Não é pra estudar: é pra saber que existe e voltar quando o problema aparecer.</li>
+    </ul>
+  </div>
+
+  <section class="week" id="trilhas">
+    <div class="week-head"><h2 style="font-size:22px;">Trilhas por vaga</h2></div>
+    <div class="week-meta">a mesma base, ordens diferentes &middot; comece pela que descreve a próxima entrevista</div>
+    <div class="trilha-grid">
+      <div class="trilha">
+        <h4>Senior Front-end · Brasil</h4>
+        <div class="quem">produto, fintech, e-commerce, consultoria</div>
+        <ol>
+          <li><a href="paginas/01-javascript-react.html"><span class="wk-n">01</span> JavaScript &amp; React</a></li>
+          <li><a href="paginas/02-nextjs-tailwind.html"><span class="wk-n">02</span> Next.js &amp; Tailwind</a></li>
+          <li><a href="paginas/b04-typescript.html"><span class="wk-n">B4</span> TypeScript de verdade</a></li>
+          <li><a href="paginas/b15-react-estado.html"><span class="wk-n">B15</span> React avançado &amp; estado no cliente</a></li>
+          <li><a href="paginas/b12-css.html"><span class="wk-n">B12</span> CSS moderno &amp; layout</a></li>
+          <li><a href="paginas/b13-navegador-performance.html"><span class="wk-n">B13</span> O navegador por dentro &amp; performance</a></li>
+          <li><a href="paginas/b11-acessibilidade.html"><span class="wk-n">B11</span> Acessibilidade &amp; HTML semântico</a></li>
+          <li><a href="paginas/b10-testes.html"><span class="wk-n">B10</span> Testes &amp; qualidade</a></li>
+          <li><a href="paginas/05-seguranca-historia.html"><span class="wk-n">05</span> Segurança &amp; a história do projeto</a></li>
+          <li><a href="paginas/historias.html"><span class="wk-n">&#9733;</span> Histórias do Gabarita</a></li>
+        </ol>
+        <p>O processo típico aqui é conversa técnica + live coding de componente ou take-home. Pesa mais profundidade em React, TypeScript e performance do que LeetCode.</p>
+      </div>
+      <div class="trilha">
+        <h4>Senior Front-end · exterior</h4>
+        <div class="quem">remoto pra EUA/Europa, big tech, scale-ups</div>
+        <ol>
+          <li><a href="paginas/b19-processo-seletivo.html"><span class="wk-n">B19</span> O processo seletivo, aqui e lá fora</a></li>
+          <li><a href="paginas/b08-algoritmos.html"><span class="wk-n">B8</span> Algoritmos &amp; LeetCode</a></li>
+          <li><a href="paginas/b14-frontend-system-design.html"><span class="wk-n">B14</span> Front-end system design</a></li>
+          <li><a href="paginas/01-javascript-react.html"><span class="wk-n">01</span> JavaScript &amp; React</a></li>
+          <li><a href="paginas/b13-navegador-performance.html"><span class="wk-n">B13</span> O navegador por dentro &amp; performance</a></li>
+          <li><a href="paginas/b11-acessibilidade.html"><span class="wk-n">B11</span> Acessibilidade &amp; HTML semântico</a></li>
+          <li><a href="paginas/b15-react-estado.html"><span class="wk-n">B15</span> React avançado &amp; estado no cliente</a></li>
+          <li><a href="paginas/b10-testes.html"><span class="wk-n">B10</span> Testes &amp; qualidade</a></li>
+          <li><a href="paginas/b18-senioridade.html"><span class="wk-n">B18</span> Senioridade &amp; comportamental</a></li>
+          <li><a href="paginas/quiz.html"><span class="wk-n">&#9733;</span> Questionário rápido</a></li>
+        </ol>
+        <p>Espere algoritmo cronometrado, front-end system design e uma rodada comportamental inteira em inglês. Acessibilidade é cobrada de verdade.</p>
+      </div>
+      <div class="trilha">
+        <h4>Software Engineer · Brasil</h4>
+        <div class="quem">full-stack ou back-end, times de produto</div>
+        <ol>
+          <li><a href="paginas/03-postgresql.html"><span class="wk-n">03</span> PostgreSQL</a></li>
+          <li><a href="paginas/04-concorrencia.html"><span class="wk-n">04</span> Concorrência</a></li>
+          <li><a href="paginas/b16-apis.html"><span class="wk-n">B16</span> Design de APIs</a></li>
+          <li><a href="paginas/b03-arquitetura-patterns.html"><span class="wk-n">B3</span> Arquitetura &amp; design patterns</a></li>
+          <li><a href="paginas/b01-system-design.html"><span class="wk-n">B1</span> System design</a></li>
+          <li><a href="paginas/b17-producao.html"><span class="wk-n">B17</span> Produção: observabilidade &amp; CI/CD</a></li>
+          <li><a href="paginas/b09-arquiteturas.html"><span class="wk-n">B9</span> Arquiteturas de software</a></li>
+          <li><a href="paginas/b06-oauth.html"><span class="wk-n">B6</span> OAuth &amp; autenticação federada</a></li>
+          <li><a href="paginas/b08-algoritmos.html"><span class="wk-n">B8</span> Algoritmos &amp; LeetCode</a></li>
+          <li><a href="paginas/historias.html"><span class="wk-n">&#9733;</span> Histórias do Gabarita</a></li>
+        </ol>
+        <p>Banco, concorrência e desenho de API são o centro. SQL costuma substituir a questão de algoritmo; system design aparece a partir de sênior.</p>
+      </div>
+      <div class="trilha">
+        <h4>Software Engineer · exterior</h4>
+        <div class="quem">loops de big tech e startups remotas</div>
+        <ol>
+          <li><a href="paginas/b19-processo-seletivo.html"><span class="wk-n">B19</span> O processo seletivo, aqui e lá fora</a></li>
+          <li><a href="paginas/b08-algoritmos.html"><span class="wk-n">B8</span> Algoritmos &amp; LeetCode</a></li>
+          <li><a href="paginas/b01-system-design.html"><span class="wk-n">B1</span> System design</a></li>
+          <li><a href="paginas/b09-arquiteturas.html"><span class="wk-n">B9</span> Arquiteturas de software</a></li>
+          <li><a href="paginas/04-concorrencia.html"><span class="wk-n">04</span> Concorrência</a></li>
+          <li><a href="paginas/03-postgresql.html"><span class="wk-n">03</span> PostgreSQL</a></li>
+          <li><a href="paginas/b17-producao.html"><span class="wk-n">B17</span> Produção: observabilidade &amp; CI/CD</a></li>
+          <li><a href="paginas/b18-senioridade.html"><span class="wk-n">B18</span> Senioridade &amp; comportamental</a></li>
+          <li><a href="paginas/pratica.html"><span class="wk-n">&#9733;</span> Onde se testar</a></li>
+          <li><a href="paginas/quiz.html"><span class="wk-n">&#9733;</span> Questionário rápido</a></li>
+        </ol>
+        <p>Duas rodadas de algoritmo, uma de system design e uma comportamental é o formato mais comum. O nível (L4/L5, senior/staff) é decidido nas duas últimas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="week" id="indice">
+    <div class="week-head"><h2 style="font-size:22px;">Índice</h2></div>
+    <div class="week-meta">27 páginas &middot; o progresso de cada uma aparece à direita</div>
+    <div class="table-scroll">
+    <table class="overview">
+      <thead><tr><th>Bloco</th><th>Foco</th><th>Tempo</th><th>Progresso</th></tr></thead>
+      <tbody>
+      <tr class="grupo"><td colspan="4">Núcleo · 5 semanas</td></tr>
+      <tr data-prefix="w1-" data-total="6"><td class="wk">01</td><td><a href="paginas/01-javascript-react.html">JavaScript &amp; React &mdash; os modelos mentais por trás dos seus hooks</a> <span class="r-count">&middot; 5 leituras</span></td><td>~8h</td><td class="p"></td></tr>
+      <tr data-prefix="w2-" data-total="6"><td class="wk">02</td><td><a href="paginas/02-nextjs-tailwind.html">Next.js (renderização, cache, edge) &amp; a filosofia do Tailwind</a> <span class="r-count">&middot; 5 leituras</span></td><td>~8h</td><td class="p"></td></tr>
+      <tr data-prefix="w3-" data-total="7"><td class="wk">03</td><td><a href="paginas/03-postgresql.html">PostgreSQL &mdash; MVCC, índices, pooling e por que não é MySQL</a> <span class="r-count">&middot; 6 leituras</span></td><td>~10h</td><td class="p"></td></tr>
+      <tr data-prefix="w4-" data-total="5"><td class="wk">04</td><td><a href="paginas/04-concorrencia.html">Concorrência: SO, event loop, filas e tempo real</a> <span class="r-count">&middot; 4 leituras</span></td><td>~10h</td><td class="p"></td></tr>
+      <tr data-prefix="w5-" data-total="5"><td class="wk">05</td><td><a href="paginas/05-seguranca-historia.html">Segurança, performance &amp; como contar a história do projeto</a> <span class="r-count">&middot; 5 leituras</span></td><td>~8h</td><td class="p"></td></tr>
+      <tr class="grupo"><td colspan="4">Bônus · material de consulta</td></tr>
+      <tr data-prefix="w6-" data-total="7"><td class="wk">B1</td><td><a href="paginas/b01-system-design.html">System design &mdash; escala, cache, CAP</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w7-" data-total="6"><td class="wk">B2</td><td><a href="paginas/b02-ia-agentes.html">IA, agentes de código &amp; harnesses</a></td><td>~5h</td><td class="p"></td></tr>
+      <tr data-prefix="w9-" data-total="6"><td class="wk">B3</td><td><a href="paginas/b03-arquitetura-patterns.html">Arquitetura &amp; design patterns</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w10-" data-total="5"><td class="wk">B4</td><td><a href="paginas/b04-typescript.html">TypeScript de verdade &mdash; generics, narrowing, tipos derivados</a></td><td>~5h</td><td class="p"></td></tr>
+      <tr data-prefix="w11-" data-total="5"><td class="wk">B5</td><td><a href="paginas/b05-http-redes.html">HTTP, redes &amp; como a web funciona</a></td><td>~5h</td><td class="p"></td></tr>
+      <tr data-prefix="w12-" data-total="5"><td class="wk">B6</td><td><a href="paginas/b06-oauth.html">Autenticação federada &amp; OAuth</a></td><td>~4h</td><td class="p"></td></tr>
+      <tr data-prefix="w8-" data-total="11"><td class="wk">B7</td><td><a href="paginas/b07-fundamentos.html">Fundamentos soltos (Big-O, Docker, Git, SOLID...)</a></td><td>~5h</td><td class="p"></td></tr>
+      <tr data-prefix="w13-" data-total="15"><td class="wk">B8</td><td><a href="paginas/b08-algoritmos.html">Algoritmos, estruturas de dados &amp; LeetCode</a></td><td>~8h+</td><td class="p"></td></tr>
+      <tr data-prefix="w14-" data-total="18"><td class="wk">B9</td><td><a href="paginas/b09-arquiteturas.html">Arquiteturas de software: catálogo, contextos e a escolha</a></td><td>~10h</td><td class="p"></td></tr>
+      <tr class="grupo"><td colspan="4">Lacunas de sênior · Brasil e exterior <span class="tag-novo">novo</span></td></tr>
+      <tr data-prefix="w15-" data-total="6"><td class="wk">B10</td><td><a href="paginas/b10-testes.html">Testes &amp; qualidade &mdash; Testing Library, Playwright, mocks e testes instáveis</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w16-" data-total="6"><td class="wk">B11</td><td><a href="paginas/b11-acessibilidade.html">Acessibilidade &amp; HTML semântico &mdash; WCAG, ARIA, foco e leitor de tela</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w17-" data-total="6"><td class="wk">B12</td><td><a href="paginas/b12-css.html">CSS moderno &amp; layout &mdash; cascata, camadas, grid e container queries</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w18-" data-total="6"><td class="wk">B13</td><td><a href="paginas/b13-navegador-performance.html">O navegador por dentro &amp; performance de front-end</a></td><td>~7h</td><td class="p"></td></tr>
+      <tr data-prefix="w19-" data-total="6"><td class="wk">B14</td><td><a href="paginas/b14-frontend-system-design.html">Front-end system design &mdash; a entrevista que só vaga de front tem</a></td><td>~7h</td><td class="p"></td></tr>
+      <tr data-prefix="w20-" data-total="6"><td class="wk">B15</td><td><a href="paginas/b15-react-estado.html">React avançado &amp; estado no cliente &mdash; React 19, server state, formulários</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w21-" data-total="7"><td class="wk">B16</td><td><a href="paginas/b16-apis.html">Design de APIs &mdash; REST maduro, GraphQL, tRPC, BFF e webhooks</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w22-" data-total="6"><td class="wk">B17</td><td><a href="paginas/b17-producao.html">Produção &mdash; observabilidade, CI/CD, feature flags e incidentes</a></td><td>~6h</td><td class="p"></td></tr>
+      <tr data-prefix="w23-" data-total="6"><td class="wk">B18</td><td><a href="paginas/b18-senioridade.html">Senioridade &mdash; liderança técnica, design docs e entrevista comportamental</a></td><td>~5h</td><td class="p"></td></tr>
+      <tr data-prefix="w24-" data-total="6"><td class="wk">B19</td><td><a href="paginas/b19-processo-seletivo.html">O processo seletivo no Brasil e no exterior &mdash; currículo, inglês, negociação, contrato</a></td><td>~5h</td><td class="p"></td></tr>
+      <tr class="grupo"><td colspan="4">Prática</td></tr>
+      <tr><td class="wk">&#9733;</td><td><a href="paginas/historias.html">Como contar a história do Gabarita numa entrevista (STAR)</a></td><td>~2h</td><td class="p">&mdash;</td></tr>
+      <tr><td class="wk">&#9733;</td><td><a href="paginas/pratica.html">Onde se testar &mdash; plataformas de quiz, exercício e simulação</a></td><td>contínuo</td><td class="p">&mdash;</td></tr>
+      <tr><td class="wk">&#9733;</td><td><a href="paginas/quiz.html">Questionário rápido &mdash; múltipla escolha com correção na hora</a></td><td>~45min</td><td class="p">&mdash;</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="pager"><a class="next" href="paginas/01-javascript-react.html"><div class="dir">começar &rarr;</div><div class="t">JavaScript &amp; React</div></a></div>
+  </section>
+
+  <section class="week backup" id="backup">
+    <div class="week-head"><h2 style="font-size:22px;">Backup do progresso</h2></div>
+    <div class="week-meta">sem conta, sem servidor &middot; um texto que você guarda onde quiser</div>
+    <p class="intro">O navegador guarda o que você marcou, mas limpar os dados do site, trocar de navegador ou de computador apaga tudo. Gere o texto (ou o arquivo), guarde numa nota ou mande pra você mesmo, e cole aqui no outro lado. Importar <strong>mescla</strong> com o que já existe &mdash; nunca desmarca nada.</p>
+    <div class="btn-row">
+      <button type="button" class="btn" id="backup-exportar">Gerar texto e copiar</button>
+      <button type="button" class="btn" id="backup-baixar">Baixar arquivo</button>
+      <button type="button" class="btn" id="backup-importar">Importar o texto colado</button>
+    </div>
+    <textarea id="backup-txt" spellcheck="false" placeholder="O backup aparece aqui. Para importar, cole o texto (ou o conteúdo do arquivo .json) e clique em importar."></textarea>
+    <p class="msg" id="backup-msg" role="status"></p>
+  </section>
+
+  <footer>
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="index.html#backup">capa</a> &middot; montado em 15/09/2026
+  </footer>
+
+</div>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

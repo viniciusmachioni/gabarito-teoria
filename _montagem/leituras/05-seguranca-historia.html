@@ -1,0 +1,111 @@
+<article data-href="https://owasp.org/Top10/2021/A01_2021-Broken_Access_Control/">
+<p class="tldr">Broken Access Control é a categoria nº1 do OWASP Top 10 — não por ser exótica, mas por ser fácil de introduzir sem perceber: a autenticação funciona, e a checagem de <em>quem pode ver o quê</em> é que falta ou está incompleta.</p>
+
+<h5>O que conta como quebra de controle de acesso</h5>
+<ul>
+<li>Violar o <strong>princípio do menor privilégio</strong>: acesso liberado além do necessário pra função.</li>
+<li>Contornar checagem <strong>editando a URL</strong>, o estado interno da aplicação, ou o próprio HTML (esconder botão na interface não é controle de acesso).</li>
+<li><strong>IDOR</strong> — permitir ver/editar registro de outro usuário só trocando um ID.</li>
+<li>Elevar privilégio: agir como admin estando logado como usuário comum, ou agir como usuário estando deslogado.</li>
+<li>CORS mal configurado permitindo acesso de origem não confiável.</li>
+<li><strong>Forçar navegação</strong> pra páginas autenticadas sem estar logado.</li>
+</ul>
+
+<h5>Como prevenir (os oito da doc)</h5>
+<ol>
+<li>Negar por padrão, exceto recursos públicos explícitos.</li>
+<li>Implementar controle de acesso <strong>uma vez</strong> e reusar em toda a aplicação, minimizando CORS.</li>
+<li>Modelar controle de acesso como <strong>dono do registro</strong>, não achar que o papel do usuário decide sozinho quem vê qual linha.</li>
+<li>Regras de negócio de domínio (limites de taxa, cota) aplicadas no servidor, não confiáveis vindas do cliente.</li>
+<li>Desativar listagem de diretório e não deixar metadado (<code>.git</code>, backup) acessível.</li>
+<li>Logar falhas de controle de acesso e alertar em repetição.</li>
+<li>Rate limit em APIs pra reduzir dano de automação/scripts.</li>
+<li>Invalidar token de sessão no servidor no logout — sessão sem estado dificulta isso (Semana 5, JWT).</li>
+</ol>
+<p>O bloco de exemplos de ataque da própria página é a resposta pronta pra "me dá um exemplo real": trocar <code>acct=104</code> por <code>acct=105</code> numa URL sem checagem de posse é o exemplo mais citado — e é literalmente o padrão que o Gabarita corrige nas D109.</p>
+</article>
+
+<article data-href="https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html">
+<p class="tldr">IDOR não se resolve escondendo o ID — se resolve provando posse <strong>dentro</strong> da mesma consulta que busca o recurso.</p>
+
+<ul>
+<li><strong>Por que UUID não é a correção</strong>: dificulta adivinhar (segurança por obscuridade), mas se o ID vazar em qualquer lugar (log, URL compartilhada, resposta de outra API), o acesso continua liberado pra quem não é dono.</li>
+<li><strong>A correção certa</strong>: toda consulta que busca um recurso por ID inclui o dono na mesma cláusula — <code>WHERE id = ? AND userId = ?</code>, nunca <code>WHERE id = ?</code> seguido de um <code>if</code> separado checando posse depois. Separar em duas etapas cria uma janela pra a próxima função esquecer a segunda.</li>
+<li><strong>Mapear ID pra sessão</strong> é a alternativa mais forte quando dá: em vez do cliente mandar o ID de um item de carrinho, o servidor resolve a partir da sessão autenticada — o cliente não tem como nem tentar outro ID.</li>
+<li>Testes de autorização deveriam existir <strong>por função</strong>, não só por tela: uma tela pode chamar três Server Actions, e testar só a tela não garante que as três provam posse.</li>
+<li>Log de tentativa de acesso a recurso de outro dono é sinal de ataque em andamento, não só bug.</li>
+</ul>
+</article>
+
+<article data-href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">
+<p class="tldr">Sessão é o estado que liga um usuário autenticado às requisições seguintes. O que decide se ela é segura são os atributos do cookie, o tamanho e a fonte do ID, e quando ela expira.</p>
+
+<h5>Session ID Properties</h5>
+<ul>
+<li>O ID precisa ter <strong>entropia suficiente</strong> (gerado por um CSPRNG, não sequencial nem previsível) — sequencial vira IDOR de sessão.</li>
+<li>Não deve carregar significado (nem nome, nem role, nem timestamp legível) — é só uma chave opaca pro servidor.</li>
+</ul>
+
+<h5>Session Management Implementation — atributos do cookie</h5>
+<div class="tbl"><table>
+<tr><th>Atributo</th><th>O que evita</th></tr>
+<tr><td><code>HttpOnly</code></td><td>JavaScript não lê o cookie — mitiga roubo de sessão via XSS</td></tr>
+<tr><td><code>Secure</code></td><td>o cookie só viaja em HTTPS — mitiga interceptação em rede</td></tr>
+<tr><td><code>SameSite=Lax</code>/<code>Strict</code></td><td>o cookie não vai em requisição cross-site — mitiga CSRF</td></tr>
+<tr><td><code>Path</code>/<code>Domain</code> estreitos</td><td>reduz onde o cookie é enviado automaticamente</td></tr>
+</table></div>
+<p>Regenerar o ID de sessão <strong>no login</strong> (não reaproveitar um ID pré-autenticação) evita <em>session fixation</em> — um atacante que force a vítima a usar um ID conhecido antes do login não ganha nada, porque o ID muda ao autenticar.</p>
+
+<h5>Session Expiration & Renewal</h5>
+<ul>
+<li><strong>Idle timeout</strong> (expira por inatividade) e <strong>timeout absoluto</strong> (expira depois de X horas, mesmo em uso) são complementares — um sozinho não cobre os dois riscos.</li>
+<li><strong>Logout</strong> precisa invalidar no servidor, não só apagar o cookie no cliente — com JWT sem estado isso exige denylist ou um carimbo tipo <code>credenciaisAlteradasEm</code> (a saída que a Semana 5 já cobre).</li>
+<li>Trocar senha, e-mail ou papel deveria <strong>encerrar as outras sessões</strong> — é exatamente a D107 do Gabarita.</li>
+</ul>
+</article>
+
+<article data-href="https://web.dev/explore/learn-core-web-vitals">
+<p class="tldr">Core Web Vitals são três métricas que tentam capturar "a página parece rápida" do jeito que o usuário sente, não do jeito que o servidor mede.</p>
+
+<h5>LCP — Largest Contentful Paint</h5>
+<p>Tempo até o <strong>maior elemento visível</strong> (geralmente imagem hero ou bloco de texto) terminar de renderizar. Bom: ≤2.5s. As causas mais comuns de LCP ruim: servidor lento pra responder, CSS/JS bloqueando o render, imagem não otimizada ou carregada tarde demais (falta <code>fetchpriority="high"</code> ou pré-carga).</p>
+
+<h5>INP — Interaction to Next Paint</h5>
+<p>Substituiu o antigo FID em 2024: mede o atraso entre <strong>qualquer interação</strong> (clique, toque, tecla) e o próximo frame pintado na tela — olhando a pior interação da visita inteira, não só a primeira. Bom: ≤200ms. A causa raiz quase sempre é <strong>trabalho síncrono longo na thread principal</strong> — handler pesado, re-render caro, terceiro script bloqueando. Conecta direto com o event loop (Semana 1): uma tarefa que não devolve o controle trava a resposta ao clique.</p>
+
+<h5>CLS — Cumulative Layout Shift</h5>
+<p>Soma quanto o layout "pula" sem o usuário ter feito nada — imagem sem <code>width</code>/<code>height</code> que empurra o texto quando carrega, fonte que troca de largura, banner que injeta acima do conteúdo. Bom: ≤0.1. Correção: reservar o espaço final <em>antes</em> de o conteúdo chegar (dimensões explícitas, <code>font-display: optional</code> ou pré-carregar fonte, <code>aspect-ratio</code> em mídia).</p>
+
+<h5>O que isso significa pra você</h5>
+<p>Nenhuma das três métricas é sobre "quão rápido o servidor responde" isoladamente — são sobre <strong>a experiência percebida</strong>. Um TTFB ótimo com LCP ruim é comum quando o servidor responde rápido mas o navegador ainda precisa baixar CSS bloqueante antes de pintar. As três juntas formam a régua que o Google usa (Lighthouse, PageSpeed Insights) e que aparece em ranking de busca.</p>
+</article>
+
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP">
+<p class="tldr">Content Security Policy é uma lista de origens permitidas por tipo de recurso, entregue por header. Ela existe pra conter o dano <em>depois</em> que uma injeção de HTML/JS já aconteceu — é defesa em profundidade, não a única defesa contra XSS.</p>
+
+<h5>O básico</h5>
+<ul>
+<li>Header <code>Content-Security-Policy</code> com diretivas tipo <code>script-src 'self'</code> (só scripts do próprio domínio), <code>img-src</code>, <code>connect-src</code> etc. <code>default-src</code> é o fallback pras diretivas não especificadas.</li>
+<li>Sem CSP, um <code>&lt;script&gt;</code> injetado por um campo mal sanitizado roda com os mesmos privilégios do site inteiro. Com <code>script-src</code> restrito, o navegador recusa executar qualquer script que não bata com a política — inclusive um injetado.</li>
+</ul>
+
+<h5>Nonce e hash — as duas formas de permitir script inline</h5>
+<ul>
+<li><strong>Hash</strong> (<code>script-src 'sha256-...'</code>): só funciona pra script com <strong>texto exatamente conhecido</strong> de antemão — calculado uma vez, fixo em config. Serve bem pra sites estáticos.</li>
+<li><strong>Nonce</strong> (<code>script-src 'nonce-abc123'</code>): um valor aleatório gerado <strong>a cada resposta</strong>, colocado no header e repetido no atributo <code>nonce</code> do script. Serve quando o conteúdo do script muda por request — como o payload inline que o Next.js injeta pra hidratar Server Components, que é diferente toda vez.</li>
+</ul>
+
+<h5><code>strict-dynamic</code></h5>
+<p>Propaga a confiança: um script com nonce válido pode carregar <strong>outros</strong> scripts (via <code>&lt;script src&gt;</code> dinâmico) e esses herdam a confiança, sem precisar estar cada um na allowlist. Isso é o que permite que os chunks JS que o Next carrega depois do payload inicial também rodem — e, como efeito colateral, o navegador passa a <strong>ignorar</strong> allowlist de domínio (<code>script-src https://cdn.x.com</code>), que é a parte de uma CSP mais fácil de contornar (um domínio confiável pode hospedar um script vulnerável a JSONP, por exemplo).</p>
+
+<h5><code>unsafe-inline</code> — por que evitar</h5>
+<p>Libera <strong>qualquer</strong> script inline, inclusive o injetado por um atacante — anula praticamente toda a proteção contra XSS que a CSP daria. Quando um navegador entende nonce/hash, ele já ignora <code>unsafe-inline</code> automaticamente (fica só como fallback pra navegador antigo).</p>
+
+<h5>Report-only e outras diretivas úteis</h5>
+<ul>
+<li><code>Content-Security-Policy-Report-Only</code>: só reporta violação (via <code>report-uri</code>/<code>report-to</code>), não bloqueia — o jeito de testar uma política nova em produção sem quebrar nada.</li>
+<li><code>frame-ancestors 'none'</code>: substitui o antigo <code>X-Frame-Options</code>, evita clickjacking (o site não pode ser embutido num <code>&lt;iframe&gt;</code> de outra origem).</li>
+<li><code>object-src 'none'</code>: bloqueia plugins antigos (Flash) que ignoravam outras diretivas.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> "nonce por request resolve o caso do Next porque hash exige texto estável e o payload RSC muda toda resposta; strict-dynamic propaga a confiança pros chunks carregados por esse script; e nada disso substitui sanitizar entrada — CSP é a segunda camada, pra quando a primeira falhar."</p>
+</article>

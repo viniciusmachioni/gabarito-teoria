@@ -1,0 +1,60 @@
+<section class="week" id="s21">
+  <div class="week-head"><span class="week-num">B16</span><h2>Bônus: design de APIs</h2></div>
+  <div class="week-meta">~6h &middot; o contrato entre front e back &mdash; e por que Server Actions meio que evitam ter que desenhar um</span></div>
+  <p class="intro">REST bem feito, GraphQL, tRPC: três respostas diferentes pra "como o cliente pede dado ao servidor". Cada uma resolve um problema real (over-fetching, tipagem ponta a ponta, cache HTTP) &mdash; e cada uma tem um custo que vale saber nomear antes de escolher.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w21-1"><label for="w21-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">REST maduro: recursos e não verbos na URL, paginação (cursor), filtro/ordenação por query string, e um formato de erro consistente entre endpoints</span></label></li>
+    <li class="item"><input type="checkbox" id="w21-2"><label for="w21-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Versionamento de API: por que quebrar contrato sem aviso é o pecado nº1, e as três formas de versionar (URL, header, campo) com seus trade-offs</span></label></li>
+    <li class="item"><input type="checkbox" id="w21-3"><label for="w21-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">GraphQL: um endpoint, o cliente pede exatamente os campos que precisa &mdash; e o problema N+1 que isso empurra pro resolver, resolvido com DataLoader</span></label></li>
+    <li class="item"><input type="checkbox" id="w21-4"><label for="w21-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">tRPC: tipagem ponta a ponta sem gerar código nem schema separado &mdash; o preço é cliente e servidor no mesmo monorepo TypeScript</span></label></li>
+    <li class="item"><input type="checkbox" id="w21-5"><label for="w21-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">BFF (Backend for Frontend): uma camada fina que agrega/formata pra um cliente específico, em vez do cliente montar seis chamadas sozinho</span></label></li>
+    <li class="item"><input type="checkbox" id="w21-6"><label for="w21-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CORS de verdade: preflight, quando ele dispara, e por que <code>Access-Control-Allow-Origin: *</code> não funciona com credenciais</span></label></li>
+    <li class="item"><input type="checkbox" id="w21-7"><label for="w21-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Webhook confiável: assinatura HMAC pra provar origem, retry do lado de quem envia, e idempotência do lado de quem recebe (a mesma lição da D104/fila)</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://cloud.google.com/apis/design" target="_blank" rel="noopener">Google API Design Guide</a></div><div class="r-note">Guia denso e usado como referência de mercado pra REST bem desenhado: recursos, paginação, erros padronizados.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia Resource Oriented Design e Errors. O resto é referência pra quando for desenhar um endpoint específico.</div><div class="r-src">cloud.google.com &middot; Google</div></li>
+    <li><div class="r-title"><a href="https://graphql.org/learn/" target="_blank" rel="noopener">GraphQL — Learn</a></div><div class="r-note">Os conceitos centrais: schema, resolver, query vs. mutation, e por que over-fetching/under-fetching motivaram o design.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia até "Schemas and Types" e depois "Execution" (onde entra o N+1). Subscriptions e o resto da referência ficam pra quando for usar de verdade.</div><div class="r-src">graphql.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://github.com/graphql/dataloader" target="_blank" rel="noopener">DataLoader</a></div><div class="r-note">Agrupa (batch) e cacheia buscas feitas no mesmo tick — a correção padrão pro N+1 de resolver GraphQL.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>README curto, com o problema e a solução lado a lado.</div><div class="r-src">github.com &middot; Facebook</div></li>
+    <li><div class="r-title"><a href="https://trpc.io/docs/concepts" target="_blank" rel="noopener">tRPC — Concepts</a></div><div class="r-note">Como a tipagem viaja do procedimento do servidor pro autocomplete do cliente sem geração de código nem schema separado.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta, conceitual — não precisa instalar nada pra entender a ideia central.</div><div class="r-src">trpc.io &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS" target="_blank" rel="noopener">MDN — CORS</a></div><div class="r-note">O que dispara um preflight (<code>OPTIONS</code>), os headers envolvidos, e a interação entre <code>Access-Control-Allow-Origin</code> e credenciais.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a visão geral e "Preflighted requests". A lista completa de headers é referência.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://docs.stripe.com/webhooks" target="_blank" rel="noopener">Stripe — Webhooks</a></div><div class="r-note">A referência de mercado pra webhook confiável: verificação de assinatura, retry, e o motivo de idempotência ser obrigatória do lado de quem recebe.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia "Verify signature" e a seção de melhores práticas de recebimento. Você já implementou boa parte disso — é a peça que dá nome ao que já fez.</div><div class="r-src">docs.stripe.com &middot; oficial</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; webhook do Stripe no Gabarita</div>
+    <div class="ammo-body">
+      <p>A D104 (várias assinaturas por usuário) e a fila com <code>SKIP LOCKED</code> (Semana 4) já formam uma resposta completa de "webhook confiável": você verifica assinatura HMAC antes de processar, aceita que o Stripe reentrega em falha (então o handler precisa ser idempotente), e resolve o estado a partir do <strong>conjunto</strong> de eventos em vez de confiar na ordem de chegada.</p>
+      <p class="why"><strong>Por que isso importa:</strong> "desenhe uma API de webhook confiável" é pergunta comum de back-end sênior, e você tem um caso real com bug encontrado e corrigido, não uma resposta de livro-texto.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Um app mobile busca uma tela que precisa de dado de 4 endpoints REST diferentes, e cada requisição tem 200ms de latência de rede. Qual padrão reduz isso pra uma chamada?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>BFF</strong>: uma camada fina, específica pro cliente mobile, que já faz as 4 chamadas (ou consultas) no servidor &mdash; onde a latência entre elas é baixíssima &mdash; e devolve um único payload agregado. O cliente paga 200ms uma vez, não quatro.</p></div>
+        </details>
+      </li>
+      <li>Por que GraphQL empurra o problema N+1 pro resolver, e não pro cliente?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Uma query pedindo uma lista de posts com o autor de cada um chama o resolver de "autor" <strong>uma vez por post</strong> por padrão &mdash; 1 query pros posts + N queries pros autores. O DataLoader resolve <strong>agrupando</strong> todas as chamadas de autor feitas no mesmo tick numa única consulta em lote (<code>WHERE id IN (…)</code>), e cacheia dentro daquele request pra não repetir.</p></div>
+        </details>
+      </li>
+      <li>Uma requisição <code>fetch</code> de um domínio pra outro, com <code>credentials: 'include'</code> e método <code>PUT</code>, dispara uma requisição <code>OPTIONS</code> antes da de verdade. Por quê?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>É um <strong>preflight</strong>: o navegador pergunta ao servidor, antes de mandar a requisição real, se aquele método/headers/origem são permitidos &mdash; dispara pra métodos além de GET/HEAD/POST simples, headers customizados, ou uso de credenciais. E com credenciais, <code>Access-Control-Allow-Origin: *</code> <strong>não é aceito</strong> pelo navegador: o servidor precisa devolver a origem exata mais <code>Access-Control-Allow-Credentials: true</code>.</p></div>
+        </details>
+      </li>
+      <li>Um provedor de pagamento reenvia o mesmo webhook duas vezes (a entrega dele é at-least-once). O que garante que seu handler não duplica o efeito?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>Idempotência do lado de quem recebe</strong>: gravar o id do evento com uma constraint <code>UNIQUE</code> na mesma transação do efeito, de forma que a segunda execução esbarre na constraint e vire no-op. Confiar que o provedor "não deveria" reenviar é a causa mais comum de cobrança duplicada em produção &mdash; mesmo raciocínio da fila com <code>UNIQUE</code> da Semana 4.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,58 @@
+<section class="week" id="s17">
+  <div class="week-head"><span class="week-num">B12</span><h2>Bônus: CSS moderno &amp; layout</h2></div>
+  <div class="week-meta">~6h &middot; a linguagem mudou muito nos últimos 5 anos &mdash; provavelmente mais que o React</div>
+  <p class="intro">Grid, container queries, <code>@layer</code> e a cascata em camadas resolveram problemas que antes exigiam gambiarra ou uma lib inteira (clearfix, grid systems de 12 colunas, especificidade em guerra). Esta seção é o CSS que um sênior de front-end deveria saber nomear, não só usar por tentativa e erro.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w17-1"><label for="w17-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">A cascata de verdade: origem (user agent/autor/important), especificidade (a conta id/classe/tag) e ordem de aparição &mdash; nessa ordem de prioridade</span></label></li>
+    <li class="item"><input type="checkbox" id="w17-2"><label for="w17-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt"><code>@layer</code>: camadas de cascata nomeadas &mdash; como resolver "meu CSS de componente perde pra especificidade do reset" sem <code>!important</code></span></label></li>
+    <li class="item"><input type="checkbox" id="w17-3"><label for="w17-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Grid vs. Flexbox: quando cada um é a ferramenta certa &mdash; Grid pra duas dimensões e layout de página, Flexbox pra distribuir itens numa linha</span></label></li>
+    <li class="item"><input type="checkbox" id="w17-4"><label for="w17-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Container queries: estilizar por espaço disponível no <em>pai</em>, não pelo viewport &mdash; o que isso destrava pra componente reutilizável</span></label></li>
+    <li class="item"><input type="checkbox" id="w17-5"><label for="w17-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Stacking context: por que um <code>z-index: 9999</code> às vezes perde pra um <code>z-index: 1</code> &mdash; o que cria um novo contexto de empilhamento</span></label></li>
+    <li class="item"><input type="checkbox" id="w17-6"><label for="w17-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CSS custom properties como estado real (não só variável) &mdash; herdam pela cascata, mudam em runtime, e dão pra ler em JS</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascade/Cascade" target="_blank" rel="noopener">MDN — Cascade</a></div><div class="r-note">A ordem real de resolução: origem e importância → especificidade → ordem de aparição, e onde <code>@layer</code> entra nessa conta.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Página média, com o diagrama da cascata. É a base pra entender por que um CSS "simples demais" às vezes perde.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@layer" target="_blank" rel="noopener">MDN — @layer</a></div><div class="r-note">Camadas nomeadas: uma regra na camada declarada primeiro sempre perde pra uma em camada declarada depois, <strong>independente de especificidade</strong>.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~12 min</span>Página curta. O ponto central: dentro da mesma camada a especificidade normal vale; entre camadas, a ordem de declaração da camada manda.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://css-tricks.com/snippets/css/complete-guide-grid/" target="_blank" rel="noopener">A Complete Guide to CSS Grid</a></div><div class="r-note">Referência visual completa de Grid — cada propriedade com diagrama.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~25 min agora</span>Passe o olho pela estrutura (propriedades do container vs. do item) agora; volte quando precisar de uma propriedade específica.</div><div class="r-src">css-tricks.com</div></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries" target="_blank" rel="noopener">MDN — Container queries</a></div><div class="r-note">Como declarar um elemento como <em>container</em> (<code>container-type</code>) e estilizar filhos por <code>@container</code> baseado no espaço dele, não do viewport.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página média. O caso de uso clássico do card que muda de layout dependendo de estar numa coluna estreita ou larga é o exemplo a guardar.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Understanding_z-index/The_stacking_context" target="_blank" rel="noopener">MDN — The stacking context</a></div><div class="r-note">A lista completa do que cria um novo contexto de empilhamento (opacidade &lt;1, transform, filter, position+z-index, e mais).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curta e resolve de vez a dúvida de "por que meu z-index não funciona" — geralmente é um ancestral criando contexto novo sem você perceber.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
+  </ul>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; migração pro Tailwind v4</div>
+    <div class="ammo-body">
+      <p>O bloco de Next.js/Tailwind já cobre que a v4 move os tokens de design pra <code>@theme</code>, viram custom properties nativas. Isso conecta direto aqui: os tokens gerados pelo Tailwind <strong>existem em runtime</strong> como CSS custom property, então dá pra ler ou sobrescrever com JavaScript (tema escuro alternável sem novo build) &mdash; algo que um objeto de config compilado em build nunca permitiu.</p>
+      <p class="why"><strong>Por que isso importa:</strong> conecta duas seções do guia numa resposta só, o que sempre soa mais senior do que citar fatos soltos.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Duas regras têm a mesma especificidade e miram o mesmo elemento. Qual vence?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>A que aparece <strong>depois</strong> no CSS (ou é importada por último) &mdash; é o último critério de desempate da cascata, depois de origem e especificidade. É por isso que a ordem dos <code>&lt;link&gt;</code> de stylesheet, ou a ordem de import, importa mesmo quando ninguém usa <code>!important</code>.</p></div>
+        </details>
+      </li>
+      <li>Por que <code>@layer reset, components, utilities;</code> resolve o problema de um botão de componente perder pra uma regra de reset mais específica?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Porque <strong>entre camadas diferentes, a especificidade não decide</strong> &mdash; só a ordem de declaração das camadas decide, e camada declarada depois sempre vence a anterior. Declarando <code>reset</code> antes de <code>components</code>, qualquer regra de componente vence o reset, mesmo com especificidade menor. Dentro da mesma camada, a especificidade normal continua valendo.</p></div>
+        </details>
+      </li>
+      <li>Um card precisa virar duas colunas quando tem espaço largo, e uma coluna quando estreito &mdash; <strong>independente</strong> da largura da tela, porque o mesmo card aparece numa sidebar estreita e num conteúdo largo. Media query resolve?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Não de forma confiável &mdash; media query olha o <strong>viewport</strong>, não o espaço real disponível pro componente. A ferramenta certa é <strong>container query</strong>: declara o pai como <code>container-type: inline-size</code> e o filho reage ao espaço daquele pai específico com <code>@container (min-width: …)</code>. É o que torna um componente de fato reutilizável em qualquer lugar do layout.</p></div>
+        </details>
+      </li>
+      <li>Um elemento com <code>z-index: 9999</code> aparece atrás de outro com <code>z-index: 1</code>. Causa mais provável?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><code>z-index</code> só compara elementos dentro do <strong>mesmo contexto de empilhamento</strong>. Se um ancestral do elemento de <code>z-index: 9999</code> criou um novo contexto (por ter <code>opacity &lt; 1</code>, <code>transform</code>, <code>filter</code>, ou <code>position</code> com <code>z-index</code> própria), o 9999 só compete <strong>dentro</strong> desse contexto &mdash; e o contexto inteiro pode estar atrás do outro elemento na pilha externa. Aumentar o número não resolve; é preciso subir na árvore e ver quem criou o contexto.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
