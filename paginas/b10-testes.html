@@ -35,12 +35,134 @@
   </ul>
 
   <h3 class="sub">Onde estudar (grátis)</h3>
-  <ul class="resources">
-    <li><div class="r-title"><a href="https://testing-library.com/docs/guiding-principles" target="_blank" rel="noopener">Testing Library — Guiding Principles</a></div><div class="r-note">O manifesto por trás da biblioteca: "quanto mais seus testes se parecem com o jeito que o software é usado, mais confiança eles dão".</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta, praticamente um parágrafo — mas é a peça que explica por que a biblioteca não tem <code>shallow render</code> nem seletor por classe CSS.</div><div class="r-src">testing-library.com &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener">About Queries — Priority</a></div><div class="r-note">A ordem de prioridade de seletor: role/label/text antes de test-id.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia a lista de prioridade e o porquê de cada nível. Pule a referência completa de cada query — isso é consulta.</div><div class="r-src">testing-library.com &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://mswjs.io/docs/" target="_blank" rel="noopener">Mock Service Worker</a></div><div class="r-note">Intercepta a requisição na camada de rede (Service Worker no navegador, interceptor no Node) — o componente não sabe que está sendo testado.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia Getting Started e Mocking Responses. A parte de browser integration só importa se for usar em desenvolvimento, não só em teste.</div><div class="r-src">mswjs.io &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://playwright.dev/docs/best-practices" target="_blank" rel="noopener">Playwright — Best Practices</a></div><div class="r-note">Auto-espera, seletores resilientes, isolamento entre testes — os hábitos que separam suíte confiável de suíte flaky.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Página de práticas, direta ao ponto. Preste atenção em "Don't test third-party dependencies" e "Use web first assertions".</div><div class="r-src">playwright.dev &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://kentcdodds.com/blog/write-tests" target="_blank" rel="noopener">Write tests. Not too many. Mostly integration.</a></div><div class="r-note">O argumento clássico do Kent C. Dodds contra a pirâmide clássica de testes: o "troféu de testes", com mais peso em integração do que em unitário puro.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Post único, leitura corrida — a tese central é o gráfico do troféu.</div><div class="r-src">kentcdodds.com</div></li>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://testing-library.com/docs/guiding-principles" target="_blank" rel="noopener">Testing Library — Guiding Principles</a></div><div class="r-note">O manifesto por trás da biblioteca: "quanto mais seus testes se parecem com o jeito que o software é usado, mais confiança eles dão".</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta, praticamente um parágrafo — mas é a peça que explica por que a biblioteca não tem <code>shallow render</code> nem seletor por classe CSS.</div><div class="r-src">testing-library.com &middot; oficial</div><details class="leitura" data-id="b10-testes--testing-library-com-docs-guiding-principles"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O manifesto cabe numa frase: <strong>“quanto mais seus testes se parecem com o jeito que o software é usado, mais confiança eles dão”</strong>. Tudo o mais na biblioteca decorre disso — inclusive as coisas que ela deliberadamente <em>não</em> tem.</p>
+
+<h5>O que a biblioteca se recusa a oferecer, e por quê</h5>
+<ul>
+<li><strong>Sem shallow render.</strong> Renderizar o componente com os filhos falsificados testa uma coisa que nunca existe em produção. O usuário vê a árvore inteira.</li>
+<li><strong>Sem acesso ao estado interno nem a métodos da instância.</strong> Estado é detalhe de implementação: renomear o <code>useState</code> não muda nada pro usuário e não deveria quebrar teste nenhum.</li>
+<li><strong>Sem seletor por classe CSS ou por estrutura do DOM.</strong> Classe é estilo; mudar de <code>.btn-primary</code> pra Tailwind não altera comportamento.</li>
+</ul>
+
+<h5>A consequência prática: teste de comportamento</h5>
+<ul>
+<li>O teste vira uma narrativa: “encontre o campo rotulado <em>E-mail</em>, digite, clique no botão <em>Entrar</em>, espere aparecer a mensagem de boas-vindas”. Se essa narrativa continua valendo depois da refatoração, o teste continua passando — que é exatamente o que se quer.</li>
+<li><strong>Teste que quebra em toda refatoração é custo, não rede de segurança.</strong> É o principal motivo de times abandonarem a suíte.</li>
+<li>O contraponto honesto: teste de comportamento localiza pior o defeito. Ele diz “o login não funciona”, não “a função <code>validaSenha</code> está errada”. Aceita-se isso em troca de não quebrar à toa.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu testo o que o usuário faz, não como o componente está escrito por dentro. O sinal de que acertei é o teste sobreviver a uma refatoração sem uma linha alterada.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://testing-library.com/docs/guiding-principles" target="_blank" rel="noopener">testing-library.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener">About Queries — Priority</a></div><div class="r-note">A ordem de prioridade de seletor: role/label/text antes de test-id.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia a lista de prioridade e o porquê de cada nível. Pule a referência completa de cada query — isso é consulta.</div><div class="r-src">testing-library.com &middot; oficial</div><details class="leitura" data-id="b10-testes--testing-library-com-docs-queries-about-priority"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A ordem de prioridade dos seletores não é estilística: ela vai do que <strong>todo mundo percebe</strong> até o que <strong>só o código enxerga</strong>. Subir na lista é, de graça, uma prova de acessibilidade.</p>
+
+<h5>A lista, do melhor pro pior</h5>
+<ol>
+<li><strong><code>getByRole</code></strong> — o mais fiel: é assim que leitor de tela e navegação por teclado enxergam a página. Com a opção <code>{ name }</code> cobre a maioria absoluta dos casos.</li>
+<li><strong><code>getByLabelText</code></strong> — o certo pra formulário; falha se o <code>&lt;label&gt;</code> não estiver associado, o que é justamente o bug que você quer pegar.</li>
+<li><strong><code>getByPlaceholderText</code></strong> — aceitável só quando não há label (e não haver label já é um problema).</li>
+<li><strong><code>getByText</code></strong> — para conteúdo não interativo.</li>
+<li><strong><code>getByDisplayValue</code></strong> — o valor atual de um campo.</li>
+<li><strong><code>getByAltText</code></strong> / <strong><code>getByTitle</code></strong> — imagem e casos residuais.</li>
+<li><strong><code>getByTestId</code></strong> — <strong>último recurso</strong>, pra o que não tem papel nem texto acessível (um contêiner de canvas, um wrapper de gráfico).</li>
+</ol>
+
+<h5>Por que isto é um detector de acessibilidade</h5>
+<ul>
+<li>Se <code>getByRole('button', { name: 'Salvar' })</code> não encontra nada, alguma coisa está errada de verdade: é uma <code>div</code> clicável, ou o botão não tem nome acessível. <strong>O teste falhou por um motivo real.</strong></li>
+<li><code>data-testid</code> passa em qualquer <code>div</code>, sem role, sem foco, sem nome — o teste fica verde e a interface continua inacessível.</li>
+</ul>
+
+<h5>As variantes <code>get</code>, <code>query</code> e <code>find</code></h5>
+<ul>
+<li><strong><code>getBy…</code></strong> lança se não achar — o padrão.</li>
+<li><strong><code>queryBy…</code></strong> devolve <code>null</code> — o único correto pra afirmar <em>ausência</em>.</li>
+<li><strong><code>findBy…</code></strong> devolve promessa e espera aparecer — o correto pra conteúdo assíncrono, e a alternativa a esperar por tempo fixo.</li>
+<li><code>…AllBy…</code> para múltiplos. Erro comum: usar <code>getBy</code> pra checar que algo sumiu (ele lança em vez de reprovar com mensagem útil).</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://testing-library.com/docs/queries/about/#priority" target="_blank" rel="noopener">testing-library.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://mswjs.io/docs/" target="_blank" rel="noopener">Mock Service Worker</a></div><div class="r-note">Intercepta a requisição na camada de rede (Service Worker no navegador, interceptor no Node) — o componente não sabe que está sendo testado.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia Getting Started e Mocking Responses. A parte de browser integration só importa se for usar em desenvolvimento, não só em teste.</div><div class="r-src">mswjs.io &middot; oficial</div><details class="leitura" data-id="b10-testes--mswjs-io-docs"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">MSW intercepta a requisição na <strong>camada de rede</strong> — Service Worker no navegador, interceptor no Node. O componente faz <code>fetch</code> de verdade e não sabe que está sendo testado. Isso muda o que o teste prova.</p>
+
+<h5>MSW vs. mockar o módulo</h5>
+<div class="tbl"><table>
+<tr><th></th><th><code>vi.mock('axios')</code></th><th>MSW</th></tr>
+<tr><td>O que substitui</td><td>a implementação do cliente HTTP</td><td>a resposta da rede</td></tr>
+<tr><td>Código real exercitado</td><td>pula serialização, headers, tratamento de status</td><td>executa tudo, até o <code>fetch</code></td></tr>
+<tr><td>Se você trocar de cliente HTTP</td><td>todos os testes quebram</td><td>nada muda</td></tr>
+<tr><td>Reuso</td><td>só no teste</td><td>mesmo handler serve pra rodar o app sem backend</td></tr>
+</table></div>
+
+<h5>Getting Started — o modelo mental</h5>
+<ul>
+<li>Você declara <strong>handlers</strong> (“<code>GET /api/usuarios</code> devolve isto”) e um servidor que os aplica. <code>onUnhandledRequest: 'error'</code> evita que uma chamada esquecida vaze silenciosamente pra rede de verdade.</li>
+<li>Ciclo padrão da suíte: <code>listen()</code> antes de tudo, <code>resetHandlers()</code> entre testes (crucial pro isolamento), <code>close()</code> no fim.</li>
+</ul>
+
+<h5>Mocking Responses — o que importa</h5>
+<ul>
+<li>Sobrescrever handler <strong>por teste</strong> é o padrão pra caso de borda: este teste devolve <code>500</code>, aquele devolve lista vazia, o outro demora e testa o estado de carregando.</li>
+<li>Testar erro fica trivial — e erro é justamente o caminho menos coberto na maioria das suítes.</li>
+<li>Handler recebe a requisição, então dá pra afirmar sobre o que <em>foi enviado</em> (corpo, query, header de autorização) sem espionar o cliente HTTP.</li>
+</ul>
+<p><strong>O bônus:</strong> os mesmos handlers rodam no navegador em desenvolvimento. Dá pra construir a tela antes de a API existir, e continuar quando o backend cai.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://mswjs.io/docs/" target="_blank" rel="noopener">mswjs.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://playwright.dev/docs/best-practices" target="_blank" rel="noopener">Playwright — Best Practices</a></div><div class="r-note">Auto-espera, seletores resilientes, isolamento entre testes — os hábitos que separam suíte confiável de suíte flaky.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Página de práticas, direta ao ponto. Preste atenção em "Don't test third-party dependencies" e "Use web first assertions".</div><div class="r-src">playwright.dev &middot; oficial</div><details class="leitura" data-id="b10-testes--playwright-dev-docs-best-practices"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">E2E é o teste mais valioso e o mais fácil de transformar em suíte instável. As práticas da página se resumem a três hábitos: <strong>teste o caminho do usuário, não a implementação</strong>; <strong>espere por condição, nunca por tempo</strong>; e <strong>isole cada teste</strong>.</p>
+
+<h5>Auto-espera — o que dispensa o <code>sleep</code></h5>
+<ul>
+<li>Antes de agir, o Playwright checa que o elemento está visível, estável (parou de animar), habilitado e recebendo eventos. Se não estiver, ele espera — até o timeout.</li>
+<li><strong>Web-first assertions</strong> (<code>await expect(locator).toBeVisible()</code>) também esperam e repetem a checagem. É a diferença entre o teste que espera o certo e o teste que dorme 3 segundos e torce.</li>
+<li><code>waitForTimeout</code> é o antipadrão nomeado: ou é curto demais e dá flaky, ou longo demais e a suíte arrasta.</li>
+</ul>
+
+<h5>Seletores resilientes</h5>
+<ul>
+<li>Mesma prioridade da Testing Library: <code>getByRole</code> com nome acessível primeiro; XPath e cadeia de CSS por último — eles quebram a cada mudança de marcação.</li>
+<li>Se precisar de âncora estável pra elemento sem semântica, use um <code>data-testid</code> explícito, combinado com o time. É melhor que um seletor estrutural frágil.</li>
+</ul>
+
+<h5>Isolamento e paralelismo</h5>
+<ul>
+<li>Cada teste roda em um <strong>contexto de navegador novo</strong>: sem cookie, sem storage compartilhado. Isso é o que permite paralelizar por padrão.</li>
+<li>A consequência no seu código: nada de teste que depende do estado deixado pelo anterior. Se dois testes escrevem no mesmo registro do banco, eles vão colidir em paralelo — cada teste cria os próprios dados.</li>
+<li>Login repetido em toda suíte custa caro: reaproveite o <strong>estado de autenticação</strong> salvo (<code>storageState</code>) em vez de refazer a tela de login.</li>
+</ul>
+
+<h5>“Don’t test third-party dependencies”</h5>
+<ul>
+<li>Não teste o Stripe, o Google OAuth ou o provedor de mapas — você não controla, eles ficam fora do ar e sua suíte fica vermelha por motivo alheio. Intercepte a rede e devolva resposta controlada.</li>
+<li>Teste o <em>seu</em> comportamento diante da resposta deles, inclusive quando ela falha.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://playwright.dev/docs/best-practices" target="_blank" rel="noopener">playwright.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://kentcdodds.com/blog/write-tests" target="_blank" rel="noopener">Write tests. Not too many. Mostly integration.</a></div><div class="r-note">O argumento clássico do Kent C. Dodds contra a pirâmide clássica de testes: o "troféu de testes", com mais peso em integração do que em unitário puro.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Post único, leitura corrida — a tese central é o gráfico do troféu.</div><div class="r-src">kentcdodds.com</div><details class="leitura" data-id="b10-testes--kentcdodds-com-blog-write-tests"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A tese é o <strong>troféu</strong> em vez da pirâmide: em aplicação web, o maior retorno está nos testes de <strong>integração</strong>, não nos de unidade. O título resume a receita: escreva testes; não muitos; principalmente de integração.</p>
+
+<h5>Os quatro níveis do troféu</h5>
+<ol>
+<li><strong>Estático</strong> (base larga): TypeScript e linter pegam erro de digitação e tipo errado antes de qualquer teste rodar. É o nível mais barato que existe.</li>
+<li><strong>Unidade</strong>: para lógica pura com muitos casos de borda (formatação, cálculo, redutor).</li>
+<li><strong>Integração</strong> (a parte mais larga): várias peças reais juntas, só a fronteira externa substituída. É onde vive o bug real.</li>
+<li><strong>E2E</strong> (topo estreito): os poucos fluxos que não podem quebrar nunca — login, checkout.</li>
+</ol>
+
+<h5>Por que integração e não unidade</h5>
+<ul>
+<li>A maior parte dos defeitos de aplicação web está na <strong>ligação entre as peças</strong>: props erradas, formato de dado divergente, ordem de eventos. Teste unitário com tudo mockado passa exatamente por cima disso.</li>
+<li>Mock demais faz o teste confirmar a suposição do autor em vez do comportamento real. Um teste 100% mockado passa com a aplicação quebrada.</li>
+<li>Teste de integração dá muita confiança por linha escrita — a métrica que o texto propõe pra avaliar um teste.</li>
+</ul>
+
+<h5>“Not too many”</h5>
+<ul>
+<li>Todo teste tem custo de manutenção. Cobertura como meta produz teste de getter e de <em>snapshot</em> gigante que ninguém lê e todo mundo atualiza no automático.</li>
+<li>A pergunta certa antes de escrever: <strong>“que bug real este teste pegaria?”</strong> Se não houver resposta, não escreva.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu concentro no meio: integração com a rede interceptada. Unidade só pra lógica com muitos casos de borda, e E2E só pros fluxos que não podem quebrar — o resto é custo de manutenção sem retorno.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://kentcdodds.com/blog/write-tests" target="_blank" rel="noopener">kentcdodds.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
   <div class="ammo">
@@ -85,7 +207,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 123 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 102 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

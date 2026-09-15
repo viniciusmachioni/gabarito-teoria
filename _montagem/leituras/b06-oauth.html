@@ -1,0 +1,128 @@
+<article data-href="https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Cheat_Sheet.html">
+<p class="tldr">O cheat sheet é a lista de tudo que costuma dar errado em OAuth. Três pontos concentram a maioria dos ataques reais: <strong>PKCE</strong>, <strong>validação exata de <code>redirect_uri</code></strong> e <strong>o parâmetro <code>state</code></strong>. Se você souber explicar esses três, cobriu a pergunta de segurança de OAuth.</p>
+
+<h5>Os quatro papéis, pra não trocar os nomes</h5>
+<ul>
+<li><strong>Resource owner</strong>: a pessoa. <strong>Client</strong>: a sua aplicação. <strong>Authorization server</strong>: quem autentica e emite token (Google, GitHub). <strong>Resource server</strong>: a API que aceita o token.</li>
+<li>Cliente <strong>confidencial</strong> (backend, guarda segredo) vs. <strong>público</strong> (SPA, app mobile — não consegue guardar segredo nenhum). Essa distinção determina o fluxo permitido.</li>
+</ul>
+
+<h5>PKCE — o que é e por que virou obrigatório pra todo mundo</h5>
+<ul>
+<li>O cliente gera um segredo aleatório (<code>code_verifier</code>), manda o <strong>hash</strong> dele (<code>code_challenge</code>) na ida, e o <code>code_verifier</code> original na troca do código por token.</li>
+<li>Assim, um atacante que <strong>intercepte o authorization code</strong> não consegue trocá-lo por token: falta o verifier, que nunca trafegou na primeira etapa.</li>
+<li>Nasceu pra app mobile (onde o redirect por esquema de URL podia ser sequestrado por outro app), mas o OAuth 2.1 o exige pra <strong>todos</strong> os clientes — inclusive backend. Custa quase nada e fecha uma classe inteira de ataque.</li>
+</ul>
+
+<h5><code>redirect_uri</code> — validação exata, sempre</h5>
+<ul>
+<li>O servidor de autorização deve comparar a URI <strong>string por string</strong> contra uma lista pré-registrada. Nada de wildcard, nada de "começa com", nada de aceitar subdomínio.</li>
+<li>O ataque: um <em>open redirect</em> em qualquer página do seu domínio permite fazer o código de autorização ser entregue ao atacante, mantendo a URL “legítima” aos olhos de uma validação frouxa.</li>
+</ul>
+
+<h5><code>state</code> e <code>nonce</code></h5>
+<ul>
+<li><strong><code>state</code></strong>: valor aleatório, imprevisível, guardado na sessão e conferido na volta. Sem ele existe <strong>CSRF de login</strong> — o atacante te faz concluir o fluxo <em>dele</em>, e você fica logado na conta do atacante, entregando dados a ela sem perceber.</li>
+<li><strong><code>nonce</code></strong> (OIDC): vai no pedido e volta dentro do ID token, provando que aquele token foi emitido pra <em>esta</em> requisição. Defesa contra replay de ID token.</li>
+</ul>
+
+<h5>O resto da lista, em uma linha cada</h5>
+<ul>
+<li>Nunca use <strong>implicit flow</strong> nem <strong>resource owner password</strong> — os dois estão obsoletos no OAuth 2.1.</li>
+<li>Token de acesso <strong>curto</strong>; refresh token com <strong>rotação</strong> e detecção de reuso (se um antigo reaparecer, revogue a família inteira).</li>
+<li>Escopo mínimo, e o <em>resource server</em> deve validar <strong>audience</strong>, emissor, expiração e assinatura — nunca só decodificar o JWT.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “PKCE protege o código interceptado, <code>redirect_uri</code> exato protege contra o código ir pro lugar errado, e <code>state</code> protege contra CSRF de login. São três ataques diferentes, e cada um tem a sua defesa.”</p>
+</article>
+
+<article data-href="https://authjs.dev/getting-started">
+<p class="tldr">Releia só os conceitos, não os guias de instalação. Três decisões do Auth.js viram pergunta de entrevista: <strong>estratégia de sessão</strong> (JWT vs. banco), <strong>os callbacks</strong> (onde você enxerta autorização) e <strong>account linking</strong> (o mesmo humano com dois provedores).</p>
+
+<h5>Estratégia de sessão — a decisão de arquitetura</h5>
+<div class="tbl"><table>
+<tr><th></th><th>JWT (padrão)</th><th>Database</th></tr>
+<tr><td>Onde está a sessão</td><td>num cookie assinado/criptografado, no cliente</td><td>uma linha na tabela de sessões</td></tr>
+<tr><td>Custo por requisição</td><td>zero consulta ao banco</td><td>uma consulta</td></tr>
+<tr><td>Revogar na hora</td><td><strong>não dá</strong> — vale até expirar</td><td>apaga a linha e acabou</td></tr>
+<tr><td>Mudar papel/permissão</td><td>só no próximo refresh do token</td><td>imediato</td></tr>
+<tr><td>Tamanho</td><td>vai em toda requisição; cuidado com cookie grande</td><td>só o id</td></tr>
+</table></div>
+<ul>
+<li>A regra prática: JWT enquanto revogação imediata não for requisito; banco quando existir “desconectar todos os dispositivos”, banimento ou mudança de permissão que precisa valer agora.</li>
+<li>Meio-termo comum: JWT curto (minutos) + refresh, que reduz a janela de revogação sem pagar consulta em toda requisição.</li>
+</ul>
+
+<h5>Os callbacks, e o que fazer em cada um</h5>
+<ul>
+<li><strong><code>signIn</code></strong>: autorização de entrada — bloquear e-mail não verificado, restringir a um domínio corporativo, recusar conta banida. Devolver <code>false</code> barra o login.</li>
+<li><strong><code>jwt</code></strong>: roda quando o token é criado ou atualizado. É onde você enfia dados extras (papel, id interno, <code>accessToken</code> do provedor). Cuidado: tudo que entrar aqui vai no cookie.</li>
+<li><strong><code>session</code></strong>: molda o que o cliente enxerga. O token pode ter campos que a sessão não deve expor — separar os dois é higiene.</li>
+<li>Regra de ouro: <strong>autorização de verdade se checa no servidor</strong>, a cada requisição. O papel dentro da sessão serve pra UI; o servidor confere de novo antes de qualquer ação.</li>
+</ul>
+
+<h5>Account linking</h5>
+<ul>
+<li>Mesma pessoa entra com Google e depois com GitHub, mesmo e-mail: são duas <code>Account</code> apontando pro mesmo <code>User</code>.</li>
+<li>O ponto de segurança: só ligar automaticamente quando o provedor <strong>verifica</strong> o e-mail. Ligar por e-mail não verificado permite tomada de conta — o atacante cria uma conta num provedor frouxo com o seu e-mail e herda o seu usuário.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Escolhi sessão em JWT porque não preciso revogar na hora; se aparecesse banimento ou ‘sair de todos os dispositivos’, eu migraria pra sessão em banco — a diferença é exatamente essa.”</p>
+</article>
+
+<article data-href="https://www.oauth.com/">
+<p class="tldr">Três capítulos bastam: <strong>Authorization Code Flow com PKCE</strong>, <strong>Access Tokens</strong> e <strong>Refresh Tokens</strong>. Pule tudo sobre construir servidor de autorização — no seu caso você é o cliente, e a entrevista vai perguntar do lado do cliente.</p>
+
+<h5>O fluxo, em oito passos</h5>
+<ol>
+<li>O cliente gera <code>state</code> e <code>code_verifier</code>, calcula o <code>code_challenge</code> (SHA-256) e guarda ambos na sessão.</li>
+<li>Redireciona pro <code>/authorize</code> com <code>client_id</code>, <code>redirect_uri</code>, <code>scope</code>, <code>response_type=code</code>, <code>state</code>, <code>code_challenge</code>.</li>
+<li>O usuário autentica <strong>no servidor de autorização</strong> — a sua aplicação nunca vê a senha. Esse é o ponto inteiro do OAuth.</li>
+<li>O usuário consente com os escopos pedidos.</li>
+<li>Volta pro <code>redirect_uri</code> com <code>code</code> e <code>state</code>.</li>
+<li>O cliente <strong>confere o <code>state</code></strong> contra o que guardou. Se não bater, aborta.</li>
+<li><code>POST /token</code> com o <code>code</code>, o <code>code_verifier</code> e (se confidencial) o segredo do cliente. Essa chamada é <strong>servidor-a-servidor</strong>.</li>
+<li>Recebe <code>access_token</code>, <code>expires_in</code>, geralmente <code>refresh_token</code> e, com OIDC, <code>id_token</code>.</li>
+</ol>
+<p>Por que o código intermediário existe: o token nunca aparece na URL, no histórico do navegador, nem no header <code>Referer</code>. Esse era exatamente o defeito do implicit flow.</p>
+
+<h5>Access tokens</h5>
+<ul>
+<li>Pro cliente, o token é <strong>opaco</strong> — não é pra você decodificar nem depender do formato; ele pode mudar.</li>
+<li>Dois formatos do lado do servidor: <strong>JWT</strong> (auto-contido, valida offline pela assinatura, não dá pra revogar antes de expirar) e <strong>referência</strong> (uma chave que o resource server consulta via <em>introspection</em> — revogável, ao custo de uma chamada).</li>
+<li>Vida curta (minutos a uma hora) é o que limita o estrago de um vazamento.</li>
+</ul>
+
+<h5>Refresh tokens</h5>
+<ul>
+<li>Servem pra obter novo access token sem incomodar o usuário. São de vida longa — e por isso o alvo mais valioso.</li>
+<li><strong>Rotação</strong>: cada uso emite um refresh novo e invalida o anterior. Se o antigo reaparecer, é sinal de roubo: revogue a família inteira e force novo login. É a resposta esperada em entrevista.</li>
+<li>Em cliente público, guarde em cookie <code>HttpOnly</code> + <code>Secure</code> + <code>SameSite</code>, nunca em <code>localStorage</code>.</li>
+<li>Duas condições de corrida clássicas: duas abas renovando ao mesmo tempo (resolve com <em>single-flight</em>, uma renova e as outras esperam), e requisições em voo quando o token expira (fila e repete depois da renovação).</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “O code existe pra o token nunca passar pelo navegador; o PKCE existe pra o code sozinho não valer nada. Access token curto, refresh com rotação e detecção de reuso.”</p>
+</article>
+
+<article data-href="https://auth0.com/blog/oauth-2-0-and-openid-connect-the-professional-guide/">
+<p class="tldr">A primeira metade responde a pergunta que mais cai: <strong>OAuth não é autenticação, é autorização delegada</strong>. Quem faz autenticação é o OpenID Connect, uma camada fina em cima. A segunda metade do guia é produto e pode pular.</p>
+
+<h5>Por que OAuth sozinho não autentica</h5>
+<ul>
+<li>Um access token diz “o portador pode acessar estes recursos”. <strong>Não diz quem é o portador</strong>, nem se essa pessoa acabou de se autenticar aqui, nem pra qual aplicação o token foi emitido.</li>
+<li>Daí o ataque clássico: usar <code>/userinfo</code> com um token obtido em <em>outro</em> app pra “logar” alguém. O token é válido, a pessoa existe — e ainda assim é uma tomada de conta, porque nada amarra o token à sua aplicação.</li>
+<li>Foi isso que o OIDC veio padronizar, depois de cada provedor inventar um jeito próprio de responder "quem é você".</li>
+</ul>
+
+<h5>O que o OIDC acrescenta</h5>
+<ul>
+<li><strong><code>scope=openid</code></strong>: o gatilho. Sem ele, não é OIDC, é só OAuth.</li>
+<li><strong>ID token</strong>: um <strong>JWT</strong> (aqui o formato é garantido) com claims sobre a autenticação — <code>iss</code> (emissor), <code>sub</code> (id estável do usuário), <code>aud</code> (<strong>a sua</strong> client_id), <code>exp</code>, <code>iat</code>, <code>nonce</code>, e opcionalmente <code>email</code>, <code>name</code>, <code>picture</code>.</li>
+<li><strong><code>/userinfo</code></strong>: endpoint padronizado pra buscar o perfil com o access token.</li>
+<li><strong>Discovery</strong> (<code>/.well-known/openid-configuration</code>) e <strong>JWKS</strong>: o cliente descobre endpoints e chaves públicas sozinho, e a rotação de chave do provedor não quebra você.</li>
+</ul>
+
+<h5>Validar o ID token — o que não pode faltar</h5>
+<ul>
+<li>Assinatura contra a chave do JWKS; <code>iss</code> igual ao esperado; <strong><code>aud</code> igual à sua <code>client_id</code></strong> (é isso que barra o token emitido pra outro app); <code>exp</code> não vencido; <code>nonce</code> igual ao que você enviou.</li>
+<li>Identifique o usuário por <strong><code>sub</code></strong>, nunca por e-mail: e-mail muda, e e-mail não verificado permite personificação.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Access token é autorização — diz o que pode, não quem é. Autenticação vem do ID token do OIDC, e validar o <code>aud</code> é o que impede usar um token emitido pra outra aplicação.”</p>
+</article>

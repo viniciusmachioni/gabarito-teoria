@@ -36,13 +36,161 @@
   </ul>
 
   <h3 class="sub">Onde estudar (grátis)</h3>
-  <ul class="resources">
-    <li><div class="r-title"><a href="https://cloud.google.com/apis/design" target="_blank" rel="noopener">Google API Design Guide</a></div><div class="r-note">Guia denso e usado como referência de mercado pra REST bem desenhado: recursos, paginação, erros padronizados.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia Resource Oriented Design e Errors. O resto é referência pra quando for desenhar um endpoint específico.</div><div class="r-src">cloud.google.com &middot; Google</div></li>
-    <li><div class="r-title"><a href="https://graphql.org/learn/" target="_blank" rel="noopener">GraphQL — Learn</a></div><div class="r-note">Os conceitos centrais: schema, resolver, query vs. mutation, e por que over-fetching/under-fetching motivaram o design.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia até "Schemas and Types" e depois "Execution" (onde entra o N+1). Subscriptions e o resto da referência ficam pra quando for usar de verdade.</div><div class="r-src">graphql.org &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://github.com/graphql/dataloader" target="_blank" rel="noopener">DataLoader</a></div><div class="r-note">Agrupa (batch) e cacheia buscas feitas no mesmo tick — a correção padrão pro N+1 de resolver GraphQL.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>README curto, com o problema e a solução lado a lado.</div><div class="r-src">github.com &middot; Facebook</div></li>
-    <li><div class="r-title"><a href="https://trpc.io/docs/concepts" target="_blank" rel="noopener">tRPC — Concepts</a></div><div class="r-note">Como a tipagem viaja do procedimento do servidor pro autocomplete do cliente sem geração de código nem schema separado.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta, conceitual — não precisa instalar nada pra entender a ideia central.</div><div class="r-src">trpc.io &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS" target="_blank" rel="noopener">MDN — CORS</a></div><div class="r-note">O que dispara um preflight (<code>OPTIONS</code>), os headers envolvidos, e a interação entre <code>Access-Control-Allow-Origin</code> e credenciais.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a visão geral e "Preflighted requests". A lista completa de headers é referência.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://docs.stripe.com/webhooks" target="_blank" rel="noopener">Stripe — Webhooks</a></div><div class="r-note">A referência de mercado pra webhook confiável: verificação de assinatura, retry, e o motivo de idempotência ser obrigatória do lado de quem recebe.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia "Verify signature" e a seção de melhores práticas de recebimento. Você já implementou boa parte disso — é a peça que dá nome ao que já fez.</div><div class="r-src">docs.stripe.com &middot; oficial</div></li>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://cloud.google.com/apis/design" target="_blank" rel="noopener">Google API Design Guide</a></div><div class="r-note">Guia denso e usado como referência de mercado pra REST bem desenhado: recursos, paginação, erros padronizados.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia Resource Oriented Design e Errors. O resto é referência pra quando for desenhar um endpoint específico.</div><div class="r-src">cloud.google.com &middot; Google</div><details class="leitura" data-id="b16-apis--cloud-google-com-apis-design"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Duas seções: <strong>Resource Oriented Design</strong> e <strong>Errors</strong>. A tese é que uma API bem desenhada tem poucos <em>verbos</em> e muitos <em>substantivos</em>: você modela recursos e aplica os métodos padrão sobre eles, em vez de inventar um endpoint por operação.</p>
+
+<h5>Resource Oriented Design</h5>
+<ul>
+<li>Modele <strong>recursos</strong> (substantivos, no plural) com hierarquia clara: <code>/empresas/{id}/pedidos/{id}/itens</code>. O caminho é o nome do recurso.</li>
+<li>Os <strong>métodos padrão</strong> cobrem quase tudo: List, Get, Create, Update, Delete. Só invente um <em>método customizado</em> (<code>:cancelar</code>, <code>:arquivar</code>) quando a ação genuinamente não couber num CRUD — e aí deixe isso explícito no nome.</li>
+<li><strong><code>POST /pedidos/123/cancelar</code> é melhor que <code>PATCH /pedidos/123 {status:"cancelado"}</code></strong> quando cancelar dispara efeitos (estorno, e-mail, estoque). O verbo genérico esconde a operação de negócio.</li>
+<li>Nomes de campo consistentes em todo lugar (<code>created_at</code> sempre, nunca <code>createdAt</code> num endpoint e <code>data_criacao</code> no outro). Consistência vale mais que a escolha em si.</li>
+<li><strong>Paginação padronizada</strong> com <code>page_size</code> e <code>page_token</code> — token opaco, não offset (ver a discussão de cursor no bloco de front-end system design).</li>
+</ul>
+
+<h5>Errors</h5>
+<ul>
+<li>Um <strong>formato único</strong> de erro pra API inteira: código, mensagem legível e detalhes estruturados. Cliente que precisa de <code>if</code> por endpoint pra entender erro é sintoma de API mal desenhada.</li>
+<li>O status HTTP faz parte do contrato: <code>400</code> malformado, <code>401</code> não autenticado, <code>403</code> sem permissão, <code>404</code> inexistente, <code>409</code> conflito, <code>429</code> limite, <code>5xx</code> culpa nossa.</li>
+<li><strong>Erro de validação precisa dizer qual campo</strong> e por quê — mensagem genérica obriga o cliente a adivinhar.</li>
+<li>Nunca vaze stack trace, SQL ou caminho de arquivo na resposta. Correlacione por um <code>request_id</code> devolvido ao cliente e registrado no log.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu modelo recurso, uso os métodos padrão e só crio ação customizada quando a operação tem efeito de negócio próprio. E padronizo o formato de erro na API inteira — é o que mais reduz código de tratamento do lado do cliente.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://cloud.google.com/apis/design" target="_blank" rel="noopener">cloud.google.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://graphql.org/learn/" target="_blank" rel="noopener">GraphQL — Learn</a></div><div class="r-note">Os conceitos centrais: schema, resolver, query vs. mutation, e por que over-fetching/under-fetching motivaram o design.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia até "Schemas and Types" e depois "Execution" (onde entra o N+1). Subscriptions e o resto da referência ficam pra quando for usar de verdade.</div><div class="r-src">graphql.org &middot; oficial</div><details class="leitura" data-id="b16-apis--graphql-org-learn"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">GraphQL resolve dois problemas do REST: <strong>over-fetching</strong> (vem mais campo do que se precisa) e <strong>under-fetching</strong> (precisa de N chamadas pra montar uma tela). Cobra com um custo próprio: cache HTTP deixa de funcionar, e a performance vira responsabilidade sua.</p>
+
+<h5>Schema e tipos</h5>
+<ul>
+<li>O schema é o <strong>contrato</strong>, tipado e introspectável. Ferramentas, autocompletar no editor e geração de tipos saem dele de graça — é o maior ganho prático do dia a dia.</li>
+<li><strong>Um endpoint só</strong> (<code>POST /graphql</code>) com três operações: <code>query</code> (ler), <code>mutation</code> (escrever, executadas em série) e <code>subscription</code> (tempo real).</li>
+<li><strong>Nulabilidade explícita</strong> (<code>String!</code>) faz parte do contrato — e a propagação de <code>null</code> num campo não-nulo derruba o objeto pai inteiro, coisa que surpreende quem está começando.</li>
+<li><strong>Versionamento por evolução</strong>: em vez de <code>/v2</code>, adiciona-se campo novo e marca-se o antigo com <code>@deprecated</code>. Dá pra medir o uso real de cada campo antes de remover — isso REST não tem.</li>
+</ul>
+
+<h5>Execution — de onde vem o N+1</h5>
+<ul>
+<li>Cada campo é resolvido por uma função. Numa lista de N posts, o campo <code>autor</code> chama o resolver N vezes: <strong>1 query pros posts + N queries pros autores</strong>.</li>
+<li>O problema é <em>estrutural</em>, não um descuido: o resolver não sabe que está sendo chamado em lote. Daí o DataLoader.</li>
+</ul>
+
+<h5>Os custos que a entrevista quer ouvir</h5>
+<ul>
+<li><strong>Cache HTTP não funciona</strong>: tudo é POST na mesma URL. O cache migra pro cliente (Apollo, urql, Relay), que normaliza por id — mais poderoso e mais complexo.</li>
+<li><strong>Consulta maliciosa</strong>: aninhamento profundo pode derrubar o servidor. Defesas: limite de profundidade, análise de custo e <em>persisted queries</em> (só consultas pré-aprovadas).</li>
+<li><strong>Autorização por campo</strong> é mais trabalhosa que por rota.</li>
+<li><strong>Quando REST continua melhor</strong>: API pública simples, download de arquivo, e qualquer caso em que cache de CDN seja o que mais importa.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://graphql.org/learn/" target="_blank" rel="noopener">graphql.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://github.com/graphql/dataloader" target="_blank" rel="noopener">DataLoader</a></div><div class="r-note">Agrupa (batch) e cacheia buscas feitas no mesmo tick — a correção padrão pro N+1 de resolver GraphQL.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>README curto, com o problema e a solução lado a lado.</div><div class="r-src">github.com &middot; Facebook</div><details class="leitura" data-id="b16-apis--github-com-graphql-dataloader"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">README curto com o problema e a solução lado a lado. DataLoader faz duas coisas: <strong>batching</strong> (junta as chamadas feitas no mesmo tick do event loop numa consulta só) e <strong>caching</strong> por requisição (a mesma chave pedida duas vezes vira uma).</p>
+
+<h5>Como o batching funciona</h5>
+<ul>
+<li>Você não passa uma função que carrega <em>um</em> item — passa uma que carrega <strong>uma lista de chaves</strong>: <code>(ids) =&gt; buscarAutores(ids)</code>, que vira <code>WHERE id IN (...)</code>.</li>
+<li>O loader acumula as chamadas de <code>.load(id)</code> e dispara a função uma vez, no fim do tick atual do event loop. Os N resolvers viram 1 consulta.</li>
+<li><strong>A regra que quebra tudo se ignorada</strong>: a função de lote deve devolver um array <strong>do mesmo tamanho e na mesma ordem</strong> das chaves pedidas. Banco não garante ordem de <code>IN</code> — é preciso remapear por id antes de devolver.</li>
+</ul>
+
+<h5>Cache por requisição, não global</h5>
+<ul>
+<li><strong>Crie um loader novo a cada requisição HTTP.</strong> Loader compartilhado entre requisições vaza dados entre usuários (dado autorizado pra um aparecendo pra outro) e serve dado velho.</li>
+<li>O cache é só pra deduplicar dentro daquela requisição. Cache de verdade entre requisições é outra camada (Redis), com invalidação própria.</li>
+<li>Depois de uma mutação na mesma requisição, chame <code>.clear(id)</code> pra não ler o valor anterior.</li>
+</ul>
+
+<h5>Além do GraphQL</h5>
+<ul>
+<li>O padrão vale pra qualquer lugar onde chamadas individuais possam virar lote: REST chamando um microsserviço, um BFF agregando, um worker processando fila.</li>
+<li>O nome genérico do padrão é <strong>request coalescing</strong> — e ele é primo do <em>single-flight</em> que evita cache stampede.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://github.com/graphql/dataloader" target="_blank" rel="noopener">github.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://trpc.io/docs/concepts" target="_blank" rel="noopener">tRPC — Concepts</a></div><div class="r-note">Como a tipagem viaja do procedimento do servidor pro autocomplete do cliente sem geração de código nem schema separado.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta, conceitual — não precisa instalar nada pra entender a ideia central.</div><div class="r-src">trpc.io &middot; oficial</div><details class="leitura" data-id="b16-apis--trpc-io-docs-concepts"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">tRPC dá tipagem ponta a ponta <strong>sem geração de código e sem schema separado</strong>: o tipo do cliente é <em>inferido</em> diretamente do roteador do servidor. O preço é que só funciona quando cliente e servidor são TypeScript no mesmo repositório.</p>
+
+<h5>A ideia central</h5>
+<ul>
+<li>Você escreve <code>procedures</code> no servidor (<code>query</code> pra ler, <code>mutation</code> pra escrever) e exporta apenas o <strong>tipo</strong> do roteador. O cliente importa esse tipo — nada de runtime atravessa.</li>
+<li>Resultado: renomear um campo no servidor produz <strong>erro de compilação no cliente</strong>, na hora. É o tipo de erro que, em REST, só aparece em produção.</li>
+<li>Validação de entrada com Zod é parte da definição da procedure — mesmo schema valida em runtime e tipa o handler.</li>
+</ul>
+
+<h5>Comparação honesta</h5>
+<div class="tbl"><table>
+<tr><th></th><th>tRPC</th><th>GraphQL</th><th>REST + OpenAPI</th></tr>
+<tr><td>Tipagem no cliente</td><td>inferida, zero build</td><td>gerada do schema</td><td>gerada da spec (se houver)</td></tr>
+<tr><td>Cliente não-TS</td><td><strong>não serve</strong></td><td>serve</td><td>serve</td></tr>
+<tr><td>API pública</td><td>ruim</td><td>ok</td><td>melhor</td></tr>
+<tr><td>Cache HTTP</td><td>limitado</td><td>não</td><td>nativo</td></tr>
+<tr><td>Cerimônia</td><td>mínima</td><td>alta</td><td>média</td></tr>
+</table></div>
+
+<h5>Quando escolher cada um</h5>
+<ul>
+<li><strong>tRPC</strong>: monorepo TypeScript, um produto, time pequeno, velocidade importa. O caso do Next.js com backend próprio.</li>
+<li><strong>GraphQL</strong>: muitos clientes diferentes com necessidades distintas de dado, ou vários times servindo um grafo comum.</li>
+<li><strong>REST</strong>: API pública, integração com terceiros, quando cache de CDN e simplicidade valem mais que tipagem.</li>
+<li>Vale notar que Server Actions do Next.js ocupam quase o mesmo nicho do tRPC — função tipada chamada do cliente, sem endpoint explícito.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://trpc.io/docs/concepts" target="_blank" rel="noopener">trpc.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS" target="_blank" rel="noopener">MDN — CORS</a></div><div class="r-note">O que dispara um preflight (<code>OPTIONS</code>), os headers envolvidos, e a interação entre <code>Access-Control-Allow-Origin</code> e credenciais.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a visão geral e "Preflighted requests". A lista completa de headers é referência.</div><div class="r-src">developer.mozilla.org &middot; oficial</div><details class="leitura" data-id="b16-apis--developer-mozilla-org-en-us-docs-web-http-guides-cors"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">CORS é uma regra do <strong>navegador</strong>, não do servidor: a política de mesma origem impede que um script leia a resposta de outra origem, a menos que o servidor autorize por header. Entender que a requisição <em>é enviada</em> mesmo quando o CORS bloqueia a leitura é o que separa quem sabe de quem chuta.</p>
+
+<h5>Origem, e o que conta como “outra”</h5>
+<ul>
+<li>Origem = <strong>esquema + host + porta</strong>. <code>https://app.com</code> e <code>https://api.app.com</code> são origens diferentes; <code>http</code> e <code>https</code> também.</li>
+<li>A restrição vale só pra JavaScript ler a resposta. Imagem, CSS, <code>&lt;script&gt;</code> e envio de formulário sempre cruzaram origem — o que é, aliás, a razão de CSRF existir.</li>
+</ul>
+
+<h5>Preflight — quando e por quê</h5>
+<ul>
+<li>Requisição “simples” (GET/HEAD/POST com <code>Content-Type</code> de formulário ou texto e sem header customizado) vai direto.</li>
+<li>Qualquer outra — e <code>Content-Type: application/json</code> já basta — dispara um <strong><code>OPTIONS</code> de preflight</strong> antes. O navegador pergunta: “posso mandar este método com estes headers?”.</li>
+<li>O servidor responde com <code>Access-Control-Allow-Origin</code>, <code>-Methods</code>, <code>-Headers</code>, e <code>Access-Control-Max-Age</code> pra o navegador cachear a permissão e não repetir o preflight a cada chamada.</li>
+</ul>
+
+<h5>Credenciais — a parte que mais confunde</h5>
+<ul>
+<li>Pra cookie atravessar: <code>credentials: 'include'</code> no cliente <strong>e</strong> <code>Access-Control-Allow-Credentials: true</code> no servidor.</li>
+<li>E aí <strong><code>Access-Control-Allow-Origin: *</code> deixa de ser aceito</strong> — é preciso ecoar a origem específica. Se você ecoa dinamicamente, valide contra uma allowlist, senão qualquer site passa a poder chamar sua API com o cookie do usuário.</li>
+<li>Lembre que <code>SameSite</code> do cookie é uma trava independente: mesmo com CORS liberado, um cookie <code>SameSite=Lax</code> não vai numa requisição entre sites.</li>
+</ul>
+
+<h5>Diagnóstico</h5>
+<ul>
+<li>“Erro de CORS” significa que o servidor <strong>respondeu</strong> sem o header certo — a requisição saiu e o efeito colateral pode ter acontecido. Não é firewall, não é rede.</li>
+<li>Erro no preflight e erro na requisição real são causas diferentes: veja qual das duas linhas falhou na aba de rede.</li>
+<li>Proxy no mesmo domínio (rota <code>/api</code> do seu próprio servidor) elimina CORS por construção — costuma ser a solução mais simples em produção.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS" target="_blank" rel="noopener">developer.mozilla.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://docs.stripe.com/webhooks" target="_blank" rel="noopener">Stripe — Webhooks</a></div><div class="r-note">A referência de mercado pra webhook confiável: verificação de assinatura, retry, e o motivo de idempotência ser obrigatória do lado de quem recebe.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia "Verify signature" e a seção de melhores práticas de recebimento. Você já implementou boa parte disso — é a peça que dá nome ao que já fez.</div><div class="r-src">docs.stripe.com &middot; oficial</div><details class="leitura" data-id="b16-apis--docs-stripe-com-webhooks"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Webhook é a inversão do modelo: em vez de você perguntar, eles avisam. Traz dois problemas que <em>sempre</em> caem em entrevista: <strong>como saber que a chamada é legítima</strong> e <strong>como não duplicar o efeito</strong> quando o mesmo evento chega duas vezes.</p>
+
+<h5>Verificar a assinatura</h5>
+<ul>
+<li>O provedor assina o corpo com um segredo compartilhado e manda a assinatura num header, junto com um timestamp.</li>
+<li><strong>A assinatura é sobre o corpo cru</strong>. Se o seu framework já parseou o JSON e você re-serializa, a assinatura não bate — é o erro de integração número um. A rota do webhook precisa receber o body como buffer.</li>
+<li>Compare com <strong>comparação de tempo constante</strong>, e rejeite timestamp antigo (defesa contra replay).</li>
+<li>Sem verificação, o endpoint é uma API pública que qualquer um pode chamar dizendo “este pagamento foi aprovado”.</li>
+</ul>
+
+<h5>Receber bem</h5>
+<ul>
+<li><strong>Responda <code>2xx</code> rápido</strong> e faça o trabalho pesado numa fila. Provedor tem timeout curto; demorar faz ele considerar falha e reenviar — criando exatamente a duplicata que você não quer.</li>
+<li><strong>Idempotência</strong>: grave o <code>event.id</code> com constraint <code>UNIQUE</code> <strong>na mesma transação</strong> do efeito. A segunda entrega esbarra na constraint e vira no-op.</li>
+<li><strong>Eventos chegam fora de ordem.</strong> Não assuma sequência: use o estado do objeto no evento, ou busque o estado atual na API antes de decidir.</li>
+<li>Trate <strong>evento desconhecido</strong> com um <code>2xx</code> silencioso — o provedor adiciona tipos novos, e falhar neles gera reentrega infinita.</li>
+</ul>
+
+<h5>Operação</h5>
+<ul>
+<li>Assine só os tipos de evento que você usa. Registre tudo que chega (com o id) pra poder auditar e reprocessar.</li>
+<li>Tenha um caminho de <strong>reconciliação</strong>: um job periódico que compara o seu estado com a API do provedor. Webhook perdido acontece, e reconciliação é o que impede o divergente de virar permanente.</li>
+<li>Em desenvolvimento, use o CLI do provedor pra encaminhar eventos pro <code>localhost</code>, em vez de expor um túnel.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.stripe.com/webhooks" target="_blank" rel="noopener">docs.stripe.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
   <div class="ammo">
@@ -86,7 +234,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 123 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 102 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

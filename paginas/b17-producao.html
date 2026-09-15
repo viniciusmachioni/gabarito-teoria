@@ -35,12 +35,140 @@
   </ul>
 
   <h3 class="sub">Onde estudar (grátis)</h3>
-  <ul class="resources">
-    <li><div class="r-title"><a href="https://opentelemetry.io/docs/concepts/observability-primer/" target="_blank" rel="noopener">OpenTelemetry — Observability Primer</a></div><div class="r-note">A definição dos três pilares e por que "eu tenho logs" não é o mesmo que "eu tenho observabilidade".</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página conceitual curta, vendor-neutra — boa base antes de olhar qualquer ferramenta específica.</div><div class="r-src">opentelemetry.io &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">Google SRE Book — Service Level Objectives</a></div><div class="r-note">O capítulo que define SLI, SLO, SLA e error budget com exemplos numéricos.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia até a seção de error budget — é o conceito que mais aparece em entrevista ("quanto de indisponibilidade vocês toleram por mês, e o que fazem quando estoura").</div><div class="r-src">sre.google &middot; oficial, livro do Google</div></li>
-    <li><div class="r-title"><a href="https://martinfowler.com/articles/feature-toggles.html" target="_blank" rel="noopener">Feature Toggles (aka Feature Flags)</a></div><div class="r-note">Taxonomia de Martin Fowler: release toggle, experiment toggle, ops toggle, permission toggle — cada um com um ciclo de vida diferente.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a introdução e a seção "Categories of Toggles". O resto (implementação, toggle router) é opcional.</div><div class="r-src">martinfowler.com</div></li>
-    <li><div class="r-title"><a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">BlueGreenDeployment</a></div><div class="r-note">Post curto que define o padrão base; de lá segue pros links de canary e rolling deployment.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Curtíssimo — leia este e depois busque "canary release" do mesmo autor pra comparar os dois.</div><div class="r-src">martinfowler.com</div></li>
-    <li><div class="r-title"><a href="https://sre.google/sre-book/postmortem-culture/" target="_blank" rel="noopener">Google SRE Book — Postmortem Culture</a></div><div class="r-note">Por que cultura sem culpa gera relatos mais honestos, e o formato de um postmortem que vira aprendizado real em vez de teatro.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Capítulo curto e muito citado — a frase "we believe that a blameless environment…" é literalmente quotada em entrevista às vezes.</div><div class="r-src">sre.google &middot; oficial, livro do Google</div></li>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://opentelemetry.io/docs/concepts/observability-primer/" target="_blank" rel="noopener">OpenTelemetry — Observability Primer</a></div><div class="r-note">A definição dos três pilares e por que "eu tenho logs" não é o mesmo que "eu tenho observabilidade".</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página conceitual curta, vendor-neutra — boa base antes de olhar qualquer ferramenta específica.</div><div class="r-src">opentelemetry.io &middot; oficial</div><details class="leitura" data-id="b17-producao--opentelemetry-io-docs-concepts-observability-primer"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A distinção que organiza tudo: <strong>monitoramento</strong> responde perguntas que você já sabia fazer (dashboards prontos); <strong>observabilidade</strong> é conseguir responder perguntas novas sobre um sistema sem fazer deploy pra descobrir. Os três sinais — logs, métricas e traces — respondem coisas diferentes.</p>
+
+<h5>Os três sinais, e o que cada um responde</h5>
+<div class="tbl"><table>
+<tr><th>Sinal</th><th>Responde</th><th>Custo</th></tr>
+<tr><td><strong>Métrica</strong></td><td>“há problema? qual a magnitude?” — agregado, barato de guardar por muito tempo</td><td>baixo; cardinalidade alta explode</td></tr>
+<tr><td><strong>Trace</strong></td><td>“onde, no caminho da requisição?” — spans encadeados entre serviços</td><td>médio; normalmente amostrado</td></tr>
+<tr><td><strong>Log</strong></td><td>“o que exatamente aconteceu ali?” — detalhe pontual</td><td>alto em volume e armazenamento</td></tr>
+</table></div>
+<p>A investigação percorre os três nessa ordem: o alerta vem da métrica, o trace mostra qual serviço ou consulta consumiu o tempo, e o log daquele span traz o detalhe.</p>
+
+<h5>Trace, span e contexto</h5>
+<ul>
+<li>Um <strong>trace</strong> é a requisição inteira; cada <strong>span</strong> é uma operação (chamada HTTP, consulta ao banco), com pai, duração e atributos.</li>
+<li><strong>Propagação de contexto</strong> é o que faz os spans de serviços diferentes pertencerem ao mesmo trace — o <code>traceparent</code> viajando no header. Sem isso, você tem pedaços soltos, não um trace.</li>
+<li>Injetar o <code>trace_id</code> no log é o que liga os dois mundos: do trace lento você pula direto pros logs daquele instante.</li>
+</ul>
+
+<h5>Boas práticas que rendem ponto</h5>
+<ul>
+<li><strong>Log estruturado</strong> (JSON com campos), nunca string concatenada — é o que permite filtrar e agregar depois. E nunca logue senha, token ou dado pessoal.</li>
+<li><strong>Cardinalidade</strong>: métrica com rótulo de id de usuário ou de URL com parâmetro gera milhões de séries e derruba o sistema de métricas. Id de usuário é atributo de <em>span</em> ou campo de <em>log</em>, não rótulo de métrica.</li>
+<li><strong>Amostragem</strong>: guardar 100% dos traces é caro. Amostragem <em>por cabeça</em> (decide no início) é barata; <em>por cauda</em> (decide depois, guardando os lentos e os com erro) é mais útil e mais cara.</li>
+<li><strong>OpenTelemetry é vendor-neutro</strong>: instrumenta uma vez, exporta pra qualquer backend. É a resposta pra “como você evita ficar preso a uma ferramenta de observabilidade?”.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://opentelemetry.io/docs/concepts/observability-primer/" target="_blank" rel="noopener">opentelemetry.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">Google SRE Book — Service Level Objectives</a></div><div class="r-note">O capítulo que define SLI, SLO, SLA e error budget com exemplos numéricos.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia até a seção de error budget — é o conceito que mais aparece em entrevista ("quanto de indisponibilidade vocês toleram por mês, e o que fazem quando estoura").</div><div class="r-src">sre.google &middot; oficial, livro do Google</div><details class="leitura" data-id="b17-producao--sre-google-sre-book-service-level-objectives"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A ideia que mais aparece em entrevista: <strong>error budget</strong>. Se a meta é 99,9% de disponibilidade no mês, você tem ~43 minutos de indisponibilidade <em>autorizados</em>. Isso transforma a briga entre “lançar rápido” e “não quebrar” numa conta, e não numa discussão de opinião.</p>
+
+<h5>SLI, SLO, SLA</h5>
+<ul>
+<li><strong>SLI</strong> (indicator): a medida — taxa de requisições bem-sucedidas, latência p99, frescor do dado.</li>
+<li><strong>SLO</strong> (objective): a meta interna sobre o SLI — “99,9% das requisições abaixo de 300ms, medido em 30 dias”.</li>
+<li><strong>SLA</strong> (agreement): o contrato com o cliente, com <strong>penalidade financeira</strong>. Sempre mais frouxo que a SLO — a SLO existe pra você descobrir o problema antes de o cliente cobrar.</li>
+</ul>
+
+<h5>Error budget, na prática</h5>
+<ul>
+<li><code>budget = 100% − SLO</code>. Com 99,9% mensal: ~43 min. Com 99,99%: ~4 min — e essa diferença custa muito dinheiro em redundância.</li>
+<li><strong>Budget sobrando</strong> = licença pra arriscar: lançar mais rápido, experimentar, migrar infraestrutura.</li>
+<li><strong>Budget estourando</strong> = desacelerar lançamento arriscado e priorizar confiabilidade até renovar. A conversa deixa de ser “você está sendo imprudente” e vira “consumimos 80% em duas semanas”.</li>
+<li><strong>Alerta por taxa de queima</strong> (<em>burn rate</em>): alerte quando o budget está sendo consumido rápido demais, não a cada erro isolado. Uma queda de 5 minutos que consome 10% do mês merece acordar alguém; um erro solto, não.</li>
+</ul>
+
+<h5>Escolher bem a SLO</h5>
+<ul>
+<li>Meça <strong>do ponto de vista do usuário</strong>: no balanceador ou no cliente, não dentro do serviço (que pode estar “saudável” com o caminho quebrado).</li>
+<li><strong>100% é a meta errada</strong> — é inatingível, e mirar nela paralisa o produto. Se ninguém reclama em 99,9%, subir pra 99,99% é gastar dinheiro sem valor percebido.</li>
+<li>Prefira <strong>percentis</strong> (p95, p99) a média: média esconde a cauda, e a cauda é a experiência real de quem reclama.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “SLO com error budget transforma confiabilidade em conta. Enquanto sobra budget, a gente acelera; quando queima rápido, a prioridade vira estabilidade — e isso é uma decisão de dados, não de opinião.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">sre.google</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://martinfowler.com/articles/feature-toggles.html" target="_blank" rel="noopener">Feature Toggles (aka Feature Flags)</a></div><div class="r-note">Taxonomia de Martin Fowler: release toggle, experiment toggle, ops toggle, permission toggle — cada um com um ciclo de vida diferente.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a introdução e a seção "Categories of Toggles". O resto (implementação, toggle router) é opcional.</div><div class="r-src">martinfowler.com</div><details class="leitura" data-id="b17-producao--martinfowler-com-articles-feature-toggles-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Flag separa <strong>deploy</strong> de <strong>release</strong>: o código vai pra produção desligado e é ligado depois, pra quem você quiser. A parte que importa é a <strong>taxonomia</strong>: cada categoria tem vida útil e dinamismo diferentes, e tratar todas igual é o que produz o emaranhado.</p>
+
+<h5>As quatro categorias</h5>
+<div class="tbl"><table>
+<tr><th>Tipo</th><th>Pra quê</th><th>Vida</th><th>Muda em runtime?</th></tr>
+<tr><td><strong>Release toggle</strong></td><td>esconder funcionalidade incompleta</td><td>dias a semanas — <strong>remover depois</strong></td><td>não precisa</td></tr>
+<tr><td><strong>Experiment toggle</strong></td><td>teste A/B</td><td>a duração do experimento</td><td>sim, por usuário</td></tr>
+<tr><td><strong>Ops toggle</strong></td><td>kill switch, degradação controlada</td><td>longa, às vezes permanente</td><td><strong>sim, na hora</strong></td></tr>
+<tr><td><strong>Permission toggle</strong></td><td>plano, beta fechado, cliente específico</td><td>permanente — é regra de negócio</td><td>sim, por usuário</td></tr>
+</table></div>
+
+<h5>O custo, e como contê-lo</h5>
+<ul>
+<li>Cada flag viva <strong>dobra os caminhos de execução</strong>. Dez flags são 1024 combinações teóricas que ninguém testa. É dívida técnica composta.</li>
+<li>A disciplina: <strong>release toggle tem dono e prazo</strong>, e vira tarefa de remoção assim que o lançamento consolida. Ops e permission toggles são os que legitimamente ficam.</li>
+<li>Teste o caminho <strong>ligado</strong> (o que vai ser o futuro) e o <strong>desligado</strong> (o que está em produção). Testar só um é meio teste.</li>
+<li>Mantenha a decisão da flag num ponto só (um serviço/wrapper), não espalhada em <code>if</code> por todo o código — assim remover é apagar um lugar.</li>
+</ul>
+
+<h5>O que flag viabiliza</h5>
+<ul>
+<li><strong>Trunk-based development</strong>: integrar na principal todo dia, sem branch de longa duração, porque o incompleto fica atrás da flag.</li>
+<li><strong>Lançamento progressivo</strong>: 1% → 10% → 100%, observando métrica a cada degrau.</li>
+<li><strong>Rollback sem deploy</strong>: desligar a flag é instantâneo e não depende do pipeline — a diferença entre 30 segundos e 15 minutos durante um incidente.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://martinfowler.com/articles/feature-toggles.html" target="_blank" rel="noopener">martinfowler.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">BlueGreenDeployment</a></div><div class="r-note">Post curto que define o padrão base; de lá segue pros links de canary e rolling deployment.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Curtíssimo — leia este e depois busque "canary release" do mesmo autor pra comparar os dois.</div><div class="r-src">martinfowler.com</div><details class="leitura" data-id="b17-producao--martinfowler-com-bliki-bluegreendeployment-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Dois ambientes de produção idênticos. Um serve o tráfego (<em>blue</em>), o outro recebe a versão nova (<em>green</em>). Testado, você <strong>troca 100% do tráfego de uma vez</strong> — e o rollback é trocar de volta. Otimiza a <em>velocidade</em> do rollback.</p>
+
+<h5>Como funciona</h5>
+<ul>
+<li>Implanta e valida no ambiente ocioso com tráfego zero (<em>smoke test</em> de verdade, em infraestrutura de produção).</li>
+<li>Troca o roteamento no balanceador. O ambiente antigo fica de pé por um tempo como rota de volta.</li>
+<li>O ciclo se inverte na próxima entrega: o que era green vira o novo blue.</li>
+</ul>
+
+<h5>Blue-green vs. canary</h5>
+<div class="tbl"><table>
+<tr><th></th><th>Blue-green</th><th>Canary</th></tr>
+<tr><td>Tráfego na versão nova</td><td>0% → <strong>100% de uma vez</strong></td><td>1% → 10% → 50% → 100%</td></tr>
+<tr><td>Otimiza</td><td>velocidade do rollback</td><td><strong>tamanho do estrago</strong></td></tr>
+<tr><td>Custo</td><td>dois ambientes completos</td><td>capacidade extra pequena</td></tr>
+<tr><td>Decisão</td><td>humana, antes da troca</td><td>métrica do grupo canário</td></tr>
+<tr><td>Bom quando</td><td>a validação prévia é confiável</td><td>o risco só aparece com tráfego real</td></tr>
+</table></div>
+
+<h5>O que nenhuma das duas resolve sozinha</h5>
+<ul>
+<li><strong>Migração de banco.</strong> O banco costuma ser compartilhado, e não volta com a troca de roteamento. É aqui que mora o risco de verdade.</li>
+<li>A saída é <strong>expand/contract</strong> (migração em duas fases): primeiro só mudanças <em>aditivas</em>, compatíveis com a versão antiga <em>e</em> a nova; depois, quando a versão antiga já não roda, remove-se o que ficou.</li>
+<li>Consequência prática: <strong>nunca renomear ou remover coluna no mesmo deploy que muda o código</strong>. Adiciona, escreve nos dois, migra, e só então remove.</li>
+<li>Sessão em memória também quebra na troca — mais um argumento pra servidor stateless.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">martinfowler.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://sre.google/sre-book/postmortem-culture/" target="_blank" rel="noopener">Google SRE Book — Postmortem Culture</a></div><div class="r-note">Por que cultura sem culpa gera relatos mais honestos, e o formato de um postmortem que vira aprendizado real em vez de teatro.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Capítulo curto e muito citado — a frase "we believe that a blameless environment…" é literalmente quotada em entrevista às vezes.</div><div class="r-src">sre.google &middot; oficial, livro do Google</div><details class="leitura" data-id="b17-producao--sre-google-sre-book-postmortem-culture"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Postmortem <em>blameless</em> não é ser educado — é uma escolha de incentivo. Se relatar o próprio erro é punido, ninguém relata, e o time perde exatamente a informação que precisava. O foco vai pro <strong>sistema que permitiu o erro</strong>.</p>
+
+<h5>O princípio</h5>
+<ul>
+<li>Assume-se que cada pessoa tomou <strong>a melhor decisão possível com a informação que tinha</strong>. Se a decisão foi ruim, a pergunta é: por que a informação errada parecia certa?</li>
+<li>Isso desloca as perguntas: não “quem rodou o comando”, mas “por que um comando destrutivo era tão fácil de rodar sem confirmação?”. A segunda gera ação concreta; a primeira gera medo.</li>
+<li><strong>Viés retrospectivo</strong> é o inimigo: depois do incidente, tudo parece óbvio. O relato precisa reconstruir o que se sabia <em>naquele momento</em>.</li>
+</ul>
+
+<h5>A estrutura de um bom postmortem</h5>
+<ul>
+<li><strong>Resumo</strong>, <strong>impacto</strong> (quantos usuários, quanto tempo, quanto dinheiro), <strong>linha do tempo</strong> com horários, <strong>causa raiz</strong>, <strong>o que foi bem</strong>, <strong>o que foi mal</strong>, <strong>onde tivemos sorte</strong>, e <strong>ações</strong>.</li>
+<li><strong>Ação com dono e prazo</strong>, ou não é ação — é desabafo. E ações devem atacar detecção e mitigação, não só a causa: “por que levou 40 minutos pra alguém perceber?” costuma render mais que a correção do bug.</li>
+<li><strong>Onde tivemos sorte</strong> é a seção mais subestimada: revela o próximo incidente antes de ele acontecer.</li>
+</ul>
+
+<h5>Gatilhos e cultura</h5>
+<ul>
+<li>Defina critérios objetivos pra exigir postmortem (perda de dado, indisponibilidade acima de X, acionamento fora de hora) — assim não vira julgamento caso a caso.</li>
+<li><strong>Publique</strong>. Postmortem que só o time lê perde metade do valor; a organização aprende com o incidente alheio.</li>
+<li>Numa entrevista, contar um incidente com esse formato — impacto quantificado, linha do tempo, causa, e a ação que <em>você</em> tocou — é uma das histórias mais fortes que existem.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://sre.google/sre-book/postmortem-culture/" target="_blank" rel="noopener">sre.google</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
   <div class="ammo">
@@ -84,7 +212,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 123 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 102 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

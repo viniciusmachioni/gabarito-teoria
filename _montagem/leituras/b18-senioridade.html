@@ -1,0 +1,110 @@
+<article data-href="https://staffeng.com/guides/what-is-staff-engineering/">
+<p class="tldr">A promoção que importa não é de “sabe mais tecnologia” — é de <strong>escopo</strong>. Júnior resolve tarefa dada; pleno resolve problema definido; sênior <strong>define</strong> o problema e decide o que construir; staff muda o que a organização inteira faz. Os arquétipos nomeiam quatro formas de exercer isso.</p>
+
+<h5>Os quatro arquétipos</h5>
+<ul>
+<li><strong>Tech Lead</strong> — o mais comum: conduz a execução de um time, faz a ponte entre produto e técnica. Costuma ser o caminho natural de quem chega a sênior.</li>
+<li><strong>Architect</strong> — responsável por uma área crítica ao longo do tempo (o sistema de pagamentos, a plataforma de dados). Profundidade e continuidade.</li>
+<li><strong>Solver</strong> — mandado ao problema espinhoso do momento, sem time fixo. Alta autonomia, pouca alavancagem duradoura.</li>
+<li><strong>Right Hand</strong> — opera com a autoridade de um líder de organização; raro e muito dependente de contexto.</li>
+</ul>
+
+<h5>Escopo — como isso aparece na entrevista</h5>
+<ul>
+<li>O sinal de senioridade não é o tamanho do sistema, é <strong>o tamanho da ambiguidade que você absorve</strong>. Uma boa história de sênior começa com um problema mal definido, não com uma tarefa clara.</li>
+<li><strong>Alavancagem</strong>: o sênior é medido também pelo que ele faz <em>os outros</em> conseguirem. Documento que destravou três times, padrão adotado, pessoa que cresceu no seu mentoring — tudo isso conta.</li>
+<li><strong>Escrita</strong> vira a habilidade central. Decisão comunicada por escrito escala pra quem não estava na reunião e sobrevive à sua saída.</li>
+<li>O que <em>não</em> conta: escrever mais código, ser o mais rápido, saber mais frameworks. Dizer isso numa entrevista já é um sinal.</li>
+</ul>
+
+<h5>A parte incômoda e honesta</h5>
+<ul>
+<li>Nível não é só mérito: depende de a empresa <strong>ter</strong> o problema do tamanho certo. É por isso que trocar de contexto às vezes promove mais que trabalhar mais.</li>
+<li>O caminho é normalmente: assumir escopo maior primeiro, título depois. Quem espera o título pra agir raramente recebe.</li>
+</ul>
+</article>
+
+<article data-href="https://google.github.io/eng-practices/review/reviewer/">
+<p class="tldr">O padrão explícito: <strong>aprove quando o código melhora a saúde geral do sistema</strong>, mesmo que não esteja perfeito. Perfeição como critério paralisa o time e desincentiva melhoria incremental. Essa é a frase que a entrevista quer ouvir.</p>
+
+<h5>The Standard of Code Review</h5>
+<ul>
+<li>A pergunta é comparativa: <em>“este PR deixa a base melhor do que está?”</em> — não <em>“é como eu teria escrito?”</em>.</li>
+<li><strong>Preferência pessoal de estilo não bloqueia.</strong> Se não há regra objetiva, o estilo do autor prevalece. Estilo com regra objetiva é trabalho de linter, não de humano.</li>
+<li>Em caso de conflito técnico genuíno, dados e princípios decidem — não senioridade. E, se persistir, escala-se em vez de travar o PR por dias.</li>
+<li><strong>Velocidade é parte da qualidade</strong>: a recomendação é responder em até um dia útil. Review lento empurra o time pra PRs gigantes, que são revisados pior — o ciclo se realimenta.</li>
+</ul>
+
+<h5>How to Write Code Review Comments</h5>
+<ul>
+<li><strong>Seja gentil, e fale do código, não da pessoa.</strong> “Esta função faz três coisas” em vez de “você complicou”.</li>
+<li><strong>Explique o porquê.</strong> Comentário sem razão vira ordem, e não ensina nada.</li>
+<li><strong>Marque o peso do comentário</strong> — a convenção <code>nit:</code> (detalhe, não bloqueia), <code>opcional:</code>, <code>pergunta:</code>, <code>bloqueante:</code>. Sem isso, todo comentário vira implicitamente bloqueante e o review fica desgastante.</li>
+<li>Prefira <strong>apontar o problema</strong> a ditar a solução: “isto quebra se a lista vier vazia” deixa espaço pra o autor resolver melhor do que você imaginou.</li>
+<li>Elogie o que está bom. Review só com crítica treina o time a temer PRs.</li>
+</ul>
+
+<h5>Do outro lado: como receber</h5>
+<ul>
+<li>Não leve pro pessoal, e <strong>responda a todo comentário</strong> — nem que seja “vou deixar como está, porque X”. Silêncio parece desprezo.</li>
+<li>Se três pessoas entenderam errado o mesmo trecho, o código está confuso — mesmo que você esteja tecnicamente certo.</li>
+<li><strong>PR pequeno</strong> é a maior alavanca de review bom. Acima de ~400 linhas, a qualidade da revisão despenca.</li>
+</ul>
+</article>
+
+<article data-href="https://www.industrialempathy.com/posts/design-docs-at-google/">
+<p class="tldr">O design doc existe pra tornar a decisão <strong>revisável enquanto ainda é barata de mudar</strong>. O valor não está no documento arquivado — está em receber objeção antes de três semanas de implementação, e em fazer você mesmo perceber o buraco enquanto escreve.</p>
+
+<h5>O que ele contém</h5>
+<ul>
+<li><strong>Contexto e escopo</strong>: por que isto existe, e explicitamente o que está <em>fora</em> de escopo (a seção que mais evita discussão paralela).</li>
+<li><strong>Objetivos e não-objetivos</strong> — não-objetivo é a ferramenta mais eficaz contra crescimento de escopo.</li>
+<li><strong>Design proposto</strong>, com diagramas e os pontos de integração.</li>
+<li><strong>Alternativas consideradas</strong>, com por que foram descartadas. <strong>É a seção mais valiosa</strong>: prova que houve comparação, e evita que alguém reabra a mesma discussão em seis meses.</li>
+<li><strong>Preocupações transversais</strong>: segurança, privacidade, custo, observabilidade, migração, e o plano de reverter.</li>
+</ul>
+
+<h5>Como escrever bem</h5>
+<ul>
+<li><strong>Curto.</strong> A recomendação é 10 a 20 páginas pra projeto grande, e uma ou duas pra mudança pequena. Documento que ninguém lê não recebe objeção — e sem objeção ele não serviu pra nada.</li>
+<li>Escreva <strong>antes</strong> de implementar, e circule cedo, ainda incompleto. Documento perfeito circulado tarde vira defesa de decisão já tomada.</li>
+<li><strong>Explicite os trade-offs.</strong> Documento que só elogia a própria proposta gera desconfiança, não aprovação.</li>
+<li>Marque o <strong>status</strong> (rascunho / em revisão / aprovado / substituído) e a data. Documento sem status envelhece em silêncio.</li>
+</ul>
+
+<h5>Quando <em>não</em> escrever</h5>
+<ul>
+<li>Quando a decisão é reversível e pequena — escrever custa mais do que refazer.</li>
+<li>Quando não há dúvida real nem partes afetadas. Documento como ritual obrigatório vira teatro.</li>
+<li>Para decisões menores, mas caras de mudar, o formato certo é um <strong>ADR</strong> de uma página, não um design doc.</li>
+</ul>
+<p><strong>Na entrevista:</strong> levar um design doc ou ADR real que você escreveu é a evidência mais forte de senioridade que existe — mostra escopo, comunicação e trade-off ao mesmo tempo.</p>
+</article>
+
+<article data-href="https://www.themuse.com/advice/star-interview-method">
+<p class="tldr"><strong>S</strong>ituation → <strong>T</strong>ask → <strong>A</strong>ction → <strong>R</strong>esult. O erro que mais gente comete: gastar a maior parte do tempo na Situação e terminar sem número. O Resultado precisa de medida — tempo, porcentagem, quantidade —, não de “melhorou bastante”.</p>
+
+<h5>A proporção certa</h5>
+<ul>
+<li><strong>Situação: 15%.</strong> Duas ou três frases. Só o contexto necessário pra entender a dificuldade.</li>
+<li><strong>Tarefa: 15%.</strong> Qual era <em>a sua</em> responsabilidade específica, e por que era difícil.</li>
+<li><strong>Ação: 50%.</strong> O que <strong>você</strong> fez, em primeira pessoa do singular, incluindo as alternativas que considerou e por que escolheu aquela.</li>
+<li><strong>Resultado: 20%.</strong> Com número, e com o que você aprendeu ou mudou no processo depois.</li>
+</ul>
+
+<h5>Os erros que derrubam</h5>
+<ul>
+<li><strong>Responder em “nós”.</strong> O entrevistador precisa saber o que <em>você</em> fez. “Nós decidimos” não diz se você decidiu, concordou ou obedeceu.</li>
+<li><strong>Resultado sem medida.</strong> “Ficou bem mais rápido” vira “de 8 minutos pra 2”. Se não houver número direto, use proxy: número de chamados, tempo de revisão, quantidade de incidentes.</li>
+<li><strong>História sem dificuldade.</strong> Se nada deu errado e ninguém discordou, não é uma história — é um relatório.</li>
+<li><strong>História grande demais.</strong> Duas a três minutos por resposta. Ensaie em voz alta e cronometre.</li>
+</ul>
+
+<h5>O banco de histórias</h5>
+<ul>
+<li>Prepare <strong>5 a 7</strong> e reaproveite mudando o ângulo: conflito técnico, erro que você causou, decisão difícil sob incerteza, liderança sem cargo, prazo apertado, feedback duro recebido, algo aprendido do zero.</li>
+<li>A de <strong>erro</strong> é a mais reveladora: precisa ter falha real, consequência assumida e mudança de processo depois. “Meu defeito é ser perfeccionista” conta como resposta não dada.</li>
+<li>Para vaga no exterior, ensaie <strong>em inglês</strong>: a história que flui em português trava quando falta uma palavra, e comportamental costuma ser rodada própria lá fora.</li>
+</ul>
+<p><strong>Conexão com o site:</strong> as histórias do Gabarita já estão montadas na página de Histórias — este texto é o formato e a disciplina de terminar com número.</p>
+</article>

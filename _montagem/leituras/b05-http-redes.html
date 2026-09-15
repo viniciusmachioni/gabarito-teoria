@@ -1,0 +1,132 @@
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview">
+<p class="tldr">HTTP é um protocolo <strong>sem estado</strong>, texto (até o HTTP/2), de requisição e resposta, sobre TCP/TLS. Tudo que parece “memória” — sessão, login, carrinho — é gambiarra construída em cima: cookie, token, cache. Entender isso explica quase todo comportamento estranho da web.</p>
+
+<h5>A anatomia de uma requisição</h5>
+<ul>
+<li><strong>Método</strong> + alvo + versão, depois headers, linha em branco, corpo opcional. A resposta troca o método por <strong>status + razão</strong>.</li>
+<li>Propriedades que caem em prova: <strong>seguro</strong> (não muda estado: GET, HEAD), <strong>idempotente</strong> (repetir dá o mesmo efeito: GET, PUT, DELETE — <em>não</em> POST) e <strong>cacheável</strong> (GET, HEAD por padrão).</li>
+<li><code>PUT</code> substitui o recurso inteiro; <code>PATCH</code> altera parte — e <code>PATCH</code> não é idempotente por definição (“some 10 ao saldo” repetido muda o resultado).</li>
+</ul>
+
+<h5>Sem estado, e as três formas de fingir estado</h5>
+<ul>
+<li><strong>Cookie</strong>: o servidor manda <code>Set-Cookie</code>, o navegador devolve em toda requisição do domínio. Os atributos que importam: <code>HttpOnly</code> (JS não lê — defesa contra XSS roubar sessão), <code>Secure</code> (só HTTPS), <code>SameSite</code> (<code>Lax</code> é o padrão moderno e barra a maior parte de CSRF) e <code>Max-Age</code>/<code>Expires</code>.</li>
+<li><strong>Token no header</strong> (<code>Authorization: Bearer …</code>): não é enviado automaticamente, então não sofre CSRF — mas fica exposto a XSS se guardado em <code>localStorage</code>.</li>
+<li><strong>Cache</strong>: <code>Cache-Control</code> (<code>max-age</code>, <code>no-store</code>, <code>private</code>, <code>stale-while-revalidate</code>) manda; <code>ETag</code>/<code>If-None-Match</code> e <code>Last-Modified</code>/<code>If-Modified-Since</code> permitem a revalidação que devolve <strong>304 Not Modified</strong> sem corpo.</li>
+</ul>
+
+<h5>Conexão, e por que isso vira latência</h5>
+<ul>
+<li>Abrir conexão custa: handshake TCP (1 RTT) + handshake TLS (1–2 RTT). Por isso <code>keep-alive</code>, reuso de conexão e <code>preconnect</code> existem.</li>
+<li><strong>CORS</strong> é regra do <em>navegador</em>, não do servidor: a política de mesma origem bloqueia a leitura da resposta entre origens diferentes, a menos que o servidor autorize com <code>Access-Control-Allow-Origin</code>. Requisição “não simples” dispara um <strong>preflight OPTIONS</strong> antes.</li>
+<li>Erro clássico de diagnóstico: “deu erro de CORS” quase sempre significa que o servidor <em>respondeu</em>, mas sem o header — a requisição saiu, e o efeito colateral pode ter acontecido.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “HTTP não tem estado; sessão é cookie ou token por cima. Por isso a discussão de segurança de login é sempre sobre atributos de cookie — <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> — ou sobre onde o token fica guardado.”</p>
+</article>
+
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status">
+<p class="tldr">Não decore os 60+. Saiba de cor duas dúzias e, principalmente, as <strong>distinções</strong> — é sempre nelas que a pergunta cai: 401 vs. 403, 301 vs. 302 vs. 307/308, 400 vs. 422, 502 vs. 503 vs. 504.</p>
+
+<div class="tbl"><table>
+<tr><th>Código</th><th>Quando</th></tr>
+<tr><td><strong>200</strong> / <strong>201</strong> / <strong>204</strong></td><td>ok com corpo / criado (com <code>Location</code>) / ok sem corpo (DELETE, PUT sem retorno)</td></tr>
+<tr><td><strong>301</strong> / <strong>308</strong></td><td>movido permanentemente — 301 pode virar GET, <strong>308 preserva o método</strong> e o corpo</td></tr>
+<tr><td><strong>302</strong> / <strong>307</strong></td><td>temporário — 302 na prática vira GET, <strong>307 preserva o método</strong></td></tr>
+<tr><td><strong>304</strong></td><td>não modificado: a revalidação de cache deu certo, não vem corpo</td></tr>
+<tr><td><strong>400</strong> / <strong>422</strong></td><td>requisição malformada (JSON quebrado) / sintaxe ok mas semanticamente inválida (e-mail já usado)</td></tr>
+<tr><td><strong>401</strong> / <strong>403</strong></td><td><strong>não sei quem você é</strong> (autenticação faltando ou inválida) / <strong>sei, e você não pode</strong> (autorização)</td></tr>
+<tr><td><strong>404</strong> / <strong>409</strong></td><td>não existe / conflito de estado (versão desatualizada, duplicata)</td></tr>
+<tr><td><strong>429</strong></td><td>rate limit — deve vir com <code>Retry-After</code></td></tr>
+<tr><td><strong>500</strong> / <strong>502</strong> / <strong>503</strong> / <strong>504</strong></td><td>erro seu / proxy recebeu resposta inválida do upstream / indisponível, sobrecarga ou manutenção / o upstream não respondeu a tempo</td></tr>
+</table></div>
+
+<h5>As três distinções que mais caem</h5>
+<ul>
+<li><strong>401 vs. 403</strong>: 401 significa "autentique-se" e deve vir com <code>WWW-Authenticate</code>; 403 significa que autenticar de novo não vai adiantar. Usar 403 pra sessão expirada faz o cliente não saber que deve renovar.</li>
+<li><strong>301 vs. 302</strong>: 301 é cacheado agressivamente pelo navegador — errar um 301 é difícil de desfazer, porque o navegador do usuário não pergunta de novo. Em dúvida, 302.</li>
+<li><strong>502 vs. 504</strong>: 502 é resposta inválida do upstream (serviço caiu, respondeu lixo); 504 é silêncio até estourar o timeout. Diagnósticos diferentes: um é crash, o outro é lentidão ou saturação.</li>
+</ul>
+<p><strong>Boa prática:</strong> 4xx é culpa do cliente e não deve ser <em>retriado</em> sem mudar a requisição; 5xx e 429 são candidatos a retry com <em>backoff exponencial</em> e jitter. Essa regra vale como resposta pronta pra "como você trata erro de integração?".</p>
+</article>
+
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP">
+<p class="tldr">Leia pelo <strong>problema que cada versão resolveu</strong>, não pela cronologia. Em três frases: 1.1 resolveu abrir conexão toda hora, mas deixou head-of-line blocking; 2 resolveu isso com multiplexação, mas o bloqueio migrou pro TCP; 3 trocou TCP por QUIC sobre UDP e resolveu de vez.</p>
+
+<h5>HTTP/1.1 — conexão persistente e o bloqueio na fila</h5>
+<ul>
+<li>Trouxe <code>keep-alive</code> (reusar a conexão), <code>Host</code> (vários sites no mesmo IP), chunked transfer e cache decente.</li>
+<li>O problema que ficou: <strong>head-of-line blocking na aplicação</strong> — numa conexão, a resposta 2 espera a resposta 1 terminar. Pipelining prometia resolver e nunca funcionou na prática.</li>
+<li>A gambiarra da época: abrir ~6 conexões por domínio, e <em>domain sharding</em> (espalhar assets por subdomínios) pra multiplicar esse limite. Sprites de CSS e concatenação de arquivos nasceram daí.</li>
+</ul>
+
+<h5>HTTP/2 — multiplexação</h5>
+<ul>
+<li><strong>Binário</strong>, com frames e <strong>streams</strong>: várias requisições e respostas intercaladas <em>numa conexão só</em>, sem esperar a anterior. Acaba o bloqueio na camada HTTP.</li>
+<li><strong>HPACK</strong> comprime headers (que em 1.1 iam repetidos e em texto puro em toda requisição — cookies grandes custavam caro).</li>
+<li>Consequência prática: sharding e concatenação agressiva viraram <strong>contraproducentes</strong>. Vários arquivos pequenos passam a ser bons (melhor cache granular).</li>
+<li>O que <em>não</em> resolveu: o <strong>head-of-line blocking do TCP</strong>. Um pacote perdido trava todos os streams, porque o TCP entrega em ordem. <em>Server push</em> foi a promessa que fracassou e acabou removida dos navegadores.</li>
+</ul>
+
+<h5>HTTP/3 — QUIC sobre UDP</h5>
+<ul>
+<li>Sai o TCP, entra <strong>QUIC</strong> sobre UDP, com streams independentes: pacote perdido afeta só o seu stream. Fim do head-of-line blocking de transporte.</li>
+<li>TLS 1.3 é <strong>parte do QUIC</strong>: o handshake de conexão e o de criptografia acontecem juntos — 1 RTT, e 0-RTT em reconexão.</li>
+<li><strong>Migração de conexão</strong>: a conexão é identificada por um id, não pela tupla IP/porta. Trocar de Wi-Fi pra 4G não derruba o download — o ganho mais visível no celular.</li>
+</ul>
+<p><strong>Frase de entrevista (as três frases):</strong> “1.1 abria conexão demais e bloqueava na fila; 2 multiplexou numa conexão só e empurrou o bloqueio pro TCP; 3 trocou TCP por QUIC sobre UDP, com streams independentes e TLS embutido.”</p>
+</article>
+
+<article data-href="https://www.cloudflare.com/learning/dns/what-is-dns/">
+<p class="tldr">DNS é a agenda da internet: transforma nome em IP. O que precisa ficar é a <strong>cadeia de quatro servidores</strong> e o papel do <strong>TTL</strong> — é o TTL que explica por que sua mudança de DNS “ainda não pegou”.</p>
+
+<h5>A cadeia</h5>
+<ol>
+<li><strong>Resolver recursivo</strong> (do provedor, ou 1.1.1.1 / 8.8.8.8): recebe o pedido do seu computador e faz o trabalho. É ele que mantém cache.</li>
+<li><strong>Root</strong> (13 conjuntos de servidores, anycast): não sabe o IP, sabe quem cuida do <code>.com</code>.</li>
+<li><strong>TLD</strong> (<code>.com</code>, <code>.br</code>): não sabe o IP, sabe quem é o autoritativo do domínio.</li>
+<li><strong>Autoritativo</strong>: tem a resposta final. É onde você edita os registros.</li>
+</ol>
+<p>Antes de tudo isso o sistema ainda consulta o cache do navegador, o do sistema operacional e o arquivo <code>hosts</code> — motivo comum de “funciona na minha máquina”.</p>
+
+<h5>Tipos de registro que aparecem no trabalho</h5>
+<ul>
+<li><strong>A</strong> (IPv4) e <strong>AAAA</strong> (IPv6); <strong>CNAME</strong> (apelido pra outro nome — não pode existir na raiz do domínio junto com outros registros); <strong>MX</strong> (e-mail); <strong>TXT</strong> (verificação de domínio, SPF/DKIM); <strong>NS</strong> (quem é o autoritativo).</li>
+<li>Vercel, Cloudflare e afins resolvem a limitação do CNAME na raiz com truques próprios (ALIAS, ANAME, CNAME flattening) — vale saber que é um caso especial.</li>
+</ul>
+
+<h5>TTL: o que morde de verdade</h5>
+<ul>
+<li>Cada registro tem um TTL. Enquanto ele não expira, o resolver serve o valor antigo — <strong>você não tem controle sobre isso</strong> depois de publicado.</li>
+<li>Por isso a receita de migração é: <strong>baixar o TTL</strong> (pra 60s) dias antes, trocar, confirmar, e só então subir o TTL de volta.</li>
+<li>Round robin por DNS é o balanceamento mais barato que existe e o pior pra tirar máquina do ar: o cliente não sabe que o IP caiu até o cache expirar. Por isso failover sério não depende só de DNS.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Recursivo → root → TLD → autoritativo, e o que dita a propagação é o TTL, não o meu deploy. Migração de DNS começa reduzindo TTL com antecedência.”</p>
+</article>
+
+<article data-href="https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/">
+<p class="tldr">O handshake TLS resolve um problema só: dois desconhecidos combinarem uma <strong>chave simétrica secreta</strong> num canal público, com certeza de com quem estão falando. Criptografia assimétrica é usada só pra isso; o tráfego real é simétrico, porque é ordens de grandeza mais rápido.</p>
+
+<h5>TLS 1.2, passo a passo</h5>
+<ol>
+<li><strong>ClientHello</strong>: versões suportadas, lista de cifras, número aleatório do cliente, e o SNI (qual domínio, pra o servidor escolher o certificado certo).</li>
+<li><strong>ServerHello</strong>: cifra escolhida, número aleatório do servidor, e o <strong>certificado</strong> (com a chave pública).</li>
+<li>O cliente <strong>valida o certificado</strong>: assinado por uma CA em que ele confia? o nome bate com o domínio? está dentro da validade? foi revogado?</li>
+<li>Troca de chaves (hoje quase sempre <strong>ECDHE</strong>): os dois derivam o mesmo segredo sem nunca transmiti-lo.</li>
+<li><strong>Finished</strong> dos dois lados, já criptografado, provando que a chave bate. A partir daí é tudo simétrico.</li>
+</ol>
+<p>Custo: <strong>2 RTT</strong>, em cima do 1 RTT do handshake TCP.</p>
+
+<h5>O que muda no TLS 1.3</h5>
+<ul>
+<li><strong>1 RTT</strong>: o cliente já manda o palpite de parâmetros de chave no ClientHello, e o servidor responde pronto pra criptografar.</li>
+<li><strong>0-RTT</strong> em reconexão (envia dado junto com o hello, usando segredo anterior). Ressalva importante: dado de 0-RTT é vulnerável a <strong>replay</strong>, então só serve pra requisição idempotente.</li>
+<li>Cifras antigas e inseguras foram <strong>removidas</strong> (RSA key exchange sem forward secrecy, RC4, CBC problemáticos). Em 1.3, <em>forward secrecy</em> é obrigatória: vazar a chave privada do servidor não decifra o tráfego passado.</li>
+</ul>
+
+<h5>Duas coisas relacionadas que costumam completar a pergunta</h5>
+<ul>
+<li><strong>mTLS</strong>: o cliente também apresenta certificado. Comum entre serviços internos.</li>
+<li><strong>HSTS</strong> (<code>Strict-Transport-Security</code>): o navegador passa a recusar HTTP naquele domínio, fechando a janela do downgrade no primeiro acesso.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Assimétrico só pra combinar a chave e provar identidade; o tráfego é simétrico. 1.2 gasta 2 RTT, 1.3 gasta 1 — e 1.3 tornou forward secrecy obrigatória.”</p>
+</article>

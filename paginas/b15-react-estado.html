@@ -35,12 +35,135 @@
   </ul>
 
   <h3 class="sub">Onde estudar (grátis)</h3>
-  <ul class="resources">
-    <li><div class="r-title"><a href="https://react.dev/learn/react-compiler" target="_blank" rel="noopener">React Compiler</a></div><div class="r-note">O que o compilador faz (memoiza automaticamente componentes e valores), as regras que seu código precisa seguir (Regras do React) pra ele funcionar, e o que ainda escapa dele.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Página de introdução, direta. O ponto central: o compiler não substitui entender <em>por que</em> um re-render acontece, só a mecânica de evitá-lo.</div><div class="r-src">react.dev &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://tanstack.com/query/latest/docs/framework/react/overview" target="_blank" rel="noopener">TanStack Query — Overview</a></div><div class="r-note">Por que "estado de servidor" merece uma ferramenta própria: cache, staleness, refetch automático, deduplicação de requisição.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia Overview e Important Defaults (o que <code>staleTime</code>/<code>gcTime</code> significam de verdade). Pule mutations e SSR integration se não usar agora.</div><div class="r-src">tanstack.com &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">React — use()</a></div><div class="r-note">A API que lê uma Promise ou Context condicionalmente dentro do render, integrada com Suspense.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página de referência, mas com exemplos suficientes pra entender o padrão sem precisar de mais nada.</div><div class="r-src">react.dev &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noopener">React DOM — Server Actions &amp; form hooks</a></div><div class="r-note"><code>useActionState</code>, <code>useFormStatus</code> e o novo ciclo de submissão de formulário integrado ao App Router.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia esta e a página de <code>useActionState</code> linkada nela. É o substituto moderno de "estado de loading manual + try/catch" num formulário.</div><div class="r-src">react.dev &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://www.patterns.dev/react/compound-pattern/" target="_blank" rel="noopener">Patterns.dev — Compound Components</a></div><div class="r-note">O padrão que resolve "componente com 15 props" trocando configuração por composição — cada peça vira um subcomponente que compartilha estado via Context.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Exemplo curto de código, o mesmo padrão por trás de Radix/shadcn.</div><div class="r-src">patterns.dev</div></li>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://react.dev/learn/react-compiler" target="_blank" rel="noopener">React Compiler</a></div><div class="r-note">O que o compilador faz (memoiza automaticamente componentes e valores), as regras que seu código precisa seguir (Regras do React) pra ele funcionar, e o que ainda escapa dele.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Página de introdução, direta. O ponto central: o compiler não substitui entender <em>por que</em> um re-render acontece, só a mecânica de evitá-lo.</div><div class="r-src">react.dev &middot; oficial</div><details class="leitura" data-id="b15-react-estado--react-dev-learn-react-compiler"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O compiler memoiza automaticamente o que você memoizava à mão com <code>useMemo</code>, <code>useCallback</code> e <code>memo</code>. O que ele <strong>não</strong> faz é te dispensar de entender <em>por que</em> um re-render acontece — ele automatiza a mecânica, não o raciocínio.</p>
+
+<h5>O que ele faz</h5>
+<ul>
+<li>Analisa o componente em tempo de build e insere memoização de granularidade fina: cada valor derivado é recalculado só quando suas entradas mudam de verdade.</li>
+<li>Costuma ser <strong>mais granular</strong> que o feito à mão — na prática, gente memoiza demais em alguns lugares e de menos em outros.</li>
+<li>Reduz um tipo específico de bug: dependência esquecida no array do <code>useMemo</code>, que produz valor velho silenciosamente.</li>
+</ul>
+
+<h5>Quando você ainda precisa de <code>useMemo</code></h5>
+<ul>
+<li>Quando o código <strong>quebra as Regras do React</strong>: mutar props ou estado, efeito colateral no corpo do componente, ler/escrever variável externa durante o render. O compiler detecta que não é seguro memoizar e <strong>prefere não memoizar a memoizar errado</strong>.</li>
+<li>Para cálculo pesado <strong>fora</strong> de componente, ou em código que o compiler não cobre.</li>
+<li>Quando você depende de <strong>identidade referencial estável</strong> por um motivo externo — uma dependência de efeito, uma chave de cache, um contexto — e não apenas por performance.</li>
+</ul>
+
+<h5>As Regras do React, que viram pré-requisito</h5>
+<ul>
+<li>Componentes e hooks precisam ser <strong>puros durante o render</strong>: mesmas props e estado, mesma saída, sem efeito colateral.</li>
+<li>Não mutar props, estado nem valores retornados por hooks.</li>
+<li>Hooks só no topo do componente/hook, sem condicional nem laço.</li>
+<li>O ESLint do React aponta as violações — e, com o compiler, elas passam a ter custo de performance visível, não só risco teórico.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “O compiler memoiza pra mim quando o código segue as Regras do React. Ele não me dispensa de saber por que um componente re-renderiza — só tira o trabalho manual de evitar isso, e só onde é seguro.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://react.dev/learn/react-compiler" target="_blank" rel="noopener">react.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://tanstack.com/query/latest/docs/framework/react/overview" target="_blank" rel="noopener">TanStack Query — Overview</a></div><div class="r-note">Por que "estado de servidor" merece uma ferramenta própria: cache, staleness, refetch automático, deduplicação de requisição.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia Overview e Important Defaults (o que <code>staleTime</code>/<code>gcTime</code> significam de verdade). Pule mutations e SSR integration se não usar agora.</div><div class="r-src">tanstack.com &middot; oficial</div><details class="leitura" data-id="b15-react-estado--tanstack-com-query-latest-docs-framework-react-overview"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A ideia que organiza tudo: <strong>estado de servidor não é estado de cliente</strong>. Dado que vem da API é uma cópia em cache de algo que pertence a outro lugar, pode ficar desatualizado a qualquer momento e é compartilhado por vários componentes. Tratar isso com <code>useState</code> + <code>useEffect</code> é reescrever uma biblioteca de cache à mão, mal.</p>
+
+<h5>Os dois tipos de estado</h5>
+<div class="tbl"><table>
+<tr><th></th><th>Estado de cliente</th><th>Estado de servidor</th></tr>
+<tr><td>Dono</td><td>você</td><td>o servidor</td></tr>
+<tr><td>Fica velho?</td><td>não</td><td><strong>sim, sem avisar</strong></td></tr>
+<tr><td>Assíncrono</td><td>não</td><td>sim, com erro e carregamento</td></tr>
+<tr><td>Compartilhado</td><td>raramente</td><td>quase sempre</td></tr>
+<tr><td>Ferramenta</td><td><code>useState</code>, Zustand, Context</td><td>TanStack Query, SWR, RSC + cache</td></tr>
+</table></div>
+
+<h5>Important Defaults — o que <code>staleTime</code> e <code>gcTime</code> realmente significam</h5>
+<ul>
+<li><strong><code>staleTime</code></strong> (padrão <code>0</code>): por quanto tempo o dado é considerado <em>fresco</em>. Fresco não dispara nova busca; assim que fica <em>stale</em>, qualquer gatilho refaz a busca. Com o padrão zero, todo dado nasce velho — daí a impressão de que a biblioteca busca o tempo todo.</li>
+<li><strong><code>gcTime</code></strong> (padrão 5 min): por quanto tempo o dado <strong>sem nenhum componente usando</strong> permanece em memória antes de ser descartado. Não tem relação com estar velho — é sobre coleta de lixo.</li>
+<li>Os gatilhos automáticos de refetch: montar um componente, <strong>voltar o foco pra janela</strong>, <strong>reconectar a rede</strong>. Todos configuráveis.</li>
+<li><strong>Dado velho é mostrado enquanto revalida</strong> (stale-while-revalidate): a tela não pisca em branco a cada atualização.</li>
+</ul>
+
+<h5>O que você ganha sem escrever</h5>
+<ul>
+<li><strong>Deduplicação</strong>: cinco componentes pedindo a mesma chave ao mesmo tempo produzem <strong>uma</strong> requisição.</li>
+<li><strong>Retry com backoff</strong>, cancelamento, e estados derivados (<code>isPending</code>, <code>isFetching</code>, <code>isError</code>) já separados — <code>isPending</code> é “não tenho dado”, <code>isFetching</code> é “estou buscando, talvez já tendo dado”.</li>
+<li><strong>Chave como dependência</strong>: a query key identifica o dado. Mudou a key, mudou o dado — e é por ela que se invalida depois de uma mutação.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu separo estado de servidor de estado de cliente. Pro primeiro uso uma biblioteca de cache com noção de staleness, porque <code>useEffect</code> + <code>useState</code> não resolve deduplicação, revalidação nem condição de corrida sem eu reimplementar tudo isso.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://tanstack.com/query/latest/docs/framework/react/overview" target="_blank" rel="noopener">tanstack.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">React — use()</a></div><div class="r-note">A API que lê uma Promise ou Context condicionalmente dentro do render, integrada com Suspense.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página de referência, mas com exemplos suficientes pra entender o padrão sem precisar de mais nada.</div><div class="r-src">react.dev &middot; oficial</div><details class="leitura" data-id="b15-react-estado--react-dev-reference-react-use"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr"><code>use()</code> lê o valor de uma promessa ou de um contexto <strong>durante o render</strong>. Com promessa, ele suspende o componente até resolver — integrando busca de dados diretamente com <code>&lt;Suspense&gt;</code> e error boundary, sem estado de carregamento manual.</p>
+
+<h5>O que ele quebra das regras antigas</h5>
+<ul>
+<li>Diferente de todo hook, <strong><code>use()</code> pode ser chamado dentro de <code>if</code> e de laço</strong>. Ele não é um hook comum.</li>
+<li>Com contexto, substitui <code>useContext</code> e permite leitura condicional — útil pra componente que só precisa do contexto em certo ramo.</li>
+</ul>
+
+<h5>O padrão com promessa</h5>
+<ul>
+<li>O Server Component <strong>começa</strong> a busca e passa a promessa (sem <code>await</code>) pro Client Component, que faz <code>const dado = use(promessa)</code> dentro de um <code>&lt;Suspense&gt;</code>.</li>
+<li>Assim a requisição começa cedo no servidor e o cliente só espera — sem a cascata de “monta, então busca”.</li>
+<li>O carregamento vira responsabilidade do <code>fallback</code> do Suspense; o erro, do error boundary. Some o trio <code>dado/carregando/erro</code> no estado do componente.</li>
+</ul>
+
+<h5>A armadilha</h5>
+<ul>
+<li><strong>Não crie a promessa dentro do render de um Client Component.</strong> Cada render cria uma promessa nova, que suspende de novo, que renderiza de novo — laço infinito.</li>
+<li>A promessa precisa vir de fora (de um Server Component, ou de um cache estável). Na prática, pra busca no cliente, uma biblioteca com cache continua sendo a resposta.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “<code>use()</code> deixa o componente ler uma promessa direto no render e suspender. O ganho é começar a busca no servidor e não pagar a cascata de montar-para-buscar — desde que a promessa não seja criada dentro do render.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://react.dev/reference/react/use" target="_blank" rel="noopener">react.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noopener">React DOM — Server Actions &amp; form hooks</a></div><div class="r-note"><code>useActionState</code>, <code>useFormStatus</code> e o novo ciclo de submissão de formulário integrado ao App Router.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia esta e a página de <code>useActionState</code> linkada nela. É o substituto moderno de "estado de loading manual + try/catch" num formulário.</div><div class="r-src">react.dev &middot; oficial</div><details class="leitura" data-id="b15-react-estado--react-dev-reference-react-dom-hooks-useformstatus"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Server Actions + <code>useActionState</code> + <code>useFormStatus</code> substituem o trio “estado de loading manual, <code>try/catch</code>, e <code>preventDefault</code>” em formulário. E o formulário volta a funcionar sem JavaScript — melhoria progressiva de graça.</p>
+
+<h5>As três peças</h5>
+<ul>
+<li><strong>Server Action</strong> (<code>'use server'</code>): uma função que roda no servidor e pode ser passada direto pro <code>action</code> do <code>&lt;form&gt;</code>. Sem endpoint, sem <code>fetch</code>, sem serializar à mão.</li>
+<li><strong><code>useActionState</code></strong>: envolve a action e devolve <code>[estado, action, isPending]</code>. O retorno da action vira o estado — é por onde voltam os erros de validação por campo.</li>
+<li><strong><code>useFormStatus</code></strong>: lido <strong>de dentro de um componente filho do form</strong>, dá <code>pending</code> sem prop drilling. É como um botão “Salvando…” se vira sozinho.</li>
+</ul>
+
+<h5>Por que isso é melhor que o padrão manual</h5>
+<ul>
+<li><strong>Funciona sem JavaScript</strong>: o navegador submete o form de verdade. Com JS carregado, o React intercepta e melhora. Melhoria progressiva sem trabalho extra.</li>
+<li><strong>Estados de envio ficam corretos</strong> por construção — inclusive envio duplo, que o <code>pending</code> permite bloquear.</li>
+<li>A validação do servidor é a mesma que alimenta a tela: uma fonte só, em vez de duplicar regra no cliente.</li>
+</ul>
+
+<h5>O que continua sendo sua responsabilidade</h5>
+<ul>
+<li><strong>Validar no servidor sempre.</strong> Server Action é um endpoint público — qualquer um pode chamá-la com qualquer payload. Autorização e validação (Zod) dentro da action, não antes dela.</li>
+<li><strong>Acessibilidade do erro</strong>: <code>aria-invalid</code> no campo, <code>aria-describedby</code> apontando pra mensagem, e foco no primeiro campo com problema.</li>
+<li>Validação no cliente continua útil pra resposta imediata — só não é a que protege.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noopener">react.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://www.patterns.dev/react/compound-pattern/" target="_blank" rel="noopener">Patterns.dev — Compound Components</a></div><div class="r-note">O padrão que resolve "componente com 15 props" trocando configuração por composição — cada peça vira um subcomponente que compartilha estado via Context.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Exemplo curto de código, o mesmo padrão por trás de Radix/shadcn.</div><div class="r-src">patterns.dev</div><details class="leitura" data-id="b15-react-estado--patterns-dev-react-compound-pattern"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Compound components trocam <strong>configuração por composição</strong>. Em vez de um componente com quinze props booleanas decidindo o que aparece, quem usa monta as peças que quer. É o padrão por trás de Radix, shadcn/ui e Headless UI.</p>
+
+<h5>O problema que resolve</h5>
+<ul>
+<li>Um <code>&lt;Card&gt;</code> com <code>showIcon</code>, <code>showFooter</code>, <code>iconPosition</code>, <code>headerAlign</code>… A combinatória explode, o componente vira uma árvore de condicionais, e sempre falta a variação que o próximo caso precisa.</li>
+<li>Com composição, a existência da subpeça <em>é</em> a configuração: incluiu <code>&lt;Card.Footer&gt;</code>, tem rodapé. Zero prop booleana.</li>
+</ul>
+
+<h5>Como se implementa</h5>
+<ul>
+<li>O componente pai guarda o estado compartilhado e o expõe por <strong>Context</strong>; os filhos consomem. É isso que permite <code>&lt;Tabs&gt;</code> saber qual aba está ativa sem que quem usa passe nada.</li>
+<li>As subpeças ficam como propriedades do pai (<code>Card.Header</code>) — bom pra descoberta no editor — ou exportadas separadamente.</li>
+<li>Um hook interno que lança erro claro quando o filho é usado fora do pai evita o erro mais comum de quem consome.</li>
+</ul>
+
+<h5>Os custos, pra citar na entrevista</h5>
+<ul>
+<li><strong>Tipagem mais difícil</strong>, especialmente pra restringir quais filhos são válidos.</li>
+<li><strong>API mais verbosa</strong> pro caso simples: quem só queria um card básico agora escreve quatro linhas.</li>
+<li><strong>Acoplamento implícito</strong> por Context: usar a subpeça fora do pai quebra em tempo de execução, não de compilação.</li>
+<li>Regra prática: compound quando existem <strong>variações reais de estrutura</strong>. Duas ou três props bastam quando a variação é só de conteúdo.</li>
+</ul>
+<p><strong>O padrão irmão que vale citar:</strong> <code>asChild</code> (ou <em>slot</em>), do Radix — deixa quem usa trocar o elemento renderizado mantendo o comportamento, resolvendo o velho problema de “quero que este botão seja um link”.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.patterns.dev/react/compound-pattern/" target="_blank" rel="noopener">patterns.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
   <div class="ammo">
@@ -79,7 +202,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 123 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 102 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

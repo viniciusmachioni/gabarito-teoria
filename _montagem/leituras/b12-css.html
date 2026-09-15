@@ -1,0 +1,130 @@
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascade/Cascade">
+<p class="tldr">A cascata é o algoritmo que decide qual declaração vence quando várias miram o mesmo elemento. Especificidade é só <strong>um</strong> dos critérios, e nem o primeiro — entender a ordem completa é o que resolve “por que meu CSS não aplica”.</p>
+
+<h5>A ordem de desempate, de cima pra baixo</h5>
+<ol>
+<li><strong>Origem e importância.</strong> A ordem completa: normal do navegador → normal do usuário → <strong>normal do autor</strong> → animação → <code>!important</code> do autor → <code>!important</code> do usuário → <code>!important</code> do navegador. Repare que <code>!important</code> <strong>inverte</strong> a hierarquia — por isso o do usuário ganha do seu, e é assim que folha de estilo de acessibilidade funciona.</li>
+<li><strong>Camadas (<code>@layer</code>)</strong>, na ordem em que foram declaradas.</li>
+<li><strong>Especificidade</strong>, como (inline, id, classe/atributo/pseudo-classe, elemento/pseudo-elemento).</li>
+<li><strong>Ordem de aparição</strong>: em tudo igual, a última declaração vence.</li>
+</ol>
+
+<h5>Especificidade — os detalhes que mordem</h5>
+<ul>
+<li>Não é um número: (0,1,0) é <strong>infinitamente</strong> maior que (0,0,99). Noventa e nove classes não vencem um id.</li>
+<li><code>:is()</code> e <code>:not()</code> assumem a especificidade do argumento mais específico; <strong><code>:where()</code> vale zero</strong> — a ferramenta certa pra estilo base sobrescrevível.</li>
+<li>Seletor universal (<code>*</code>) e combinadores (<code>&gt;</code>, <code>+</code>) não somam nada.</li>
+<li>Estilo <code>style=""</code> só perde pra <code>!important</code>. Por isso guerra de <code>!important</code> começa quando alguém resolve “só desta vez”.</li>
+</ul>
+
+<h5>Herança e os valores especiais</h5>
+<ul>
+<li>Nem toda propriedade herda: cor, fonte e <code>line-height</code> herdam; <code>border</code>, <code>padding</code> e <code>display</code> não.</li>
+<li><code>inherit</code> força herdar, <code>initial</code> volta ao padrão da especificação (não ao do navegador), <code>unset</code> = herda se herdável, senão <code>initial</code>, e <code>revert</code> volta ao estilo do navegador. <code>revert</code> costuma ser o que você realmente queria ao “resetar”.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “A cascata resolve por origem, depois camada, depois especificidade, depois ordem. Como <code>!important</code> inverte a ordem de origem, ele deixa de ser truque e vira dívida — prefiro resolver com camada.”</p>
+</article>
+
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/CSS/@layer">
+<p class="tldr"><code>@layer</code> resolve o problema que a especificidade criou: <strong>entre camadas diferentes, a ordem de declaração decide, e a especificidade não entra na conta</strong>. Um seletor de uma classe numa camada posterior vence um <code>#id</code> de uma camada anterior.</p>
+
+<h5>Como funciona</h5>
+<ul>
+<li>Declare a ordem uma vez, no topo: <code>@layer reset, base, componentes, utilidades;</code>. A ordem das <em>declarações</em> é o que vale, não a ordem em que você preenche cada camada.</li>
+<li>Dentro da mesma camada, a especificidade tradicional volta a valer normalmente.</li>
+<li><strong>Estilo sem camada vence todas as camadas.</strong> Isso é contraintuitivo e proposital: código legado fora de camadas continua ganhando, o que permite adotar <code>@layer</code> aos poucos.</li>
+<li><code>@import url(…) layer(vendor)</code> coloca uma folha de terceiro inteira numa camada — jeito limpo de garantir que o CSS de uma biblioteca nunca ganhe do seu.</li>
+</ul>
+
+<h5>O que isso resolve na prática</h5>
+<ul>
+<li><strong>Fim do <code>!important</code> defensivo</strong> e das cadeias de seletor inflacionadas só pra ganhar de uma biblioteca.</li>
+<li><strong>Ordem de importação deixa de importar</strong> pro resultado — a camada declara a intenção, não o acaso do bundler.</li>
+<li><strong>Design system sobrescrevível de verdade</strong>: base em camada baixa, aplicação em camada alta, sem guerra.</li>
+</ul>
+<p><strong>A combinação vencedora:</strong> <code>@layer</code> pra hierarquia entre grupos + <code>:where()</code> pra zerar especificidade dentro do estilo base. Juntos, eliminam praticamente toda a necessidade de <code>!important</code> em CSS novo.</p>
+</article>
+
+<article data-href="https://css-tricks.com/snippets/css/complete-guide-grid/">
+<p class="tldr">É consulta, não leitura linear. Agora, passe o olho na <strong>estrutura</strong>: propriedades do contêiner de um lado, do item do outro. Depois volte pra propriedade específica no dia em que precisar.</p>
+
+<h5>A distinção que organiza tudo: grid vs. flex</h5>
+<ul>
+<li><strong>Grid</strong> é bidimensional — você define linhas <em>e</em> colunas, e o contêiner manda no layout. Use pra estrutura de página e para qualquer arranjo em que o alinhamento entre linhas importe.</li>
+<li><strong>Flex</strong> é unidimensional — uma direção por vez, e o conteúdo influencia o tamanho. Use pra barra, lista de botões, alinhamento de um grupo.</li>
+<li>Regra prática: <em>layout</em> em grid, <em>componente</em> em flex. E eles se combinam — itens de grid podem ser contêineres flex.</li>
+</ul>
+
+<h5>Do contêiner — o que mais se usa</h5>
+<ul>
+<li><code>grid-template-columns</code> com <strong><code>fr</code></strong> (fração do espaço livre) e <code>repeat()</code>.</li>
+<li><strong><code>minmax()</code></strong> pra faixa (mínimo e máximo) e <strong><code>auto-fit</code> / <code>auto-fill</code></strong> pra quantidade variável de colunas.</li>
+<li>A linha que resolve grade responsiva <strong>sem media query nenhuma</strong>: <code>grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))</code>. Vale memorizar — é pedida clássica em entrevista de CSS.</li>
+<li><code>gap</code>, <code>grid-template-areas</code> (layout legível por nome), <code>place-items</code> pra alinhar nos dois eixos.</li>
+<li>Diferença de <code>auto-fit</code> e <code>auto-fill</code>: com poucos itens, <code>auto-fit</code> estica as colunas existentes; <code>auto-fill</code> mantém colunas vazias.</li>
+</ul>
+
+<h5>Do item</h5>
+<ul>
+<li><code>grid-column: span 2</code> / <code>grid-row</code> pra ocupar mais de uma célula; <code>grid-area</code> pra nomear.</li>
+<li><code>justify-self</code> / <code>align-self</code> pra alinhar um item específico dentro da célula.</li>
+</ul>
+
+<h5>Detalhes que evitam bug</h5>
+<ul>
+<li>O valor padrão <code>minimum size</code> de um item de grid/flex é <code>auto</code>, e ele <strong>se recusa a encolher abaixo do conteúdo</strong> — a causa clássica de estouro horizontal com texto longo ou <code>&lt;pre&gt;</code>. A correção é <code>min-width: 0</code> (ou <code>min-height: 0</code>) no item.</li>
+<li>Propriedades lógicas (<code>margin-inline</code>, <code>padding-block</code>, <code>inset</code>) em vez de left/right facilitam suporte a idioma da direita pra esquerda.</li>
+</ul>
+</article>
+
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries">
+<p class="tldr">Media query pergunta o tamanho da <strong>janela</strong>; container query pergunta o tamanho do <strong>espaço disponível pro componente</strong>. É a diferença entre um componente que só funciona onde foi projetado e um que funciona em qualquer lugar.</p>
+
+<h5>Por que media query não bastava</h5>
+<ul>
+<li>O mesmo card aparece numa sidebar estreita e numa área de conteúdo larga, <em>na mesma tela</em>. A largura do viewport não distingue os dois casos — a media query decide errado num deles necessariamente.</li>
+<li>A gambiarra antiga era passar uma prop (<code>variant="compacto"</code>) e obrigar quem usa a saber em que contexto está. Container query devolve essa responsabilidade ao CSS.</li>
+</ul>
+
+<h5>Como escrever</h5>
+<ul>
+<li>No pai: <code>container-type: inline-size</code> (o mais comum — observa só a largura) e, opcionalmente, <code>container-name</code>.</li>
+<li>No filho: <code>@container (min-width: 400px) { … }</code>, ou com nome pra mirar um contêiner específico.</li>
+<li><strong>Só funciona com um ancestral declarado como contêiner</strong> — o erro número um é esquecer o <code>container-type</code> no pai.</li>
+<li><code>container-type: size</code> (as duas dimensões) exige altura definida e quebra layout com frequência; prefira <code>inline-size</code>.</li>
+</ul>
+
+<h5>Unidades de contêiner e o efeito no design system</h5>
+<ul>
+<li><code>cqw</code>, <code>cqh</code>, <code>cqi</code>, <code>cqb</code> — relativas ao contêiner, não ao viewport. Úteis pra tipografia que acompanha o espaço do componente.</li>
+<li>O ganho arquitetural: o componente vira <strong>de verdade</strong> autocontido. Você pode movê-lo pra qualquer região do layout e ele se adapta sozinho, sem prop e sem media query no consumidor.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Media query é para o layout da página; container query é para o componente. Com container query eu consigo um card que se adapta ao espaço que recebeu, o que media query não resolve porque ela só conhece o viewport.”</p>
+</article>
+
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Understanding_z-index/The_stacking_context">
+<p class="tldr">Resolve de vez o “meu <code>z-index: 9999</code> não funciona”. <strong>z-index só compete dentro do mesmo contexto de empilhamento</strong> — e vários ancestrais criam contexto novo sem que você perceba.</p>
+
+<h5>O que cria um contexto de empilhamento</h5>
+<ul>
+<li>Elemento posicionado (<code>relative</code>, <code>absolute</code>, <code>sticky</code>) com <code>z-index</code> diferente de <code>auto</code>.</li>
+<li><code>position: fixed</code> ou <code>sticky</code> — <strong>sempre</strong>, mesmo sem z-index.</li>
+<li><code>opacity</code> menor que 1. Este é o culpado mais frequente e o menos suspeito.</li>
+<li><code>transform</code>, <code>filter</code>, <code>backdrop-filter</code>, <code>perspective</code>, <code>clip-path</code>, <code>mask</code>, <code>mix-blend-mode</code> diferente de <code>normal</code>.</li>
+<li><code>will-change</code> com qualquer dessas propriedades, <code>isolation: isolate</code>, <code>contain: paint</code> e filho de flex/grid com z-index.</li>
+</ul>
+
+<h5>A regra que explica o bug</h5>
+<ul>
+<li>O contexto funciona como uma <strong>caixa selada</strong>: o filho, por maior que seja o z-index, nunca escapa da posição do pai na pilha. Um filho com <code>z-index: 9999</code> dentro de um pai com <code>z-index: 1</code> continua atrás de um irmão do pai com <code>z-index: 2</code>.</li>
+<li>Dentro de um contexto, a ordem de pintura é: fundo do contexto → z-index negativo → blocos no fluxo → flutuantes → inline → <code>z-index: 0</code>/<code>auto</code> → z-index positivo.</li>
+</ul>
+
+<h5>Como consertar de verdade</h5>
+<ul>
+<li><strong>Tire o elemento de dentro do contexto</strong>: renderize modal, tooltip e menu em <em>portal</em> no fim do <code>body</code>. É por isso que toda biblioteca de UI faz isso.</li>
+<li>Melhor ainda: use a <strong>top layer</strong> do navegador — <code>&lt;dialog&gt;</code> com <code>showModal()</code> e a Popover API ficam <em>acima de tudo</em>, imunes a z-index e a contexto de empilhamento.</li>
+<li>Padronize a escala de z-index em variáveis (<code>--z-dropdown: 100; --z-modal: 400</code>) em vez de números mágicos crescentes.</li>
+<li><code>isolation: isolate</code> serve pra criar contexto <em>de propósito</em>, contendo o z-index de um subárvore.</li>
+</ul>
+</article>

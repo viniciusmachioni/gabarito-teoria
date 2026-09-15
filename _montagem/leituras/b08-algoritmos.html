@@ -1,0 +1,181 @@
+<article data-href="https://neetcode.io/practice">
+<p class="tldr">O roadmap existe porque a ordem importa: cada tópico assume o anterior. O objetivo <strong>não é resolver muitos problemas</strong> — é chegar ao ponto de <em>classificar</em> um enunciado em 30 segundos. Abaixo, os cinco primeiros blocos do roadmap e o padrão que cada um instala na sua cabeça.</p>
+
+<h5>1. Arrays &amp; Hashing</h5>
+<ul>
+<li><strong>A ideia única:</strong> trocar busca O(n) por consulta O(1) usando um mapa. Quase todo laço aninhado sobre a mesma coleção vira um passe só com hash.</li>
+<li>Padrões: contagem de frequência, agrupar por chave canônica (anagrama → letras ordenadas), verificar duplicata com <code>Set</code>, <strong>prefix sum</strong> (soma acumulada) pra consulta de intervalo.</li>
+<li>Sinal no enunciado: “já viu antes?”, “quantas vezes?”, “dois elementos que somam X”.</li>
+</ul>
+
+<h5>2. Two Pointers</h5>
+<ul>
+<li><strong>A ideia:</strong> em dado <em>ordenado</em> (ou que dá pra ordenar), dois índices caminhando eliminam a busca aninhada. O(n²) → O(n) sem memória extra.</li>
+<li>Variações: extremos convergindo (par que soma X, palíndromo, container com mais água), rápido e lento (ciclo em lista ligada, achar o meio), e escrita/leitura no mesmo array (remover duplicatas no lugar).</li>
+<li>Sinal: array ordenado, par ou trio de elementos, palíndromo.</li>
+</ul>
+
+<h5>3. Sliding Window</h5>
+<ul>
+<li><strong>A ideia:</strong> subarray/substring contíguo com uma propriedade. A janela cresce pela direita e encolhe pela esquerda; o custo total continua O(n) porque cada elemento entra e sai uma vez.</li>
+<li>Janela <strong>fixa</strong> (média máxima de k elementos) e <strong>variável</strong> (menor subarray com soma ≥ X, maior substring sem repetir caractere).</li>
+<li>Sinal: as palavras <em>contíguo</em>, <em>substring</em>, <em>subarray</em>, <em>mais longo/mais curto com tal condição</em>.</li>
+</ul>
+
+<h5>4. Stack</h5>
+<ul>
+<li><strong>A ideia:</strong> guardar o que ainda está pendente de resolução, resolvendo na ordem inversa.</li>
+<li>Padrões: parênteses balanceados, avaliar expressão, <strong>monotonic stack</strong> (próximo maior elemento, temperatura mais quente, maior retângulo no histograma), e simular recursão.</li>
+<li>Sinal: aninhamento, “último que entrou”, “próximo elemento maior/menor”.</li>
+</ul>
+
+<h5>5. Binary Search</h5>
+<ul>
+<li><strong>A ideia maior que a busca:</strong> não é só procurar valor em array ordenado — é <strong>buscar na resposta</strong>. Se dá pra responder “esse candidato serve?” em tempo linear e a resposta é monótona, dá pra binarizar (capacidade mínima de navio, velocidade mínima).</li>
+<li>Cuidados que derrubam gente: <code>mid = lo + (hi - lo) / 2</code>, invariante do laço escolhida e mantida, e as variantes “primeiro ≥ x” / “último ≤ x”.</li>
+<li>Sinal: ordenado, rotacionado, ou “o menor valor que ainda satisfaz”.</li>
+</ul>
+
+<h5>O método por problema (o que realmente faz diferença)</h5>
+<ol>
+<li><strong>20 minutos sozinho.</strong> Trave? Anote onde travou — essa informação vale mais que a solução.</li>
+<li><strong>Assista/leia a solução</strong>, entenda a <em>ideia central</em>, não o código.</li>
+<li><strong>Reescreva do zero no dia seguinte</strong>, sem olhar. Se não sair, você tinha reconhecido, não aprendido — e entrevista mede produzir, não reconhecer.</li>
+<li>Fale em voz alta enquanto resolve. A entrevista avalia a narração tanto quanto o código.</li>
+</ol>
+</article>
+
+<article data-href="https://www.techinterviewhandbook.org/">
+<p class="tldr">Duas partes valem: a <strong>grade de estudo</strong> (o que estudar, em que ordem, com que profundidade) e a de <strong>comportamental/STAR</strong>. A de negociação só faz sentido com oferta na mão — leia lá, não agora.</p>
+
+<h5>A grade de coding interview</h5>
+<ul>
+<li>Priorize por <strong>frequência real</strong>: array, string, hash map, two pointers, árvore/BFS-DFS, recursão e ordenação cobrem a maior parte. Grafo avançado, DP difícil e estruturas exóticas têm retorno baixo por hora investida.</li>
+<li>Recomenda <strong>uma linguagem só</strong>, dominada a ponto de não pensar na sintaxe. Pra você, JavaScript/TypeScript — e vale conhecer as armadilhas: <code>sort</code> comparando como string por padrão, <code>Map</code> vs. objeto, ausência de heap nativo.</li>
+<li>Formato de resposta esperado na entrevista, em cinco passos: <strong>esclarecer</strong> o enunciado e os casos de borda → propor a <strong>força bruta</strong> e dizer o custo → <strong>otimizar</strong> explicando a troca → <strong>codificar</strong> narrando → <strong>testar</strong> com um exemplo pequeno, na mão.</li>
+<li>Erro que mais reprova candidato bom: <strong>silêncio</strong>. Entrevistador não avalia o que não ouve, e não pode ajudar quem não mostra onde travou.</li>
+</ul>
+
+<h5>Comportamental e STAR</h5>
+<ul>
+<li><strong>S</strong>ituation (contexto curto) → <strong>T</strong>ask (sua responsabilidade específica) → <strong>A</strong>ction (o que <em>você</em> fez, em primeira pessoa) → <strong>R</strong>esult (com número).</li>
+<li>Os dois erros mais comuns: ficar 80% do tempo na Situation, e responder em "nós" — o entrevistador precisa saber o que <em>você</em> fez.</li>
+<li>Prepare <strong>5 a 7 histórias</strong> e reaproveite: conflito com colega, erro que você causou, decisão técnica difícil, algo que você liderou sem ter o cargo, prazo apertado, feedback duro recebido, algo que você aprendeu do zero.</li>
+<li>A história de <strong>erro</strong> é a mais reveladora: precisa ter falha real, consequência assumida e mudança de processo depois — não "meu defeito é ser perfeccionista".</li>
+</ul>
+<p><strong>Conexão com o resto do site:</strong> as histórias do Gabarita já estão prontas na página de Histórias — o que este handbook acrescenta é o formato e a disciplina de terminar com número.</p>
+</article>
+
+<article data-href="https://leetcode.com/studyplan/leetcode-75/">
+<p class="tldr">Duas coisas diferentes no mesmo link. O <strong>LeetCode 75</strong> é alternativa ao roadmap do NeetCode — escolha <em>um</em>, fazer os dois é repetição. O <strong>SQL 50</strong> é à parte, vale por si, e conversa direto com a Semana 3.</p>
+
+<h5>LeetCode 75 vs. roadmap do NeetCode</h5>
+<div class="tbl"><table>
+<tr><th></th><th>LeetCode 75</th><th>NeetCode roadmap</th></tr>
+<tr><td>Organização</td><td>lista curada, por tópico</td><td>grafo de pré-requisitos</td></tr>
+<tr><td>Explicação</td><td>discussão da comunidade</td><td>vídeo do autor pra cada problema</td></tr>
+<tr><td>Melhor pra</td><td>quem já tem a base e quer volume dirigido</td><td>quem precisa <em>construir</em> a base na ordem</td></tr>
+</table></div>
+<p>Se os padrões de array/hashing ainda não são automáticos, o roadmap rende mais. Se já são, o 75 é mais rápido.</p>
+
+<h5>SQL 50 — por que vale à parte</h5>
+<ul>
+<li>Em vaga de SWE no Brasil, <strong>SQL frequentemente substitui a questão de algoritmo</strong>. É o exercício de melhor retorno por hora desta seção inteira.</li>
+<li>O que ele cobre e cai em entrevista: <code>JOIN</code> (e por que <code>LEFT JOIN</code> + <code>IS NULL</code> acha o que não tem par), <code>GROUP BY</code> com <code>HAVING</code> (filtro depois da agregação, ao contrário do <code>WHERE</code>), subconsulta correlacionada, <strong>window functions</strong> (<code>ROW_NUMBER</code>, <code>RANK</code>, <code>LAG</code>) e CTE recursiva.</li>
+<li><strong>Window function é o divisor de águas</strong>: "segundo maior salário por departamento" e "diferença pro mês anterior" são perguntas clássicas que ficam triviais com elas e horríveis sem.</li>
+<li>Prazo realista: uma semana, meia hora por dia.</li>
+</ul>
+<p><strong>Armadilha:</strong> medir progresso por número de problemas resolvidos. Cinquenta problemas mal digeridos valem menos que quinze reescritos do zero no dia seguinte.</p>
+</article>
+
+<article data-href="https://seanprashad.com/leetcode-patterns/">
+<p class="tldr">Não é lista pra resolver — é treino de <strong>classificação</strong>. A entrevista dá 30 segundos de reconhecimento antes de você começar a falar, e é esse reflexo que a tabela de hints treina. Dez minutos por dia rendem mais aqui do que uma hora resolvendo.</p>
+
+<h5>O exercício</h5>
+<ol>
+<li>Leia só o enunciado.</li>
+<li>Em 30 segundos, diga em voz alta: <strong>qual padrão</strong> e <strong>qual a complexidade alvo</strong>.</li>
+<li>Abra o hint e confira. Errou? Anote qual pista do enunciado você não viu.</li>
+<li>Não resolva. Próximo.</li>
+</ol>
+
+<h5>O mapa de pistas → padrão</h5>
+<div class="tbl"><table>
+<tr><th>No enunciado</th><th>Padrão provável</th></tr>
+<tr><td>array <strong>ordenado</strong>, par que soma X</td><td>two pointers ou busca binária</td></tr>
+<tr><td>substring/subarray <strong>contíguo</strong></td><td>sliding window</td></tr>
+<tr><td>“top K”, “K maiores/menores”</td><td>heap (ou quickselect)</td></tr>
+<tr><td>todas as permutações/combinações/subconjuntos</td><td>backtracking</td></tr>
+<tr><td>maximizar/minimizar com escolhas que se repetem</td><td>programação dinâmica</td></tr>
+<tr><td>menor número de passos / menor caminho sem peso</td><td>BFS</td></tr>
+<tr><td>caminho/soma em árvore, ilhas em matriz</td><td>DFS</td></tr>
+<tr><td>dependência, pré-requisito, ordem de tarefas</td><td>ordenação topológica</td></tr>
+<tr><td>agrupar conectados, detectar ciclo em grafo não dirigido</td><td>union-find</td></tr>
+<tr><td>intervalos que se sobrepõem</td><td>ordenar por início e varrer</td></tr>
+<tr><td>prefixo de palavra, autocomplete</td><td>trie</td></tr>
+<tr><td>“próximo maior elemento”</td><td>monotonic stack</td></tr>
+</table></div>
+
+<h5>Por que isso funciona</h5>
+<ul>
+<li>Entrevista não mede se você inventa algoritmo novo — mede se você <strong>reconhece</strong> o problema conhecido embaixo do enunciado disfarçado.</li>
+<li>Classificar errado custa a entrevista inteira: dez minutos indo pro caminho errado raramente dão pra recuperar. Por isso o reflexo dos 30 segundos vale mais que velocidade de digitação.</li>
+</ul>
+</article>
+
+<article data-href="https://visualgo.net/en">
+<p class="tldr">Quatro visualizações, cada uma <em>no dia</em> em que o tópico aparecer. Vídeo e animação são péssimos pra consultar depois e ótimos pra instalar a intuição na primeira vez — use nesse papel e siga em frente.</p>
+
+<h5>Heap / heapify</h5>
+<ul>
+<li>Árvore binária <strong>completa</strong> guardada num array: filhos de <code>i</code> em <code>2i+1</code> e <code>2i+2</code>. Ver isso animado resolve de vez a confusão entre a forma e o armazenamento.</li>
+<li>Custos: inserir e remover o topo em O(log n); espiar o topo em O(1); <strong>construir</strong> a heap a partir de um array em O(n) (não O(n log n) — é a pegadinha).</li>
+<li>Onde entra: “top K” (heap de tamanho K), fila de prioridade, mediana em fluxo (duas heaps), Dijkstra.</li>
+</ul>
+
+<h5>BST</h5>
+<ul>
+<li><strong>In-order</strong> devolve os elementos em ordem crescente — é isso que faz BST valer a pena, e é a base de metade dos problemas de árvore.</li>
+<li>Sem balanceamento, inserir dado já ordenado degenera em lista ligada: O(n). É o motivo de existirem AVL e rubro-negra (e de o <code>Map</code> de várias linguagens usar hash em vez de árvore).</li>
+</ul>
+
+<h5>BFS / DFS em grafo</h5>
+<ul>
+<li><strong>BFS</strong> usa fila e visita por camadas → é a escolha pra <strong>menor número de passos</strong> em grafo sem peso.</li>
+<li><strong>DFS</strong> usa pilha (ou recursão) e vai fundo → detectar ciclo, componentes conexos, ordenação topológica, backtracking.</li>
+<li>O detalhe que causa laço infinito: marcar como visitado <strong>ao enfileirar</strong>, não ao desenfileirar.</li>
+</ul>
+
+<h5>Sorting</h5>
+<ul>
+<li>Ver merge sort e quicksort animados fixa a diferença: merge divide sempre ao meio e é estável, com O(n) de memória extra; quicksort particiona por pivô, é in-place e cai pra O(n²) com pivô ruim.</li>
+<li><strong>Estabilidade</strong> importa quando se ordena por dois critérios em sequência — pergunta comum e pouco esperada.</li>
+</ul>
+</article>
+
+<article data-href="https://interviewing.io/learn">
+<p class="tldr">Três gravações bastam, e <strong>pelo menos uma precisa ser de uma entrevista que deu errado</strong>. O valor não está na solução — está em ver como a pessoa se comunica enquanto pensa, e em calibrar o que "bom" parece na prática.</p>
+
+<h5>O que observar em quem passou</h5>
+<ul>
+<li><strong>Faz perguntas antes de codificar</strong>: tamanho da entrada, valores possíveis, o que fazer com entrada vazia ou duplicada.</li>
+<li><strong>Diz a força bruta primeiro</strong>, com a complexidade, e só então otimiza. Isso garante que existe alguma resposta na mesa desde o começo.</li>
+<li><strong>Narra o raciocínio</strong> continuamente — e narra também o abandono: “ia tentar ordenar, mas isso já custa n log n e eu quero linear”.</li>
+<li><strong>Testa na mão</strong> antes de dizer que terminou, incluindo um caso de borda.</li>
+<li><strong>Usa a dica</strong> que o entrevistador dá. Ignorar dica é sinal ruim; incorporar é sinal de que dá pra trabalhar junto.</li>
+</ul>
+
+<h5>O que derruba na gravação que deu errado</h5>
+<ul>
+<li><strong>Silêncio longo.</strong> Quase sempre o momento em que a entrevista virou. Dizer “deixa eu pensar em voz alta” custa nada e conserta.</li>
+<li><strong>Codificar antes de ter plano</strong>, e ficar remendando.</li>
+<li><strong>Defender a ideia errada</strong> depois de a dica apontar pro outro lado.</li>
+<li><strong>Travar e não pedir ajuda.</strong> Entrevistador espera interação; travar em silêncio é o pior dos mundos.</li>
+</ul>
+
+<h5>Como usar</h5>
+<ul>
+<li>Assista uma e depois <strong>simule você mesmo</strong>, em voz alta, gravando. Ouvir a própria gravação é desconfortável e é o feedback mais útil que existe de graça.</li>
+<li>Se for pra vaga no exterior: faça pelo menos uma simulação <strong>inteira em inglês</strong>. Explicar algoritmo em inglês sob pressão é uma habilidade separada de saber o algoritmo.</li>
+</ul>
+</article>

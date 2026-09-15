@@ -36,12 +36,146 @@
     </ul>
 
     <h3 class="sub">Onde estudar (grátis)</h3>
+    <p class="leituras-bar" data-leituras-pagina></p>
     <ul class="resources">
-      <li><div class="r-title"><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">Building Effective Agents</a></div><div class="r-note">O artigo da própria Anthropic sobre padrões de agente (workflow vs. agente de verdade, quando cada um vale a complexidade). A melhor visão geral conceitual que existe hoje.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~25 min</span>Artigo &uacute;nico. O n&uacute;cleo &eacute; a distin&ccedil;&atilde;o <strong>workflow vs. agente</strong> e os cinco padr&otilde;es de workflow (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer). Saber nomear os cinco j&aacute; &eacute; a resposta.</div><div class="r-src">anthropic.com/engineering &middot; oficial, gratuito</div></li>
-      <li><div class="r-title"><a href="https://simonwillison.net/guides/agentic-engineering-patterns/how-coding-agents-work/" target="_blank" rel="noopener">How coding agents work</a></div><div class="r-note">Explica exatamente o que você observou usando um agente pra codar &mdash; loop de ferramentas, contexto, e por que ele &ldquo;parece&rdquo; entender o projeto.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Leitura corrida, sem se&ccedil;&atilde;o pra pular. &Eacute; a descri&ccedil;&atilde;o t&eacute;cnica do que voc&ecirc; observou na pr&aacute;tica &mdash; leia com o Gabarita na cabe&ccedil;a, marcando o que bate.</div><div class="r-src">simonwillison.net &middot; Simon Willison, gratuito</div></li>
-      <li><div class="r-title"><a href="https://simonwillison.net/guides/agentic-engineering-patterns/what-is-agentic-engineering/" target="_blank" rel="noopener">What is agentic engineering?</a></div><div class="r-note">Vocabulário atualizado (2026) pra nomear o que virou a sua rotina de desenvolvimento no último ano.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~12 min</span>Curto, e &eacute; vocabul&aacute;rio. Se os termos forem novos pra voc&ecirc;, <strong>leia este antes</strong> do item acima.</div><div class="r-src">simonwillison.net &middot; gratuito</div></li>
-      <li><div class="r-title"><a href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">Prompt engineering overview</a></div><div class="r-note">Documentação oficial da Anthropic sobre como estruturar um prompt &mdash; a base teórica de algo que você já pratica todo dia sem o nome formal.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~30 min</span>N&atilde;o leia todas as subp&aacute;ginas. Leia a <em>overview</em> e depois s&oacute; tr&ecirc;s t&eacute;cnicas: <strong>be clear and direct</strong>, <strong>use XML tags</strong> e <strong>chain of thought</strong>. O restante &eacute; refer&ecirc;ncia pra quando precisar.</div><div class="r-src">docs.claude.com &middot; oficial, gratuito</div></li>
-      <li><div class="r-title"><a href="https://docs.claude.com/en/docs/agent-sdk/overview" target="_blank" rel="noopener">Agent SDK overview</a></div><div class="r-note">Como um harness é montado por dentro (ferramentas, permissões, loop) &mdash; útil pra desmistificar a &ldquo;caixa preta&rdquo; que você usou pra construir o Gabarita.</div><div class="r-scope"><span class="r-tag t-part">Passar o olho &middot; ~15 min</span>S&oacute; a p&aacute;gina de overview: o que &eacute; o loop, o que s&atilde;o tools e como funcionam permiss&otilde;es. <strong>N&atilde;o entre na refer&ecirc;ncia de API</strong> a menos que v&aacute; construir um harness de verdade.</div><div class="r-src">docs.claude.com &middot; oficial, gratuito</div></li>
+      <li><div class="r-title"><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">Building Effective Agents</a></div><div class="r-note">O artigo da própria Anthropic sobre padrões de agente (workflow vs. agente de verdade, quando cada um vale a complexidade). A melhor visão geral conceitual que existe hoje.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~25 min</span>Artigo &uacute;nico. O n&uacute;cleo &eacute; a distin&ccedil;&atilde;o <strong>workflow vs. agente</strong> e os cinco padr&otilde;es de workflow (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer). Saber nomear os cinco j&aacute; &eacute; a resposta.</div><div class="r-src">anthropic.com/engineering &middot; oficial, gratuito</div><details class="leitura" data-id="b02-ia-agentes--anthropic-com-engineering-building-effective-agents"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A tese central é contra-intuitiva pra quem está vendendo IA: <strong>a maioria dos casos não precisa de agente</strong>. Um prompt bem feito com recuperação de contexto resolve mais do que parece, e quando não resolve, um <em>workflow</em> (caminho fixo) costuma bastar. Agente — o modelo decidendo os próprios passos em loop — é o último recurso, porque troca previsibilidade por flexibilidade.</p>
+
+<h5>A distinção que vale a resposta inteira</h5>
+<ul>
+<li><strong>Workflow</strong>: LLMs e ferramentas orquestrados por <strong>caminhos de código pré-definidos</strong>. Você sabe de antemão a sequência. Previsível, testável, barato.</li>
+<li><strong>Agente</strong>: o LLM <strong>dirige o próprio processo</strong>, escolhendo ferramentas e quando parar, em loop com feedback do ambiente. Flexível, e por isso caro, lento e difícil de garantir.</li>
+<li>A regra prática: comece pelo mais simples que funciona, e só suba de complexidade quando ela <strong>demonstravelmente</strong> melhora o resultado.</li>
+</ul>
+
+<h5>Os cinco padrões de workflow (saber nomear já é a resposta)</h5>
+<div class="tbl"><table>
+<tr><th>Padrão</th><th>Como funciona</th><th>Quando usar</th></tr>
+<tr><td><strong>Prompt chaining</strong></td><td>saída de um passo vira entrada do próximo, com checagem entre eles</td><td>tarefa que decompõe em passos fixos (esboço → revisar → escrever)</td></tr>
+<tr><td><strong>Routing</strong></td><td>classifica a entrada e manda pro tratamento especializado</td><td>categorias distintas que se atrapalhariam num prompt único (suporte: reembolso, técnico, vendas)</td></tr>
+<tr><td><strong>Parallelization</strong></td><td><em>sectioning</em> (dividir em subtarefas independentes) ou <em>voting</em> (rodar o mesmo várias vezes e agregar)</td><td>subtarefas paralelizáveis, ou quando múltiplas tentativas aumentam a confiança</td></tr>
+<tr><td><strong>Orchestrator-workers</strong></td><td>um LLM central decompõe dinamicamente e delega a workers</td><td>quando as subtarefas <em>não</em> dá pra prever (mexer em N arquivos que só se descobre na hora)</td></tr>
+<tr><td><strong>Evaluator-optimizer</strong></td><td>um gera, outro avalia e devolve crítica, em loop</td><td>quando existe critério claro de qualidade e a crítica mensuravelmente melhora (tradução literária, busca com refinamento)</td></tr>
+</table></div>
+
+<h5>Quando o agente se justifica</h5>
+<ul>
+<li>Problema <strong>aberto</strong>, em que não dá pra prever o número de passos nem codificar o caminho fixo.</li>
+<li>Existe <strong>sinal de ambiente</strong> confiável pra fechar o loop: teste que roda, compilador que reclama, saída de comando. Sem esse feedback, o agente só acumula alucinação.</li>
+<li>O custo de errar é <strong>recuperável</strong> — e por isso agentes de código funcionam tão bem: o diff é revisável e reversível.</li>
+</ul>
+
+<h5>Os princípios de implementação</h5>
+<ul>
+<li><strong>Simplicidade</strong> no design do agente; <strong>transparência</strong> (mostrar explicitamente o passo de planejamento); e caprichar na <strong>interface agente-computador</strong> (ACI) tanto quanto se capricha numa interface humano-computador.</li>
+<li>Documentar a ferramenta como se fosse pra um dev júnior: nome claro, exemplo de uso, formato de saída, erros possíveis. A maior parte das falhas de agente é ferramenta mal descrita, não modelo ruim.</li>
+<li>Frameworks (LangGraph, SDKs de agente) escondem a camada de prompt e tornam difícil depurar. Comece com chamadas diretas à API; adote framework depois de entender o que ele abstrai.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Workflow é caminho de código pré-definido com LLM nos passos; agente é o LLM escolhendo os próprios passos em loop com feedback do ambiente. Eu só subo pra agente quando o caminho não é previsível e existe um sinal confiável pra fechar o loop.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">anthropic.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://simonwillison.net/guides/agentic-engineering-patterns/how-coding-agents-work/" target="_blank" rel="noopener">How coding agents work</a></div><div class="r-note">Explica exatamente o que você observou usando um agente pra codar &mdash; loop de ferramentas, contexto, e por que ele &ldquo;parece&rdquo; entender o projeto.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Leitura corrida, sem se&ccedil;&atilde;o pra pular. &Eacute; a descri&ccedil;&atilde;o t&eacute;cnica do que voc&ecirc; observou na pr&aacute;tica &mdash; leia com o Gabarita na cabe&ccedil;a, marcando o que bate.</div><div class="r-src">simonwillison.net &middot; Simon Willison, gratuito</div><details class="leitura" data-id="b02-ia-agentes--simonwillison-net-guides-agentic-engineering-patterns-how-coding-agent"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Um agente de código é muito mais simples do que parece de fora: é um <strong>loop</strong> — modelo pede uma ferramenta, o harness executa, o resultado volta como mensagem, repete até o modelo dizer que acabou. Toda a esperteza percebida vem de três coisas: as ferramentas disponíveis, o que entra no contexto e o sinal de verificação.</p>
+
+<h5>O loop, em cinco linhas</h5>
+<ol>
+<li>Prompt do sistema + pedido do usuário vão pro modelo.</li>
+<li>O modelo responde com texto e/ou uma <strong>chamada de ferramenta</strong> (ler arquivo, rodar comando, editar, buscar).</li>
+<li>O <em>harness</em> executa a ferramenta de verdade, no ambiente real.</li>
+<li>A saída (inclusive o erro) volta como mais uma mensagem na conversa.</li>
+<li>Repete, até o modelo parar de pedir ferramenta. Fim.</li>
+</ol>
+
+<h5>Por que funciona tão bem em código, especificamente</h5>
+<ul>
+<li>Código tem <strong>verificador barato e objetivo</strong>: compila? o teste passa? o linter reclama? O agente não precisa “saber” que acertou — ele descobre rodando.</li>
+<li>O erro tem <strong>mensagem de erro útil</strong>. Stack trace é um sinal de correção de altíssima qualidade, coisa que quase nenhum outro domínio tem.</li>
+<li>O resultado é <strong>reversível e revisável</strong>: um diff no git. Isso muda o cálculo de risco de deixar um modelo agir.</li>
+</ul>
+
+<h5>Onde mora a engenharia de verdade</h5>
+<ul>
+<li><strong>Gestão de contexto.</strong> A janela é finita e barulhenta. Escolher o que colocar (e o que resumir ou descartar) é o principal fator de qualidade — mais que a escolha do modelo, em muitos casos.</li>
+<li><strong>Desenho de ferramenta.</strong> Ferramenta genérica demais (“rode qualquer shell”) é perigosa e vaga; específica demais explode em quantidade. Boa ferramenta tem saída curta, determinística e mensagem de erro que ensina o próximo passo.</li>
+<li><strong>Permissão e sandbox.</strong> O loop faz efeito colateral no mundo real. Modo de aprovação, allowlist e isolamento são requisito de produto, não detalhe.</li>
+<li><strong>Parar.</strong> Loop sem critério de parada vira gasto infinito. Limite de passos, de custo e detecção de repetição.</li>
+</ul>
+<p><strong>Como ler isto com o Gabarita na cabeça:</strong> você já viu o loop acontecer. Marque, enquanto lê, quais ferramentas você percebeu sendo usadas e onde o contexto claramente ficou curto — esse relato concreto vale mais numa entrevista do que qualquer definição.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://simonwillison.net/guides/agentic-engineering-patterns/how-coding-agents-work/" target="_blank" rel="noopener">simonwillison.net</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://simonwillison.net/guides/agentic-engineering-patterns/what-is-agentic-engineering/" target="_blank" rel="noopener">What is agentic engineering?</a></div><div class="r-note">Vocabulário atualizado (2026) pra nomear o que virou a sua rotina de desenvolvimento no último ano.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~12 min</span>Curto, e &eacute; vocabul&aacute;rio. Se os termos forem novos pra voc&ecirc;, <strong>leia este antes</strong> do item acima.</div><div class="r-src">simonwillison.net &middot; gratuito</div><details class="leitura" data-id="b02-ia-agentes--simonwillison-net-guides-agentic-engineering-patterns-what-is-agentic-"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">É vocabulário, e vocabulário é o que te impede de parecer perdido quando a vaga menciona IA. O termo nomeia uma prática nova: engenharia feita <strong>com</strong> agentes no fluxo, o que muda o que o engenheiro faz — menos digitar, mais especificar, verificar e revisar.</p>
+
+<h5>Os termos que você precisa usar sem hesitar</h5>
+<ul>
+<li><strong>Agente</strong>: LLM em loop com ferramentas e feedback de ambiente.</li>
+<li><strong>Harness</strong>: o programa em volta do modelo — quem executa ferramenta, monta o contexto, aplica permissão e decide quando parar. O Claude Code é um harness.</li>
+<li><strong>Tool / tool use</strong>: função declarada com nome, descrição e schema, que o modelo pode pedir pra executar. O modelo não executa nada: ele <em>pede</em>.</li>
+<li><strong>Contexto</strong>: tudo que está na janela naquele turno. <em>Context engineering</em> é a disciplina de escolher isso deliberadamente.</li>
+<li><strong>MCP</strong>: protocolo aberto pra expor ferramentas e dados a qualquer harness, em vez de cada cliente integrar cada serviço à mão.</li>
+<li><strong>Eval</strong>: conjunto de casos com resultado esperado, rodado a cada mudança de prompt ou modelo. É o teste automatizado do mundo de LLM — e a resposta certa pra “como você sabe que melhorou?”.</li>
+</ul>
+
+<h5>O que muda no trabalho</h5>
+<ul>
+<li>O gargalo desloca da escrita pra <strong>revisão</strong>: gerar 400 linhas ficou barato, entender e aprovar 400 linhas não.</li>
+<li><strong>Especificação vira artefato de primeira classe.</strong> Descrever precisamente o que se quer (e os critérios de pronto) passa a ser a parte difícil.</li>
+<li>Prática que sobe de valor: teste automatizado, tipagem, commits pequenos — tudo que dá ao agente (e a você) sinal rápido de que algo quebrou.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu uso agente pra ampliar o que consigo verificar, não pra pular a verificação. O que mudou no meu fluxo foi investir mais em teste e especificação, porque são eles que dão o sinal que o loop precisa.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://simonwillison.net/guides/agentic-engineering-patterns/what-is-agentic-engineering/" target="_blank" rel="noopener">simonwillison.net</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">Prompt engineering overview</a></div><div class="r-note">Documentação oficial da Anthropic sobre como estruturar um prompt &mdash; a base teórica de algo que você já pratica todo dia sem o nome formal.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~30 min</span>N&atilde;o leia todas as subp&aacute;ginas. Leia a <em>overview</em> e depois s&oacute; tr&ecirc;s t&eacute;cnicas: <strong>be clear and direct</strong>, <strong>use XML tags</strong> e <strong>chain of thought</strong>. O restante &eacute; refer&ecirc;ncia pra quando precisar.</div><div class="r-src">docs.claude.com &middot; oficial, gratuito</div><details class="leitura" data-id="b02-ia-agentes--docs-claude-com-en-docs-build-with-claude-prompt-engineering-overview"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A ordem importa: antes de escrever prompt melhor, <strong>defina como vai medir</strong> (evals) e garanta que a tarefa está bem especificada. Depois disso, três técnicas resolvem a grande maioria dos casos — o resto da documentação é referência pra quando bater um problema específico.</p>
+
+<h5>1. Be clear and direct</h5>
+<ul>
+<li>Trate o modelo como alguém competente mas <strong>sem nenhum contexto do seu time</strong>: ele não sabe pra quem é a saída, o que já foi tentado, nem o que "bom" significa aqui.</li>
+<li>Dê o <strong>propósito</strong> ("isto vai pro cliente final, tom formal"), o <strong>formato exato</strong> da saída e as <strong>restrições</strong>. Instrução sequencial em lista numerada funciona melhor que parágrafo corrido.</li>
+<li>Diga o que <strong>fazer</strong>, não só o que evitar. "Escreva em português do Brasil" bate "não escreva em inglês".</li>
+</ul>
+
+<h5>2. Use XML tags</h5>
+<ul>
+<li>Separar as partes com tags (<code>&lt;documento&gt;</code>, <code>&lt;exemplo&gt;</code>, <code>&lt;instrucoes&gt;</code>) elimina a ambiguidade entre "isto é dado" e "isto é ordem".</li>
+<li>Ganho direto e prático: reduz o risco de <strong>injeção de prompt</strong> vinda do conteúdo, porque fica explícito o que é conteúdo a analisar e o que é instrução a seguir.</li>
+<li>Também facilita extrair a resposta programaticamente — peça a saída dentro de uma tag e faça parse dela.</li>
+</ul>
+
+<h5>3. Chain of thought</h5>
+<ul>
+<li>Pedir o raciocínio antes da resposta melhora tarefas de análise, matemática e decisão com múltiplos critérios. Peça o raciocínio dentro de uma tag e a resposta final em outra.</li>
+<li>Custa tokens e latência — não use em tarefa simples de classificação ou extração, onde só aumenta a conta.</li>
+</ul>
+
+<h5>Duas coisas de suporte que sempre valem</h5>
+<ul>
+<li><strong>Exemplos (multishot)</strong> são o caminho mais rápido pra fixar formato e tom. Três a cinco exemplos cobrindo os casos de borda valem mais que um parágrafo de descrição.</li>
+<li><strong>Pré-preencher a resposta do assistente</strong> força o formato (começar com <code>{</code> pra garantir JSON, por exemplo) e corta o preâmbulo.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Prompt engineering sem eval é chute. Eu monto primeiro um conjunto de casos com saída esperada; aí cada mudança de prompt ou de modelo passa a ser uma medição, não uma impressão.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">docs.claude.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://docs.claude.com/en/docs/agent-sdk/overview" target="_blank" rel="noopener">Agent SDK overview</a></div><div class="r-note">Como um harness é montado por dentro (ferramentas, permissões, loop) &mdash; útil pra desmistificar a &ldquo;caixa preta&rdquo; que você usou pra construir o Gabarita.</div><div class="r-scope"><span class="r-tag t-part">Passar o olho &middot; ~15 min</span>S&oacute; a p&aacute;gina de overview: o que &eacute; o loop, o que s&atilde;o tools e como funcionam permiss&otilde;es. <strong>N&atilde;o entre na refer&ecirc;ncia de API</strong> a menos que v&aacute; construir um harness de verdade.</div><div class="r-src">docs.claude.com &middot; oficial, gratuito</div><details class="leitura" data-id="b02-ia-agentes--docs-claude-com-en-docs-agent-sdk-overview"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O SDK expõe o mesmo loop do agente de código pra você usar no seu produto: o modelo pede ferramenta, o SDK executa num ambiente controlado, o resultado volta. O que você precisa entender da overview: o loop, o que é uma tool, e como permissões funcionam.</p>
+
+<h5>O loop, do ponto de vista de quem integra</h5>
+<ul>
+<li>Você fornece o objetivo e o conjunto de ferramentas; o SDK cuida do vai-e-vem, do histórico e da execução.</li>
+<li><strong>Subagente</strong> é uma tarefa delegada com contexto próprio — serve pra manter a janela principal limpa quando a subtarefa produz muito ruído (uma busca ampla, por exemplo).</li>
+<li>Como a janela é finita, existe <strong>compactação</strong>: o histórico antigo é resumido pra caber. Consequência prática: nem tudo que aconteceu continua acessível literalmente.</li>
+</ul>
+
+<h5>Ferramentas</h5>
+<ul>
+<li>Vêm três famílias: as <strong>embutidas</strong> (arquivo, shell, busca), as <strong>suas</strong> (funções que você declara) e as de <strong>MCP</strong> (servidores externos plugados no harness).</li>
+<li>A qualidade da descrição da ferramenta é o que mais mexe no acerto. Nome explícito, quando usar, quando <em>não</em> usar, e formato do retorno.</li>
+</ul>
+
+<h5>Permissões — a parte que vira pergunta de segurança</h5>
+<ul>
+<li>Modos que vão de "pergunta sempre" a "executa automaticamente", com <strong>allowlist</strong> por ferramenta ou por padrão de comando.</li>
+<li><strong>Hooks</strong> interceptam antes/depois da execução: dá pra bloquear, auditar ou reescrever uma chamada. É onde entra política da empresa.</li>
+<li>O risco de verdade é a <strong>injeção de prompt</strong>: conteúdo lido (issue, página, arquivo) pode conter instruções. A defesa é tratar tudo que entra como <em>dado</em>, nunca como ordem, e limitar o que a ferramenta pode fazer — sandbox e menor privilégio, não confiança no modelo.</li>
+</ul>
+<p><strong>Quando parar de ler:</strong> só a overview basta pra conversar. A referência completa de API só vale a pena quando você for construir um harness de verdade.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.claude.com/en/docs/agent-sdk/overview" target="_blank" rel="noopener">docs.claude.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     </ul>
 
     <div class="ammo">
@@ -96,7 +230,7 @@ persistir; não há 2ª chamada de IA auditando conteúdo clínico.</code></pre>
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 123 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 102 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

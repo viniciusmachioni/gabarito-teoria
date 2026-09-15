@@ -35,12 +35,142 @@
   </ul>
 
   <h3 class="sub">Onde estudar (grátis)</h3>
-  <ul class="resources">
-    <li><div class="r-title"><a href="https://www.w3.org/WAI/ARIA/apg/practices/" target="_blank" rel="noopener">ARIA Authoring Practices Guide</a></div><div class="r-note">A referência oficial de padrões de componente acessível (modal, combobox, tabs, menu) com exemplo funcional de cada um.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia "Reading order" no topo (as regras gerais) e depois só os padrões de componente que você constrói de verdade: Dialog (Modal), Combobox, Tabs. O resto é consulta pra quando construir aquele componente.</div><div class="r-src">w3.org &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions" target="_blank" rel="noopener">MDN — ARIA live regions</a></div><div class="r-note">Como e quando usar <code>aria-live="polite"</code> vs. <code>"assertive"</code>, e os papéis com live region embutida (<code>status</code>, <code>alert</code>).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página média, direto ao ponto — o exemplo de chat/notificação é o caso mais comum no dia a dia.</div><div class="r-src">developer.mozilla.org &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://web.dev/learn/accessibility/welcome" target="_blank" rel="noopener">web.dev — Learn Accessibility</a></div><div class="r-note">Curso curto em módulos: semântica, foco, ARIA, cor e contraste, formulários.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~1h</span>Faça os módulos Semantics, Focus e Forms. Cor/contraste e mídia podem ficar pra depois se o tempo apertar.</div><div class="r-src">web.dev &middot; Google</div></li>
-    <li><div class="r-title"><a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener">WCAG 2.2 — Quick Reference</a></div><div class="r-note">A lista completa de critérios de sucesso, filtrável por nível (A/AA/AAA).</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~20 min agora</span>Filtre por nível AA (o exigido na maioria das leis) e passe o olho pelos títulos. Não leia o texto normativo inteiro — é referência jurídica, não prosa.</div><div class="r-src">w3.org &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://www.a11yproject.com/checklist/" target="_blank" rel="noopener">The A11Y Project — Checklist</a></div><div class="r-note">Checklist prática, organizada por tipo de verificação (estrutura, teclado, formulário, mídia).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curta e acionável — dá pra usar literalmente como checklist de PR.</div><div class="r-src">a11yproject.com</div></li>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://www.w3.org/WAI/ARIA/apg/practices/" target="_blank" rel="noopener">ARIA Authoring Practices Guide</a></div><div class="r-note">A referência oficial de padrões de componente acessível (modal, combobox, tabs, menu) com exemplo funcional de cada um.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia "Reading order" no topo (as regras gerais) e depois só os padrões de componente que você constrói de verdade: Dialog (Modal), Combobox, Tabs. O resto é consulta pra quando construir aquele componente.</div><div class="r-src">w3.org &middot; oficial</div><details class="leitura" data-id="b11-acessibilidade--w3-org-wai-aria-apg-practices"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O APG é o manual de como componente interativo <strong>deve se comportar</strong> — não só que atributo colocar. A parte de leitura geral e três ou quatro padrões de componente (Dialog, Combobox, Disclosure, Tabs) cobrem o que você constrói de verdade.</p>
+
+<h5>As regras gerais (a parte mais importante)</h5>
+<ul>
+<li><strong>Primeira regra do ARIA: não use ARIA.</strong> Se existe elemento nativo com a semântica necessária, use ele. ARIA descreve semântica e <strong>não adiciona comportamento nenhum</strong> — nem foco, nem teclado, nem nada.</li>
+<li><strong>Não mude a semântica nativa</strong> (<code>&lt;button role="heading"&gt;</code> é sempre errado).</li>
+<li><strong>Todo controle interativo tem que ser operável por teclado</strong>, e nunca esconda o indicador de foco de quem navega assim.</li>
+<li><strong>ARIA errado é pior que ARIA nenhum</strong>: um <code>aria-label</code> desatualizado mente com a autoridade de um atributo explícito.</li>
+</ul>
+
+<h5>Dialog (modal) — o padrão que mais cai</h5>
+<ul>
+<li><code>role="dialog"</code> + <code>aria-modal="true"</code> + um nome (<code>aria-labelledby</code> apontando pro título).</li>
+<li><strong>Foco vai pra dentro na abertura</strong> (o primeiro controle, ou o próprio contêiner), <strong>fica preso</strong> enquanto aberto (Tab circula só ali), e <strong>volta pro elemento que abriu</strong> ao fechar.</li>
+<li><strong>Esc fecha.</strong> O conteúdo atrás fica inerte (hoje, o atributo <code>inert</code> resolve isso de um jeito só).</li>
+<li>O elemento nativo <code>&lt;dialog&gt;</code> com <code>showModal()</code> já entrega quase tudo isso — é a aplicação direta da primeira regra.</li>
+</ul>
+
+<h5>Os outros três que valem</h5>
+<ul>
+<li><strong>Disclosure</strong> (mostrar/esconder): um <code>&lt;button&gt;</code> com <code>aria-expanded</code> e <code>aria-controls</code>. O mais simples e o mais usado.</li>
+<li><strong>Tabs</strong>: <code>tablist</code>/<code>tab</code>/<code>tabpanel</code>, e a regra que quase todo mundo erra — <strong>setas navegam entre as abas, Tab sai do conjunto</strong>. Só a aba ativa fica na ordem de tabulação (<em>roving tabindex</em>).</li>
+<li><strong>Combobox / autocomplete</strong>: o campo mantém o foco enquanto as setas movem a <em>opção ativa</em>, apontada por <code>aria-activedescendant</code>. É o padrão mais difícil de acertar à mão — o melhor argumento a favor de usar Radix, React Aria ou Headless UI.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Acessibilidade de componente é 20% ARIA e 80% gerenciamento de foco e teclado. Por isso eu prefiro um primitivo testado a reimplementar combobox do zero.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.w3.org/WAI/ARIA/apg/practices/" target="_blank" rel="noopener">w3.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions" target="_blank" rel="noopener">MDN — ARIA live regions</a></div><div class="r-note">Como e quando usar <code>aria-live="polite"</code> vs. <code>"assertive"</code>, e os papéis com live region embutida (<code>status</code>, <code>alert</code>).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página média, direto ao ponto — o exemplo de chat/notificação é o caso mais comum no dia a dia.</div><div class="r-src">developer.mozilla.org &middot; oficial</div><details class="leitura" data-id="b11-acessibilidade--developer-mozilla-org-en-us-docs-web-accessibility-aria-guides-live-re"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Conteúdo inserido no DOM <strong>não é anunciado</strong> por leitor de tela. Quem usa leitor só sabe o que tem foco ou o que está numa <em>live region</em> declarada. É por isso que toast, erro de formulário, contador de resultados e estado de carregamento precisam de tratamento explícito.</p>
+
+<h5>Os dois níveis de urgência</h5>
+<ul>
+<li><strong><code>aria-live="polite"</code></strong>: o leitor termina o que está falando e então anuncia. É o padrão pra quase tudo — “3 resultados encontrados”, “salvo”.</li>
+<li><strong><code>aria-live="assertive"</code></strong>: interrompe na hora. Reserve pra erro que impede de continuar ou aviso crítico. Usar em excesso torna o produto inutilizável.</li>
+<li>Os papéis prontos: <strong><code>role="status"</code></strong> (polite implícito) e <strong><code>role="alert"</code></strong> (assertive implícito). Preferir os papéis deixa a intenção explícita.</li>
+</ul>
+
+<h5>A regra que faz a live region funcionar (ou não)</h5>
+<ul>
+<li><strong>O contêiner tem que existir no DOM <em>antes</em> do conteúdo aparecer.</strong> Inserir a div com <code>aria-live</code> e o texto juntos, no mesmo instante, frequentemente não anuncia nada — o leitor não teve tempo de registrar a região.</li>
+<li>Na prática: renderize o contêiner vazio sempre e só preencha o texto quando houver mensagem.</li>
+<li><code>aria-atomic="true"</code> faz ler a região inteira a cada mudança (bom pra mensagem curta que se substitui). <code>aria-relevant</code> controla se remoções também são anunciadas — raramente necessário.</li>
+</ul>
+
+<h5>Onde isso aparece no dia a dia</h5>
+<ul>
+<li><strong>Toast e notificação</strong> — o caso do livro-texto.</li>
+<li><strong>Busca com filtro</strong> — anunciar a contagem de resultados; sem isso, quem não vê a lista não sabe que algo mudou.</li>
+<li><strong>Erro de validação</strong> — o campo recebe <code>aria-invalid</code> e <code>aria-describedby</code> apontando pra mensagem; o resumo de erros pode ser um <code>role="alert"</code>.</li>
+<li><strong>Carregando</strong> — anunciar “carregando” e depois “pronto”. Spinner puramente visual não comunica nada.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Guides/Live_regions" target="_blank" rel="noopener">developer.mozilla.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://web.dev/learn/accessibility/welcome" target="_blank" rel="noopener">web.dev — Learn Accessibility</a></div><div class="r-note">Curso curto em módulos: semântica, foco, ARIA, cor e contraste, formulários.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~1h</span>Faça os módulos Semantics, Focus e Forms. Cor/contraste e mídia podem ficar pra depois se o tempo apertar.</div><div class="r-src">web.dev &middot; Google</div><details class="leitura" data-id="b11-acessibilidade--web-dev-learn-accessibility-welcome"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Curso em módulos. Faça <strong>Semantics</strong>, <strong>Focus</strong> e <strong>Forms</strong> — são os três que mudam o código que você escreve amanhã. Cor, contraste e mídia podem esperar.</p>
+
+<h5>Semantics</h5>
+<ul>
+<li>Existe uma <strong>árvore de acessibilidade</strong> derivada do DOM: cada elemento tem <em>papel</em>, <em>nome</em>, <em>estado</em> e <em>valor</em>. É essa árvore que a tecnologia assistiva lê — não os seus pixels.</li>
+<li>Landmarks (<code>header</code>, <code>nav</code>, <code>main</code>, <code>aside</code>, <code>footer</code>) permitem pular direto pra uma região. Uma página inteira de <code>div</code> não tem por onde navegar.</li>
+<li>Hierarquia de títulos sem pulo (<code>h1</code> → <code>h2</code> → <code>h3</code>): quem usa leitor navega por títulos como quem lê um índice.</li>
+<li>O nome acessível vem, em ordem: <code>aria-labelledby</code> → <code>aria-label</code> → conteúdo do elemento → <code>title</code>. Botão com só um ícone precisa de nome explícito, sempre.</li>
+</ul>
+
+<h5>Focus</h5>
+<ul>
+<li>A <strong>ordem de tabulação segue a ordem do DOM</strong>. CSS que reordena visualmente (<code>order</code> do flex, <code>grid-area</code>) cria descompasso entre o que se vê e o que o Tab percorre.</li>
+<li><code>tabindex="0"</code> insere na ordem natural; <code>tabindex="-1"</code> deixa focável só por código (útil pra mover foco); <strong><code>tabindex</code> positivo é sempre errado</strong> — bagunça a ordem da página inteira.</li>
+<li><code>:focus-visible</code> mostra o anel só pra quem navega por teclado, resolvendo a velha desculpa de “o outline é feio no clique”. <strong>Remover o outline sem substituto é falha de AA.</strong></li>
+<li><strong>Skip link</strong> (“pular para o conteúdo”) como primeiro elemento focável: sem ele, quem usa teclado passa por todo o menu em cada página.</li>
+</ul>
+
+<h5>Forms</h5>
+<ul>
+<li>Todo campo com <code>&lt;label for&gt;</code> associado. Placeholder <strong>não</strong> é rótulo: some ao digitar, tem contraste baixo e não é anunciado de forma confiável.</li>
+<li>Agrupe rádio e checkbox relacionados em <code>&lt;fieldset&gt;</code> com <code>&lt;legend&gt;</code>.</li>
+<li>Erro precisa ser identificado <strong>em texto</strong> (não só borda vermelha), associado ao campo por <code>aria-describedby</code>, e o foco deve ir pro primeiro campo com problema.</li>
+<li><code>autocomplete</code> com o valor certo ajuda todo mundo e é critério do WCAG 2.1.</li>
+</ul>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://web.dev/learn/accessibility/welcome" target="_blank" rel="noopener">web.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener">WCAG 2.2 — Quick Reference</a></div><div class="r-note">A lista completa de critérios de sucesso, filtrável por nível (A/AA/AAA).</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~20 min agora</span>Filtre por nível AA (o exigido na maioria das leis) e passe o olho pelos títulos. Não leia o texto normativo inteiro — é referência jurídica, não prosa.</div><div class="r-src">w3.org &middot; oficial</div><details class="leitura" data-id="b11-acessibilidade--w3-org-wai-wcag22-quickref"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">É referência normativa — não se lê inteiro. Filtre por <strong>nível AA</strong> (o exigido pela maioria das leis) e passe o olho nos títulos pra saber o que existe. O que você precisa carregar na cabeça é a estrutura POUR e uma dúzia de critérios.</p>
+
+<h5>POUR — os quatro princípios</h5>
+<ul>
+<li><strong>Perceptível</strong>: dá pra perceber por algum sentido (alternativa em texto, legenda, contraste, não depender só de cor).</li>
+<li><strong>Operável</strong>: dá pra usar (teclado, tempo suficiente, sem provocar convulsão, navegação clara).</li>
+<li><strong>Compreensível</strong>: previsível e com erro explicado.</li>
+<li><strong>Robusto</strong>: funciona com tecnologia assistiva — marcação válida, nome/papel/valor corretos.</li>
+</ul>
+
+<h5>Os critérios AA que mais aparecem</h5>
+<div class="tbl"><table>
+<tr><th>Critério</th><th>O que exige</th></tr>
+<tr><td>1.1.1 Conteúdo não textual</td><td>alt em imagem; <code>alt=""</code> quando é decorativa</td></tr>
+<tr><td>1.3.1 Info e relações</td><td>a estrutura visual existe também na marcação (label, título, tabela com <code>th</code>)</td></tr>
+<tr><td>1.4.3 Contraste</td><td><strong>4.5:1</strong> texto normal, <strong>3:1</strong> texto grande</td></tr>
+<tr><td>1.4.11 Contraste não textual</td><td>3:1 pra borda de campo, ícone essencial, estado de foco</td></tr>
+<tr><td>2.1.1 / 2.1.2 Teclado</td><td>tudo operável por teclado, e sem armadilha de foco</td></tr>
+<tr><td>2.4.7 Foco visível</td><td>o indicador de foco tem que aparecer</td></tr>
+<tr><td>3.3.1 / 3.3.3 Erros</td><td>erro identificado em texto e com sugestão de correção</td></tr>
+<tr><td>4.1.2 Nome, papel, valor</td><td>todo componente customizado expõe os três corretamente</td></tr>
+</table></div>
+
+<h5>Novidades da 2.2 que valem citar</h5>
+<ul>
+<li><strong>2.4.11 Foco não obscurecido</strong>: cabeçalho fixo não pode cobrir o elemento que acabou de receber foco — um bug comuníssimo em site com <em>sticky header</em>.</li>
+<li><strong>2.5.7 Movimentos de arrastar</strong>: toda ação de arrastar precisa de alternativa por clique.</li>
+<li><strong>2.5.8 Tamanho do alvo</strong>: mínimo de 24×24 CSS pixels pra alvo de toque.</li>
+<li><strong>3.3.8 Autenticação acessível</strong>: não exigir teste cognitivo (decorar código, resolver enigma) sem alternativa — permitir colar senha, por exemplo.</li>
+</ul>
+<p><strong>Por que AA e não AAA:</strong> a própria W3C recomenda não exigir AAA pro site inteiro — alguns critérios (contraste 7:1, linguagem simplificada) são inviáveis pra certos tipos de conteúdo.</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener">w3.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://www.a11yproject.com/checklist/" target="_blank" rel="noopener">The A11Y Project — Checklist</a></div><div class="r-note">Checklist prática, organizada por tipo de verificação (estrutura, teclado, formulário, mídia).</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curta e acionável — dá pra usar literalmente como checklist de PR.</div><div class="r-src">a11yproject.com</div><details class="leitura" data-id="b11-acessibilidade--a11yproject-com-checklist"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Curta e acionável — dá pra colar literalmente como checklist de PR. Serve como a camada de verificação manual que complementa o automático: <strong>ferramenta automática pega de 30% a 40% dos problemas</strong>, e saber disso já é meio ponto na entrevista.</p>
+
+<h5>A versão de bolso, pra revisar qualquer tela</h5>
+<ul>
+<li><strong>Estrutura</strong>: um <code>h1</code> por página, títulos sem pulo, landmarks presentes, <code>lang</code> no <code>html</code>, <code>&lt;title&gt;</code> descritivo.</li>
+<li><strong>Teclado</strong>: percorra a tela inteira só de Tab. Chega em tudo? Dá pra voltar? Enter e Espaço acionam? Esc fecha? O foco está sempre visível?</li>
+<li><strong>Imagens</strong>: conteúdo tem <code>alt</code> descritivo; decoração tem <code>alt=""</code>; ícone que é botão tem nome acessível.</li>
+<li><strong>Formulário</strong>: label associado, erro em texto, foco vai pro primeiro erro.</li>
+<li><strong>Cor</strong>: contraste AA, e nenhuma informação transmitida <em>só</em> por cor (adicione ícone ou texto).</li>
+<li><strong>Movimento</strong>: respeite <code>prefers-reduced-motion</code>; nada que pisque mais de 3 vezes por segundo.</li>
+<li><strong>Zoom</strong>: 200% sem perder conteúdo e sem rolagem horizontal.</li>
+</ul>
+
+<h5>O fluxo de verificação realista</h5>
+<ol>
+<li><strong>Automático</strong> (axe DevTools, Lighthouse, <code>eslint-plugin-jsx-a11y</code>, <code>jest-axe</code> no CI): pega contraste, alt faltando, label órfão, ARIA inválido.</li>
+<li><strong>Só teclado</strong>: 5 minutos, sem ferramenta nenhuma, e acha a maioria dos problemas de foco.</li>
+<li><strong>Leitor de tela</strong>: VoiceOver (Cmd+F5 no macOS) ou NVDA (grátis, Windows). Meia hora usando o próprio produto de olhos fechados ensina mais que qualquer documentação.</li>
+</ol>
+<p><strong>Frase de entrevista:</strong> “Ferramenta automática pega uns 30–40% dos problemas — o resto é foco, ordem, nome acessível e contexto, que só aparecem navegando por teclado e com leitor de tela. Eu rodo axe no CI e faço a passagem de teclado no PR.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.a11yproject.com/checklist/" target="_blank" rel="noopener">a11yproject.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
   <div class="ammo">
@@ -84,7 +214,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 123 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 102 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

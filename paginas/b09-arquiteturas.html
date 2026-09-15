@@ -103,13 +103,168 @@
     <p class="intro"><strong>Monolito distribuído</strong> &mdash; serviços separados que precisam subir juntos e compartilham banco: você pagou o preço da rede sem receber a independência. <strong>Big ball of mud</strong> &mdash; sem fronteira reconhecível; qualquer coisa chama qualquer coisa. <strong>Martelo dourado</strong> &mdash; a ferramenta da última empresa aplicada a um problema que não é o mesmo. <strong>Arquitetura de currículo</strong> &mdash; Kafka, Kubernetes e microsserviços num produto de duzentos usuários. <strong>EDA sem rastreio</strong> &mdash; eventos por toda parte e ninguém sabe quem consome o quê; acrescentar um campo vira arqueologia. <strong>Camada anêmica</strong> &mdash; quatro camadas cujo único trabalho é copiar objeto de uma pra outra. Saber apontar qual deles <em>você</em> evitou, e como, vale mais numa entrevista do que recitar o catálogo inteiro.</p>
 
     <h3 class="sub">Onde estudar (grátis)</h3>
+    <p class="leituras-bar" data-leituras-pagina></p>
     <ul class="resources">
-      <li><div class="r-title"><a href="https://martinfowler.com/architecture/" target="_blank" rel="noopener">Martin Fowler &mdash; Software Architecture Guide</a></div><div class="r-note">O índice curado do assunto, escrito por quem definiu boa parte do vocabulário. Cada verbete é curto e leva aos artigos longos quando você quiser aprofundar.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~1h30</span>Comece pelo ensaio de abertura (&ldquo;<em>Who needs an architect?</em>&rdquo;, de onde vem a definição de &ldquo;decisões difíceis de mudar&rdquo;) e siga só três links: <strong>Microservices Guide</strong>, <strong>Monolith First</strong> e <strong>Sacrificial Architecture</strong>. O resto é consulta.</div><div class="r-src">martinfowler.com &middot; gratuito</div></li>
-      <li><div class="r-title"><a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/" target="_blank" rel="noopener">Cloud Design Patterns (Microsoft)</a></div><div class="r-note">O catálogo mais completo e gratuito de padrões de sistema distribuído &mdash; cada um com problema, solução, diagrama e &ldquo;quando NÃO usar&rdquo;. Na prática, independente de Azure.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~1h de reconhecimento</span><strong>Não leia os 40.</strong> Leia oito, os que aparecem em entrevista: <strong>Circuit Breaker</strong>, <strong>Retry</strong>, <strong>Bulkhead</strong>, <strong>Saga</strong>, <strong>Transactional Outbox</strong>, <strong>CQRS</strong>, <strong>Strangler Fig</strong> e <strong>Anti-Corruption Layer</strong>. Uns 7 min cada.</div><div class="r-src">learn.microsoft.com &middot; gratuito</div></li>
-      <li><div class="r-title"><a href="https://microservices.io/patterns/index.html" target="_blank" rel="noopener">microservices.io &mdash; pattern language</a></div><div class="r-note">Chris Richardson organizou microsserviços como uma linguagem de padrões: cada decisão puxa a próxima. É onde saga, outbox, API gateway e service discovery se encaixam num mapa só.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~45 min</span>Olhe o <strong>mapa de padrões</strong> primeiro, pra ver como um puxa o outro. Depois leia só <strong>Database per Service</strong>, <strong>Saga</strong>, <strong>Transactional Outbox</strong> e <strong>API Gateway</strong>. Os de deploy só interessam se a vaga for de plataforma.</div><div class="r-src">microservices.io &middot; gratuito</div></li>
-      <li><div class="r-title"><a href="https://c4model.com/" target="_blank" rel="noopener">C4 model</a></div><div class="r-note">Como desenhar arquitetura em quatro níveis de zoom sem cair na sopa de caixinhas. Curto, prático, e é a notação que mais aparece em documentação boa hoje.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~30 min</span>Site pequeno. O que precisa ficar são os níveis <strong>1 (Contexto)</strong> e <strong>2 (Containers)</strong> &mdash; são os dois que você vai desenhar numa entrevista. O nível 4 quase ninguém usa.</div><div class="r-src">c4model.com &middot; Simon Brown, gratuito</div></li>
-      <li><div class="r-title"><a href="https://adr.github.io/" target="_blank" rel="noopener">Architecture Decision Records</a></div><div class="r-note">A prática de registrar decisão + contexto + consequência em uma página. É a coisa de maior retorno por esforço desta lista inteira &mdash; e você já faz, sem chamar assim.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Leia a página inicial e <strong>um</strong> template (o do Nygard ou o MADR). Depois converta duas entradas do seu <code>DECISOES.md</code> pro formato &mdash; leva 15 minutos e vira peça de portfólio.</div><div class="r-src">adr.github.io &middot; gratuito</div></li>
-      <li><div class="r-title"><a href="https://martinfowler.com/articles/patterns-of-distributed-systems/" target="_blank" rel="noopener">Patterns of Distributed Systems</a></div><div class="r-note">Unmesh Joshi catalogou os mecanismos que existem <em>dentro</em> de Kafka, Postgres, etcd e Cassandra: write-ahead log, lease, quorum, relógio lógico. É o nível abaixo do diagrama.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~40 min</span>Quatro padrões bastam pra conversar com propriedade: <strong>Write-Ahead Log</strong>, <strong>Leader and Followers</strong>, <strong>Quorum</strong> e <strong>Idempotent Receiver</strong>. Os dois primeiros conectam direto com a sua Semana 3.</div><div class="r-src">martinfowler.com &middot; gratuito</div></li>
+      <li><div class="r-title"><a href="https://martinfowler.com/architecture/" target="_blank" rel="noopener">Martin Fowler &mdash; Software Architecture Guide</a></div><div class="r-note">O índice curado do assunto, escrito por quem definiu boa parte do vocabulário. Cada verbete é curto e leva aos artigos longos quando você quiser aprofundar.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~1h30</span>Comece pelo ensaio de abertura (&ldquo;<em>Who needs an architect?</em>&rdquo;, de onde vem a definição de &ldquo;decisões difíceis de mudar&rdquo;) e siga só três links: <strong>Microservices Guide</strong>, <strong>Monolith First</strong> e <strong>Sacrificial Architecture</strong>. O resto é consulta.</div><div class="r-src">martinfowler.com &middot; gratuito</div><details class="leitura" data-id="b09-arquiteturas--martinfowler-com-architecture"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A definição que organiza o resto: arquitetura é o conjunto das <strong>decisões difíceis de mudar</strong>. Por isso a habilidade central não é conhecer estilos — é reconhecer quais decisões são caras de reverter e adiar o máximo possível as que não precisam ser tomadas agora.</p>
+
+<h5>“Who needs an architect?” — as ideias que ficam</h5>
+<ul>
+<li>Arquitetura é o que é <strong>compartilhado</strong> pela equipe e <strong>caro de mudar depois</strong>. Escolha de banco, fronteira de serviço, modelo de consistência: caro. Nome de variável, biblioteca de gráfico: barato.</li>
+<li>O bom arquiteto <strong>reduz</strong> o número de decisões irreversíveis, em vez de acertar todas — cria costuras que permitem mudar de ideia.</li>
+<li>Arquiteto que não escreve código perde contato com o custo real das próprias decisões. O papel é ativo, não consultivo.</li>
+</ul>
+
+<h5>Os três guias que valem seguir</h5>
+<ul>
+<li><strong>Microservices Guide</strong>: os pré-requisitos <em>antes</em> de tentar — deploy automatizado rápido, monitoramento decente, e times capazes de operar o que constroem. Sem os três, microsserviço entrega só o custo.</li>
+<li><strong>Monolith First</strong>: fronteira certa se descobre usando o sistema, não desenhando antes. Monolito modular primeiro, extração quando a dor for real.</li>
+<li><strong>Sacrificial Architecture</strong>: parte do sistema é feita pra ser jogada fora em dois anos. Reconhecer isso evita superinvestir no que é temporário — e evita a culpa quando chega a hora de reescrever.</li>
+</ul>
+
+<h5>O vocabulário que cai</h5>
+<ul>
+<li><strong>Requisito não funcional</strong> (ou atributo de qualidade): disponibilidade, latência, custo, segurança, manutenibilidade. É <em>aqui</em> que arquitetura se decide — funcionalidade qualquer estilo entrega.</li>
+<li><strong>Dívida técnica</strong> como metáfora financeira: aceitar juros conscientemente às vezes é certo; o problema é a dívida que ninguém registrou.</li>
+<li><strong>Costura / ponto de flexibilidade</strong>: onde você deliberadamente colocou uma interface pra poder trocar depois.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu separo decisão reversível de irreversível. Nas reversíveis eu decido rápido e sigo; nas irreversíveis eu adio até ter informação, e quando não dá pra adiar, eu registro a decisão e os descartados num ADR.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://martinfowler.com/architecture/" target="_blank" rel="noopener">martinfowler.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/" target="_blank" rel="noopener">Cloud Design Patterns (Microsoft)</a></div><div class="r-note">O catálogo mais completo e gratuito de padrões de sistema distribuído &mdash; cada um com problema, solução, diagrama e &ldquo;quando NÃO usar&rdquo;. Na prática, independente de Azure.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~1h de reconhecimento</span><strong>Não leia os 40.</strong> Leia oito, os que aparecem em entrevista: <strong>Circuit Breaker</strong>, <strong>Retry</strong>, <strong>Bulkhead</strong>, <strong>Saga</strong>, <strong>Transactional Outbox</strong>, <strong>CQRS</strong>, <strong>Strangler Fig</strong> e <strong>Anti-Corruption Layer</strong>. Uns 7 min cada.</div><div class="r-src">learn.microsoft.com &middot; gratuito</div><details class="leitura" data-id="b09-arquiteturas--learn-microsoft-com-en-us-azure-architecture-patterns"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Oito padrões, uns 7 minutos cada, cobrem o que aparece em entrevista. Todos respondem à mesma pergunta subjacente: <strong>o que fazer quando uma dependência falha, fica lenta ou precisa mudar</strong>.</p>
+
+<h5>Resiliência</h5>
+<ul>
+<li><strong>Retry</strong>: repetir falha <em>transitória</em>, com <strong>backoff exponencial e jitter</strong>. Sem jitter, todo mundo repete junto e derruba o serviço que estava se recuperando. Retry em erro permanente (4xx) só piora.</li>
+<li><strong>Circuit Breaker</strong>: depois de N falhas, <strong>para de tentar</strong> por um tempo e falha rápido. Três estados: fechado (normal), aberto (recusa na hora), <em>meio-aberto</em> (deixa passar uma pra testar). Resolve o que o retry sozinho piora — evita esgotar thread/conexão esperando um serviço que está fora.</li>
+<li><strong>Bulkhead</strong>: compartimentar recursos (pool de conexão separado por dependência) pra que a saturação de <em>uma</em> integração não derrube o sistema inteiro. Vem de anteparo de navio.</li>
+<li>Os três se combinam: bulkhead isola, retry cobre o transitório, circuit breaker impede o retry de virar o problema.</li>
+</ul>
+
+<h5>Dados e transação distribuída</h5>
+<ul>
+<li><strong>Saga</strong>: transação que cruza serviços vira uma sequência de transações locais, cada uma com sua <strong>compensação</strong> (não dá pra dar rollback no que outro serviço já commitou). Duas formas: <em>coreografia</em> (cada um reage a evento — simples no começo, difícil de enxergar depois) e <em>orquestração</em> (um coordenador explícito — mais fácil de depurar e de mudar).</li>
+<li><strong>Transactional Outbox</strong>: resolve o problema de "gravar no banco <em>e</em> publicar evento" sem transação distribuída. Grave o evento numa tabela <strong>na mesma transação</strong>; um processo separado lê a tabela e publica. Entrega vira at-least-once, e o consumidor precisa ser idempotente.</li>
+<li><strong>CQRS</strong>: separar o modelo de escrita do de leitura. Ganha quando as duas cargas são muito diferentes; cobra em consistência eventual entre os dois lados. Não é pré-requisito de event sourcing nem vice-versa.</li>
+</ul>
+
+<h5>Migração e integração</h5>
+<ul>
+<li><strong>Strangler Fig</strong>: um proxy na frente redireciona rota por rota do sistema velho pro novo, até o velho poder morrer. Migração incremental, com rollback por rota.</li>
+<li><strong>Anti-Corruption Layer</strong>: camada de tradução na fronteira com um sistema legado ou de terceiro, pra que o modelo ruim dele não contamine o seu domínio.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Retry sem circuit breaker transforma lentidão em queda. Eu combino os dois com bulkhead, e do lado dos dados uso outbox pra não precisar de transação distribuída.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://learn.microsoft.com/en-us/azure/architecture/patterns/" target="_blank" rel="noopener">learn.microsoft.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://microservices.io/patterns/index.html" target="_blank" rel="noopener">microservices.io &mdash; pattern language</a></div><div class="r-note">Chris Richardson organizou microsserviços como uma linguagem de padrões: cada decisão puxa a próxima. É onde saga, outbox, API gateway e service discovery se encaixam num mapa só.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~45 min</span>Olhe o <strong>mapa de padrões</strong> primeiro, pra ver como um puxa o outro. Depois leia só <strong>Database per Service</strong>, <strong>Saga</strong>, <strong>Transactional Outbox</strong> e <strong>API Gateway</strong>. Os de deploy só interessam se a vaga for de plataforma.</div><div class="r-src">microservices.io &middot; gratuito</div><details class="leitura" data-id="b09-arquiteturas--microservices-io-patterns-index-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Olhe primeiro o <strong>mapa</strong>: o valor do site é mostrar que um padrão puxa o outro. Escolher microsserviços obriga a database per service, que obriga a saga, que obriga a outbox, que obriga a idempotência. A cascata inteira é o custo real da decisão inicial.</p>
+
+<h5>Database per Service</h5>
+<ul>
+<li>Cada serviço é dono do seu banco; ninguém lê a tabela do outro. É isso que dá independência de deploy e de schema — e é o que torna tudo mais difícil.</li>
+<li>O que se perde: <strong>join</strong> entre serviços, <strong>transação ACID</strong> entre serviços, e a consulta que cruza domínios (que vira composição de API ou uma view materializada por eventos — CQRS).</li>
+<li>O antipadrão a citar: <em>shared database</em>. Mantém o join, mas acopla tudo — todo mundo volta a depender do mesmo schema, e você tem monolito distribuído, o pior dos dois mundos.</li>
+</ul>
+
+<h5>Saga e Outbox, do ponto de vista do catálogo</h5>
+<ul>
+<li>Saga aparece como consequência inevitável de database per service, não como escolha isolada. O custo que se aceita: <strong>não existe isolamento</strong> — um estado intermediário fica visível, e a compensação nem sempre restaura o mundo (e-mail já enviado não desenvia).</li>
+<li>Outbox garante que evento e mudança de estado sejam atômicos. A alternativa <em>event sourcing</em> vai além: o log de eventos <strong>é</strong> o estado.</li>
+</ul>
+
+<h5>API Gateway</h5>
+<ul>
+<li>Ponto único de entrada: roteamento, autenticação, rate limit, agregação, TLS. Evita que o cliente conheça a topologia interna e que cada serviço reimplemente o mesmo.</li>
+<li>Riscos: virar ponto único de falha, e virar o novo monolito quando lógica de negócio começa a se acumular nele.</li>
+<li>Variante <strong>BFF</strong> (Backend for Frontend): um gateway por tipo de cliente (web, mobile), cada um moldando o payload que aquele cliente precisa.</li>
+</ul>
+
+<h5>Padrões de apoio que a entrevista espera ouvir</h5>
+<ul>
+<li><strong>Service discovery</strong>, <strong>health check API</strong>, <strong>log agregado</strong>, <strong>tracing distribuído</strong> (com correlation id atravessando tudo) e <strong>métricas por serviço</strong>. Sem esses, depurar uma requisição que passou por seis serviços é impossível.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Microsserviço não é uma decisão, é uma cascata: database per service → saga → outbox → idempotência → tracing distribuído. Eu só pago essa cascata quando o gargalo é organizacional.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://microservices.io/patterns/index.html" target="_blank" rel="noopener">microservices.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://c4model.com/" target="_blank" rel="noopener">C4 model</a></div><div class="r-note">Como desenhar arquitetura em quatro níveis de zoom sem cair na sopa de caixinhas. Curto, prático, e é a notação que mais aparece em documentação boa hoje.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~30 min</span>Site pequeno. O que precisa ficar são os níveis <strong>1 (Contexto)</strong> e <strong>2 (Containers)</strong> &mdash; são os dois que você vai desenhar numa entrevista. O nível 4 quase ninguém usa.</div><div class="r-src">c4model.com &middot; Simon Brown, gratuito</div><details class="leitura" data-id="b09-arquiteturas--c4model-com"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Quatro níveis de zoom pra desenhar software, e só os <strong>dois primeiros</strong> importam na prática — são os que você vai rabiscar numa entrevista. O valor do C4 é resolver o problema de diagrama que mistura tudo: caixa que é ora servidor, ora classe, ora time.</p>
+
+<h5>Os níveis</h5>
+<ol>
+<li><strong>Contexto</strong>: o seu sistema como <em>uma</em> caixa, cercado de pessoas e sistemas externos. Responde "o que isso faz e com quem conversa". É o diagrama que um gerente entende.</li>
+<li><strong>Containers</strong>: as unidades <em>executáveis/deployáveis</em> — aplicação web, API, banco, worker, fila, SPA. <strong>Container aqui não é Docker</strong>: é qualquer coisa que roda separada e tem seu processo. É o nível mais útil dos quatro.</li>
+<li><strong>Componentes</strong>: as peças lógicas dentro de um container. Útil em documento específico, envelhece rápido.</li>
+<li><strong>Código</strong>: classes, UML. Quase ninguém usa, e a própria documentação sugere gerar em vez de desenhar.</li>
+</ol>
+
+<h5>As regras que salvam o diagrama</h5>
+<ul>
+<li>Toda seta é <strong>rotulada</strong>, com a intenção e a tecnologia: “lê pedidos via JSON/HTTPS”, não uma linha nua.</li>
+<li>Toda caixa tem <strong>nome, tipo e uma linha de descrição</strong>. Legenda sempre, pra o diagrama funcionar sem você narrando.</li>
+<li>Um nível por diagrama. Misturar níveis é o defeito mais comum em diagrama de entrevista.</li>
+</ul>
+
+<h5>Como usar numa entrevista de system design</h5>
+<ul>
+<li>Comece no <strong>nível 1</strong> (uma caixa, atores e integrações) pra fixar escopo. Vá pro <strong>nível 2</strong> assim que o escopo estiver combinado — é ali que se fala de banco, cache, fila e worker.</li>
+<li>O nível 2 já dá o vocabulário pra discutir escala: qual container escala horizontalmente, qual é gargalo, o que é stateless.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu desenho em dois níveis: contexto pra combinar escopo, e containers pra discutir o que escala e onde está o estado. Seta sem rótulo eu não deixo passar, porque é onde a ambiguidade se esconde.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://c4model.com/" target="_blank" rel="noopener">c4model.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://adr.github.io/" target="_blank" rel="noopener">Architecture Decision Records</a></div><div class="r-note">A prática de registrar decisão + contexto + consequência em uma página. É a coisa de maior retorno por esforço desta lista inteira &mdash; e você já faz, sem chamar assim.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>Leia a página inicial e <strong>um</strong> template (o do Nygard ou o MADR). Depois converta duas entradas do seu <code>DECISOES.md</code> pro formato &mdash; leva 15 minutos e vira peça de portfólio.</div><div class="r-src">adr.github.io &middot; gratuito</div><details class="leitura" data-id="b09-arquiteturas--adr-github-io"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Um ADR é um arquivo curto no repositório que registra <strong>uma</strong> decisão arquitetural: o contexto, a escolha e as consequências. O que ele resolve não é documentar — é impedir que, em seis meses, ninguém saiba por que aquilo foi feito assim (nem o autor).</p>
+
+<h5>O formato do Nygard, em quatro campos</h5>
+<ul>
+<li><strong>Título</strong> — curto e afirmativo: “Usar Postgres como fila de jobs”.</li>
+<li><strong>Status</strong> — proposto / aceito / <strong>substituído por ADR-0012</strong>. ADR não se apaga nem se edita depois de aceito: se a decisão mudou, escreve-se um novo que substitui o anterior. O histórico é o ponto.</li>
+<li><strong>Contexto</strong> — as forças em jogo: requisitos, restrições, o que se sabia na época. É o campo mais valioso, porque é o que explica uma decisão que hoje parece errada.</li>
+<li><strong>Decisão</strong> e <strong>Consequências</strong> — o que foi escolhido, e o que isso custa (inclusive as consequências ruins que você aceitou de olhos abertos).</li>
+</ul>
+
+<h5>O MADR acrescenta</h5>
+<ul>
+<li><strong>Opções consideradas</strong>, com prós e contras de cada uma. É o campo que mais impressiona em entrevista: mostra que houve comparação, não só preferência.</li>
+<li><strong>Drivers de decisão</strong> — os critérios explícitos (custo operacional, latência, tamanho do time) usados pra comparar.</li>
+</ul>
+
+<h5>Como usar de verdade</h5>
+<ul>
+<li>Um arquivo por decisão, numerado, em <code>docs/adr/</code>, versionado com o código e revisado no PR — a discussão acontece onde ela pertence.</li>
+<li>Escreva só pro que é caro de mudar. ADR pra escolha de biblioteca de data é burocracia; ADR pra modelo de consistência, pra fronteira de serviço ou pra formato de evento vale ouro.</li>
+<li><strong>Ação concreta:</strong> converta duas entradas do seu <code>DECISOES.md</code> pro formato MADR. Leva 15 minutos, e vira peça de portfólio — dá pra abrir numa entrevista e dizer "esta foi a decisão e estes foram os descartados".</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Decisão arquitetural sem registro vira folclore. Eu escrevo ADR curto pro que é caro de mudar, com as opções descartadas — assim quem chega depois discute a decisão, não a arqueologia dela.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://adr.github.io/" target="_blank" rel="noopener">adr.github.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+      <li><div class="r-title"><a href="https://martinfowler.com/articles/patterns-of-distributed-systems/" target="_blank" rel="noopener">Patterns of Distributed Systems</a></div><div class="r-note">Unmesh Joshi catalogou os mecanismos que existem <em>dentro</em> de Kafka, Postgres, etcd e Cassandra: write-ahead log, lease, quorum, relógio lógico. É o nível abaixo do diagrama.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~40 min</span>Quatro padrões bastam pra conversar com propriedade: <strong>Write-Ahead Log</strong>, <strong>Leader and Followers</strong>, <strong>Quorum</strong> e <strong>Idempotent Receiver</strong>. Os dois primeiros conectam direto com a sua Semana 3.</div><div class="r-src">martinfowler.com &middot; gratuito</div><details class="leitura" data-id="b09-arquiteturas--martinfowler-com-articles-patterns-of-distributed-systems"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Quatro padrões bastam pra conversar com propriedade sobre sistema distribuído — e os dois primeiros explicam por dentro coisas que você já usa (o WAL do Postgres, a replicação primário-réplica).</p>
+
+<h5>Write-Ahead Log</h5>
+<ul>
+<li>Antes de alterar o estado, <strong>escreva a intenção num log append-only e dê fsync</strong>. Se o processo cair no meio, a recuperação relê o log e reaplica.</li>
+<li>É como se consegue durabilidade sem gravar aleatoriamente no disco a cada operação: escrita sequencial é ordens de grandeza mais rápida.</li>
+<li>Onde você já usa: o WAL do Postgres (e é dele que sai a replicação e o point-in-time recovery), o journal do sistema de arquivos, o log do Kafka.</li>
+<li>Traz junto o conceito de <strong>checkpoint</strong> (a partir de onde reaplicar) e de <strong>segmento</strong> (como truncar o log sem perder o que importa).</li>
+</ul>
+
+<h5>Leader and Followers</h5>
+<ul>
+<li>Um nó aceita escrita e propaga; os demais replicam. Evita conflito por construção — só um decide a ordem.</li>
+<li>O problema real é a <strong>eleição</strong>: como escolher novo líder quando o atual some, sem eleger dois (<em>split brain</em>). É pra isso que existe quórum: só a maioria pode eleger, e só pode existir uma maioria.</li>
+<li>Replicação <strong>síncrona</strong> (espera o follower confirmar) custa latência e dá durabilidade; <strong>assíncrona</strong> é rápida e pode perder as últimas escritas no failover. É a mesma escolha da Semana 3, agora com nome.</li>
+</ul>
+
+<h5>Quorum</h5>
+<ul>
+<li>Decisão válida é a que a <strong>maioria</strong> confirma. Com N nós, maioria é ⌊N/2⌋+1 — daí clusters com número ímpar (3, 5): 4 nós toleram as mesmas falhas que 3 e custam mais.</li>
+<li>Em banco distribuído aparece como R + W &gt; N: se as leituras e escritas confirmadas se sobrepõem em pelo menos um nó, a leitura vê a última escrita.</li>
+</ul>
+
+<h5>Idempotent Receiver</h5>
+<ul>
+<li>Como a rede entrega at-least-once, o receptor precisa reconhecer mensagem repetida — por id de requisição guardado, ou por número de sequência por cliente.</li>
+<li>É o mesmo raciocínio do webhook do Stripe e da chave de idempotência: o efeito acontece uma vez, mesmo que a mensagem chegue cinco.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Durabilidade vem de log sequencial com fsync; ordem vem de ter um líder; segurança na troca de líder vem de quórum; e como a entrega é at-least-once, o receptor tem que ser idempotente. Esses quatro explicam quase tudo.”</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://martinfowler.com/articles/patterns-of-distributed-systems/" target="_blank" rel="noopener">martinfowler.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
       <li><div class="r-title"><a href="https://martinfowler.com/bliki/StranglerFigApplication.html" target="_blank" rel="noopener">Strangler Fig Application</a></div><div class="r-note">Como substituir um sistema em produção sem parar o mundo. É a resposta pronta pra &ldquo;como você migraria esse legado?&rdquo;, que aparece em quase toda entrevista de pleno pra cima.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Post curto. Leia junto com <a href="https://martinfowler.com/bliki/BranchByAbstraction.html" target="_blank" rel="noopener">Branch By Abstraction</a> (mais 8 min): os dois combinados formam uma resposta completa.</div><div class="r-src">martinfowler.com &middot; gratuito</div></li>
       <li><div class="r-title"><a href="https://martinfowler.com/articles/201701-event-driven.html" target="_blank" rel="noopener">What do you mean by &ldquo;Event-Driven&rdquo;?</a></div><div class="r-note">O texto que desfaz a confusão de chamar quatro coisas diferentes pelo mesmo nome: notificação, transferência de estado, event sourcing e CQRS.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~12 min</span>Curto e de altíssimo retorno em entrevista. Saia sabendo dizer sem hesitar a diferença entre <strong>event notification</strong> e <strong>event-carried state transfer</strong> &mdash; é pergunta comum e quase ninguém responde direito.</div><div class="r-src">martinfowler.com &middot; gratuito</div></li>
       <li><div class="r-title"><a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener">System Design Primer</a></div><div class="r-note">O repositório mais estrelado do assunto: teoria condensada, estudos de caso resolvidos e um bom checklist pra revisar antes de entrevista. Complementa o B1.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~2h no total</span>Use como revisão, não como primeira leitura. Leia o <em>index</em>, a seção de <strong>trade-offs</strong> e <strong>dois</strong> estudos de caso resolvidos &mdash; encurtador de URL e feed de rede social. Ignore os cartões de Anki, você já tem seu próprio SM-2.</div><div class="r-src">GitHub &middot; gratuito</div></li>
@@ -199,7 +354,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 25 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 72 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
+    O Gabarito da Teoria &middot; 24 blocos &middot; 168 tópicos &middot; 123 leituras resumidas &middot; 91 perguntas abertas com gabarito &middot; 102 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/09/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

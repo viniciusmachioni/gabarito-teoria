@@ -1,0 +1,140 @@
+<article data-href="https://github.com/donnemartin/system-design-primer">
+<p class="tldr">O primer é um catálogo, não um livro: cada peça de infraestrutura existe pra resolver um gargalo específico e traz um custo. A resposta de entrevista não é listar componentes, é dizer <em>qual gargalo</em> cada um resolve e o que você paga por ele.</p>
+
+<h5>Escalar: vertical, horizontal e o que quebra</h5>
+<ul>
+<li><strong>Vertical</strong> (máquina maior) é o primeiro passo e o mais barato em esforço. Acaba: existe teto de hardware e o custo vira exponencial. E continua com um ponto único de falha.</li>
+<li><strong>Horizontal</strong> (mais máquinas) não tem teto, mas força uma decisão: os servidores precisam ficar <strong>stateless</strong>. Sessão em memória do processo deixa de funcionar quando a próxima requisição cai em outra máquina — daí sessão em Redis, ou token assinado no cliente.</li>
+<li>O custo escondido de escalar horizontalmente é <strong>estado clonado</strong>: cache local por máquina vira N caches divergentes, e upload salvo em disco local some quando a máquina morre.</li>
+</ul>
+
+<h5>A cadeia da borda: DNS → CDN → load balancer → reverse proxy</h5>
+<ul>
+<li><strong>DNS</strong> resolve nome pra IP e já é uma forma de balanceamento (round robin, geográfico). O TTL é o que te prende: mudança de DNS não é instantânea, resolvers guardam o valor antigo.</li>
+<li><strong>CDN</strong> serve conteúdo do nó mais próximo do usuário. <em>Push</em> (você publica) serve bem conteúdo que muda pouco; <em>pull</em> (o CDN busca no primeiro acesso) serve o caso comum, com a penalidade do primeiro usuário e do TTL mal configurado.</li>
+<li><strong>Load balancer</strong> distribui e tira de rotação quem falha no health check. Algoritmos: round robin, menos conexões, hash do IP (dá aderência de sessão, ao custo de desbalancear). Termina TLS num lugar só.</li>
+<li><strong>Reverse proxy</strong> é o mesmo ponto único de entrada, mas com um servidor só atrás: compressão, cache, TLS, esconder a topologia interna. Um load balancer é um reverse proxy que também distribui.</li>
+</ul>
+
+<h5>Cache: onde, e a política de escrita</h5>
+<ul>
+<li>Camadas possíveis: cliente, CDN, web server, aplicação (Redis/Memcached) e o cache do próprio banco. Quanto mais perto do usuário, mais barato e mais difícil de invalidar.</li>
+<li><strong>Cache-aside</strong> (lazy loading) é o padrão: a aplicação busca no cache, erra, lê o banco, grava no cache. Simples, mas cada miss paga a latência cheia e existe janela de dado velho.</li>
+<li><strong>Write-through</strong> grava no cache e no banco juntos — leitura sempre quente, escrita mais lenta, e enche o cache de dado que ninguém vai ler. <strong>Write-behind</strong> grava no cache e persiste depois: rápido, mas perde dado se o cache cair.</li>
+<li>Invalidação é o problema de verdade. As três saídas honestas são TTL curto, invalidação explícita na escrita, e chave versionada (trocar a chave em vez de apagar).</li>
+</ul>
+
+<h5>Assincronismo</h5>
+<ul>
+<li><strong>Fila</strong> tira trabalho do caminho da requisição: o usuário recebe <code>202</code> e o worker processa depois. É o que segura pico sem derrubar o site — a fila cresce, a latência de processamento sobe, mas o site responde.</li>
+<li><strong>Back pressure</strong> é o contrário: quando a fila passa de um limite, o sistema começa a recusar (<code>429</code>) em vez de aceitar trabalho que nunca vai dar conta.</li>
+<li><strong>Job agendado</strong> pré-computa o caro (relatório, feed) fora do horário de pico. É a versão mais barata de "cache" pra coisa que não muda de minuto em minuto.</li>
+</ul>
+
+<h5>Banco: replicação, sharding, federação</h5>
+<ul>
+<li><strong>Primário-réplica</strong>: escrita num lugar, leitura em muitos. Resolve carga de leitura e introduz <em>replication lag</em> — o usuário salva e não vê a própria mudança. Solução comum: ler do primário logo depois de escrever ("read your writes").</li>
+<li><strong>Primário-primário</strong> aceita escrita nos dois lados e paga com resolução de conflito e ids que não podem colidir. Raramente vale.</li>
+<li><strong>Federação</strong> divide por função (banco de usuários, banco de produtos): menos tráfego por banco, mas join entre eles morre.</li>
+<li><strong>Sharding</strong> divide por linha (hash do id, faixa, geografia): escala escrita, e cobra caro — rebalancear shard, shard quente e consulta que precisa varrer todos.</li>
+<li><strong>Desnormalizar</strong> é aceitar duplicação pra evitar join caro; <strong>SQL tuning</strong> (índice certo, coluna estreita, menos varredura) vem antes de qualquer uma dessas decisões, sempre.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Antes de shardar eu esgoto o barato: índice, cache e réplica de leitura. Sharding é a última carta porque é a única que não dá pra desfazer fácil.”</p>
+</article>
+
+<article data-href="https://highscalability.com/">
+<p class="tldr">O valor do site não é a teoria, é ter <strong>dois exemplos concretos na manga</strong>. Entrevistador acredita mais em “a arquitetura X fez assim, pelo motivo Y” do que em qualquer definição decorada. Abaixo, os padrões que se repetem em quase todo estudo de caso da série “X Architecture”.</p>
+
+<h5>O que se repete em praticamente todos os casos</h5>
+<ul>
+<li><strong>Começaram monolito.</strong> Quase nenhum caso famoso nasceu distribuído — a arquitetura complexa é resposta a um problema que já existia, não previsão.</li>
+<li><strong>Leitura e escrita foram separadas cedo.</strong> Réplica de leitura, cache agressivo e às vezes um caminho de escrita completamente diferente (fila) é o primeiro grande corte.</li>
+<li><strong>Cache em várias camadas</strong>, com invalidação sendo citada como a parte mais dolorosa. Ninguém descreve invalidação como resolvida.</li>
+<li><strong>Feed é pré-computado.</strong> O padrão <em>fan-out on write</em> (escrever na timeline de cada seguidor quando o post é criado) aparece repetido, junto com a exceção pra contas com milhões de seguidores, que caem pra <em>fan-out on read</em>.</li>
+<li><strong>Coisas caras foram movidas pra assíncrono</strong>: imagem, vídeo, e-mail, indexação de busca. O caminho síncrono fica com o mínimo.</li>
+</ul>
+
+<h5>Como usar isto numa entrevista</h5>
+<ul>
+<li>Escolha <strong>dois</strong> casos e leia inteiros. Um de leitura pesada (rede social, notícias) e um de escrita pesada (mensageria, telemetria) cobrem os dois lados do espectro.</li>
+<li>Guarde de cada um: o gargalo que os obrigou a mudar, a mudança feita, e o custo que assumiram. Essa tríade é uma resposta completa.</li>
+<li>Números ajudam mais que nomes. “Eles chegaram a X requisições por segundo e o gargalo virou o banco de escrita” vale mais que a lista de tecnologias usadas.</li>
+</ul>
+<p><strong>Armadilha:</strong> citar arquitetura de empresa gigante pra problema pequeno é sinal de falta de julgamento, não de leitura. O uso correto é como contraste: “nessa escala não precisa disso ainda; a solução do caso X só faz sentido depois de Y”.</p>
+</article>
+
+<article data-href="https://www.freecodecamp.org/news/understanding-the-cap-theorem-consistency-availability-and-partition-tolerance-in-system-design">
+<p class="tldr">CAP diz: quando a rede particiona, você escolhe entre <strong>responder com dado possivelmente velho</strong> (AP) ou <strong>recusar a responder</strong> (CP). Não é “escolha 2 de 3” — partição não é opcional numa rede real, então a escolha é sempre entre C e A, e só durante a partição.</p>
+
+<h5>Os três termos, com precisão</h5>
+<ul>
+<li><strong>Consistency (C)</strong> aqui é <em>linearizabilidade</em>: toda leitura vê a escrita mais recente confirmada. Não é o “C” do ACID (que é sobre invariantes do banco) — nomes iguais, conceitos diferentes, e confundir os dois é erro clássico de entrevista.</li>
+<li><strong>Availability (A)</strong>: todo nó que está no ar responde com sucesso a toda requisição. Responder erro ou estourar timeout conta como indisponível.</li>
+<li><strong>Partition tolerance (P)</strong>: o sistema continua operando mesmo que mensagens entre nós sejam perdidas ou atrasadas.</li>
+</ul>
+
+<h5>Por que P não é escolha</h5>
+<p>Cabo se rompe, switch reinicia, zona de disponibilidade fica inalcançável. Se você tem mais de um nó, partição vai acontecer — então sistema distribuído é sempre P, e a decisão real é o que fazer <em>durante</em> a partição.</p>
+<div class="tbl"><table>
+<tr><th>Escolha</th><th>Durante a partição</th><th>Exemplo típico</th></tr>
+<tr><td><strong>CP</strong></td><td>recusa ou bloqueia a operação no lado sem quórum, pra não divergir</td><td>etcd, ZooKeeper, HBase, Postgres com replicação síncrona</td></tr>
+<tr><td><strong>AP</strong></td><td>responde de todo jeito, aceitando divergência e reconciliando depois</td><td>Cassandra, DynamoDB (padrão), DNS, Riak</td></tr>
+</table></div>
+
+<h5>A escolha é por operação, não pelo sistema</h5>
+<ul>
+<li>No mesmo produto: saldo bancário e transferência pedem CP; contador de curtidas e lista de "quem está online" vivem muito bem em AP.</li>
+<li>Vários bancos deixam escolher por consulta (leitura eventualmente consistente vs. fortemente consistente no DynamoDB, nível de quórum no Cassandra). Saber isso é o que mostra que você entendeu que CAP é um dial, não um rótulo.</li>
+</ul>
+
+<h5>O que vem depois: PACELC e consistência eventual</h5>
+<ul>
+<li><strong>PACELC</strong> completa o teorema: <em>se</em> particionou (P), escolha entre A e C; <strong>senão</strong> (E, “else”), escolha entre <strong>latência (L)</strong> e consistência (C). Isso é o que mais pesa no dia a dia — mesmo sem partição nenhuma, replicação síncrona custa latência.</li>
+<li><strong>Consistência eventual</strong> é a promessa de que, parando de escrever, todas as réplicas convergem. Os reforços úteis: <em>read your writes</em> (você vê o que escreveu), <em>monotonic reads</em> (a leitura não volta no tempo) e quórum (R + W &gt; N).</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Partição não é escolha, é fato. O que eu escolho é o comportamento durante ela — e escolho por operação: dinheiro é CP, contador é AP.”</p>
+</article>
+
+<article data-href="https://mwhittaker.github.io/blog/an_illustrated_proof_of_the_cap_theorem/">
+<p class="tldr">A prova é curta e vale porque troca “eu li que CAP diz isso” por “eu consigo mostrar por que é impossível”. O argumento é por contradição, com dois nós e uma única mensagem perdida.</p>
+
+<h5>O cenário mínimo</h5>
+<ol>
+<li>Dois nós, <strong>G1</strong> e <strong>G2</strong>, ambos com o valor <code>v0</code>. Existe uma partição: nenhuma mensagem passa entre eles.</li>
+<li>Um cliente <strong>escreve <code>v1</code> em G1</strong>. Como o sistema é <em>available</em>, G1 precisa aceitar e confirmar — não pode esperar G2, que está inalcançável.</li>
+<li>Outro cliente <strong>lê de G2</strong>. Como o sistema é <em>available</em>, G2 precisa responder — e tudo que ele tem é <code>v0</code>.</li>
+<li>A leitura devolveu <code>v0</code> depois de uma escrita confirmada de <code>v1</code>: isso viola consistência. Logo, C, A e P juntos são impossíveis.</li>
+</ol>
+
+<h5>O que a prova ensina além do enunciado</h5>
+<ul>
+<li>A impossibilidade vem da <strong>falta de informação</strong>, não de implementação ruim: G2 não tem como saber que <code>v1</code> existe. Nenhum algoritmo esperto resolve isso.</li>
+<li>Por isso as saídas reais são todas variações de “não seja totalmente A” — esperar quórum, recusar escrita na minoria, ou degradar pra somente-leitura.</li>
+<li>E por isso <strong>o teorema só morde durante a partição</strong>: sem partição, G1 e G2 se falam e dá pra ter C e A ao mesmo tempo, pagando em latência (o E do PACELC).</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Dá pra provar em quatro passos: nó isolado que aceita escrita e nó isolado que responde leitura, na mesma partição, produzem respostas incompatíveis. Não é limitação de engenharia, é de informação.”</p>
+</article>
+
+<article data-href="https://www.youtube.com/@ByteByteGo">
+<p class="tldr">Use como revisão depois de ler, não como primeira fonte — vídeo é ótimo pra fixar diagrama e péssimo pra consultar depois. Três vídeos cobrem o que mais cai; abaixo, o conteúdo esperado de cada um, pra você conferir se entendeu.</p>
+
+<h5>“Caching strategies” — o que precisa ficar</h5>
+<ul>
+<li>As cinco políticas e o custo de cada uma: cache-aside, read-through, write-through, write-behind, refresh-ahead.</li>
+<li><strong>Cache stampede</strong> (<em>thundering herd</em>): a chave quente expira e mil requisições vão ao banco ao mesmo tempo. Defesas: <em>single-flight</em> (só uma recalcula), TTL com jitter, e servir o valor velho enquanto revalida.</li>
+<li>Políticas de despejo: LRU é o padrão, LFU serve melhor quando há item popular estável, TTL sozinho não controla memória.</li>
+</ul>
+
+<h5>“Load balancing algorithms”</h5>
+<ul>
+<li><strong>Round robin</strong> ignora o custo de cada requisição; <strong>least connections</strong> lida melhor com requisições de duração desigual; <strong>hash de IP/chave</strong> dá aderência (útil pra cache local) ao custo de distribuição desigual.</li>
+<li><strong>Hash consistente</strong> é o que evita remapear tudo quando um nó entra ou sai — a base de sharding de cache. Vale saber o nome e o problema que resolve.</li>
+<li>Camada 4 (TCP, rápido, cego ao conteúdo) vs. camada 7 (HTTP, roteia por caminho/header, mais caro).</li>
+</ul>
+
+<h5>“CAP theorem”</h5>
+<ul>
+<li>Serve como revisão dos dois textos anteriores. Se o vídeo não te trouxer nada novo, é sinal de que a leitura pegou — siga em frente.</li>
+</ul>
+<p><strong>Como usar:</strong> um vídeo logo depois de ler o tópico correspondente, nunca uma maratona. O ganho é o diagrama na memória visual, e isso só cola quando você já tem o vocabulário.</p>
+</article>

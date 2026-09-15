@@ -1,0 +1,134 @@
+<article data-href="https://web.dev/articles/critical-rendering-path">
+<p class="tldr">A base pra tudo nesta seção. O caminho crítico é a sequência que o navegador percorre entre receber o HTML e pintar o primeiro pixel: <strong>HTML → DOM, CSS → CSSOM, os dois → render tree, layout, paint, composite</strong>. Otimizar carregamento é encurtar essa sequência; otimizar interação é evitar refazê-la.</p>
+
+<h5>As seis etapas</h5>
+<ol>
+<li><strong>DOM</strong>: o parser lê o HTML incrementalmente e já pode pintar o que chegou.</li>
+<li><strong>CSSOM</strong>: o CSS é <strong>bloqueante de renderização</strong>. Sem ele completo, o navegador não pinta — pintar sem estilo e repintar seria pior.</li>
+<li><strong>Render tree</strong>: DOM + CSSOM, só com o que é visível (<code>display: none</code> fica de fora; <code>visibility: hidden</code> entra, ocupando espaço).</li>
+<li><strong>Layout</strong> (reflow): calcula geometria — posição e tamanho de cada caixa. Custo proporcional ao número de nós.</li>
+<li><strong>Paint</strong>: preenche pixels em camadas.</li>
+<li><strong>Composite</strong>: junta as camadas, muitas vezes na GPU.</li>
+</ol>
+
+<h5>O que bloqueia o quê</h5>
+<ul>
+<li><strong>CSS bloqueia renderização</strong> (e, por tabela, a execução de script que vem depois, porque o script pode consultar estilo).</li>
+<li><strong>Script sem <code>defer</code>/<code>async</code> bloqueia o parser</strong>: ele para de construir o DOM, baixa e executa. O motivo histórico é <code>document.write</code>.</li>
+<li>Fonte via <code>@font-face</code> só é baixada quando o CSS diz que ela é usada — daí a demora, e daí o <code>preload</code>.</li>
+</ul>
+
+<h5>As alavancas, em ordem de impacto</h5>
+<ul>
+<li><strong>Reduzir</strong> o número de recursos bloqueantes (CSS crítico inline, o resto adiado; <code>defer</code> em todo script).</li>
+<li><strong>Reduzir bytes</strong> (compressão Brotli, minificação, dividir o bundle).</li>
+<li><strong>Reduzir viagens</strong> (CDN próximo, <code>preconnect</code> pro domínio de origem crítico, <code>preload</code> do recurso que só é descoberto tarde).</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “CSS bloqueia pintura, script sem defer bloqueia o parser. A primeira coisa que eu olho num carregamento lento é quantos recursos bloqueantes existem antes do primeiro paint — quase sempre é um script síncrono no head ou uma folha de estilo gigante.”</p>
+</article>
+
+<article data-href="https://web.dev/articles/optimize-fcp">
+<p class="tldr">O foco aqui é a diferença entre <strong>nenhum atributo</strong>, <strong><code>defer</code></strong> e <strong><code>async</code></strong> — quando cada um baixa e quando executa em relação ao parse do HTML. É a pergunta de front-end mais previsível que existe.</p>
+
+<div class="tbl"><table>
+<tr><th></th><th>Download</th><th>Execução</th><th>Ordem entre scripts</th></tr>
+<tr><td><strong>(nenhum)</strong></td><td>para o parser</td><td>imediata, com o parser parado</td><td>ordem do documento</td></tr>
+<tr><td><strong><code>defer</code></strong></td><td>paralelo ao parse</td><td>depois do HTML parseado, antes do <code>DOMContentLoaded</code></td><td><strong>garantida</strong></td></tr>
+<tr><td><strong><code>async</code></strong></td><td>paralelo ao parse</td><td>assim que terminar de baixar (pode interromper o parse)</td><td><strong>nenhuma</strong> — quem chegar primeiro roda primeiro</td></tr>
+</table></div>
+
+<h5>Como escolher</h5>
+<ul>
+<li><strong><code>defer</code> é o padrão certo</strong> pra script da aplicação: ordem preservada e DOM pronto quando roda.</li>
+<li><strong><code>async</code></strong> só pra script totalmente independente, que não depende do DOM nem de outro script — analytics é o exemplo canônico.</li>
+<li><strong>Nenhum atributo</strong> só quando o script precisa rodar antes da pintura de propósito (o trecho anti-<em>flash</em> que decide o tema, por exemplo).</li>
+<li><code>type="module"</code> já é <code>defer</code> por padrão.</li>
+</ul>
+
+<h5>As outras causas comuns de FCP ruim</h5>
+<ul>
+<li><strong>CSS não usado</strong>: extrair o crítico e carregar o resto de forma não bloqueante (<code>media="print"</code> trocado no <code>onload</code>, ou <code>rel="preload"</code> + troca pra stylesheet).</li>
+<li><strong>Fonte</strong>: <code>font-display: swap</code> evita texto invisível; <code>preload</code> da fonte usada no topo evita a espera em cascata.</li>
+<li><strong>Cadeia de requisições</strong>: HTML → CSS → <code>@import</code> → fonte é uma sequência serial. Cada elo custa um RTT — <code>@import</code> dentro de CSS é o pior padrão dessa lista.</li>
+<li><strong>Servidor lento (TTFB)</strong>: nenhuma otimização de front-end compensa 800ms de espera pelo primeiro byte.</li>
+</ul>
+</article>
+
+<article data-href="https://csstriggers.com/">
+<p class="tldr">Tabela de consulta: para cada propriedade CSS, quais fases ela dispara ao mudar — <strong>layout, paint, composite</strong>. A conclusão prática cabe numa linha: <strong>anime só <code>transform</code> e <code>opacity</code></strong>.</p>
+
+<h5>As três fases, em custo</h5>
+<ul>
+<li><strong>Layout</strong> (o mais caro): recalcula geometria, e pode afetar irmãos e filhos. Disparado por <code>width</code>, <code>height</code>, <code>top</code>, <code>left</code>, <code>margin</code>, <code>padding</code>, <code>font-size</code>, <code>display</code>.</li>
+<li><strong>Paint</strong> (médio): repinta pixels sem recalcular posição. Disparado por <code>color</code>, <code>background</code>, <code>box-shadow</code>, <code>border-radius</code>, <code>visibility</code>.</li>
+<li><strong>Composite</strong> (barato): só reposiciona camadas já pintadas, tipicamente na GPU. É o que <code>transform</code> e <code>opacity</code> fazem.</li>
+</ul>
+
+<h5>Por que isso decide se a animação roda a 60fps</h5>
+<ul>
+<li>A 60fps, cada quadro tem <strong>16,7 ms</strong> para tudo. Animar <code>left</code> significa layout + paint + composite a cada quadro; animar <code>transform: translateX()</code> significa só composite.</li>
+<li><strong>Layout thrashing</strong>: ler uma propriedade geométrica (<code>offsetWidth</code>, <code>getBoundingClientRect</code>) logo depois de escrever força o navegador a recalcular o layout <em>naquele instante</em>. Num laço, isso multiplica reflows. A correção é agrupar todas as leituras e só então todas as escritas.</li>
+<li><code>will-change: transform</code> avisa o navegador pra promover a camada antes — mas usar em excesso consome memória de GPU e piora. Aplique pouco antes da animação, remova depois.</li>
+</ul>
+
+<h5>Como migrar animação comum</h5>
+<ul>
+<li>Posição: <code>left/top</code> → <code>transform: translate()</code>.</li>
+<li>Tamanho: <code>width/height</code> → <code>transform: scale()</code> (com a ressalva de que escala distorce o conteúdo).</li>
+<li>Aparecer/sumir: <code>display</code> → <code>opacity</code> + <code>visibility</code>, ou as transições de <code>@starting-style</code> e <code>transition-behavior: allow-discrete</code>, mais novas.</li>
+</ul>
+</article>
+
+<article data-href="https://web.dev/articles/reduce-javascript-payloads-with-code-splitting">
+<p class="tldr">JavaScript é o recurso mais caro da página: além de baixar, precisa ser <strong>parseado, compilado e executado</strong> na thread principal. Code splitting adia o que não é necessário agora — e em celular modesto isso vale mais do que qualquer compressão.</p>
+
+<h5>Os três cortes, em ordem de retorno</h5>
+<ol>
+<li><strong>Por rota</strong>: cada página baixa só o seu código. É o corte de maior retorno, e frameworks modernos fazem automaticamente.</li>
+<li><strong>Por componente pesado</strong>: editor de texto rico, biblioteca de gráfico, mapa, leitor de PDF. <code>import()</code> dinâmico (ou <code>React.lazy</code>) carrega quando o componente aparece ou quando o usuário aciona.</li>
+<li><strong>Por interação</strong>: modal, menu complexo, fluxo de checkout — só quando o usuário clicar.</li>
+</ol>
+
+<h5>Como funciona</h5>
+<ul>
+<li><code>import('./editor')</code> devolve promessa; o bundler cria um <em>chunk</em> separado no ponto do <code>import()</code>. Em React: <code>const Editor = lazy(() =&gt; import('./Editor'))</code> dentro de um <code>&lt;Suspense&gt;</code> com fallback.</li>
+<li><strong>Sempre trate a falha de carregamento</strong> do chunk: rede instável e deploy novo (hash de arquivo mudou) fazem o import dinâmico rejeitar. Sem tratamento, a tela fica branca.</li>
+<li><strong>Precarregue na intenção</strong>: no <code>mouseenter</code>/<code>focus</code> do botão, dispare o <code>import()</code>. O download acontece durante os ~200ms até o clique e a espera percebida vira zero.</li>
+</ul>
+
+<h5>Os erros que anulam o ganho</h5>
+<ul>
+<li><strong>Granularidade demais</strong>: dezenas de chunks minúsculos custam mais em requisições do que economizam em bytes.</li>
+<li><strong>Cascata</strong>: chunk que importa chunk que importa chunk — cada nível é mais um RTT.</li>
+<li><strong>Dependência duplicada</strong> em vários chunks porque não foi extraída num chunk comum.</li>
+<li><strong>Não medir</strong>: rode o analisador de bundle antes de dividir. Muitas vezes o problema é uma biblioteca de datas ou de ícones importada inteira, e a correção é trocar o import, não dividir.</li>
+</ul>
+</article>
+
+<article data-href="https://web.dev/learn/images">
+<p class="tldr">Imagem costuma ser a maior fatia de bytes de uma página e o elemento LCP mais comum. Dois módulos bastam: <strong>formato</strong> e <strong>imagens responsivas</strong>. Compressão avançada e vídeo podem ficar de fora.</p>
+
+<h5>Formato</h5>
+<ul>
+<li><strong>AVIF</strong> comprime melhor; <strong>WebP</strong> tem suporte universal hoje; <strong>JPEG</strong> é o fallback. <code>&lt;picture&gt;</code> com vários <code>&lt;source type&gt;</code> deixa o navegador escolher o primeiro que ele entende.</li>
+<li><strong>SVG</strong> pra ícone, logo e ilustração vetorial — escala sem perder e costuma ser minúsculo.</li>
+<li><strong>PNG</strong> só quando transparência com bordas nítidas for necessária e o WebP não servir.</li>
+<li>Foto grande em PNG é o erro de peso mais comum em produção.</li>
+</ul>
+
+<h5>Imagens responsivas</h5>
+<ul>
+<li><code>srcset</code> + <code>sizes</code>: você oferece várias larguras e <strong>declara o espaço que a imagem vai ocupar no layout</strong>; o navegador escolhe considerando também a densidade da tela.</li>
+<li><code>sizes</code> errado é o erro clássico — sem ele, o navegador assume 100% da largura da janela e baixa maior do que precisa.</li>
+<li><code>&lt;picture&gt;</code> com <code>media</code> serve pra <em>art direction</em>: recorte diferente no celular, não só tamanho diferente.</li>
+</ul>
+
+<h5>Layout e prioridade</h5>
+<ul>
+<li><strong>Sempre declare <code>width</code> e <code>height</code></strong> (ou <code>aspect-ratio</code>): o navegador reserva o espaço e o conteúdo não pula quando a imagem chega. É a principal causa de CLS.</li>
+<li><code>loading="lazy"</code> pro que está abaixo da dobra — e <strong>nunca</strong> na imagem do topo, que é justamente a que precisa vir primeiro.</li>
+<li>Pra imagem LCP: <code>fetchpriority="high"</code> e, se ela for descoberta tarde (via CSS ou JS), <code>preload</code>.</li>
+<li><code>decoding="async"</code> evita bloquear a thread principal na decodificação.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Imagem do topo: sem lazy, com <code>fetchpriority=&quot;high&quot;</code>, dimensão declarada e formato moderno via <code>&lt;picture&gt;</code>. Abaixo da dobra: lazy. Isso resolve LCP e CLS ao mesmo tempo.”</p>
+</article>

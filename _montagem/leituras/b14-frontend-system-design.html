@@ -1,0 +1,131 @@
+<article data-href="https://www.greatfrontend.com/system-design">
+<p class="tldr">A entrevista de front-end system design não é a de back-end com React por cima. Ela pergunta <strong>arquitetura de componentes, modelo de estado, contrato de API do ponto de vista do cliente, e as preocupações que só o navegador tem</strong>: rede instável, acessibilidade, i18n, tamanho de bundle. O framework <strong>RADIO</strong> organiza os 45 minutos.</p>
+
+<h5>RADIO, com o tempo que cada parte merece</h5>
+<ol>
+<li><strong>R — Requirements</strong> (~5 min). Funcionais (o que faz) e não funcionais (quantos itens, offline?, mobile?, acessível?, quantos idiomas?). <strong>Pular esta etapa é o erro que mais reprova.</strong> Termine repetindo o escopo combinado.</li>
+<li><strong>A — Architecture</strong> (~10 min). Os componentes e a responsabilidade de cada um; onde fica a camada de dados; separação entre visão, estado e acesso à rede. Desenhe caixas com setas rotuladas.</li>
+<li><strong>D — Data model</strong> (~10 min). O que é <em>estado de servidor</em> (vem da API, tem cache e validade) e o que é <em>estado de cliente</em> (rascunho, filtro, seleção). Normalizar ou não. Onde o estado mora — e quem o consome.</li>
+<li><strong>I — Interface / API</strong> (~10 min). O contrato: endpoints, formato, paginação (cursor!), como o erro chega, e a API entre os <em>seus</em> componentes (props e eventos).</li>
+<li><strong>O — Optimization</strong> (~10 min). Performance (virtualização, splitting, imagem), rede (debounce, cancelamento, retry), acessibilidade, i18n e casos de borda.</li>
+</ol>
+
+<h5>Autocomplete — o que o estudo de caso cobra</h5>
+<ul>
+<li><strong>Debounce</strong> na digitação (uns 200–300ms) pra não disparar uma busca por tecla.</li>
+<li><strong>Condição de corrida</strong>: resposta antiga chegando depois da nova. Resolve com <code>AbortController</code> ou número de sequência.</li>
+<li><strong>Cache</strong> por termo, com política de invalidação.</li>
+<li><strong>Acessibilidade</strong>: o padrão combobox — setas movem a opção ativa, o foco fica no campo, <code>aria-activedescendant</code>, contagem anunciada por live region.</li>
+<li><strong>Bordas</strong>: nenhum resultado, erro de rede, entrada muito curta, caractere especial.</li>
+</ul>
+
+<h5>News feed — o que ele cobra</h5>
+<ul>
+<li><strong>Paginação por cursor</strong> (offset quebra com inserção), rolagem infinita com <code>IntersectionObserver</code>, e virtualização se a lista crescer muito.</li>
+<li><strong>Atualização otimista</strong> de curtir/comentar, com rollback.</li>
+<li><strong>Normalização</strong> do cache pra que o mesmo post, aparecendo em dois lugares, não fique dessincronizado.</li>
+<li><strong>Mídia</strong>: imagem responsiva, lazy abaixo da dobra, dimensão declarada pra não causar CLS na rolagem.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu sigo RADIO e gasto os primeiros cinco minutos só em requisitos — porque aqui a decisão difícil quase nunca é ‘que componente’, é quanta rede, quanto estado e quanto bundle eu aceito.”</p>
+</article>
+
+<article data-href="https://web.dev/articles/virtualize-long-lists-react-window">
+<p class="tldr">O gargalo de uma lista enorme <strong>não são os dados em memória, é o número de nós no DOM</strong>. Cada nó custa memória, layout e paint. Virtualizar significa renderizar só a janela visível (mais uma folga) e simular a altura total com um espaçador.</p>
+
+<h5>Como funciona</h5>
+<ul>
+<li>Um contêiner com altura fixa e rolagem; dentro, um elemento com a <strong>altura total simulada</strong> (<code>n × alturaDoItem</code>), pra barra de rolagem se comportar direito.</li>
+<li>A cada evento de rolagem, calcula-se o intervalo visível e renderiza-se só ele, posicionado com <code>transform: translateY()</code>.</li>
+<li>Um <em>overscan</em> de alguns itens acima e abaixo evita área em branco durante a rolagem rápida.</li>
+</ul>
+
+<h5>Os custos que a entrevista quer ouvir</h5>
+<ul>
+<li><strong>Ctrl+F do navegador não acha</strong> o que não está renderizado. Vale o mesmo pra impressão e pra tradução automática da página.</li>
+<li><strong>Acessibilidade</strong>: leitor de tela precisa saber o tamanho real e a posição — <code>aria-setsize</code> e <code>aria-posinset</code> nos itens, e cuidado com foco em item que é desmontado ao rolar.</li>
+<li><strong>Altura variável</strong> é o caso difícil: exige medir cada item e corrigir a estimativa em tempo real (o que bibliotecas chamam de virtualização dinâmica).</li>
+<li>Ancorar a posição de rolagem ao inserir item acima, e restaurar a posição ao voltar pra lista, viram trabalho extra.</li>
+</ul>
+
+<h5>Quando <em>não</em> virtualizar</h5>
+<ul>
+<li>Abaixo de algumas centenas de itens simples, o ganho não paga a complexidade. Meça antes.</li>
+<li>Alternativas mais baratas: paginação clássica, “carregar mais” com botão, ou <code>content-visibility: auto</code> — que deixa o navegador pular o trabalho de renderizar o que está fora da tela, sem biblioteca nenhuma.</li>
+</ul>
+</article>
+
+<article data-href="https://developer.mozilla.org/en-US/docs/Web/API/AbortController">
+<p class="tldr">Um objeto com um <code>signal</code> e um método <code>abort()</code>. Passe o <code>signal</code> pro <code>fetch</code> e você ganha cancelamento — a peça que resolve condição de corrida de rede, requisição órfã de componente desmontado e timeout.</p>
+
+<h5>Os três usos que aparecem</h5>
+<ul>
+<li><strong>Condição de corrida</strong>: a cada nova busca, aborte a anterior. Sem isso, a resposta de “a” pode chegar depois da de “abc” e sobrescrever a lista certa. É o bug clássico de autocomplete.</li>
+<li><strong>Desmontagem</strong>: no cleanup do <code>useEffect</code>, aborte. Evita atualizar estado de componente que não existe mais e libera a conexão.</li>
+<li><strong>Timeout</strong>: <code>AbortSignal.timeout(5000)</code> dá timeout declarativo — o <code>fetch</code> não tem um nativo.</li>
+</ul>
+
+<h5>Detalhes que evitam bug</h5>
+<ul>
+<li>Abortar rejeita a promessa com um erro de nome <code>AbortError</code>. <strong>Trate esse caso separadamente</strong>: cancelamento não é falha, e mostrar “erro ao carregar” depois de um abort é bug de UX.</li>
+<li>O controller é <strong>de uso único</strong>: depois de abortado, aquele signal fica abortado pra sempre. Crie um novo por requisição.</li>
+<li><code>AbortSignal.any([a, b])</code> combina sinais (timeout <em>ou</em> desmontagem, o que vier primeiro).</li>
+<li>Não serve só pra <code>fetch</code>: <code>addEventListener</code> aceita <code>{ signal }</code> e remove o listener no abort — jeito limpo de limpar vários listeners de uma vez.</li>
+</ul>
+
+<h5>A alternativa sem cancelar</h5>
+<ul>
+<li>Se não der pra abortar (uma promessa que não aceita signal), use <strong>número de sequência</strong>: guarde o id da requisição mais recente e descarte a resposta que não for dele. Menos eficiente — a requisição continua ocupando rede — mas correto.</li>
+</ul>
+</article>
+
+<article data-href="https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates">
+<p class="tldr">Atualização otimista é aplicar a mudança na interface <strong>antes</strong> da confirmação do servidor, pra o clique parecer instantâneo. O que a torna correta não é aplicar — é <strong>saber desfazer</strong>. O fluxo <code>onMutate</code> → <code>onError</code> → <code>onSettled</code> é o padrão, dentro ou fora do TanStack Query.</p>
+
+<h5>O fluxo, em quatro passos</h5>
+<ol>
+<li><strong><code>onMutate</code></strong>: cancele as buscas em voo daquela chave (senão uma resposta antiga sobrescreve a sua mudança otimista), <strong>salve um snapshot</strong> do estado atual e aplique a mudança.</li>
+<li><strong><code>onError</code></strong>: restaure o snapshot e <strong>comunique</strong> — o usuário viu a mudança acontecer, reverter em silêncio é pior que não ter sido otimista.</li>
+<li><strong><code>onSettled</code></strong>: invalide a chave pra revalidar contra o servidor, dando certo ou errado. É o que garante convergência com a verdade.</li>
+<li>Em muitos casos <code>onSuccess</code> nem precisa fazer nada: a interface já está no estado certo.</li>
+</ol>
+
+<h5>Quando vale, e quando não</h5>
+<ul>
+<li><strong>Vale</strong> quando a operação quase sempre dá certo e o efeito é fácil de reverter: curtir, marcar concluído, favoritar, reordenar.</li>
+<li><strong>Não vale</strong> quando a falha é provável, quando o servidor decide o resultado (o id gerado, o preço final, disponibilidade de estoque) ou quando a reversão confunde — pagamento, envio de mensagem em conversa, exclusão definitiva.</li>
+<li>Para esses, o padrão certo é um estado “enviando” explícito, com botão desabilitado e possibilidade de repetir.</li>
+</ul>
+
+<h5>Os casos de borda que a entrevista busca</h5>
+<ul>
+<li><strong>Mutações concorrentes</strong> na mesma entidade: dois cliques rápidos, cada um com o seu snapshot. Reverter a segunda restaura um estado já desatualizado — daí a regra de sempre revalidar no <code>onSettled</code>.</li>
+<li><strong>Item criado otimisticamente</strong> não tem id do servidor. Use id temporário e reconcilie na resposta.</li>
+<li><strong>Offline</strong>: enfileirar a mutação e reenviar ao voltar exige que a operação seja idempotente do lado do servidor.</li>
+</ul>
+</article>
+
+<article data-href="https://www.patterns.dev/">
+<p class="tldr">Consulta, não leitura. Passe o olho na seção de <strong>Component Patterns</strong> agora, pra reconhecer os nomes; volte a um padrão específico quando ele aparecer numa decisão real ou numa entrevista.</p>
+
+<h5>Os padrões de componente que valem reconhecer</h5>
+<ul>
+<li><strong>Container/Presentational</strong>: separar quem busca dados de quem desenha. Hoje o papel é feito por hooks + componente puro, mas o nome ainda aparece.</li>
+<li><strong>Compound components</strong>: <code>&lt;Tabs&gt;&lt;Tabs.List/&gt;&lt;Tabs.Panel/&gt;&lt;/Tabs&gt;</code>. Troca quinze props booleanas por composição — quem usa decide o que existe incluindo ou não a subpeça.</li>
+<li><strong>Render props / children como função</strong>: quem chama controla a renderização e recebe o estado. Menos comum hoje, substituído por hooks na maior parte dos casos.</li>
+<li><strong>HOC</strong>: envolve um componente adicionando comportamento. Legado — hooks resolvem melhor, sem o inferno de props implícitas.</li>
+<li><strong>Hooks customizados</strong>: o jeito atual de compartilhar lógica com estado. Se você está pensando em HOC ou render prop, provavelmente quer um hook.</li>
+<li><strong>Provider</strong>: Context pra evitar prop drilling — com a ressalva de que todo consumidor re-renderiza quando o valor muda.</li>
+</ul>
+
+<h5>Padrões de renderização (a parte que conversa com o Next.js)</h5>
+<ul>
+<li><strong>CSR</strong>, <strong>SSR</strong>, <strong>SSG</strong>, <strong>ISR</strong> e <strong>streaming SSR</strong> — e o eixo que os organiza: <em>quando</em> o HTML é gerado (build, requisição, cliente) e <em>quanto</em> JavaScript precisa hidratar depois.</li>
+<li><strong>Islands</strong> e <strong>hidratação parcial</strong>: só as ilhas interativas recebem JavaScript; o resto é HTML estático. É a ideia por trás do Astro e, em outra forma, dos Server Components.</li>
+</ul>
+
+<h5>Padrões de performance</h5>
+<ul>
+<li><strong>Import dinâmico</strong> e <strong>import na interação/visibilidade</strong>; <strong>preload</strong> e <strong>prefetch</strong> (prefetch é ociosidade, preload é urgência); <strong>tree shaking</strong> (que depende de módulo ES e de a biblioteca não ter efeito colateral).</li>
+</ul>
+<p><strong>Como usar numa entrevista:</strong> nomear o padrão é bom, mas o ponto vem de dizer o <em>custo</em>. “Compound components deixa a API mais flexível, ao custo de acoplar as subpeças por Context e de ficar mais difícil de tipar.”</p>
+</article>

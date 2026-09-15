@@ -1,0 +1,129 @@
+<article data-href="https://refactoring.guru/design-patterns">
+<p class="tldr">Padrão de projeto é <strong>nome pra uma solução recorrente</strong>, não receita a aplicar. O valor em entrevista é duplo: reconhecer o padrão que você já usa sem saber o nome, e saber <em>criticar</em> cada um. Seis bastam.</p>
+
+<h5>O que é (e o que não é) um design pattern</h5>
+<ul>
+<li>É a descrição de um problema recorrente + uma solução geral, não código pronto. Dois usos do mesmo padrão podem não ter uma linha em comum.</li>
+<li>Não confundir com <strong>algoritmo</strong> (receita de passos, sempre igual) nem com <strong>arquitetura</strong> (decisão de estrutura do sistema inteiro).</li>
+<li>O risco conhecido é <em>overengineering</em>: aplicar padrão onde uma função resolveria. A pergunta certa antes de usar é "que mudança futura isso está me deixando barata?".</li>
+</ul>
+
+<h5>Os seis que caem</h5>
+<div class="tbl"><table>
+<tr><th>Padrão</th><th>Problema que resolve</th><th>Onde você já usa</th></tr>
+<tr><td><strong>Strategy</strong></td><td>trocar o algoritmo em tempo de execução sem <code>if</code> em cascata</td><td>provedores de IA intercambiáveis por trás de uma interface</td></tr>
+<tr><td><strong>Factory Method</strong></td><td>criar objeto sem acoplar quem chama à classe concreta</td><td><code>createClient()</code> que devolve implementação conforme o ambiente</td></tr>
+<tr><td><strong>Observer</strong></td><td>notificar N interessados sem que a origem os conheça</td><td>event emitter, <code>addEventListener</code>, pub/sub, o próprio React state</td></tr>
+<tr><td><strong>Adapter</strong></td><td>fazer duas interfaces incompatíveis conversarem</td><td>embrulhar uma API de terceiro no formato do seu domínio</td></tr>
+<tr><td><strong>Decorator</strong></td><td>somar comportamento sem herança e sem tocar no original</td><td>middleware de log, retry, cache em volta de uma função</td></tr>
+<tr><td><strong>Singleton</strong></td><td>uma instância só, globalmente acessível</td><td>pool de conexão — e é sobre <em>isso</em> que perguntam, pra ver se você critica</td></tr>
+</table></div>
+
+<h5>A crítica do Singleton (a parte que vale ponto)</h5>
+<ul>
+<li>É estado global disfarçado: acopla tudo que o usa, torna teste difícil (não dá pra injetar dublê) e esconde dependência — ninguém vê na assinatura que a função depende dele.</li>
+<li>Em ambiente concorrente vira ponto de contenção e exige cuidado com inicialização.</li>
+<li>A alternativa honesta na maioria dos casos é <strong>injeção de dependência</strong>: uma instância criada na composição raiz e passada adiante. Você continua tendo "uma só", sem o global.</li>
+</ul>
+
+<h5>Strategy vs. objeto de configuração — quando cada um</h5>
+<ul>
+<li>Se as variações diferem só em <em>valores</em>, configuração basta. Se diferem em <em>comportamento</em>, Strategy paga.</li>
+<li>Em JavaScript/TypeScript, Strategy quase sempre é só "passar uma função". Não precisa de classe abstrata pra ser o padrão — e dizer isso mostra que você entendeu o conceito, não decorou o diagrama UML.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu uso padrão como vocabulário, não como meta. Se eu não consigo nomear a mudança futura que ele barateia, é complexidade sem retorno.”</p>
+</article>
+
+<article data-href="https://martinfowler.com/bliki/MonolithFirst.html">
+<p class="tldr">A observação empírica: quase todo sistema de microsserviços bem-sucedido começou como <strong>monolito que ficou grande demais</strong>, e quase todo sistema que nasceu microsserviço acabou em apuros. Não é preferência estética — é sobre <em>quando</em> você sabe o suficiente pra desenhar as fronteiras.</p>
+
+<h5>Por que começar monolito</h5>
+<ul>
+<li>No início você <strong>não conhece as fronteiras certas</strong> do domínio. Fronteira errada em monolito é uma refatoração; em microsserviço é migração distribuída com contrato de rede no meio.</li>
+<li>Microsserviço cobra um <em>pedágio de entrada</em> alto e imediato: deploy independente, observabilidade distribuída, versionamento de contrato, consistência eventual, teste de integração entre serviços.</li>
+<li>Esse pedágio só se paga quando o gargalo vira <strong>organizacional</strong> — times demais pisando no mesmo deploy.</li>
+</ul>
+
+<h5>As saídas propostas</h5>
+<ul>
+<li><strong>Monolith first</strong>: construa monolito, encontre as fronteiras pelo uso, extraia serviços quando a dor aparecer.</li>
+<li><strong>Monolito modular</strong>: módulos com fronteira explícita dentro do mesmo deploy. Dá quase todo o benefício de organização, com quase nenhum custo de distribuição — e vira o caminho natural de extração depois.</li>
+<li><strong>Design pra ser substituível</strong> (sacrificial architecture): assumir desde o começo que aquele pedaço vai ser jogado fora, e não superinvestir nele.</li>
+</ul>
+
+<h5>Os sinais de que chegou a hora de extrair</h5>
+<ul>
+<li>Deploy virou fila: um time espera o outro pra entregar.</li>
+<li>Um pedaço tem <strong>perfil de escala ou de disponibilidade muito diferente</strong> do resto (processamento pesado, integração instável de terceiro).</li>
+<li>A fronteira já está clara no código: um módulo que fala com o resto por poucas chamadas bem definidas.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu começo monolito modular. Microsserviço resolve problema de time, não de código — e cobra o preço de rede antes de entregar o benefício.”</p>
+</article>
+
+<article data-href="https://blog.cleancoder.com/uncle-bob/2011/11/22/Clean-Architecture.html">
+<p class="tldr">Uma regra só importa: <strong>dependências apontam pra dentro</strong>. Regra de negócio não pode saber de framework, banco ou HTTP. Os nomes das quatro camadas (entidades, casos de uso, adaptadores, frameworks) são secundários — vários autores usam outros nomes pro mesmo desenho (hexagonal, ports & adapters, onion).</p>
+
+<h5>A regra da dependência</h5>
+<ul>
+<li>Nada de um círculo interno pode <strong>nomear</strong> nada de um círculo externo: nem classe, nem função, nem variável. Se a entidade importa o ORM, a regra já foi quebrada.</li>
+<li>O que fica dentro: entidades (regras que valem independentemente de aplicação) e casos de uso (regras da <em>sua</em> aplicação). O que fica fora: controller, gateway, repositório concreto, UI, banco.</li>
+<li>Banco e framework viram <strong>detalhe</strong>, decidido tarde. Esse é o ponto que Uncle Bob mais insiste, e o que mais gera discussão.</li>
+</ul>
+
+<h5>Como o fluxo se inverte na fronteira</h5>
+<ul>
+<li>O problema: o caso de uso precisa <em>chamar</em> o banco, mas não pode depender dele. Como o fluxo de controle vai pra fora e a dependência tem que apontar pra dentro, usa-se <strong>inversão de dependência</strong>.</li>
+<li>Na prática: o caso de uso declara uma <strong>interface</strong> (<code>RepositorioDePedidos</code>) e o adaptador externo a <strong>implementa</strong>. O código de dentro depende da abstração que ele mesmo define; o de fora é que depende de dentro.</li>
+<li>Consequência boa e concreta: dá pra testar o caso de uso inteiro com uma implementação em memória, sem banco, sem HTTP, em milissegundos.</li>
+</ul>
+
+<h5>A crítica honesta</h5>
+<ul>
+<li>Em CRUD simples, as camadas viram repasse: quatro arquivos pra salvar um registro. O próprio custo vira o argumento contra.</li>
+<li>O ganho aparece onde a <strong>regra de negócio é rica</strong> e o entorno é instável (integrações que trocam, múltiplos canais de entrada). Saber apontar isso é o que separa quem aplicou de quem só leu.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “A regra é uma só: dependência aponta pra dentro, e a fronteira se inverte com interface declarada pelo domínio. Se o meu domínio importa o ORM, não é clean architecture, é só pasta com nome bonito.”</p>
+</article>
+
+<article data-href="https://martinfowler.com/bliki/DomainDrivenDesign.html">
+<p class="tldr">É um verbete de cinco minutos. O núcleo do DDD não é tática (entidade, agregado, repositório) — é a ideia de que o <strong>modelo do domínio</strong> e a <strong>linguagem</strong> usada pra falar dele são a mesma coisa, e que sistemas grandes precisam de <em>vários</em> modelos, não de um modelo unificado.</p>
+
+<h5>Ubiquitous language</h5>
+<ul>
+<li>Uma linguagem só, usada por especialista de domínio e por dev, e <strong>refletida no código</strong>. Se o negócio diz "apólice" e a classe se chama <code>DataRecord</code>, cada conversa paga um custo de tradução — e é na tradução que o bug nasce.</li>
+<li>Consequência prática: renomear classe pra casar com o termo do negócio é trabalho de arquitetura, não capricho.</li>
+</ul>
+
+<h5>Bounded context</h5>
+<ul>
+<li>O mesmo termo significa coisas diferentes em áreas diferentes: "cliente" pra vendas não é "cliente" pra cobrança nem pra suporte. Tentar um modelo único de "Cliente" pra empresa inteira produz aquele objeto gigante que ninguém entende.</li>
+<li>A solução é <strong>delimitar contextos</strong>: cada um com seu modelo internamente coerente, e tradução explícita nas fronteiras (<em>context map</em>, <em>anti-corruption layer</em>).</li>
+<li>É daqui que sai a fronteira natural de serviço — o vínculo direto entre DDD e microsserviços, e a resposta pra “como você decide o que vira serviço?”.</li>
+</ul>
+
+<h5>O que evitar</h5>
+<ul>
+<li>Reduzir DDD a "pastas de entidade e repositório". A parte tática sem a estratégica (linguagem e contextos) entrega burocracia sem o benefício.</li>
+<li>Usar DDD onde o domínio é raso. Se a regra de negócio cabe num CRUD, o modelo rico é peso morto.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “O que eu levo de DDD é bounded context: em vez de um modelo canônico pra empresa inteira, modelos coerentes por contexto com tradução explícita na fronteira. É isso que me dá onde cortar um serviço.”</p>
+</article>
+
+<article data-href="https://www.freecodecamp.org/news/a-quick-introduction-to-clean-architecture-990c014448d2/">
+<p class="tldr">É a tradução prática do post do Uncle Bob, com código. Leia <em>depois</em> dele. Se o original já fez sentido sozinho, pule — a redundância é de propósito, e seu tempo rende mais nos outros links.</p>
+
+<h5>O que este texto acrescenta ao original</h5>
+<ul>
+<li>Mostra a <strong>montagem</strong>: quem instancia o quê. A composição raiz (<code>main</code>, container de DI, o arquivo de bootstrap) é onde o concreto encontra a interface — e é a peça que falta quando só se lê a teoria.</li>
+<li>Deixa concreto o <strong>DTO de fronteira</strong>: o formato que entra e sai do caso de uso não é a entidade nem o JSON do HTTP. Evitar vazamento da entidade pro controller é metade do benefício prático.</li>
+<li>Explicita o <strong>fluxo de uma requisição</strong>: controller → mapeia entrada → caso de uso → porta → adaptador → banco, e a volta pelo mesmo caminho. Conseguir narrar esses seis passos é uma resposta completa de entrevista.</li>
+</ul>
+
+<h5>A versão econômica, pra projeto real</h5>
+<ul>
+<li>Comece com <strong>duas camadas</strong>: domínio/casos de uso e infraestrutura. Divida mais só quando a dor aparecer.</li>
+<li>Crie interface <strong>onde existe variação real ou necessidade de teste</strong>, não pra toda classe. Interface com uma implementação só e sem teste dublê é cerimônia.</li>
+<li>O sinal de que valeu: dá pra rodar a suíte de regra de negócio inteira sem subir banco nem servidor.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> “Eu aplico a regra da dependência de forma proporcional: interface onde há variação ou teste, e composição raiz única. O resto vira cerimônia que ninguém mantém.”</p>
+</article>
