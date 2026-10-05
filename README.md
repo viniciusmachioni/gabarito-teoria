@@ -7,7 +7,7 @@ Site 100% estático (HTML + CSS + JS): **sem back-end e sem banco**. O progresso
 
 **Foco atual: o roadmap da mentoria (R0–R7)**, que vem primeiro na capa, no índice e no quiz. O R0 é um mapa que cruza
 os 24 itens do roadmap com o que já existe no **Gabarita** e no **Ally AI** (arquivo e linha), e cada página R1–R6 tem
-um bloco "No seu código" com a evidência e um bloco "O que falta construir". O R7 cobre a ativação do LinkedIn.
+um bloco "Onde você já aplicou" com o exemplo de cada pedido do roadmap nos dois projetos. O R7 cobre a ativação do LinkedIn.
 
 Depois do roadmap, o guia continua igual: as 5 semanas de núcleo, 9 blocos bônus originais e 10 blocos novos de lacunas de sênior (testes, acessibilidade,
 CSS moderno, performance de navegador, front-end system design, React avançado, design de APIs, produção/observabilidade,

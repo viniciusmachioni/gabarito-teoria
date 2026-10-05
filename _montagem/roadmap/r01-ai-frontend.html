@@ -1,7 +1,7 @@
 <section class="week" id="rm1">
   <div class="week-head"><span class="week-num">R1</span><h2>AI-Powered Frontend</h2></div>
   <div class="week-meta">~8h &middot; a parte da IA que o usuário vê: o tempo de espera, o formato da resposta e o que acontece quando ela falha</div>
-  <p class="intro">Vaga de Frontend Engineer com foco em IA não pergunta como treinar um modelo. Pergunta o que a interface faz durante os 10 segundos em que o modelo pensa, como transformar texto livre em dado que um componente consegue renderizar, e o que o usuário vê quando a cota estoura. Este bloco cobre as quatro frentes do roadmap: <strong>streaming e estados assíncronos</strong>, <strong>tool calling e structured outputs</strong>, <strong>Generative UI</strong> e <strong>UX de loading, erro, retry e human-in-the-loop</strong>. A boa notícia: o Gabarita e o Ally AI já resolvem metade disso, e com mais rigor do que muito tutorial. O vocabulário de base (token, RAG, loop agentic) está no <a href="b02-ia-agentes.html">B2</a>, e estado de servidor no cliente está no <a href="b15-react-estado.html">B15</a>.</p>
+  <p class="intro">Vaga de Frontend Engineer com foco em IA não pergunta como treinar um modelo. Pergunta o que a interface faz durante os 10 segundos em que o modelo pensa, como transformar texto livre em dado que um componente consegue renderizar, e o que o usuário vê quando a cota estoura. Este bloco cobre as quatro frentes do roadmap: <strong>streaming e estados assíncronos</strong>, <strong>tool calling e structured outputs</strong>, <strong>Generative UI</strong> e <strong>UX de loading, erro, retry e human-in-the-loop</strong>. O Gabarita e o Ally AI já aplicam boa parte disso &mdash; a seção &ldquo;Onde você já aplicou&rdquo; mostra onde. O vocabulário de base (token, RAG, loop agentic) está no <a href="b02-ia-agentes.html">B2</a>, e estado de servidor no cliente está no <a href="b15-react-estado.html">B15</a>.</p>
 
   <h3 class="sub">Tópicos</h3>
   <ul class="checklist">
@@ -26,16 +26,16 @@
     <li><div class="r-title"><a href="https://ai-sdk.dev/docs/agents/tool-approvals" target="_blank" rel="noopener">AI SDK &mdash; Tool Approvals</a></div><div class="r-note">Human-in-the-loop na forma mais concreta: a ferramenta para, a UI pergunta, o usuário aprova ou nega, e o modelo segue sabendo da decisão.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta. Note a diferença entre aprovação estática (por ferramenta) e dinâmica (pelo valor do argumento).</div><div class="r-src">ai-sdk.dev &middot; oficial (Vercel)</div></li>
   </ul>
 
-  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
   <div class="evid">
-    <div class="evid-head">O que você já fez &middot; arquivo e linha</div>
+    <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
       <div class="evid-item">
-        <h4>Interfaces com LLM, streaming e estados assíncronos <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
-        <p><span class="proj">Gabarita</span> &mdash; não tem streaming de token, mas resolve a espera de um jeito melhor pro caso dele: a explicação é gerada <strong>depois que a resposta HTTP já saiu</strong>, e o cliente consulta de novo com intervalo crescente e um prazo pra desistir.</p>
+        <h4>Interfaces com LLM, streaming e estados assíncronos <span class="st p">Gabarita: aplicado em parte</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
+        <p><span class="proj">Gabarita</span> &mdash; a explicação da IA é gerada <strong>depois que a resposta HTTP já saiu</strong>, e o cliente consulta de novo com intervalo crescente e um prazo de desistência. Nenhum render espera a IA.</p>
         <ul>
-          <li><code>src/lib/study/explain-prefetch.ts</code> L18-30 &mdash; <code>agendarExplicacao()</code> usa <code>after()</code> do <code>next/server</code>: &ldquo;nenhum render espera a IA&rdquo;. L75-95 &mdash; <code>agendarExplicacoesEmLote()</code> faz um único <code>after()</code> sequencial com espaçamento contra 429.</li>
-          <li><code>src/app/(app)/estudo/[sessaoId]/[ordem]/question-runner.tsx</code> L117-122 &mdash; polling com <code>router.refresh()</code> e desistência em 23s:</li>
+          <li><code>src/lib/study/explain-prefetch.ts</code> L18-30 &mdash; <code>agendarExplicacao()</code> agenda a geração com <code>after()</code> do <code>next/server</code>. L75-95 &mdash; <code>agendarExplicacoesEmLote()</code> faz um único <code>after()</code> sequencial, espaçando as chamadas pra respeitar a cota.</li>
+          <li><code>src/app/(app)/estudo/[sessaoId]/[ordem]/question-runner.tsx</code> L117-122 &mdash; polling com <code>router.refresh()</code> em 3s, 9s e 21s, e troca de estado aos 23s:</li>
         </ul>
         <pre><code>useEffect(() =&gt; {
   if (!respondida || props.resumo !== null) return;
@@ -43,16 +43,17 @@
   const desistir = setTimeout(() =&gt; setDesistiuDaExplicacao(true), 23000);
   return () =&gt; { timers.forEach(clearTimeout); clearTimeout(desistir); };
 }, [respondida, props.resumo, router]);</code></pre>
-        <p><span class="proj">Ally AI</span> &mdash; request/response síncrono: a auditoria inteira (Chromium + axe + Gemini) roda dentro de um <code>POST</code>, e a UI só tem <code>isLoading</code>/<code>error</code>/<code>results</code>.</p>
+        <p><span class="proj">Ally AI</span> &mdash; a interface dispara a auditoria (Chromium + axe-core + Gemini) e conduz os estados de carregando, erro e resultado.</p>
         <ul>
-          <li><code>apps/web/src/app/page.tsx</code> L62-92 &mdash; <code>handleAnalyze</code> chama <code>api.post("/audit", { url })</code> e diferencia 401, 403 e erro genérico.</li>
-          <li><code>apps/api/src/services/aiService.ts</code> L99-106 &mdash; <code>generateContent</code>, sem <code>generateContentStream</code>. Não há SSE, <code>ReadableStream</code> nem AI SDK nos dois projetos.</li>
+          <li><code>apps/web/src/app/page.tsx</code> L62-92 &mdash; <code>handleAnalyze</code> chama <code>api.post("/audit", { url })</code>, controla <code>isLoading</code>/<code>error</code>/<code>results</code> e trata 401 (sessão), 403 (créditos) e erro genérico de forma diferente.</li>
+          <li><code>apps/api/src/services/aiService.ts</code> L99-106 &mdash; a chamada <code>generateContent</code> ao Gemini que alimenta a tela.</li>
         </ul>
+        <p>Ainda não aplicado aqui: streaming de tokens (SSE / <code>ReadableStream</code>).</p>
       </div>
 
       <div class="evid-item">
-        <h4>Tool calling e structured outputs <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
-        <p>Os dois projetos são <strong>fortes em structured output</strong> e <strong>não usam tool calling</strong>. A diferença entre eles é onde a validação mora.</p>
+        <h4>Tool calling e structured outputs <span class="st p">Gabarita: aplicado em parte</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
+        <p>Os dois projetos aplicam <strong>structured outputs</strong> a fundo, cada um com uma estratégia de validação.</p>
         <p><span class="proj">Ally AI</span> &mdash; schema duplo: JSON Schema enviado ao Gemini <em>e</em> Zod por item na volta, com allowlist de <code>id</code>.</p>
         <ul>
           <li><code>apps/api/src/services/aiService.ts</code> L16-21 (<code>analysisItemSchema</code> em Zod), L24-36 (o mesmo formato em JSON Schema), L102-105 (<code>responseMimeType: "application/json", responseJsonSchema</code>), L64-86 (<code>parseAnalyses</code>):</li>
@@ -63,64 +64,65 @@
   const { id, ...analysis } = parsed.data;
   analyses[id] = analysis;
 }</code></pre>
-        <p><span class="proj">Gabarita</span> &mdash; pede só JSON (<code>src/lib/ai/gemini.ts</code> L53, &ldquo;Zod é o validador de verdade a jusante&rdquo;) e vai além do formato: valida o <strong>significado</strong>.</p>
+        <p><span class="proj">Gabarita</span> &mdash; pede JSON ao modelo (<code>src/lib/ai/gemini.ts</code> L53) e valida forma <strong>e significado</strong> no código.</p>
         <ul>
-          <li><code>src/lib/ai/schemas.ts</code> L92 (<code>ExplicacaoSchema</code>, com <code>refine</code> que barra markdown e exige exatamente uma correta) e L136-161 (<code>validarExplicacao</code>: as letras da IA têm que ser as do banco, e a correta da IA tem que ser a do gabarito &mdash; senão <code>throw</code>).</li>
-          <li><code>src/lib/study/explain.ts</code> L32 e L85-89 &mdash; até <code>MAX_TENTATIVAS_VALIDACAO = 3</code> chamadas quando a saída é recusada.</li>
-          <li><code>src/lib/ai/gemini.ts</code> L22 &mdash; <code>stripCodeFence</code>, porque o modelo às vezes devolve <code>```json</code> mesmo com <code>responseMimeType</code> JSON.</li>
+          <li><code>src/lib/ai/schemas.ts</code> L92 (<code>ExplicacaoSchema</code>, com <code>refine</code> que exige texto limpo e exatamente uma correta) e L136-161 (<code>validarExplicacao</code>: as letras da IA são as do banco, e a correta da IA é a do gabarito).</li>
+          <li><code>src/lib/study/explain.ts</code> L32 e L85-89 &mdash; até <code>MAX_TENTATIVAS_VALIDACAO = 3</code> chamadas até a saída passar na validação.</li>
+          <li><code>src/lib/ai/gemini.ts</code> L22 &mdash; <code>stripCodeFence</code>, normalizando a resposta antes do parse.</li>
         </ul>
-        <p>Tool calling: nenhum <code>functionDeclarations</code>/<code>tools</code> em nenhum dos dois. O mais perto é o Ally AI, que já usa o padrão &ldquo;LLM sobre resultado de ferramenta&rdquo; &mdash; só que a ferramenta (axe-core) é chamada pelo código, não pelo modelo (<code>apps/api/src/services/auditService.ts</code> L37-51).</p>
+        <p>O Ally AI também aplica o padrão &ldquo;LLM sobre resultado de ferramenta&rdquo;: o axe-core roda e o modelo recebe os achados como contexto (<code>apps/api/src/services/auditService.ts</code> L37-51). Ainda não aplicado aqui: tool calling com o modelo escolhendo a ferramenta (<code>functionDeclarations</code>).</p>
       </div>
 
       <div class="evid-item">
-        <h4>Generative UI <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
-        <p>Nos dois, a IA preenche <strong>componentes fixos</strong> com dado estruturado: o modelo não escolhe qual componente aparecer. É o degrau anterior à Generative UI, e vale contar assim, com honestidade.</p>
+        <h4>Generative UI <span class="st p">Gabarita: aplicado em parte</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
+        <p>Nos dois, a saída estruturada da IA vira <strong>componente de domínio</strong> em vez de parágrafo solto &mdash; é a base sobre a qual a Generative UI é construída.</p>
         <ul>
-          <li><span class="proj">Gabarita</span> &mdash; <code>src/app/(app)/estudo/[sessaoId]/[ordem]/correcao-card.tsx</code> L34-48: resumo + &ldquo;Alternativa por alternativa&rdquo; com o <code>motivo</code> de cada uma. <code>src/components/aviso-diretriz.tsx</code> L51-58: resumo da IA com a citação literal num <code>&lt;blockquote&gt;</code>. Frases-chave geradas e <strong>editáveis</strong> pelo aluno em <code>src/app/(app)/revisao/caderno/</code>.</li>
-          <li><span class="proj">Ally AI</span> &mdash; <code>apps/web/src/components/Dashboard.tsx</code> L62-136: card por violação, selo de prioridade com cor condicional (L77-87), bloco &ldquo;AI Analysis&rdquo; com <code>Sparkles</code> (L96-101) e a correção num <code>&lt;pre&gt;&lt;code&gt;</code> (L127-131). Não dá pra copiar, filtrar, ordenar nem aplicar a correção.</li>
+          <li><span class="proj">Gabarita</span> &mdash; <code>src/app/(app)/estudo/[sessaoId]/[ordem]/correcao-card.tsx</code> L34-48: resumo + &ldquo;Alternativa por alternativa&rdquo; com o <code>motivo</code> de cada uma. <code>src/components/aviso-diretriz.tsx</code> L51-58: resumo da IA com a citação literal num <code>&lt;blockquote&gt;</code>. Frases-chave geradas pela IA e <strong>editáveis</strong> pelo aluno em <code>src/app/(app)/revisao/caderno/</code>.</li>
+          <li><span class="proj">Ally AI</span> &mdash; <code>apps/web/src/components/Dashboard.tsx</code> L62-136: card por violação, selo de prioridade com cor por nível (L77-87), bloco &ldquo;AI Analysis&rdquo; com <code>Sparkles</code> (L96-101) e o código corrigido num <code>&lt;pre&gt;&lt;code&gt;</code> (L127-131).</li>
         </ul>
+        <p>Ainda não aplicado aqui: o modelo escolhendo qual componente renderizar a partir de uma chamada de ferramenta.</p>
       </div>
 
       <div class="evid-item">
-        <h4>UX de loading, streaming, erro, retry e human-in-the-loop <span class="st y">Gabarita: usado</span> <span class="st p">Ally AI: parcial</span></h4>
-        <p><span class="proj">Gabarita</span> &mdash; cobre tudo menos streaming:</p>
+        <h4>UX de loading, streaming, erro, retry e human-in-the-loop <span class="st y">Gabarita: aplicado</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
+        <p><span class="proj">Gabarita</span></p>
         <ul>
           <li><strong>Loading:</strong> <code>correcao-card.tsx</code> L29-31 (&ldquo;Escrevendo a correção&hellip;&rdquo;) e L54-59 (skeleton com <code>aria-hidden</code>); seis <code>loading.tsx</code> de rota.</li>
-          <li><strong>Desistência:</strong> <code>correcao-card.tsx</code> L49-52 &mdash; &ldquo;Não foi possível gerar a explicação agora. Ela aparece aqui quando estiver pronta.&rdquo;</li>
-          <li><strong>Acessível:</strong> <code>question-runner.tsx</code> L281 (<code>role="alert"</code> no erro) e L286 (<code>role="status" aria-live="polite"</code> em volta do card de correção).</li>
-          <li><strong>Retry consciente:</strong> <code>src/lib/ai/retry.ts</code> L51 (<code>isRetryableAIError</code>: 429/5xx/rede sim, 400/404 não), L39 (<code>parseRetryDelayMs</code> lê o <code>RetryInfo.retryDelay</code> do 429), L85-106 (<code>withRetry</code>: espera o que a API pediu, senão backoff exponencial, sempre com teto), L64 (<code>humanizeAIError</code>).</li>
-          <li><strong>Sem chamada duplicada:</strong> <code>src/lib/study/explain.ts</code> L66-74 &mdash; lease atômica com <code>updateMany</code> condicional em <code>explicacaoIniciadaEm</code>.</li>
-          <li><strong>Human-in-the-loop:</strong> toda questão extraída nasce com <code>needsVerification: true</code> (<code>src/lib/ingestion/create-question.ts</code> L62 e L88); a fila <code>/verificacao</code> tem confirmar/rejeitar/editar (<code>src/app/(app)/verificacao/[id]/actions.ts</code> L10-40); o aluno reporta problema por categoria (<code>src/app/(app)/estudo/[sessaoId]/[ordem]/report-question-button.tsx</code>, com <code>gabarito_errado</code> como padrão).</li>
+          <li><strong>Prazo de desistência:</strong> <code>correcao-card.tsx</code> L49-52 &mdash; &ldquo;Não foi possível gerar a explicação agora. Ela aparece aqui quando estiver pronta.&rdquo;</li>
+          <li><strong>Estados anunciados:</strong> <code>question-runner.tsx</code> L281 (<code>role="alert"</code>) e L286 (<code>role="status" aria-live="polite"</code> em volta do card de correção).</li>
+          <li><strong>Retry consciente:</strong> <code>src/lib/ai/retry.ts</code> L51 (<code>isRetryableAIError</code>: 429/5xx/rede sim, 400/404 não), L39 (<code>parseRetryDelayMs</code> lê o <code>RetryInfo.retryDelay</code> do 429), L85-106 (<code>withRetry</code>: espera o que a API pediu, senão backoff exponencial com teto), L64 (<code>humanizeAIError</code>).</li>
+          <li><strong>Uma chamada por explicação:</strong> <code>src/lib/study/explain.ts</code> L66-74 &mdash; lease atômica com <code>updateMany</code> condicional em <code>explicacaoIniciadaEm</code>.</li>
+          <li><strong>Human-in-the-loop:</strong> toda questão extraída nasce com <code>needsVerification: true</code> (<code>src/lib/ingestion/create-question.ts</code> L62 e L88); a fila <code>/verificacao</code> tem confirmar/rejeitar/editar (<code>src/app/(app)/verificacao/[id]/actions.ts</code> L10-40); o aluno reporta por categoria (<code>src/app/(app)/estudo/[sessaoId]/[ordem]/report-question-button.tsx</code>).</li>
         </ul>
-        <p><span class="proj">Ally AI</span> &mdash; o servidor é cuidadoso; a interface, nem tanto:</p>
+        <p><span class="proj">Ally AI</span></p>
         <ul>
           <li><strong>Erros com taxonomia:</strong> <code>apps/api/src/services/auditErrors.ts</code> L1-42 &mdash; cada <code>AuditErrorCode</code> tem status HTTP (400/422/503/504) e mensagem pra pessoa (&ldquo;Tente de novo em alguns minutos&rdquo;).</li>
           <li><strong>Compensação:</strong> <code>apps/api/src/controllers/AuditController.ts</code> L27-35 reserva o crédito com <code>updateMany</code> condicional (<code>credits: { gte: 1 }</code>) e L52-53 devolve em qualquer falha (<code>refundCredit</code>, L66-75).</li>
-          <li><strong>Retry no servidor:</strong> <code>aiService.ts</code> L97-121 &mdash; só 429/503, espera de <code>attempt + 1</code> segundos, até 3 tentativas.</li>
-          <li><strong>Degradação graciosa:</strong> <code>apps/api/src/services/auditService.ts</code> L45-51 &mdash; se a IA falhar, o relatório sai sem <code>aiAnalysis</code>. Mas a UI <strong>não avisa</strong> que a análise faltou.</li>
-          <li><strong>Loading:</strong> <code>apps/web/src/components/HeroSearch.tsx</code> L58-62 (botão desabilitado + <code>Loader2</code>), skeletons em <code>DashboardSkeleton.tsx</code>. Nenhum <code>aria-live</code>, nenhum botão de &ldquo;tentar de novo&rdquo;, nenhum human-in-the-loop.</li>
+          <li><strong>Retry no servidor:</strong> <code>aiService.ts</code> L97-121 &mdash; 429/503 com espera crescente, até 3 tentativas.</li>
+          <li><strong>Degradação graciosa:</strong> <code>apps/api/src/services/auditService.ts</code> L45-51 &mdash; o relatório do axe é entregue mesmo quando a análise da IA não vem.</li>
+          <li><strong>Loading:</strong> <code>apps/web/src/components/HeroSearch.tsx</code> L58-62 (botão desabilitado + <code>Loader2</code>) e skeletons em <code>DashboardSkeleton.tsx</code>; modal dedicado quando os créditos acabam.</li>
         </ul>
+        <p>Ainda não aplicado aqui: retry pela interface e revisão humana.</p>
       </div>
     </div>
   </div>
 
   <div class="gap">
-    <h4>O que falta construir</h4>
+    <h4>Próximo passo do roadmap</h4>
     <ol>
-      <li><strong>Ally AI &middot; streaming da auditoria.</strong> Trocar o <code>POST /audit</code> que espera tudo por uma resposta em stream (NDJSON ou SSE) em <code>apps/api/src/controllers/AuditController.ts</code>: um evento quando o axe termina (os cards aparecem já com a violação), depois um evento por análise da IA, e <code>done</code>/<code>error</code> no fim. No front (<code>apps/web/src/app/page.tsx</code>), <code>fetch</code> + <code>getReader()</code> com <code>AbortController</code> num botão &ldquo;cancelar&rdquo;. Vira o <strong>post 5</strong> do <a href="r07-linkedin.html">R7</a>.</li>
-      <li><strong>Ally AI &middot; estados que a UI ainda não mostra.</strong> Em <code>Dashboard.tsx</code>: aviso quando <code>aiAnalysis</code> veio vazio (a degradação silenciosa), botão &ldquo;tentar análise de novo&rdquo; só pra violações sem análise, e <code>role="status" aria-live="polite"</code> no resultado &mdash; um produto de acessibilidade sem live region é a primeira pergunta de qualquer entrevistador.</li>
-      <li><strong>Ally AI &middot; Generative UI de verdade com tool calling.</strong> Um painel &ldquo;pergunte sobre este relatório&rdquo; em <code>apps/web/src/app/dashboard/analysis/[id]/page.tsx</code>, com ferramentas declaradas no Gemini (<code>listarViolacoes(impacto)</code>, <code>detalharViolacao(id)</code>) que leem o JSONB salvo; cada resultado de ferramenta renderiza um componente (lista filtrada, card com diff antes/depois), não texto. Vira o <strong>post 6</strong>.</li>
-      <li><strong>Ally AI &middot; interações sobre o resultado.</strong> Copiar correção, filtrar e ordenar por prioridade, e mostrar o <code>helpUrl</code> do axe que já é salvo (<code>auditService.ts</code> L58) mas nunca aparece &mdash; é a citação que dá confiança à sugestão da IA (ponte com AI UX no <a href="r06-proximo-nivel.html">R6</a>).</li>
-      <li><strong>Gabarita &middot; streaming só onde não quebra a validação.</strong> A explicação não pode ser transmitida token a token, porque <code>validarExplicacao</code> só decide no fim (ver a munição abaixo). Um candidato honesto: o resumo de diretriz no admin, com rótulo &ldquo;rascunho&rdquo; até a citação ser verificada.</li>
+      <li><strong>Aplicar streaming no Ally AI:</strong> a auditoria passa a chegar em eventos (NDJSON ou SSE) &mdash; primeiro as violações do axe, depois uma análise da IA por vez &mdash; e o front lê com <code>fetch</code> + <code>getReader()</code> e um <code>AbortController</code> pra cancelar. Vira o <strong>post 5</strong> do <a href="r07-linkedin.html">R7</a>.</li>
+      <li><strong>Aplicar tool calling + Generative UI no Ally AI:</strong> um painel &ldquo;pergunte sobre este relatório&rdquo; em <code>apps/web/src/app/dashboard/analysis/[id]/page.tsx</code>, com ferramentas no Gemini (<code>listarViolacoes(impacto)</code>, <code>detalharViolacao(id)</code>) lendo o relatório salvo, e cada resultado renderizado como componente. Vira o <strong>post 6</strong>.</li>
+      <li><strong>Aplicar retry pela interface no Ally AI:</strong> estendendo o retry que já existe no servidor, um botão &ldquo;gerar análise de novo&rdquo; por violação, com o resultado anunciado por <code>role="status"</code> no mesmo padrão do Gabarita.</li>
+      <li><strong>Aplicar streaming no Gabarita onde a validação permite:</strong> o resumo de diretriz no admin, exibido como rascunho até a citação ser verificada.</li>
     </ol>
   </div>
 
   <div class="ammo">
     <div class="ammo-head">Munição da sua entrevista &middot; &ldquo;a IA propõe, o código verifica&rdquo; no Gabarita</div>
     <div class="ammo-body">
-      <p>A explicação de uma questão de residência médica que contradiz o gabarito é pior que nenhuma explicação. Por isso, no Gabarita, a saída do Gemini passa por três portas: Zod garante o formato (<code>ExplicacaoSchema</code>), <code>validarExplicacao</code> confere que as letras são as da questão e que a correta da IA é a do banco, e se qualquer uma falha a chamada é refeita até 3 vezes (<code>src/lib/study/explain.ts</code>). Isso roda fora do caminho crítico, num <code>after()</code>, com trava atômica no Postgres pra não pagar duas vezes a mesma explicação; o cliente consulta em 3s, 9s e 21s e, aos 23s, troca o skeleton por uma mensagem honesta, sem travar o estudo.</p>
-      <p>E a consequência que impressiona: <strong>foi uma decisão consciente não usar streaming</strong> ali. Streaming mostraria texto que ainda pode ser recusado; como a aluna leva de 30s a 2min por questão e a geração leva 10-13s, a explicação quase sempre já está pronta quando ela responde.</p>
-      <p class="why"><strong>Por que isso importa:</strong> qualquer um liga um <code>useChat</code>. O que separa sênior é saber quando streaming é a resposta errada, tratar o modelo como entrada não confiável, e desenhar o estado de falha antes do estado feliz.</p>
+      <p>A explicação de uma questão de residência médica precisa concordar com o gabarito. Por isso, no Gabarita, a saída do Gemini passa por três portas: Zod garante o formato (<code>ExplicacaoSchema</code>), <code>validarExplicacao</code> confere que as letras são as da questão e que a correta da IA é a do banco, e a chamada é refeita até 3 vezes até passar (<code>src/lib/study/explain.ts</code>). Tudo roda fora do caminho crítico, num <code>after()</code>, com trava atômica no Postgres pra gerar cada explicação uma vez só; o cliente consulta em 3s, 9s e 21s e, aos 23s, mostra uma mensagem clara sem travar o estudo.</p>
+      <p>E a decisão de design que impressiona: <strong>geração antecipada em vez de streaming</strong> ali. A validação decide sobre a resposta inteira, e como a aluna leva de 30s a 2min por questão e a geração leva 10-13s, a explicação já está pronta quando ela responde.</p>
+      <p class="why"><strong>Por que isso importa:</strong> qualquer um liga um <code>useChat</code>. O que separa sênior é escolher a técnica pelo caso, tratar a saída do modelo como entrada a validar, e desenhar o estado de falha junto com o estado feliz.</p>
     </div>
   </div>
 
@@ -130,7 +132,7 @@
       <li>Por que o Gabarita não faz streaming da explicação, se streaming &ldquo;é melhor pra UX&rdquo;?
         <details class="ans"><summary>ver resposta</summary>
           <div class="ans-body"><p>Porque a validação é <strong>sobre a resposta inteira</strong>: só no fim dá pra saber se a alternativa que a IA marcou como correta é a do gabarito. Transmitir token a token mostraria à aluna um texto que pode ser recusado e substituído &mdash; numa prova de medicina, uma explicação errada que aparece por 5 segundos já ensinou errado.</p>
-<p>E o ganho de streaming (tempo até o primeiro token) quase não existe ali: a geração começa num <code>after()</code> quando a questão abre e termina antes de a aluna responder. Streaming resolve espera percebida; quando não há espera percebida, ele só traz risco.</p></div>
+<p>E o ganho de streaming (tempo até o primeiro token) quase não existe ali: a geração começa num <code>after()</code> quando a questão abre e termina antes de a aluna responder. Streaming resolve espera percebida; quando a geração antecipada já elimina a espera, ela é a escolha mais simples.</p></div>
         </details>
       </li>
       <li>Qual a diferença entre structured output e tool calling, e quando você usaria cada um?
@@ -147,7 +149,7 @@
       </li>
       <li>O polling do Gabarita (3s, 9s, 21s, desiste em 23s) é uma boa solução? O que mudaria com SSE ou streaming?
         <details class="ans"><summary>ver resposta</summary>
-          <div class="ans-body"><p>Pro caso dele, sim: são no máximo 3 requisições, o intervalo crescente acompanha a distribuição real do tempo de geração, e o prazo de desistência garante que a tela nunca fica em loading eterno. O custo é latência: a explicação pode ficar pronta aos 10s e só aparecer aos 21s.</p>
+          <div class="ans-body"><p>Pro caso dele, sim: são no máximo 3 requisições, o intervalo crescente acompanha a distribuição real do tempo de geração, e o prazo de desistência garante que a tela nunca fica em loading eterno. O trade-off é de latência: a explicação pode ficar pronta aos 10s e aparecer no refresh dos 21s.</p>
 <p>Com SSE (ver <a href="04-concorrencia.html">Semana 4</a>), o servidor avisaria no instante em que a explicação fosse gravada &mdash; menos latência, mas uma conexão aberta por aluna, o que pesa em serverless com limite de duração de função. É o trade-off clássico entre polling (simples, sem estado) e push (imediato, com conexão).</p></div>
         </details>
       </li>

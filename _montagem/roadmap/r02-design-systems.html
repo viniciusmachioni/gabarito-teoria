@@ -26,19 +26,19 @@
     <li><div class="r-title"><a href="https://playwright.dev/docs/test-snapshots" target="_blank" rel="noopener">Playwright &mdash; Visual comparisons</a></div><div class="r-note"><code>toHaveScreenshot()</code>: baseline no primeiro run, comparação nos seguintes, <code>--update-snapshots</code> e o aviso sobre SO/hardware.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta. O parágrafo sobre variação de renderização entre ambientes é o que mais cai em entrevista.</div><div class="r-src">playwright.dev &middot; oficial</div></li>
   </ul>
 
-  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
   <div class="evid">
-    <div class="evid-head">Onde você já fez isso &middot; e onde ainda não</div>
+    <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
       <div class="evid-item">
-        <h4>Tokens, variantes, composição e documentação <span class="st p">Gabarita: parcial (tokens fortes, sem lib de variantes)</span> <span class="st p">Ally AI: parcial</span></h4>
+        <h4>Tokens, variantes, composição e documentação <span class="st p">Gabarita: aplicado em parte</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
         <p class="proj">Gabarita</p>
         <ul>
-          <li><strong>Tokens semânticos em OKLCH</strong> no <code>@theme</code> do Tailwind v4: <code>src/app/globals.css</code> L8&ndash;38 (<code>--color-paper</code>, <code>--color-ink-soft</code>, <code>--color-brand</code>, <code>--color-on-brand</code>, raios, sombras). Os comentários registram o contraste (&ldquo;texto secundário (&ge;4.5:1)&rdquo;, &ldquo;Fill tunado para AA&rdquo;).</li>
-          <li><strong>Tema escuro trocando só os tokens</strong>: <code>:root[data-theme=&quot;dark&quot;]</code> em <code>globals.css</code> L43&ndash;59 &mdash; nenhum componente sabe que existe dark mode. Escolha explícita da usuária, nunca herdada do SO (decisão D85), aplicada antes do primeiro paint por <code>src/components/script-tema.tsx</code> com o nonce da CSP.</li>
-          <li><strong>Variantes como classes de componente</strong> em <code>@layer components</code> (<code>globals.css</code> L100+): <code>.btn-primary</code> / <code>.btn-ghost</code> / <code>.btn-danger</code> (L143&ndash;160), <code>.chip</code>/<code>.chip-on</code>, <code>.input</code>, <code>.select</code>, <code>.card</code> (L163), <code>.skeleton</code> (L174). Funciona, mas não é tipado: nada impede <code>className=&quot;btn-primary btn-danger&quot;</code>.</li>
+          <li><strong>Tokens semânticos em OKLCH</strong> no <code>@theme</code> do Tailwind v4: <code>src/app/globals.css</code> L8&ndash;38 (<code>--color-paper</code>, <code>--color-ink-soft</code>, <code>--color-brand</code>, <code>--color-on-brand</code>, raios, sombras). Os comentários registram o contraste de cada par (&ldquo;texto secundário (&ge;4.5:1)&rdquo;, &ldquo;Fill tunado para AA&rdquo;).</li>
+          <li><strong>Tema escuro trocando só os tokens</strong>: <code>:root[data-theme=&quot;dark&quot;]</code> em <code>globals.css</code> L43&ndash;59 &mdash; nenhum componente sabe que existe dark mode. A escolha é explícita da usuária (decisão D85) e aplicada antes do primeiro paint por <code>src/components/script-tema.tsx</code>, com o nonce da CSP.</li>
+          <li><strong>Variantes como classes de componente</strong> em <code>@layer components</code> (<code>globals.css</code> L100+): <code>.btn-primary</code> / <code>.btn-ghost</code> / <code>.btn-danger</code> (L143&ndash;160), <code>.chip</code>/<code>.chip-on</code>, <code>.input</code>, <code>.select</code>, <code>.card</code> (L163), <code>.skeleton</code> (L174).</li>
           <li><strong>Variante por prop, tipada</strong>: <code>src/components/grade-numerada.tsx</code> &mdash; <code>type Escala = &quot;trilha&quot; | &quot;mini&quot; | &quot;completa&quot; | &quot;mobile&quot;</code> (L8) e mapas <code>Record&lt;Escala, string&gt;</code> (L10&ndash;22). É o padrão do <code>cva</code> escrito à mão.</li>
-          <li><strong>Documentação</strong>: <code>DESIGN.md</code> (seções Tokens, Componentes, Estados obrigatórios e &ldquo;Refusos&rdquo;) e a página <code>src/app/(app)/admin/design/page.tsx</code>, um &ldquo;Storybook caseiro&rdquo; só pra admin que mostra a <code>GradeNumerada</code> em todos os estados.</li>
+          <li><strong>Documentação</strong>: <code>DESIGN.md</code> (seções Tokens, Componentes, Estados obrigatórios e &ldquo;Refusos&rdquo;) e a página <code>src/app/(app)/admin/design/page.tsx</code>, uma vitrine de componentes que mostra a <code>GradeNumerada</code> em todos os estados.</li>
         </ul>
 <pre><code>const TAMANHO: Record&lt;Escala, string&gt; = {
   trilha: "size-2.5",
@@ -48,56 +48,66 @@
 };</code></pre>
         <p class="proj">Ally AI</p>
         <ul>
-          <li>Quatro tokens de cor e duas fontes no <code>@theme</code>: <code>apps/web/src/app/globals.css</code> L3&ndash;11. Sem variantes e sem componentes de base: as classes de botão e input se repetem em <code>login/page.tsx</code>, <code>register/page.tsx</code> e <code>pricing/page.tsx</code>, e há cor fora de token (<code>slate-*</code>, <code>indigo-*</code>) em <code>components/HeroSearch.tsx</code> e <code>DashboardSkeleton.tsx</code>.</li>
-          <li><code>animate-in fade-in slide-in-from-*</code> (<code>Dashboard.tsx</code> L22, <code>HeroSearch.tsx</code> L70, <code>DashboardSkeleton.tsx</code> L3) não faz nada: o plugin <code>tw-animate-css</code> não está instalado.</li>
+          <li><strong>Tokens de marca no <code>@theme</code></strong> do Tailwind v4 (CSS-first, sem <code>tailwind.config</code>): quatro cores semânticas (<code>--color-primary</code>, <code>secondary</code>, <code>tertiary</code>, <code>neutral</code>) e duas fontes (<code>--font-headline</code>, <code>--font-body</code>) em <code>apps/web/src/app/globals.css</code> L3&ndash;11, com as fontes vindas de <code>next/font</code> em <code>app/layout.tsx</code>.</li>
+          <li><strong>Regra de design documentada</strong>: o <code>CLAUDE.md</code> define que &ldquo;acessibilidade vence estética: se o token não passa contraste, muda o token&rdquo; (L167) &mdash; a decisão mora no token, não em cada tela.</li>
         </ul>
+        <p>Ainda não aplicado aqui: variantes tipadas (<code>cva</code>) em componentes de base compartilhados.</p>
       </div>
 
       <div class="evid-item">
-        <h4>Biblioteca de componentes com Storybook e Figma <span class="st n">Gabarita: lacuna</span> <span class="st n">Ally AI: lacuna</span></h4>
-        <p>Nenhum dos dois tem Storybook, <code>*.stories.tsx</code> ou Code Connect. O mais perto disso é o <code>/admin/design</code> do Gabarita. O protótipo de design do Gabarita vive fora do repositório (o <code>DESIGN.md</code> diz isso explicitamente). No Ally AI, o pacote compartilhado <code>packages/types</code> é só de tipos &mdash; a fundação de monorepo pra um <code>packages/ui</code> já existe (ver <a href="r03-arquitetura-frontend.html">R3</a>), falta o pacote.</p>
+        <h4>Biblioteca de componentes com Storybook e Figma <span class="st n">Gabarita: ainda não aplicado</span> <span class="st n">Ally AI: ainda não aplicado</span></h4>
+        <p>O que já existe e serve de ponto de partida: no Gabarita, a vitrine <code>/admin/design</code> e o <code>DESIGN.md</code> já cumprem o papel de catálogo e documentação. No Ally AI, o monorepo Turborepo com <code>packages/types</code> já é a estrutura onde um <code>packages/ui</code> entraria (ver <a href="r03-arquitetura-frontend.html">R3</a>).</p>
       </div>
 
       <div class="evid-item">
-        <h4>Regressão visual e acessibilidade automatizada <span class="st n">Gabarita: lacuna (só getByRole)</span> <span class="st p">Ally AI: parcial (é o produto, não o teste)</span></h4>
-        <p class="proj">Gabarita</p>
-        <ul>
-          <li>Sem axe, sem Playwright, sem screenshot. Mas os testes de componente (Vitest + Testing Library) já consultam por papel e nome acessível, o que reprova componente sem semântica: <code>src/components/grade-numerada.test.tsx</code> L18 (<code>getByRole(&quot;img&quot;, { name: &quot;Questão 1 — Acerto&quot; })</code>) e L27 (&ldquo;todo estado tem legenda textual, não só cor&rdquo;); <code>question-runner.test.tsx</code> L49&ndash;51.</li>
-        </ul>
+        <h4>Regressão visual e acessibilidade automatizada <span class="st n">Gabarita: ainda não aplicado</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
         <p class="proj">Ally AI</p>
         <ul>
-          <li>O produto <strong>é</strong> um motor de teste automatizado de acessibilidade: <code>apps/api/src/services/auditService.ts</code> L96 (<code>scanPage</code>) abre a página no Chromium e roda <code>new AxePuppeteer(page).analyze()</code> (L156).</li>
-          <li>Só que o front do próprio Ally AI não é auditado: o dogfooding é item P0 pendente em <code>docs/DIAGNOSTICO.md</code> (L21), e a seção 4 (L119+) mede o contraste dos tokens &mdash; <code>secondary #475569</code> dá <strong>2,36:1</strong> sobre o fundo, <code>primary #6366F1</code> dá 4,00:1, branco sobre <code>primary</code> reprova por 0,03.</li>
+          <li><strong>O produto é um motor de teste automatizado de acessibilidade.</strong> <code>apps/api/src/services/auditService.ts</code>: <code>scanPage</code> (L96+) abre a URL num Chromium headless com Puppeteer, espera a rede assentar e roda <code>new AxePuppeteer(page).analyze()</code> (L156) &mdash; auditando o DOM depois de montar componente e resolver rota, não o HTML de origem.</li>
+          <li><strong>Mapeamento WCAG preservado</strong>: cada violação mantém <code>id</code>, <code>impact</code>, <code>help</code>, <code>helpUrl</code> e todos os <code>nodes</code> (L53&ndash;60); o <code>CLAUDE.md</code> define preservar <code>target</code>, <code>tags</code> (critério WCAG e nível) e os <code>incomplete</code> (L135&ndash;136).</li>
+          <li><strong>Processo de verificação em três frentes</strong>, documentado no <code>CLAUDE.md</code> (L102&ndash;108): rodar o próprio motor axe, Lighthouse e navegação só por teclado, com meta de WCAG 2.2 A/AA nas rotas principais.</li>
         </ul>
+<pre><code>const enrichedResults = axeResults.violations.map((violation) =&gt; ({
+  id: violation.id,
+  impact: violation.impact || "desconhecido",
+  help: violation.help,
+  helpUrl: violation.helpUrl,
+  nodes: violation.nodes,
+  aiAnalysis: aiAnalyses[violation.id] || undefined,
+}));</code></pre>
+        <p class="proj">Gabarita</p>
+        <ul>
+          <li>Os testes de componente (Vitest + Testing Library) consultam por papel e nome acessível, o que já trava a semântica: <code>src/components/grade-numerada.test.tsx</code> L18 (<code>getByRole(&quot;img&quot;, { name: &quot;Questão 1 — Acerto&quot; })</code>) e L27 (&ldquo;todo estado tem legenda textual, não só cor&rdquo;); <code>question-runner.test.tsx</code> L49&ndash;51.</li>
+        </ul>
+        <p>Ainda não aplicado aqui: screenshot de regressão visual e axe rodando no CI.</p>
       </div>
 
       <div class="evid-item">
-        <h4>Componentes responsivos e acessíveis (WCAG 2.1) <span class="st y">Gabarita: usado</span> <span class="st p">Ally AI: responsivo sim, acessível não</span></h4>
+        <h4>Componentes responsivos e acessíveis (WCAG 2.1) <span class="st y">Gabarita: aplicado</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
         <p class="proj">Gabarita</p>
         <ul>
           <li><strong>1.4.1 &mdash; não depender só de cor</strong>: <code>grade-numerada.tsx</code> L33&ndash;53 diferencia acerto/erro/atual/em-branco/anulada por <em>padrão de borda</em> (sólida, pontilhada, tracejada, line-through), não só por cor, e sempre com legenda textual (L108&ndash;121). Item clicável vira <code>&lt;button aria-label&gt;</code> (L87&ndash;97); não clicável vira <code>role=&quot;img&quot;</code> (L101).</li>
           <li><strong>Foco e movimento</strong>: <code>:focus-visible</code> com outline de marca (<code>globals.css</code> L77&ndash;81) e <code>prefers-reduced-motion</code> global (L91&ndash;97).</li>
-          <li><strong>Alvo de toque e zoom do iOS</strong>: <code>min-h-11</code> (44px) nos botões; <code>@media (width &lt; 48rem)</code> sobe a fonte do input pra 1rem (L215+) &mdash; abaixo de 16px o Safari dá zoom no foco.</li>
+          <li><strong>Alvo de toque e zoom do iOS</strong>: <code>min-h-11</code> (44px) nos botões; <code>@media (width &lt; 48rem)</code> sobe a fonte do input pra 1rem (L215+), porque abaixo de 16px o Safari dá zoom no foco.</li>
           <li><strong>Navegação mobile própria</strong>: <code>src/app/(app)/mobile-tab-bar.tsx</code> &mdash; <code>md:hidden</code> (L46), <code>nav aria-label</code> (L86), <code>aria-current=&quot;page&quot;</code> (L91), <code>aria-expanded</code>/<code>aria-controls</code> no &ldquo;Mais&rdquo; (L101&ndash;102).</li>
-          <li>Diálogos com papel: <code>entregar-prova.tsx</code> L36 (<code>role=&quot;dialog&quot; aria-modal=&quot;true&quot;</code>), <code>multi-select.tsx</code> L84&ndash;96 (dialog + searchbox + teclado, Escape fecha em L39).</li>
+          <li><strong>Diálogos com papel</strong>: <code>entregar-prova.tsx</code> L36 (<code>role=&quot;dialog&quot; aria-modal=&quot;true&quot;</code>), <code>multi-select.tsx</code> L84&ndash;96 (dialog + searchbox + teclado, Escape fecha em L39).</li>
         </ul>
         <p class="proj">Ally AI</p>
         <ul>
-          <li>Responsivo com breakpoints do Tailwind (<code>Dashboard.tsx</code> <code>md:flex-row</code>, <code>grid-cols-1 lg:grid-cols-3</code>), mas a navegação some no celular sem alternativa (<code>components/Header.tsx</code> L51, <code>hidden ... md:flex</code>).</li>
-          <li>Zero atributo <code>aria-*</code>, <code>role</code> ou <code>htmlFor</code> em <code>apps/web/src</code>; <code>&lt;label&gt;</code> sem associação em <code>login/page.tsx</code> L49 e L64; input de URL sem label (<code>HeroSearch.tsx</code> L43); modal de créditos sem <code>role=&quot;dialog&quot;</code> e botão de fechar só com ícone (<code>HeroSearch.tsx</code> L76&ndash;84).</li>
+          <li><strong>Layout responsivo com breakpoints do Tailwind</strong>: <code>components/Dashboard.tsx</code> L23 (<code>flex-col</code> &rarr; <code>md:flex-row</code>), L60 (<code>grid-cols-1</code> &rarr; <code>lg:grid-cols-3</code>) e o resumo <code>sticky top-24</code> na coluna lateral (L139); tipografia em escala no hero (<code>text-4xl md:text-5xl lg:text-6xl</code>, <code>HeroSearch.tsx</code>).</li>
+          <li><strong>Base semântica</strong>: <code>lang=&quot;pt-BR&quot;</code> no <code>layout.tsx</code>, landmarks <code>&lt;header&gt;</code>/<code>&lt;nav&gt;</code>/<code>&lt;main&gt;</code> e <code>alt</code> no logo com <code>next/image</code>.</li>
         </ul>
       </div>
     </div>
   </div>
 
   <div class="gap">
-    <h4>O que falta construir</h4>
+    <h4>Próximo passo do roadmap</h4>
     <ol>
-      <li><strong>Ally AI &middot; tokens que passam no AA.</strong> Trocar <code>--color-secondary</code>/<code>--color-primary</code> em <code>apps/web/src/app/globals.css</code> pelos candidatos já medidos no <code>DIAGNOSTICO.md</code> (ex.: <code>indigo-400</code> 5,98:1 pra texto) e eliminar as cores soltas. Uma tarde de trabalho, antes/depois mensurável. <em>Post R7:</em> &ldquo;Minha ferramenta de acessibilidade reprovava na própria auditoria&rdquo;.</li>
-      <li><strong>Ally AI &middot; <code>packages/ui</code> com Button/Input/Dialog em <code>cva</code></strong> + Storybook com <code>@storybook/addon-a11y</code> em <code>test: 'error'</code>. Resolve de uma vez as classes repetidas, o label solto e o modal sem papel. <em>Post R7:</em> &ldquo;Do design system ao Storybook&rdquo; (post 7 do calendário).</li>
-      <li><strong>Ally AI &middot; dogfooding no CI.</strong> Um teste Playwright com <code>@axe-core/playwright</code> (<code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) nas rotas <code>/</code>, <code>/login</code>, <code>/dashboard</code>. É o item P0 do diagnóstico virando build vermelho.</li>
-      <li><strong>Gabarita &middot; Storybook da <code>GradeNumerada</code></strong> substituindo (ou alimentando) o <code>/admin/design</code>: uma story por escala, decorator de tema claro/escuro, e <code>toHaveScreenshot()</code> das quatro escalas nos dois temas &mdash; regressão visual barata no componente-assinatura.</li>
-      <li><strong>Gabarita &middot; tokens exportáveis.</strong> Escrever os tokens do <code>@theme</code> num <code>tokens.json</code> no formato DTCG e gerar o CSS a partir dele. É o passo que permite sincronizar com o Figma (Tokens Studio / variables) e falar de &ldquo;fonte única da verdade&rdquo; com prova.</li>
+      <li><strong>Aplicar Storybook no Ally AI</strong> criando um <code>packages/ui</code> no monorepo (Button, Input, Dialog com variantes em <code>cva</code>) e o <code>@storybook/addon-a11y</code> com <code>test: 'error'</code>. <em>Post R7:</em> &ldquo;Do design system ao Storybook&rdquo; (post 7 do calendário).</li>
+      <li><strong>Aplicar a ideia do motor do Ally AI na própria interface</strong>: um teste Playwright com <code>@axe-core/playwright</code> (<code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) nas rotas <code>/</code>, <code>/login</code> e <code>/dashboard</code>, rodando no CI. <em>Post R7:</em> &ldquo;A ferramenta de acessibilidade que audita a si mesma&rdquo;.</li>
+      <li><strong>Aplicar regressão visual no Gabarita</strong> com stories da <code>GradeNumerada</code> (uma por escala, decorator de tema claro/escuro) e <code>toHaveScreenshot()</code> das quatro escalas nos dois temas.</li>
+      <li><strong>Aplicar tokens exportáveis no Gabarita</strong>: os tokens do <code>@theme</code> num <code>tokens.json</code> no formato DTCG, gerando o CSS a partir dele &mdash; o passo que conecta o design system ao Figma (variables / Tokens Studio).</li>
     </ol>
   </div>
 
@@ -127,9 +137,9 @@
           <div class="ans-body"><p>A baseline foi gerada num ambiente diferente do CI: a renderização de fonte e antialiasing muda com SO, versão do navegador, hardware e até modo headless (a própria doc do Playwright avisa). Por isso o nome do snapshot leva navegador e plataforma (<code>-chromium-linux</code>). Solução: gerar e atualizar a baseline <strong>no mesmo ambiente do CI</strong> (um container fixo), e usar tolerância (<code>maxDiffPixels</code>) só pra ruído, nunca pra esconder mudança real.</p></div>
         </details>
       </li>
-      <li>O Ally AI audita acessibilidade dos sites dos clientes com axe-core. Um entrevistador pergunta: &ldquo;e o seu próprio front passa?&rdquo;. Qual é a resposta honesta e o que ela mostra?
+      <li>O Ally AI audita acessibilidade dos sites dos clientes com axe-core. Como você explicaria a divisão de trabalho entre o axe-core e o LLM nesse motor?
         <details class="ans"><summary>ver resposta</summary>
-          <div class="ans-body"><p>Hoje não passa, e você sabe exatamente por quê: o <code>DIAGNOSTICO.md</code> mediu o contraste dos tokens (2,36:1 no <code>secondary</code>), listou label sem associação, modal sem papel e navegação mobile ausente, e pôs o dogfooding como P0. A resposta mostra duas coisas boas: você mede antes de afirmar, e sabe que a correção certa é <strong>no token</strong>, não caso a caso. Melhor ainda se, quando a entrevista chegar, o teste com <code>@axe-core/playwright</code> já estiver no CI.</p></div>
+          <div class="ans-body"><p>O axe-core <strong>detecta</strong>: é um motor de regras determinístico (contraste calculado, ARIA inválido, nome acessível ausente) e roda no DOM real do Chromium depois que a SPA montou. Detecção precisa dar o mesmo resultado hoje e daqui a três meses, ou ninguém confia nela num CI. O LLM só <strong>escreve a correção</strong> de cada violação &mdash; o <code>aria-label</code> certo pra aquele botão é onde regra não chega e modelo chega. E o resultado preserva o critério WCAG, o seletor e os nós afetados, então a sugestão da IA sempre aponta pra um fato verificável.</p></div>
         </details>
       </li>
       <li>Se o axe-core não acusa nenhuma violação, o componente está conforme a WCAG 2.1 AA?

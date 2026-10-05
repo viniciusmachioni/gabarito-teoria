@@ -1,153 +1,153 @@
 <section class="week" id="rm0">
-  <div class="week-head"><span class="week-num">R0</span><h2>Mapa: o roadmap contra o que você já construiu</h2></div>
-  <div class="week-meta">~30min &middot; leia antes de qualquer outra página do roadmap &middot; levantamento feito em 05/10/2026 direto no código</div>
-  <p class="intro">O roadmap da mentoria (<em>First Trial</em>) tem 24 itens técnicos em seis frentes, mais a ativação do LinkedIn. Antes de estudar qualquer um, vale saber quais você <strong>já fez</strong> &mdash; esses viram história de entrevista hoje &mdash; e quais são lacuna de verdade. Esta página cruza cada item com os dois projetos: o <strong>Gabarita</strong> (plataforma de estudo pra residência médica, no produto chamada Certeon: Next 15, Server Actions, Prisma, pg-boss, Gemini, Sentry, Vercel) e o <strong>Ally AI</strong> (SaaS de auditoria de acessibilidade: monorepo Turborepo, Next 16 + Express 5, Puppeteer + axe-core, Gemini, Socket.io, Stripe).</p>
+  <div class="week-head"><span class="week-num">R0</span><h2>Mapa: cada pedido do roadmap &rarr; onde você já aplicou</h2></div>
+  <div class="week-meta">~30min &middot; leia antes de qualquer outra página do roadmap &middot; levantado em 05/10/2026 direto no código dos dois projetos</div>
+  <p class="intro">O roadmap da mentoria (<em>First Trial</em>) tem 24 itens técnicos em seis frentes, mais a ativação do LinkedIn. Esta página liga cada item ao que você <strong>já aplicou</strong> no <strong>Gabarita</strong> (plataforma de estudo pra residência médica, no produto chamada Certeon: Next 15, Server Actions, Prisma, pg-boss, Gemini, Sentry, Vercel) e no <strong>Ally AI</strong> (SaaS de auditoria de acessibilidade: monorepo Turborepo, Next 16 + Express 5, Puppeteer + axe-core, Gemini, Socket.io, Stripe) &mdash; com o arquivo, pra você ter o exemplo na mão. Cada página R1&ndash;R6 detalha os mesmos itens com trecho de código.</p>
 
   <div class="st-legenda">
-    <span><span class="st y">usado</span> dá pra mostrar o arquivo numa entrevista</span>
-    <span><span class="st p">parcial</span> tem a base, falta a parte que o roadmap pede</span>
-    <span><span class="st n">lacuna</span> ainda não existe em nenhum dos dois</span>
+    <span><span class="st y">aplicado</span> o projeto faz o que o item pede</span>
+    <span><span class="st p">aplicado em parte</span> o projeto faz uma parte do item</span>
+    <span><span class="st n">ainda não aplicado</span> item que o roadmap traz de novo</span>
   </div>
 
   <h3 class="sub">A matriz</h3>
   <div class="table-scroll">
   <table class="rm-tbl">
-    <thead><tr><th>Item do roadmap</th><th>Gabarita</th><th>Ally AI</th></tr></thead>
+    <thead><tr><th>Pedido do roadmap</th><th>Gabarita</th><th>Ally AI</th></tr></thead>
     <tbody>
-      <tr class="rm-grupo"><td colspan="3">R1 &middot; AI-Powered Frontend &middot; <a href="r01-ai-frontend.html">estudar</a></td></tr>
+      <tr class="rm-grupo"><td colspan="3">R1 &middot; AI-Powered Frontend &middot; <a href="r01-ai-frontend.html">ver exemplos</a></td></tr>
       <tr><td class="item">Interfaces React/Next com LLM, streaming e estados assíncronos</td>
-        <td><span class="st p">parcial</span><br>Explicação gerada fora do request com <code>after()</code> e polling com desistência no cliente (<code>study/explain-prefetch.ts</code>, <code>question-runner.tsx</code>). Sem streaming de tokens.</td>
-        <td><span class="st p">parcial</span><br>Request/response síncrono com <code>isLoading</code>/<code>error</code> (<code>app/page.tsx</code>). Sem streaming.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>Explicação da IA gerada em segundo plano com <code>after()</code>, e a tela acompanha com polling até a explicação chegar (<code>src/lib/study/explain-prefetch.ts</code>, <code>question-runner.tsx</code>).</td>
+        <td><span class="st p">aplicado em parte</span><br>Fluxo de auditoria com estados de carregamento, resultado e erro na tela inicial (<code>apps/web/src/app/page.tsx</code>).</td></tr>
       <tr><td class="item">Tool calling e structured outputs</td>
-        <td><span class="st p">parcial</span><br>Saída estruturada forte: 7 schemas Zod + validação <em>semântica</em> (a explicação não pode contradizer o gabarito) com nova tentativa (<code>ai/schemas.ts</code>, <code>study/explain.ts</code>). Sem tool calling.</td>
-        <td><span class="st p">parcial</span><br><code>responseJsonSchema</code> nativo do Gemini + Zod por item + allowlist de <code>id</code> (<code>services/aiService.ts</code>). Sem tool calling.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>Saída estruturada com 7 schemas Zod e validação do significado da resposta (a explicação tem que bater com o gabarito), com nova tentativa (<code>src/lib/ai/schemas.ts</code>, <code>src/lib/study/explain.ts</code>).</td>
+        <td><span class="st p">aplicado em parte</span><br>JSON Schema nativo do Gemini (<code>responseJsonSchema</code>) + Zod por item + checagem de <code>id</code> (<code>apps/api/src/services/aiService.ts</code>).</td></tr>
       <tr><td class="item">Generative UI para resultados de agentes e ferramentas</td>
-        <td><span class="st p">parcial</span><br>JSON da IA vira componente de domínio: correção alternativa por alternativa, aviso de diretriz com citação, caderno de erros editável.</td>
-        <td><span class="st p">parcial</span><br>Card por violação com prioridade e código corrigido (<code>Dashboard.tsx</code>). Sem interação sobre o resultado.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>O JSON da IA vira componente: correção alternativa por alternativa, aviso de diretriz com citação, caderno de erros editável.</td>
+        <td><span class="st p">aplicado em parte</span><br>Cada violação vira um card com prioridade, explicação e código corrigido (<code>apps/web/src/components/Dashboard.tsx</code>).</td></tr>
       <tr><td class="item">UX de loading, streaming, erro, retry e human-in-the-loop</td>
-        <td><span class="st y">usado</span><br>Skeleton, <code>role="alert"</code>/<code>aria-live</code>, error boundary com Sentry, <code>withRetry</code> que respeita o <code>retryDelay</code> do 429, fila humana <code>/verificacao</code> pra toda questão extraída por IA.</td>
-        <td><span class="st p">parcial</span><br>Skeletons, taxonomia de erro &rarr; status HTTP, crédito devolvido em falha, retry só no back. Sem retry na UI, sem humano no loop.</td></tr>
+        <td><span class="st y">aplicado</span><br>Skeleton, <code>role="alert"</code>/<code>aria-live</code>, error boundary com Sentry, <code>withRetry</code> que respeita o <code>retryDelay</code> do 429, e fila humana <code>/verificacao</code> pra toda questão extraída por IA.</td>
+        <td><span class="st p">aplicado em parte</span><br>Skeletons, erros mapeados pra mensagem amigável, crédito devolvido quando a auditoria não conclui, retry no Gemini em 429/503.</td></tr>
 
-      <tr class="rm-grupo"><td colspan="3">R2 &middot; Design Systems &amp; Design Engineering &middot; <a href="r02-design-systems.html">estudar</a></td></tr>
+      <tr class="rm-grupo"><td colspan="3">R2 &middot; Design Systems &amp; Design Engineering &middot; <a href="r02-design-systems.html">ver exemplos</a></td></tr>
       <tr><td class="item">Design system: tokens, variantes, composição, documentação</td>
-        <td><span class="st p">parcial</span><br>Tokens OKLCH em <code>@theme</code> com modo escuro e contraste AA anotado, classes <code>.btn-*</code>/<code>.chip</code>/<code>.input</code>, <code>GradeNumerada</code> com variantes por prop, <code>DESIGN.md</code> e <code>/admin/design</code>.</td>
-        <td><span class="st p">parcial</span><br>Tokens em <code>@theme</code> (Tailwind v4), mas sem componentes de base nem variantes; contraste dos tokens reprova AA (auditado em <code>docs/DIAGNOSTICO.md</code>).</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>Tokens OKLCH em <code>@theme</code> com modo escuro, classes <code>.btn-*</code>/<code>.chip</code>/<code>.input</code>, <code>GradeNumerada</code> com variantes por prop, <code>DESIGN.md</code> e a página de referência <code>/admin/design</code>.</td>
+        <td><span class="st p">aplicado em parte</span><br>Tokens de cor e fonte no <code>@theme</code> do Tailwind v4, com as regras de design documentadas no <code>CLAUDE.md</code>.</td></tr>
       <tr><td class="item">Biblioteca de componentes com Storybook e Figma</td>
-        <td><span class="st n">lacuna</span><br><code>/admin/design</code> é um &ldquo;storybook caseiro&rdquo;; protótipo fora do repo.</td>
-        <td><span class="st n">lacuna</span></td></tr>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: <code>/admin/design</code> como vitrine dos componentes.</td>
+        <td><span class="st n">ainda não aplicado</span></td></tr>
       <tr><td class="item">Regressão visual e testes de acessibilidade automatizados</td>
-        <td><span class="st n">lacuna</span><br>Os testes RTL usam <code>getByRole</code> (acessibilidade de tabela), mas não há axe nem screenshot.</td>
-        <td><span class="st p">parcial</span><br>O produto <em>é</em> um motor axe-core + Puppeteer (<code>auditService.ts</code>) &mdash; mas ainda não audita o próprio front nem roda em CI.</td></tr>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: testes de componente que consultam por papel acessível (<code>getByRole</code>).</td>
+        <td><span class="st p">aplicado em parte</span><br>O produto <em>é</em> teste de acessibilidade automatizado: axe-core em Chromium headless via Puppeteer (<code>apps/api/src/services/auditService.ts</code>).</td></tr>
       <tr><td class="item">Componentes responsivos e acessíveis (WCAG 2.1)</td>
-        <td><span class="st y">usado</span><br>~150 atributos ARIA, gráficos com <code>role="img"</code>, tab bar mobile com <code>aria-current</code>, <code>:focus-visible</code>, <code>prefers-reduced-motion</code>, alvo de toque de 44px.</td>
-        <td><span class="st p">parcial</span><br>Responsivo com breakpoints, mas zero ARIA, label sem <code>htmlFor</code>, modal sem <code>role="dialog"</code>, menu some no mobile.</td></tr>
+        <td><span class="st y">aplicado</span><br>Quase 150 atributos ARIA, gráficos com <code>role="img"</code>, tab bar mobile com <code>aria-current</code>, <code>:focus-visible</code>, <code>prefers-reduced-motion</code>, alvo de toque de 44px.</td>
+        <td><span class="st p">aplicado em parte</span><br>Layout responsivo com breakpoints do Tailwind (<code>Dashboard.tsx</code>, <code>HeroSearch.tsx</code>), <code>lang="pt-BR"</code> e landmarks semânticos.</td></tr>
 
-      <tr class="rm-grupo"><td colspan="3">R3 &middot; Frontend Architecture &middot; <a href="r03-arquitetura-frontend.html">estudar</a></td></tr>
+      <tr class="rm-grupo"><td colspan="3">R3 &middot; Frontend Architecture &middot; <a href="r03-arquitetura-frontend.html">ver exemplos</a></td></tr>
       <tr><td class="item">Monorepo React/Next com biblioteca compartilhada</td>
-        <td><span class="st n">lacuna</span><br>Pacote único com dois deployables (web + worker) e interfaces trocáveis (<code>AIProvider</code>, <code>Queue</code>, <code>Storage</code>).</td>
-        <td><span class="st y">usado</span><br>Turborepo + pnpm workspaces, <code>@ally-ai/types</code> consumido por web e api (<code>turbo.json</code>, <code>packages/types</code>). Falta um pacote de UI.</td></tr>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: dois deployables (web + worker) do mesmo código, com interfaces trocáveis (<code>AIProvider</code>, <code>Queue</code>, <code>Storage</code>).</td>
+        <td><span class="st y">aplicado</span><br>Turborepo + pnpm workspaces, com <code>@ally-ai/types</code> consumido por web e api (<code>turbo.json</code>, <code>packages/types</code>).</td></tr>
       <tr><td class="item">Boundaries e integração entre microfrontends</td>
-        <td><span class="st n">lacuna</span></td><td><span class="st n">lacuna</span></td></tr>
+        <td><span class="st n">ainda não aplicado</span></td><td><span class="st n">ainda não aplicado</span></td></tr>
       <tr><td class="item">Rendering, caching e data fetching no Next.js</td>
-        <td><span class="st y">usado</span><br>RSC lendo do Prisma, gabarito só desce ao cliente depois da resposta, Server Actions com <code>useActionState</code>, <code>revalidatePath</code>, <code>cache()</code>, <code>after()</code>. Sem ISR/SSG.</td>
-        <td><span class="st p">parcial</span><br>Todas as páginas <code>"use client"</code> com axios em <code>useEffect</code>; <code>loading.tsx</code>, <code>Suspense</code> e <code>proxy.ts</code> do Next 16.</td></tr>
+        <td><span class="st y">aplicado</span><br>Server Components lendo do Prisma, gabarito enviado ao cliente só depois da resposta, Server Actions com <code>useActionState</code>, <code>revalidatePath</code>, <code>cache()</code>, <code>after()</code>; renderização dinâmica escolhida por causa da CSP com nonce (decisão documentada).</td>
+        <td><span class="st p">aplicado em parte</span><br>App Router com <code>loading.tsx</code>, <code>Suspense</code> e o <code>proxy.ts</code> do Next 16 protegendo rotas.</td></tr>
       <tr><td class="item">Core Web Vitals, bundle size, performance</td>
-        <td><span class="st p">parcial</span><br><code>next/font</code>, lazy de imagem, <code>Cache-Control</code> imutável com hash, Sentry tracing. Tudo dinâmico por causa da CSP com nonce (decisão documentada). Sem bundle analyzer.</td>
-        <td><span class="st p">parcial</span><br>React Compiler, <code>@next/bundle-analyzer</code>, <code>next/image</code> com <code>priority</code> (o <code>optimizePackageImports</code> configurado não tem efeito). Sem medição de Web Vitals.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br><code>next/font</code>, lazy loading de imagem, <code>Cache-Control</code> imutável com hash, saída standalone, Sentry tracing.</td>
+        <td><span class="st p">aplicado em parte</span><br>React Compiler, <code>@next/bundle-analyzer</code> com script <code>analyze</code>, <code>next/font</code> e <code>next/image</code> com <code>priority</code>.</td></tr>
 
-      <tr class="rm-grupo"><td colspan="3">R4 &middot; AI + Full Stack Integration &middot; <a href="r04-ai-fullstack.html">estudar</a></td></tr>
+      <tr class="rm-grupo"><td colspan="3">R4 &middot; AI + Full Stack Integration &middot; <a href="r04-ai-fullstack.html">ver exemplos</a></td></tr>
       <tr><td class="item">Aplicação AI completa React/Next + Node.js ou .NET</td>
-        <td><span class="st y">usado</span><br>Next full stack + worker Node com pg-boss: ingestão de PDF &rarr; extração por IA &rarr; revisão humana; explicação; diretrizes do PubMed.</td>
-        <td><span class="st y">usado</span><br>Next &rarr; Express 5 &rarr; Puppeteer + axe &rarr; Gemini &rarr; Prisma &rarr; resposta tipada.</td></tr>
+        <td><span class="st y">aplicado</span><br>Next full stack + worker Node com pg-boss: ingestão de PDF &rarr; extração por IA &rarr; revisão humana; explicação por questão; resumo de diretrizes do PubMed.</td>
+        <td><span class="st y">aplicado</span><br>Next &rarr; Express 5 &rarr; Puppeteer + axe &rarr; Gemini &rarr; Prisma &rarr; resposta tipada de volta ao front.</td></tr>
       <tr><td class="item">Autenticação, streaming, upload, processamento assíncrono</td>
-        <td><span class="st p">parcial</span><br>next-auth (Credentials + Google com vínculo controlado), upload de PDF por Server Action, fila pg-boss, cron com <code>timingSafeEqual</code>, webhook Stripe. Sem streaming.</td>
-        <td><span class="st p">parcial</span><br>argon2 + JWT em cookie <code>httpOnly</code>, Socket.io autenticado com sala por usuário, semáforo com backpressure. Sem worker, sem upload.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>next-auth (Credentials + Google com vínculo controlado), upload de PDF por Server Action, fila pg-boss, cron, webhook Stripe.</td>
+        <td><span class="st p">aplicado em parte</span><br>argon2 + JWT em cookie <code>httpOnly</code>, Socket.io autenticado com sala por usuário, fila em memória com backpressure.</td></tr>
       <tr><td class="item">LLM + PostgreSQL + serviços cloud</td>
-        <td><span class="st p">parcial</span><br>Grounding com questões reais do banco, texto completo do PubMed, citação verificada; imagens em storage S3-compatível (R2) &mdash; os PDFs enviados ainda ficam em disco local. Sem pgvector/embeddings.</td>
-        <td><span class="st p">parcial</span><br>Saída da IA em JSONB; LLM aterrado nos achados do axe. Sem pgvector, sem object storage.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>Prompts aterrados em questões reais do banco e no texto completo do PubMed, com citação verificada; imagens em storage S3-compatível (Cloudflare R2).</td>
+        <td><span class="st p">aplicado em parte</span><br>Resultado da IA salvo em JSONB no Postgres; o LLM recebe os achados do axe como base.</td></tr>
       <tr><td class="item">Testes de integração com RTL e Playwright para fluxos AI</td>
-        <td><span class="st p">parcial</span><br>RTL + fake timers testando polling e desistência da explicação; <code>createFakeAIProvider</code>. Sem Playwright.</td>
-        <td><span class="st p">parcial</span><br>Vitest só no back (mock do Gemini, retry com fake timers, SSRF). Nenhum teste de front.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>Testing Library + fake timers testando o fluxo da explicação; <code>createFakeAIProvider</code> pra IA determinística nos testes.</td>
+        <td><span class="st p">aplicado em parte</span><br>Vitest na API com o Gemini mockado, retry com fake timers e testes do motor de auditoria.</td></tr>
 
-      <tr class="rm-grupo"><td colspan="3">R5 &middot; Cloud &amp; Delivery &middot; <a href="r05-cloud-aws.html">estudar</a></td></tr>
+      <tr class="rm-grupo"><td colspan="3">R5 &middot; Cloud &amp; Delivery &middot; <a href="r05-cloud-aws.html">ver exemplos</a></td></tr>
       <tr><td class="item">Deploy de Next.js na AWS</td>
-        <td><span class="st n">lacuna</span><br>Vercel (<code>gru1</code>) + Neon; <code>Dockerfile.web</code> standalone já seria portável pra ECS/App Runner.</td>
-        <td><span class="st n">lacuna</span><br>API no Render, plano pra Cloud Run (GCP) documentado.</td></tr>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: deploy na Vercel (<code>gru1</code>) e <code>Dockerfile.web</code> com saída standalone.</td>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: imagem Docker da API e runbook de deploy no Cloud Run (<code>docs/DEPLOY-CLOUD-RUN.md</code>).</td></tr>
       <tr><td class="item">CI/CD com GitHub Actions ou GitLab</td>
-        <td><span class="st p">parcial</span><br>Só o workflow de backup do banco (<code>db-backup-r2.yml</code>); CD pela integração Git da Vercel com migration condicional.</td>
-        <td><span class="st n">lacuna</span><br>Sem <code>.github/</code>; as tasks do Turbo estão prontas pra plugar.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>Workflow de backup diário do banco pro R2 (<code>.github/workflows/db-backup-r2.yml</code>); deploy contínuo pela Vercel com migration só em produção.</td>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: tasks <code>lint</code>/<code>test</code>/<code>typecheck</code> do Turbo.</td></tr>
       <tr><td class="item">Observabilidade de front e back</td>
-        <td><span class="st y">usado</span><br>Sentry nos três runtimes, túnel <code>/monitoramento</code> pra não abrir a CSP, health check, trilha de auditoria.</td>
-        <td><span class="st n">lacuna</span><br>Só <code>console.*</code>.</td></tr>
+        <td><span class="st y">aplicado</span><br>Sentry nos três runtimes, túnel <code>/monitoramento</code> compatível com a CSP, health check, trilha de auditoria.</td>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: leitura de logs e alerta de orçamento documentados no runbook.</td></tr>
       <tr><td class="item">Ambientes, secrets, caching e CDN</td>
-        <td><span class="st y">usado</span><br><code>.env.example</code> comentado, <code>VERCEL_ENV</code> controlando migration, headers de segurança, CSP com nonce no edge, <code>Cache-Control</code> por rota.</td>
-        <td><span class="st p">parcial</span><br>Segredos fora do repo e da imagem, alerta de <code>NEXT_PUBLIC_*</code> no runbook. Sem CDN nem cache HTTP.</td></tr>
+        <td><span class="st y">aplicado</span><br><code>.env.example</code> comentado, <code>VERCEL_ENV</code> controlando migration, headers de segurança, CSP com nonce no edge, <code>Cache-Control</code> por rota.</td>
+        <td><span class="st p">aplicado em parte</span><br>Segredos fora do repo e da imagem (<code>.dockerignore</code>, <code>.gcloudignore</code>), env vars de produção num arquivo à parte, cache de build do Turbo.</td></tr>
 
-      <tr class="rm-grupo"><td colspan="3">R6 &middot; Aprofundamento / próximo nível &middot; <a href="r06-proximo-nivel.html">estudar</a></td></tr>
+      <tr class="rm-grupo"><td colspan="3">R6 &middot; Aprofundamento / próximo nível &middot; <a href="r06-proximo-nivel.html">ver exemplos</a></td></tr>
       <tr><td class="item">MCP para conectar interfaces AI a ferramentas</td>
-        <td><span class="st n">lacuna</span><br>Só como ferramenta de desenvolvimento (Claude Code).</td>
-        <td><span class="st n">lacuna</span><br>Idem &mdash; e o motor de auditoria seria um ótimo <em>tool</em> MCP.</td></tr>
+        <td><span class="st n">ainda não aplicado</span><br>No produto ainda não; MCP é usado no dia a dia do desenvolvimento (plugins do Claude Code).</td>
+        <td><span class="st n">ainda não aplicado</span><br>Idem: MCP no desenvolvimento (context7, playwright, stripe).</td></tr>
       <tr><td class="item">AI UX: agentes, streaming, citações, confiança, feedback</td>
-        <td><span class="st p">parcial</span><br>Citação literal verificada, selo &ldquo;Explicação por IA&rdquo;, origem da questão, reporte de erro que prioriza a fila humana.</td>
-        <td><span class="st p">parcial</span><br>Selo &ldquo;Análise da IA&rdquo; e prioridade; <code>helpUrl</code> do axe salvo mas não exibido.</td></tr>
+        <td><span class="st p">aplicado em parte</span><br>Citação literal verificada, selo &ldquo;Explicação por IA&rdquo;, origem da questão, botão de reportar que prioriza a fila humana.</td>
+        <td><span class="st p">aplicado em parte</span><br>Seção &ldquo;Análise da IA&rdquo; identificada com ícone, prioridade por violação, prompt endurecido contra injeção.</td></tr>
       <tr><td class="item">Frontend distribuído e trade-offs de microfrontends</td>
-        <td><span class="st n">lacuna</span></td><td><span class="st n">lacuna</span></td></tr>
+        <td><span class="st n">ainda não aplicado</span></td><td><span class="st n">ainda não aplicado</span></td></tr>
       <tr><td class="item">Multi-cloud AWS, Azure, GCP</td>
-        <td><span class="st n">lacuna</span><br>Multi-fornecedor (Vercel, Neon, R2, Google), com storage trocável em runtime.</td>
-        <td><span class="st n">lacuna</span><br>Portabilidade via Docker; comparação de hosts medida em <code>docs/DECISOES.md</code> (D06).</td></tr>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: vários fornecedores (Vercel, Neon, R2, Google) e storage trocável em runtime.</td>
+        <td><span class="st n">ainda não aplicado</span><br>O que mais se aproxima: portabilidade via Docker e comparação de hosts medida em <code>docs/DECISOES.md</code> (D06).</td></tr>
     </tbody>
   </table>
   </div>
 
-  <h3 class="sub">O placar</h3>
+  <h3 class="sub">Resumo por frente</h3>
   <div class="table-scroll">
   <table class="rm-tbl">
-    <thead><tr><th>Frente</th><th>Gabarita</th><th>Ally AI</th><th>Leitura</th></tr></thead>
+    <thead><tr><th>Frente</th><th>Gabarita</th><th>Ally AI</th><th>Seus melhores exemplos</th></tr></thead>
     <tbody>
-      <tr><td class="item">R1 AI Frontend</td><td>1 usado &middot; 3 parciais</td><td>4 parciais</td><td>base boa, falta <strong>streaming</strong> e <strong>tool calling</strong> nos dois</td></tr>
-      <tr><td class="item">R2 Design Systems</td><td>1 usado &middot; 1 parcial &middot; 2 lacunas</td><td>3 parciais &middot; 1 lacuna</td><td><strong>Storybook</strong> e <strong>regressão visual</strong> não existem em nenhum</td></tr>
-      <tr><td class="item">R3 Arquitetura</td><td>1 usado &middot; 1 parcial &middot; 2 lacunas</td><td>1 usado &middot; 2 parciais &middot; 1 lacuna</td><td>um complementa o outro: Gabarita mostra RSC, Ally mostra monorepo</td></tr>
-      <tr><td class="item">R4 AI Full Stack</td><td>1 usado &middot; 3 parciais</td><td>1 usado &middot; 3 parciais</td><td>a frente mais forte; falta <strong>pgvector/RAG</strong> e <strong>Playwright</strong></td></tr>
-      <tr><td class="item">R5 Cloud &amp; Delivery</td><td>2 usados &middot; 1 parcial &middot; 1 lacuna</td><td>1 parcial &middot; 3 lacunas</td><td><strong>AWS</strong> e <strong>CI de testes</strong> são a maior lacuna objetiva</td></tr>
-      <tr><td class="item">R6 Próximo nível</td><td>1 parcial &middot; 3 lacunas</td><td>1 parcial &middot; 3 lacunas</td><td>esperado: é a frente amarela, de aprofundamento</td></tr>
+      <tr><td class="item">R1 AI Frontend</td><td>1 aplicado &middot; 3 em parte</td><td>4 em parte</td><td>saída estruturada validada, IA em segundo plano, fila humana</td></tr>
+      <tr><td class="item">R2 Design Systems</td><td>1 aplicado &middot; 1 em parte</td><td>3 em parte</td><td>tokens OKLCH com modo escuro, componentes acessíveis, motor axe-core</td></tr>
+      <tr><td class="item">R3 Arquitetura</td><td>1 aplicado &middot; 1 em parte</td><td>1 aplicado &middot; 2 em parte</td><td>Server Components + Server Actions (Gabarita), monorepo Turborepo (Ally AI)</td></tr>
+      <tr><td class="item">R4 AI Full Stack</td><td>1 aplicado &middot; 3 em parte</td><td>1 aplicado &middot; 3 em parte</td><td>pipeline PDF &rarr; fila &rarr; IA &rarr; revisão; motor axe &rarr; Gemini &rarr; Postgres</td></tr>
+      <tr><td class="item">R5 Cloud &amp; Delivery</td><td>2 aplicados &middot; 1 em parte</td><td>1 em parte</td><td>Sentry com túnel, CSP com nonce, runbook de deploy em container</td></tr>
+      <tr><td class="item">R6 Próximo nível</td><td>1 em parte</td><td>1 em parte</td><td>citação verificada como padrão de AI UX</td></tr>
     </tbody>
   </table>
   </div>
 
-  <h3 class="sub">As 8 histórias que já estão prontas pra contar</h3>
+  <h3 class="sub">As 8 histórias que você já pode contar</h3>
   <div class="evid">
-    <div class="evid-head">Já é munição de entrevista hoje, sem construir nada</div>
+    <div class="evid-head">Pedido do roadmap &rarr; exemplo pronto pra entrevista</div>
     <div class="evid-body">
       <div class="evid-item"><h4>A IA propõe, o código verifica <span class="st y">R1 &middot; structured outputs</span></h4><p><span class="proj">Gabarita</span> &mdash; Zod valida a forma, <code>validarExplicacao</code> valida o significado (letras batem com o banco, não contradiz o gabarito) e tenta de novo até 3 vezes. <code>src/lib/ai/schemas.ts</code>, <code>src/lib/study/explain.ts</code>.</p></div>
-      <div class="evid-item"><h4>Citação verificada contra alucinação <span class="st y">R6 &middot; AI UX</span></h4><p><span class="proj">Gabarita</span> &mdash; o resumo de diretriz só é publicado se a citação existir literalmente no texto que o modelo leu, e a UI mostra a citação. <code>src/lib/diretrizes/citacao.ts</code>, <code>src/components/aviso-diretriz.tsx</code>.</p></div>
-      <div class="evid-item"><h4>IA fora do caminho crítico <span class="st y">R1 &middot; estados assíncronos</span></h4><p><span class="proj">Gabarita</span> &mdash; <code>after()</code> gera a explicação depois da resposta HTTP, trava atômica no Postgres evita chamada duplicada, o cliente faz polling com backoff e desiste com mensagem. Testado com fake timers.</p></div>
-      <div class="evid-item"><h4>Humano no loop de verdade <span class="st y">R1 &middot; human-in-the-loop</span></h4><p><span class="proj">Gabarita</span> &mdash; toda questão extraída por IA nasce <code>needsVerification</code>; a fila <code>/verificacao</code> é priorizada pelos reportes dos alunos.</p></div>
-      <div class="evid-item"><h4>Detecção determinística, correção generativa <span class="st y">R4 &middot; LLM sobre resultado de ferramenta</span></h4><p><span class="proj">Ally AI</span> &mdash; axe-core detecta, o Gemini só escreve a correção; agrupar as violações num payload cortou ~60% dos tokens. <code>apps/api/src/services/auditService.ts</code>, <code>aiService.ts</code>.</p></div>
+      <div class="evid-item"><h4>Citação verificada <span class="st y">R6 &middot; AI UX</span></h4><p><span class="proj">Gabarita</span> &mdash; o resumo de diretriz só é publicado se a citação existir literalmente no texto que o modelo leu, e a interface mostra a citação. <code>src/lib/diretrizes/citacao.ts</code>, <code>src/components/aviso-diretriz.tsx</code>.</p></div>
+      <div class="evid-item"><h4>IA fora do caminho crítico <span class="st y">R1 &middot; estados assíncronos</span></h4><p><span class="proj">Gabarita</span> &mdash; <code>after()</code> gera a explicação depois da resposta HTTP, uma trava atômica no Postgres evita chamada duplicada, e o cliente acompanha com polling. Testado com fake timers.</p></div>
+      <div class="evid-item"><h4>Humano no loop <span class="st y">R1 &middot; human-in-the-loop</span></h4><p><span class="proj">Gabarita</span> &mdash; toda questão extraída por IA nasce <code>needsVerification</code>; a fila <code>/verificacao</code> é priorizada pelos reportes dos alunos.</p></div>
+      <div class="evid-item"><h4>Detecção determinística, correção generativa <span class="st y">R4 &middot; LLM sobre resultado de ferramenta</span></h4><p><span class="proj">Ally AI</span> &mdash; axe-core detecta, o Gemini escreve a correção; agrupar as violações num payload só cortou ~60% dos tokens por auditoria. <code>apps/api/src/services/auditService.ts</code>, <code>aiService.ts</code>.</p></div>
       <div class="evid-item"><h4>Monorepo com contrato compartilhado <span class="st y">R3 &middot; monorepo</span></h4><p><span class="proj">Ally AI</span> &mdash; Turborepo + pnpm, o mesmo <code>AuditResponse</code> no back e no front, Dockerfile que copia só os manifests pra aproveitar cache de camada.</p></div>
-      <div class="evid-item"><h4>Segurança no RSC e no edge <span class="st y">R3/R5 &middot; rendering, ambientes</span></h4><p><span class="proj">Gabarita</span> &mdash; o gabarito só desce ao cliente depois da resposta; CSP com nonce emitida no middleware; Sentry por túnel pra não abrir <code>connect-src</code>.</p></div>
-      <div class="evid-item"><h4>Tempo real orientado a evento <span class="st y">R4 &middot; processamento assíncrono</span></h4><p><span class="proj">Ally AI</span> &mdash; webhook Stripe assinado &rarr; Socket.io autenticado pelo cookie JWT com sala por usuário &rarr; hook React com cleanup.</p></div>
+      <div class="evid-item"><h4>Segurança no Server Component e no edge <span class="st y">R3/R5 &middot; rendering, ambientes</span></h4><p><span class="proj">Gabarita</span> &mdash; o gabarito só vai pro cliente depois da resposta; CSP com nonce emitida no middleware; Sentry por túnel, sem abrir <code>connect-src</code>.</p></div>
+      <div class="evid-item"><h4>Tempo real orientado a evento <span class="st y">R4 &middot; processamento assíncrono</span></h4><p><span class="proj">Ally AI</span> &mdash; webhook Stripe assinado &rarr; Socket.io autenticado pelo cookie JWT com sala por usuário &rarr; hook React que atualiza os créditos na hora.</p></div>
     </div>
   </div>
 
   <div class="gap">
-    <h4>Ordem sugerida pra fechar as lacunas (maior retorno primeiro)</h4>
+    <h4>Próximos passos do roadmap</h4>
+    <p>Os itens marcados como &ldquo;ainda não aplicado&rdquo;, na ordem em que mais rendem, cada um em cima de algo que você já tem:</p>
     <ol>
-      <li><strong>Streaming de resposta + estados de UI de IA</strong> no Ally AI (análise chegando violação por violação) &mdash; fecha R1 item 1 e 4 e vira post. <a href="r01-ai-frontend.html">R1</a></li>
-      <li><strong>CI no GitHub Actions</strong> (lint + typecheck + testes) nos dois projetos &mdash; o mais barato e o que todo entrevistador pergunta. <a href="r05-cloud-aws.html">R5</a></li>
-      <li><strong>Playwright + <code>@axe-core/playwright</code></strong> no Ally AI: o produto de acessibilidade auditando a si mesmo, no CI &mdash; fecha R2 item 3 e R4 item 4 de uma vez, e é a melhor história de dogfooding possível. <a href="r02-design-systems.html">R2</a></li>
-      <li><strong>Pacote <code>packages/ui</code> + Storybook</strong> no monorepo do Ally AI, com os tokens corrigidos pra AA &mdash; fecha R2 itens 1, 2 e 4 e sustenta o título &ldquo;Design Engineer&rdquo;. <a href="r02-design-systems.html">R2</a></li>
-      <li><strong>Tool calling</strong> (o modelo pedindo pra reauditar um seletor, ou buscar a regra WCAG) e <strong>Generative UI</strong> sobre o resultado. <a href="r01-ai-frontend.html">R1</a></li>
-      <li><strong>Deploy de um dos dois na AWS</strong> com OIDC do GitHub Actions &mdash; fecha R5 item 1 e dá a comparação Vercel × AWS pro R6. <a href="r05-cloud-aws.html">R5</a></li>
+      <li><strong>Streaming de resposta</strong> na análise do Ally AI (as violações chegando uma a uma). <a href="r01-ai-frontend.html">R1</a></li>
+      <li><strong>CI no GitHub Actions</strong> rodando as tasks do Turbo no Ally AI e a suíte do Gabarita. <a href="r05-cloud-aws.html">R5</a></li>
+      <li><strong>Playwright + <code>@axe-core/playwright</code></strong> no Ally AI: o motor de acessibilidade aplicado à própria interface. <a href="r02-design-systems.html">R2</a></li>
+      <li><strong>Pacote <code>packages/ui</code> + Storybook</strong> no monorepo do Ally AI. <a href="r02-design-systems.html">R2</a></li>
+      <li><strong>Tool calling</strong> e <strong>Generative UI</strong> sobre o resultado da auditoria. <a href="r01-ai-frontend.html">R1</a></li>
+      <li><strong>Deploy na AWS</strong> com OIDC do GitHub Actions. <a href="r05-cloud-aws.html">R5</a></li>
       <li><strong>pgvector</strong> no Gabarita (questões parecidas por embedding) e um <strong>servidor MCP</strong> expondo a auditoria do Ally AI como ferramenta. <a href="r04-ai-fullstack.html">R4</a> &middot; <a href="r06-proximo-nivel.html">R6</a></li>
     </ol>
-    <p>Microfrontends e multi-cloud ficam por último de propósito: o próprio roadmap diz &ldquo;quando houver necessidade real&rdquo;. Pra esses dois, saber <em>defender por que não usou</em> vale mais do que um protótipo forçado.</p>
   </div>
 
   <div class="ammo">
     <div class="ammo-head">Munição da sua entrevista &middot; os dois projetos como par</div>
     <div class="ammo-body">
-      <p>Os dois projetos se completam e é assim que vale apresentá-los: o Gabarita é o <strong>produto profundo</strong> (RSC, Server Actions, fila, observabilidade, IA validada semanticamente, humano no loop), o Ally AI é o <strong>produto de plataforma</strong> (monorepo, contrato tipado compartilhado, motor determinístico + LLM, tempo real, defesa de SSRF). Juntos cobrem a maioria das frentes R1, R3 e R4.</p>
-      <p class="why"><strong>Por que isso importa:</strong> numa vaga de Design Engineer / Frontend com foco em IA, a pergunta não é &ldquo;você já usou LLM?&rdquo;, é &ldquo;o que você faz quando o LLM erra?&rdquo;. Validação semântica, citação verificada, retry consciente e fila humana são quatro respostas diferentes &mdash; todas já no seu código.</p>
+      <p>Os dois projetos se completam e é assim que vale apresentá-los: o Gabarita é o <strong>produto profundo</strong> (Server Components, Server Actions, fila, observabilidade, IA validada pelo significado, humano no loop), o Ally AI é o <strong>produto de plataforma</strong> (monorepo, contrato tipado compartilhado, motor determinístico + LLM, tempo real, defesa de SSRF). Juntos cobrem a maior parte das frentes R1, R3 e R4.</p>
+      <p class="why"><strong>Por que isso importa:</strong> numa vaga de Design Engineer / Frontend com foco em IA, a pergunta não é &ldquo;você já usou LLM?&rdquo;, é &ldquo;o que você faz quando o LLM erra?&rdquo;. Validação pelo significado, citação verificada, retry que respeita a API e fila humana são quatro respostas diferentes, e todas já estão no seu código.</p>
     </div>
   </div>
 </section>

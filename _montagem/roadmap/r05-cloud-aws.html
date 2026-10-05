@@ -26,59 +26,62 @@
     <li><div class="r-title"><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html" target="_blank" rel="noopener">CloudFront &mdash; Understand cache policies</a></div><div class="r-note">Cache key, TTLs contra <code>Cache-Control</code>, compressão. A página onde está a regra que vaza página privada se você não souber dela.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia &ldquo;Time to live (TTL) settings&rdquo; e &ldquo;Cache key settings&rdquo;. A parte longa de compressão é consulta.</div><div class="r-src">docs.aws.amazon.com &middot; oficial</div></li>
   </ul>
 
-  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
   <div class="evid">
-    <div class="evid-head">O que os dois projetos já fazem desta frente</div>
+    <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
 
       <div class="evid-item">
-        <h4>Deploy de Next.js com AWS como cloud principal <span class="st n">Gabarita: lacuna</span> <span class="st n">Ally AI: lacuna</span></h4>
-        <p><span class="proj">Gabarita</span> Está na Vercel (<code>vercel.json:4</code> fixa <code>"regions": ["gru1"]</code>, e a <code>:5</code> agenda o cron diário). Mas a imagem pra sair de lá já existe: <code>next.config.ts:8</code> só liga <code>output: "standalone"</code> fora da Vercel, e <code>Dockerfile.web</code> (21 linhas, multi-stage) copia <code>.next/standalone</code> e <code>.next/static</code> e roda <code>node server.js</code>. Essa imagem iria quase sem mudança pra ECS Fargate ou App Runner. O worker do pg-boss tem imagem própria (<code>Dockerfile.worker</code>).</p>
+        <h4>Deploy de Next.js com AWS como cloud principal <span class="st n">Gabarita: ainda não aplicado</span> <span class="st n">Ally AI: ainda não aplicado</span></h4>
+        <p><span class="proj">Gabarita</span> O deploy em produção roda na Vercel, com a região fixada em <code>vercel.json:4</code> (<code>"regions": ["gru1"]</code>) e o cron diário na <code>:5</code>. A imagem portável pra container já está pronta: <code>next.config.ts:8</code> liga <code>output: "standalone"</code> fora da Vercel, e o <code>Dockerfile.web</code> (multi-stage) copia <code>.next/standalone</code> e <code>.next/static</code> e roda <code>node server.js</code>. É a mesma imagem que ECS Fargate ou App Runner recebem. O worker do pg-boss tem imagem própria (<code>Dockerfile.worker</code>), e o <code>docker-compose.yml</code> sobe db + web + worker juntos.</p>
         <pre><code>// next.config.ts:6-8
 // Docker usa o output standalone (build enxuto); no Vercel deixamos o default,
 // porque o standalone atrapalha o tracing das funções serverless. VERCEL=1 é setado lá.
 output: process.env.VERCEL ? undefined : "standalone",</code></pre>
-        <p><strong>Achado pra entrevista:</strong> o Gabarita usa <code>after()</code> pra gerar a explicação da IA depois da resposta (<code>src/lib/study/explain-prefetch.ts:20</code>) e streaming de RSC pelos seis <code>loading.tsx</code>. Os dois aparecem na lista de <em>não suportados</em> do Amplify Hosting. Ou seja, o caminho &ldquo;mais fácil&rdquo; da AWS quebraria a promessa central do produto (&ldquo;nenhum render espera a IA&rdquo;). Pra esse app, container standalone é a escolha certa.</p>
-        <p><span class="proj">Ally AI</span> O <code>Dockerfile</code> da raiz builda só a API (Express + Chromium, <code>Dockerfile:1-39</code>), que roda no Render grátis e tem migração documentada pro Google Cloud Run (<code>docs/DEPLOY-CLOUD-RUN.md:129-166</code>, com uma tabela do porquê de cada flag). Onde o web (Next 16) vai ficar ainda é pergunta aberta em <code>docs/DECISOES.md:92</code>. Não há nada de AWS.</p>
+        <p><strong>Decisão de plataforma pra levar à entrevista:</strong> o Gabarita usa <code>after()</code> pra gerar a explicação da IA depois da resposta (<code>src/lib/study/explain-prefetch.ts:20</code>) e streaming de RSC pelos seis <code>loading.tsx</code>. Os dois aparecem na lista de <em>não suportados</em> do Amplify Hosting, então pra esse app o caminho natural na AWS é o container standalone que já existe.</p>
+        <p><span class="proj">Ally AI</span> A API já é empacotada em container: o <code>Dockerfile</code> da raiz (node:20-slim + Chromium) copia primeiro só os manifests do monorepo e roda <code>pnpm install --frozen-lockfile</code> antes do <code>COPY . .</code> (<code>Dockerfile:27-33</code>), pra a camada de dependências ficar em cache entre builds. O deploy em nuvem está escrito como runbook passo a passo em <code>docs/DEPLOY-CLOUD-RUN.md</code>, com o comando completo e uma tabela explicando cada flag (<code>:129-166</code>). Ainda não aplicado aqui: o deploy na AWS.</p>
       </div>
 
       <div class="evid-item">
-        <h4>CI/CD com GitHub Actions <span class="st p">Gabarita: parcial</span> <span class="st n">Ally AI: lacuna</span></h4>
-        <p><span class="proj">Gabarita</span> O único workflow é <code>.github/workflows/db-backup-r2.yml</code>: cron diário às 06:00 UTC (<code>:21</code>), <code>pg_dump</code> da produção dentro de um container <code>postgres:18</code> (<code>:32-35</code>), envio pro R2 pela CLI da AWS com <code>--endpoint-url</code> (<code>:49-51</code>), e remoção de dumps com mais de 30 dias (<code>:53-71</code>). Já tem <code>timeout-minutes</code> e segredos em <code>secrets.*</code>. Lint, teste e build em PR não existem. O CD é a integração Git da Vercel, e o <code>buildCommand</code> só roda migration em produção:</p>
+        <h4>CI/CD com GitHub Actions <span class="st p">Gabarita: aplicado em parte</span> <span class="st n">Ally AI: ainda não aplicado</span></h4>
+        <p><span class="proj">Gabarita</span> O workflow <code>.github/workflows/db-backup-r2.yml</code> é um job agendado de verdade: cron diário às 06:00 UTC (<code>:21</code>), <code>pg_dump</code> da produção dentro de um container <code>postgres:18</code> (<code>:32-35</code>), envio pro R2 pela CLI da AWS com <code>--endpoint-url</code> (<code>:49-51</code>) e rotação dos dumps com mais de 30 dias (<code>:53-71</code>), com <code>timeout-minutes</code> e segredos em <code>secrets.*</code>. O CD acontece pela integração Git da Vercel, e o <code>buildCommand</code> aplica as migrations só no ambiente de produção:</p>
         <pre><code>// vercel.json:3
 "buildCommand": "prisma generate &amp;&amp; if [ \"$VERCEL_ENV\" = production ]; then prisma migrate deploy; fi &amp;&amp; next build"</code></pre>
-        <p><span class="proj">Ally AI</span> Não tem <code>.github/</code>, e o próprio diagnóstico admite (&ldquo;sem CI&rdquo;, <code>docs/DIAGNOSTICO.md:194</code>). As peças pra plugar já existem: <code>turbo.json:14-18</code> tem as tasks <code>lint</code>, <code>test</code> e <code>typecheck</code>, e há cinco arquivos de teste Vitest na API. O runbook só cita o deploy contínuo pelo console do Cloud Run (<code>docs/DEPLOY-CLOUD-RUN.md:248-250</code>).</p>
+        <p>Ainda não aplicado aqui: um workflow de lint, teste e build em cada PR.</p>
+        <p><span class="proj">Ally AI</span> O pipeline do Turborepo já define as tasks que um CI chamaria: <code>lint</code>, <code>test</code> e <code>typecheck</code> em <code>turbo.json:14-18</code>, com cinco arquivos de teste Vitest na API. Ainda não aplicado aqui: o workflow do GitHub Actions que roda essas tasks.</p>
       </div>
 
       <div class="evid-item">
-        <h4>Observabilidade de front e back: erro, performance e uso <span class="st y">Gabarita: usado</span> <span class="st n">Ally AI: lacuna</span></h4>
-        <p><span class="proj">Gabarita</span> Sentry nos três runtimes, do jeito que o guia oficial manda:</p>
+        <h4>Observabilidade de front e back: erro, performance e uso <span class="st y">Gabarita: aplicado</span> <span class="st n">Ally AI: ainda não aplicado</span></h4>
+        <p><span class="proj">Gabarita</span> Sentry nos três runtimes, seguindo o guia oficial:</p>
         <ul>
           <li><code>src/instrumentation.ts:10-17</code>: <code>register()</code> carrega a config de Node ou de edge conforme <code>NEXT_RUNTIME</code>. A <code>:22</code> exporta <code>onRequestError = Sentry.captureRequestError</code>, que pega o erro de Server Action/RSC que nunca chega a um <code>error.tsx</code>.</li>
           <li><code>src/instrumentation-client.ts:13-18</code>: init no navegador e <code>captureRouterTransitionStart</code>, que mede a navegação entre rotas.</li>
-          <li><code>src/sentry.server.config.ts:10-15</code>: <code>tracesSampleRate: 1</code> com justificativa no comentário (&ldquo;produto sem tráfego real ainda, cabe no teto grátis&rdquo;) e <code>enableLogs: true</code>.</li>
+          <li><code>src/sentry.server.config.ts:10-15</code>: <code>tracesSampleRate: 1</code> com a justificativa no comentário (&ldquo;produto sem tráfego real ainda, cabe no teto grátis&rdquo;) e <code>enableLogs: true</code>.</li>
           <li><code>next.config.ts:31</code>: <code>tunnelRoute: "/monitoramento"</code>. O evento sai por rota same-origin, e a CSP continua com <code>connect-src 'self'</code>.</li>
           <li>Também: <code>src/components/error-screen.tsx:37</code> (<code>captureException</code> + <code>reset()</code>), o health check com <code>SELECT 1</code> e 503 em <code>src/app/api/health/route.ts</code>, e a trilha de auditoria em <code>src/lib/audit/registrar.ts:31</code>.</li>
         </ul>
-        <p>Cobre &ldquo;quebrou?&rdquo; e &ldquo;está lento?&rdquo;. Falta &ldquo;está sendo usado?&rdquo;: não há analytics de produto.</p>
-        <p><span class="proj">Ally AI</span> Só <code>console.*</code>, por exemplo <code>apps/api/src/controllers/AuditController.ts:56,60,73</code>. Em produção, o plano é ler log com <code>gcloud run services logs read</code> procurando &ldquo;Auditoria não concluída&rdquo; (<code>docs/DEPLOY-CLOUD-RUN.md:218-221</code>), e o alerta de orçamento (<code>:199-208</code>) é o único alarme.</p>
+        <p>Isso responde &ldquo;quebrou?&rdquo; e &ldquo;está lento?&rdquo; das três perguntas da observabilidade.</p>
+        <p><span class="proj">Ally AI</span> O runbook documenta a operação em produção: como ler os logs do serviço com <code>gcloud run services logs read</code> filtrando a mensagem de auditoria (<code>docs/DEPLOY-CLOUD-RUN.md:216-222</code>) e um alerta de orçamento em 50/90/100% (<code>:199-208</code>). Ainda não aplicado aqui: uma ferramenta de rastreio de erros como o Sentry.</p>
       </div>
 
       <div class="evid-item">
-        <h4>Ambientes, segredos, cache e CDN pra um app internacional <span class="st y">Gabarita: usado</span> <span class="st p">Ally AI: parcial</span></h4>
+        <h4>Ambientes, segredos, cache e CDN pra um app internacional <span class="st y">Gabarita: aplicado</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
         <p><span class="proj">Gabarita</span></p>
         <ul>
           <li><strong>Segredos:</strong> o <code>.env.example</code> comenta cada variável. O DSN do Sentry é <code>NEXT_PUBLIC_</code> de propósito, e o motivo está escrito (<code>src/instrumentation-client.ts:7-11</code>: é endereço, não segredo).</li>
           <li><strong>Sem chave guardada:</strong> o storage da Vercel autentica por <strong>OIDC</strong> em produção, sem token nenhum (<code>src/lib/storage/image-storage.ts:10-12</code>). É a mesma ideia do OIDC GitHub &rarr; AWS desta página.</li>
           <li><strong>Cache imutável:</strong> <code>Cache-Control: private, max-age=31536000, immutable</code> na foto de perfil, seguro porque a URL carrega <code>?v=&lt;hash&gt;</code> (<code>src/app/api/perfil/foto/[userId]/route.ts:61</code>). As imagens de questão usam <code>private, max-age=86400</code> (<code>question-images/[id]/route.ts:29</code>).</li>
-          <li><strong>Região:</strong> a decisão D42 (<code>docs/DECISOES.md:64</code>) fixou a região da função pra ficar ao lado do banco. Detalhe na munição abaixo.</li>
+          <li><strong>Ambiente controlando o build:</strong> <code>VERCEL_ENV</code> decide se a migration roda (<code>vercel.json:3</code>) e <code>VERCEL</code> decide o modo de output (<code>next.config.ts:8</code>).</li>
+          <li><strong>Região:</strong> a decisão D42 (<code>docs/DECISOES.md:64</code>) fixou a região da função ao lado do banco. Detalhe na munição abaixo.</li>
         </ul>
         <p><span class="proj">Ally AI</span></p>
         <ul>
-          <li><strong>Segredos:</strong> <code>apps/api/.env.example</code> lista as chaves. As variáveis de produção ficam num arquivo fora do repositório, passado com <code>--env-vars-file</code> (<code>docs/DEPLOY-CLOUD-RUN.md:93-125</code>). O Secret Manager aparece só como &ldquo;melhoria opcional&rdquo; (<code>:254-255</code>).</li>
-          <li><strong>Armadilha do build:</strong> o runbook registra que trocar <code>NEXT_PUBLIC_API_URL</code> no painel não basta, porque o valor é embutido no build e exige novo deploy do front (<code>:195-196</code>). O valor é lido em <code>apps/web/src/lib/api.ts:5</code> e <code>hooks/useCreditSocket.ts:14</code>.</li>
-          <li><strong>Risco:</strong> <code>apps/api/src/index.ts:3-5</code> desliga a verificação TLS quando <code>NODE_ENV</code> não é <code>production</code>, e o <code>Dockerfile</code> não define <code>NODE_ENV</code>. Hoje quem segura isso é uma linha do arquivo de env (<code>DEPLOY-CLOUD-RUN.md:105</code>), não o código.</li>
-          <li><strong>Mercado:</strong> o produto mira Irlanda e Reino Unido (<code>docs/DECISOES.md:61-65</code>). É o caso real de &ldquo;aplicação internacional&rdquo; desta frente, ainda sem CDN, região europeia ou i18n decididos.</li>
+          <li><strong>Segredos fora do repositório e da imagem:</strong> <code>apps/api/.env.example</code> lista as chaves, <code>.dockerignore</code> e <code>.gcloudignore</code> excluem todo <code>.env*</code> (mantendo só o <code>.env.example</code>), e as variáveis de produção ficam num arquivo fora do repo, passado com <code>--env-vars-file</code> (<code>docs/DEPLOY-CLOUD-RUN.md:93-125</code>).</li>
+          <li><strong>Build-time vs. runtime:</strong> o runbook registra que <code>NEXT_PUBLIC_API_URL</code> é embutido no build do front e que trocá-lo pede um novo deploy (<code>:195-196</code>) &mdash; o tópico 7 desta página, já documentado no projeto.</li>
+          <li><strong>Escala e custo como configuração:</strong> <code>--max-instances 1</code> como teto real de gasto, <code>--min-instances 0</code> pra desligar quando ocioso, <code>--cpu-boost</code> e <code>--timeout 600</code>, cada um explicado no runbook (<code>:129-166</code>).</li>
+          <li><strong>Escolha de infraestrutura por medição:</strong> a decisão D06 (<code>docs/DECISOES.md:39-55</code>) mediu a mesma imagem Docker com quatro limites de CPU (0,1 CPU dá timeout; 1 vCPU audita em 6,5 s) e escolheu o Cloud Run comparando com Koyeb, Fly.io, Railway e Oracle.</li>
+          <li><strong>Mercado internacional:</strong> o produto mira Irlanda e Reino Unido (<code>docs/DECISOES.md:61-65</code>), o caso real de &ldquo;aplicação internacional&rdquo; desta frente.</li>
         </ul>
       </div>
 
@@ -86,22 +89,21 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
   </div>
 
   <div class="gap">
-    <h4>O que falta construir</h4>
+    <h4>Próximo passo do roadmap</h4>
     <ol>
-      <li><strong>Ally AI &middot; CI do monorepo.</strong> Criar <code>.github/workflows/ci.yml</code> que rode <code>pnpm turbo lint typecheck test</code> em todo PR, com cache do pnpm e <code>concurrency</code>, mais um <code>docker build</code> da API pra pegar Dockerfile quebrado antes do deploy. É meio dia de trabalho e fecha a lacuna mais visível do repositório público. <em>Post:</em> &ldquo;CI de monorepo com Turborepo: só roda o que mudou&rdquo;.</li>
-      <li><strong>Gabarita &middot; CI com Postgres de verdade.</strong> Workflow com um <code>services: postgres</code> criando o banco <code>_test</code> que a guarda de <code>src/lib/testing/guard-banco-de-teste.ts</code> exige, e os 1.800+ testes do Vitest rodando em PR. Vira check obrigatório antes da Vercel promover o build.</li>
-      <li><strong>Ally AI &middot; web na AWS, sem chave.</strong> Fazer deploy do <code>apps/web</code> como container standalone (ECS Fargate ou App Runner) na região <code>eu-west-1</code> (Irlanda, o mercado da D04), com CloudFront na frente e GitHub Actions assumindo uma role por OIDC. Antes, confira se o Amplify já suporta Next 16 (a página oficial lista até a 15). Isso é o post 8 do <a href="r07-linkedin.html">calendário do R7</a>: &ldquo;Next.js na AWS: o que muda em relação à Vercel&rdquo;.</li>
-      <li><strong>Ally AI &middot; Sentry e log estruturado.</strong> <code>@sentry/nextjs</code> no web e <code>@sentry/node</code> na API (a auditoria é o fluxo que falha em produção), e trocar <code>console.*</code> por um logger em JSON com <code>userId</code> e código do erro, que qualquer coletor (CloudWatch, Cloud Logging) entende.</li>
-      <li><strong>Ally AI &middot; segredo no lugar certo.</strong> Mover <code>JWT_SECRET</code>, <code>STRIPE_SECRET_KEY</code>, <code>GEMINI_API_KEY</code> e <code>DATABASE_URL</code> pro Secret Manager (<code>--set-secrets</code>), e pôr <code>ENV NODE_ENV=production</code> no <code>Dockerfile</code>, pra o TLS não depender de uma linha esquecida.</li>
+      <li><strong>Aplicar CI/CD com GitHub Actions no Ally AI:</strong> um <code>.github/workflows/ci.yml</code> que rode <code>pnpm turbo lint typecheck test</code> em todo PR, aproveitando as tasks que o <code>turbo.json</code> já define, mais o <code>docker build</code> da API. <em>Post:</em> &ldquo;CI de monorepo com Turborepo: só roda o que mudou&rdquo;.</li>
+      <li><strong>Aplicar CI de testes no Gabarita:</strong> um workflow com <code>services: postgres</code> criando o banco <code>_test</code> que a suíte já usa (<code>src/lib/testing/guard-banco-de-teste.ts</code>), pra os testes do Vitest rodarem em cada PR, ao lado do workflow de backup que já existe.</li>
+      <li><strong>Aplicar deploy de Next.js na AWS no Ally AI:</strong> levar o <code>apps/web</code> como container standalone (ECS Fargate ou App Runner) pra <code>eu-west-1</code>, perto do mercado da D04, com CloudFront na frente e o GitHub Actions assumindo uma role por OIDC. É o post 8 do <a href="r07-linkedin.html">calendário do R7</a>: &ldquo;Next.js na AWS: o que muda em relação à Vercel&rdquo;.</li>
+      <li><strong>Aplicar observabilidade no Ally AI:</strong> estender ao Ally AI o mesmo Sentry que o Gabarita já tem (<code>@sentry/nextjs</code> no web, <code>@sentry/node</code> na API), com o fluxo de auditoria como primeira transação monitorada.</li>
     </ol>
   </div>
 
   <div class="ammo">
     <div class="ammo-head">Munição da sua entrevista &middot; D42, a função em Washington e o banco em São Paulo</div>
     <div class="ammo-body">
-      <p>O Gabarita levava segundos por clique em produção. Em vez de palpitar, você mediu. O header <code>X-Vercel-Id: gru1::iad1::…</code> mostrou que o request entrava pela borda de São Paulo mas a <strong>função executava em Washington</strong>, enquanto o Neon estava em <code>sa-east</code>. Duas rotas isolaram o custo: <code>/api/auth/session</code> (JWT, zero banco) levava ~280 ms e <code>/api/health</code> (um <code>SELECT 1</code>) levava ~830 ms, ou seja, <strong>~550 ms por ida ao banco</strong>.</p>
-      <p>A correção atacou três frentes: <code>"regions": ["gru1"]</code> no <code>vercel.json</code>, <code>connection_limit</code> de 1 pra 5, e <code>relationJoins</code> do Prisma (7 queries &rarr; 1 na página da questão). Pra não regredir, um teste conta as queries do <code>answerItem</code> e falha acima de 5 (<code>docs/DECISOES.md:64</code>).</p>
-      <p class="why"><strong>Por que isso importa:</strong> é a resposta pronta pra &ldquo;como você pensa região e latência numa aplicação internacional?&rdquo;. A regra que você aprendeu medindo, a função tem que ficar onde o dado está, vale igual pra Lambda, Fargate ou Cloud Run. E &ldquo;mediu, isolou, corrigiu e pôs teste de orçamento&rdquo; é o roteiro de incidente que um painel sênior quer ouvir.</p>
+      <p>Os cliques do Gabarita em produção estavam levando segundos, e você foi medir antes de mexer. O header <code>X-Vercel-Id: gru1::iad1::…</code> mostrou que o request entrava pela borda de São Paulo mas a <strong>função executava em Washington</strong>, enquanto o Neon estava em <code>sa-east</code>. Duas rotas isolaram o custo: <code>/api/auth/session</code> (JWT, sem banco) levava ~280 ms e <code>/api/health</code> (um <code>SELECT 1</code>) levava ~830 ms, ou seja, <strong>~550 ms por ida ao banco</strong>.</p>
+      <p>A solução combinou três frentes: <code>"regions": ["gru1"]</code> no <code>vercel.json</code>, <code>connection_limit</code> de 1 pra 5, e <code>relationJoins</code> do Prisma (7 queries &rarr; 1 na página da questão). E um teste conta as queries do <code>answerItem</code> e falha acima de 5, pra o ganho ficar garantido (<code>docs/DECISOES.md:64</code>).</p>
+      <p class="why"><strong>Por que isso importa:</strong> é a resposta pronta pra &ldquo;como você pensa região e latência numa aplicação internacional?&rdquo;. A regra que você aprendeu medindo, a função fica onde o dado está, vale igual pra Lambda, Fargate ou Cloud Run. E &ldquo;mediu, isolou, resolveu e pôs teste de orçamento&rdquo; é o roteiro que um painel sênior quer ouvir.</p>
     </div>
   </div>
 
@@ -119,9 +121,9 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
           <div class="ans-body"><p>Com OIDC não existe chave de longa duração pra vazar, girar ou esquecer. O workflow pede um token assinado pelo GitHub (<code>permissions: id-token: write</code>) e troca por credencial temporária da role. A trust policy decide <strong>quem</strong> pode fazer essa troca: a condição <code>token.actions.githubusercontent.com:sub</code> restringe ao repositório e à branch ou ao environment (por exemplo, <code>repo:org/ally-ai:environment:prod</code>). Assim, um fork, outra branch ou outro repositório não assume a role de deploy de produção, mesmo rodando o mesmo YAML.</p></div>
         </details>
       </li>
-      <li>No Ally AI, trocaram <code>NEXT_PUBLIC_API_URL</code> no painel da hospedagem e o front continuou chamando a API antiga. Por quê? E como ter <strong>uma</strong> imagem que serve staging e produção?
+      <li>Você troca <code>NEXT_PUBLIC_API_URL</code> no painel da hospedagem e o front continua chamando a API antiga. Por quê? E como ter <strong>uma</strong> imagem que serve staging e produção?
         <details class="ans"><summary>ver resposta</summary>
-          <div class="ans-body"><p>Variável <code>NEXT_PUBLIC_*</code> é <strong>embutida no JavaScript durante o <code>next build</code></strong>. O valor do painel só vale no próximo build, e o runbook do Ally AI já registra isso. Pra promover a mesma imagem entre ambientes, o valor que muda por ambiente tem que ser lido no servidor em runtime: numa rota dinâmica (depois de <code>connection()</code>/<code>headers()</code>), ou entregue ao cliente por um endpoint de configuração ou por uma prop de Server Component. A outra saída, mais simples e mais lenta, é aceitar um build por ambiente.</p></div>
+          <div class="ans-body"><p>Variável <code>NEXT_PUBLIC_*</code> é <strong>embutida no JavaScript durante o <code>next build</code></strong>. O valor do painel só vale no próximo build &mdash; o runbook de deploy do Ally AI já documenta exatamente esse passo. Pra promover a mesma imagem entre ambientes, o valor que muda por ambiente tem que ser lido no servidor em runtime: numa rota dinâmica (depois de <code>connection()</code>/<code>headers()</code>), ou entregue ao cliente por um endpoint de configuração ou por uma prop de Server Component. A outra saída, mais simples e mais lenta, é aceitar um build por ambiente.</p></div>
         </details>
       </li>
       <li>Você põe o CloudFront na frente do Gabarita com um cache policy de TTL mínimo de 1 dia, &ldquo;pra acelerar&rdquo;. O que pode dar errado?

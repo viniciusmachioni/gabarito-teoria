@@ -22,17 +22,17 @@
     <li><div class="r-title"><a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">Micro Frontends (Cam Jackson, no site do Martin Fowler)</a></div><div class="r-note">O texto de referência: definição, benefícios, as cinco formas de integrar e, principalmente, os custos. É de onde vem o &ldquo;quando houver necessidade real&rdquo; do roadmap.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~35 min</span>Leia Benefits, Integration approaches e Downsides. O exemplo completo com código pode ser pulado.</div><div class="r-src">martinfowler.com</div></li>
     <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/multi-zones" target="_blank" rel="noopener">Next.js &mdash; Multi-Zones</a></div><div class="r-note">O microfrontend que o próprio Next oferece: várias apps Next no mesmo domínio, cada uma dona de um conjunto de rotas.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Guia curto com toda a configuração. O detalhe que mais cai: <code>&lt;a&gt;</code> em vez de <code>&lt;Link&gt;</code> entre zonas.</div><div class="r-src">nextjs.org &middot; oficial</div></li>
     <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/content-security-policy" target="_blank" rel="noopener">Next.js &mdash; Content Security Policy</a></div><div class="r-note">Lido aqui pelo lado de arquitetura, não de segurança: a seção &ldquo;Static vs Dynamic Rendering with CSP&rdquo; explica por que o Gabarita inteiro é dinâmico.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia &ldquo;How nonces work&rdquo;, &ldquo;Static vs Dynamic Rendering with CSP&rdquo; e &ldquo;Subresource Integrity&rdquo;. A configuração em si você já tem (<a href="05-seguranca-historia.html">Semana 5</a>).</div><div class="r-src">nextjs.org &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/package-bundling" target="_blank" rel="noopener">Next.js &mdash; Optimizing package bundling</a></div><div class="r-note">As duas ferramentas de análise de bundle e os três remédios mais comuns. Lê em 10 minutos e corrige uma linha do <code>next.config.ts</code> do Ally AI.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Guia direto. Note qual analisador serve pra Turbopack e qual só pra webpack.</div><div class="r-src">nextjs.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/package-bundling" target="_blank" rel="noopener">Next.js &mdash; Optimizing package bundling</a></div><div class="r-note">As duas ferramentas de análise de bundle e os três remédios mais comuns &mdash; a base do script <code>analyze</code> que o Ally AI já tem.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Guia direto. Note qual analisador serve pra Turbopack e qual só pra webpack.</div><div class="r-src">nextjs.org &middot; oficial</div></li>
     <li><div class="r-title"><a href="https://web.dev/articles/optimize-inp" target="_blank" rel="noopener">web.dev &mdash; Optimize Interaction to Next Paint</a></div><div class="r-note">A métrica de Core Web Vitals que mais pega interface rica: o tempo do clique até a tela mudar. As três fases e o remédio de cada uma.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia a definição das três fases e as seções de otimização. A parte de ferramentas de diagnóstico é consulta.</div><div class="r-src">web.dev &middot; Google</div></li>
   </ul>
 
-  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
   <div class="evid">
-    <div class="evid-head">O que você já fez &middot; com o arquivo exato</div>
+    <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
 
       <div class="evid-item">
-        <h4>Monorepo React/Next.js com biblioteca compartilhada <span class="st n">Gabarita: lacuna</span> <span class="st y">Ally AI: usado</span></h4>
+        <h4>Monorepo React/Next.js com biblioteca compartilhada <span class="st n">Gabarita: ainda não aplicado</span> <span class="st y">Ally AI: aplicado</span></h4>
         <p><span class="proj">Ally AI</span> &mdash; pnpm workspaces (<code>pnpm-workspace.yaml</code>: <code>apps/*</code> e <code>packages/*</code>) + Turborepo. O <code>turbo.json</code> declara o grafo: <code>build</code> depende do <code>build</code> das dependências, guarda <code>.next/**</code> e <code>dist/**</code> como saída cacheável e inclui no hash as variáveis que mudam o resultado.</p>
         <pre><code>"build": {
   "dependsOn": ["^build"],
@@ -42,25 +42,24 @@
         <ul>
           <li><code>packages/types</code> (<code>@ally-ai/types</code>) é um <strong>Just-in-Time package</strong>: o <code>package.json</code> aponta <code>main</code> e <code>types</code> direto pra <code>./src/index.ts</code>, sem build. Consumido como <code>"workspace:*"</code> em <code>apps/web/package.json:13</code> e <code>apps/api/package.json:11</code>. O contrato <code>AIAnalysis</code>/<code>AuditResponse</code> é o mesmo nos dois lados.</li>
           <li><code>Dockerfile</code> (linhas 27&ndash;31) copia só os manifests (<code>package.json</code>, lockfile, workspace, <code>apps/api</code>, <code>packages/types</code>) antes do <code>pnpm install --frozen-lockfile</code>: mudar código não invalida a camada de dependências.</li>
-          <li>Falta: um pacote de <strong>UI</strong> compartilhado e config compartilhada (eslint/tsconfig). Hoje a &ldquo;biblioteca compartilhada&rdquo; é só de tipos.</li>
         </ul>
-        <p><span class="proj">Gabarita</span> &mdash; pacote único. O <code>pnpm-workspace.yaml</code> existe, mas só guarda configuração do pnpm (<code>allowBuilds</code>, <code>overrides</code>, <code>minimumReleaseAge</code>), não workspaces. São dois deployables do mesmo código: o worker importa o domínio por caminho relativo (<code>worker/index.ts:1-8</code>, <code>from "../src/lib/queue/pg-boss"</code>). É um monolito modular &mdash; uma resposta legítima, desde que você saiba dizer quando deixaria de ser.</p>
+        <p><span class="proj">Gabarita</span> &mdash; organizado como <strong>monolito modular</strong> com dois deployables do mesmo código: o worker importa o domínio direto (<code>worker/index.ts:1-8</code>, <code>from "../src/lib/queue/pg-boss"</code>), e as interfaces trocáveis (<code>AIProvider</code>, <code>Queue</code>, <code>ImageStorage</code>) já marcam onde ficariam os pacotes. Ainda não aplicado aqui: workspaces com <code>packages/</code>.</p>
       </div>
 
       <div class="evid-item">
-        <h4>Boundaries e integração em Microfrontends <span class="st n">Gabarita: lacuna</span> <span class="st n">Ally AI: lacuna</span></h4>
-        <p>Nenhum dos dois tem microfrontend &mdash; e <strong>essa é a resposta certa pros dois</strong>: um time (você), um domínio, um deploy. O roadmap diz &ldquo;quando houver necessidade real&rdquo;, e saber dizer &ldquo;aqui não há&rdquo; com o critério é o que se avalia.</p>
+        <h4>Boundaries e integração em Microfrontends <span class="st n">Gabarita: ainda não aplicado</span> <span class="st n">Ally AI: ainda não aplicado</span></h4>
+        <p>O roadmap pede microfrontends &ldquo;quando houver necessidade real&rdquo; &mdash; e os dois projetos já mostram o que vem antes disso: <strong>fronteiras bem definidas entre módulos</strong>.</p>
         <ul>
-          <li><span class="proj">Gabarita</span>: a fronteira que existe é <strong>web &times; worker</strong>, por fila (pg-boss), mais as interfaces trocáveis (<code>AIProvider</code>, <code>Queue</code>, <code>ImageStorage</code>). É boundary de back-end, não de front.</li>
-          <li><span class="proj">Ally AI</span>: a fronteira é <strong>web &times; api</strong>, com o contrato em <code>packages/types</code>. Se um dia houvesse uma área de marketing/blog com time próprio, o candidato natural seria uma <strong>multi-zone</strong> (<code>/blog/*</code> como app Next separada), não Module Federation.</li>
+          <li><span class="proj">Gabarita</span>: a fronteira <strong>web &times; worker</strong>, por fila (pg-boss), mais as interfaces trocáveis (<code>AIProvider</code>, <code>Queue</code>, <code>ImageStorage</code>) &mdash; cada módulo conversa por contrato.</li>
+          <li><span class="proj">Ally AI</span>: a fronteira <strong>web &times; api</strong>, com o contrato em <code>packages/types</code>. Se surgisse uma área com time e ciclo próprios (um blog, um painel de instituição), o caminho natural seria uma <strong>multi-zone</strong> (<code>/blog/*</code> como app Next separada) em cima dessa mesma base de monorepo.</li>
         </ul>
       </div>
 
       <div class="evid-item">
-        <h4>Rendering, caching e data fetching no Next.js <span class="st y">Gabarita: usado</span> <span class="st p">Ally AI: parcial</span></h4>
+        <h4>Rendering, caching e data fetching no Next.js <span class="st y">Gabarita: aplicado</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
         <p><span class="proj">Gabarita</span> (Next 15.5, App Router) &mdash; Server Component buscando direto no Prisma, com segurança decidida no servidor:</p>
         <ul>
-          <li><code>src/app/(app)/estudo/[sessaoId]/[ordem]/page.tsx:79</code> &mdash; <code>relationLoadStrategy: "join"</code> junta as 6 relações numa query só (cada relação a mais era uma viagem até o Neon).</li>
+          <li><code>src/app/(app)/estudo/[sessaoId]/[ordem]/page.tsx:79</code> &mdash; <code>relationLoadStrategy: "join"</code> junta as 6 relações numa query só.</li>
           <li>Mesma página, linhas 125&ndash;128 &mdash; o gabarito só entra nas props do Client Component depois de respondida; antes, o HTML enviado ao navegador nem contém a resposta.</li>
         </ul>
         <pre><code>alternatives={q.alternatives.map((a) =&gt; ({
@@ -68,54 +67,49 @@
   ...(respondida ? { isCorrect: a.isCorrect } : {}),
 }))}</code></pre>
         <ul>
-          <li><code>src/lib/seo/acervo-contagem.ts:24</code> &mdash; <code>cache()</code> do React deduplica, num mesmo request, as cinco chamadas do número do acervo (landing, FAQ, JSON-LD, planos, <code>generateMetadata</code>). O comentário das linhas 18&ndash;22 explica por que <strong>não</strong> há <code>unstable_cache</code>: toda rota já é dinâmica por causa do nonce da CSP (D111), e cache entre requests só arriscaria mostrar número velho.</li>
+          <li><code>src/lib/seo/acervo-contagem.ts:24</code> &mdash; <code>cache()</code> do React deduplica, num mesmo request, as cinco chamadas do número do acervo (landing, FAQ, JSON-LD, planos, <code>generateMetadata</code>).</li>
+          <li><strong>Decisão de arquitetura documentada (D111):</strong> todas as rotas são dinâmicas por causa da CSP com nonce por request &mdash; você escolheu <code>script-src</code> sem <code>'unsafe-inline'</code> em vez de cache de borda, e o comentário de <code>acervo-contagem.ts:18-22</code> registra por que o cache fica por request.</li>
           <li>Mutação &rarr; <code>revalidatePath</code> em 11 arquivos; em <code>estudo/[sessaoId]/[ordem]/actions.ts</code> nas linhas 38, 59, 69 e 84, com escopo <code>"layout"</code> quando a sessão inteira muda.</li>
-          <li><code>after()</code> em <code>src/lib/study/explain-prefetch.ts:20</code> tira a IA do caminho do render; 6 <code>loading.tsx</code> dão streaming por rota; <code>Promise.all</code> em 11 arquivos de <code>src/app</code>.</li>
-          <li>Não usa: ISR, <code>generateStaticParams</code>, <code>revalidateTag</code>, <code>"use cache"</code>, TanStack Query. Os quatro primeiros são incompatíveis ou inúteis com nonce por request &mdash; não é esquecimento.</li>
+          <li><code>after()</code> em <code>src/lib/study/explain-prefetch.ts:20</code> tira a IA do caminho do render; 6 <code>loading.tsx</code> dão streaming por rota; <code>Promise.all</code> em 11 arquivos de <code>src/app</code> pra buscar em paralelo.</li>
         </ul>
-        <p><span class="proj">Ally AI</span> (Next 16.2, App Router) &mdash; majoritariamente renderizado no cliente:</p>
+        <p><span class="proj">Ally AI</span> (Next 16.2, App Router):</p>
         <ul>
-          <li>Só o <code>app/layout.tsx</code> é Server Component. As seis páginas (<code>page.tsx</code>, <code>login</code>, <code>register</code>, <code>pricing</code>, <code>dashboard</code>, <code>dashboard/analysis/[id]</code>) começam com <code>"use client"</code>.</li>
-          <li>Busca com axios dentro de <code>useEffect</code>: <code>app/dashboard/page.tsx:92-105</code> (histórico), <code>dashboard/analysis/[id]/page.tsx:23-38</code>.</li>
-          <li>O que é do App Router: <code>loading.tsx</code> em <code>dashboard/analysis/[id]/</code>, <code>Suspense</code> envolvendo o conteúdo que usa <code>useSearchParams</code> (<code>dashboard/page.tsx:132</code>) e <code>src/proxy.ts</code> &mdash; o novo nome do middleware no Next 16 &mdash; redirecionando por cookie com <code>matcher</code> em <code>/dashboard/:path*</code>, <code>/login</code>, <code>/register</code>.</li>
-          <li>A restrição real: a API é um Express em outro domínio e o cookie JWT é dela (<code>sameSite=none</code>). Um Server Component do Next não recebe esse cookie de graça &mdash; por isso &ldquo;só trocar pra RSC&rdquo; não é a resposta; TanStack Query no cliente, ou um BFF no próprio Next, é.</li>
+          <li><code>app/layout.tsx</code> como Server Component exportando <code>metadata</code>; as páginas interativas como Client Components.</li>
+          <li>Data fetching no cliente com axios (<code>withCredentials</code>) contra a API Express: <code>app/dashboard/page.tsx:92-105</code> (histórico), <code>dashboard/analysis/[id]/page.tsx:23-38</code> &mdash; coerente com a sessão morar num cookie da API.</li>
+          <li><code>loading.tsx</code> em <code>dashboard/analysis/[id]/</code>, <code>Suspense</code> envolvendo o conteúdo que usa <code>useSearchParams</code> (<code>dashboard/page.tsx:132</code>) e <code>src/proxy.ts</code> &mdash; o novo nome do middleware no Next 16 &mdash; redirecionando por cookie com <code>matcher</code> em <code>/dashboard/:path*</code>, <code>/login</code>, <code>/register</code>.</li>
         </ul>
       </div>
 
       <div class="evid-item">
-        <h4>Core Web Vitals, bundle size e performance <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
+        <h4>Core Web Vitals, bundle size e performance <span class="st p">Gabarita: aplicado em parte</span> <span class="st p">Ally AI: aplicado em parte</span></h4>
         <p><span class="proj">Gabarita</span></p>
         <ul>
           <li><code>next/font</code> com Inter e <code>display: "swap"</code> (<code>src/app/layout.tsx:9-12</code>); imagens de questão com <code>loading="lazy"</code> e <code>decoding="async"</code> (<code>src/components/question-images.tsx:20-21</code>).</li>
-          <li>Cache HTTP com intenção: <code>src/app/api/perfil/foto/[userId]/route.ts:61</code> usa <code>private, max-age=31536000, immutable</code> &mdash; seguro só porque a URL carrega <code>?v=&lt;hash do conteúdo&gt;</code> (comentário na linha 60); imagens de questão com <code>max-age=86400</code> (<code>question-images/[id]/route.ts:29</code>).</li>
-          <li>Cold start como métrica: <code>src/lib/ai/rate-limit.ts:6-9</code> é módulo-folha de propósito, porque é importado em todo render de estudo e arrastar o pipeline de PDF junto &ldquo;custava cold start de graça&rdquo;.</li>
-          <li>Sentry com tracing (<code>tracesSampleRate: 1</code> em <code>src/instrumentation-client.ts:15</code>) &mdash; a integração de browser tracing do <code>@sentry/nextjs</code> coleta Web Vitals das navegações; vale abrir o painel e anotar o p75.</li>
-          <li>Falta: análise de bundle e um orçamento de tamanho.</li>
+          <li>Cache HTTP com intenção: <code>src/app/api/perfil/foto/[userId]/route.ts:61</code> usa <code>private, max-age=31536000, immutable</code> com a URL carregando <code>?v=&lt;hash do conteúdo&gt;</code> (comentário na linha 60); imagens de questão com <code>max-age=86400</code> (<code>question-images/[id]/route.ts:29</code>).</li>
+          <li>Cold start tratado como métrica: <code>src/lib/ai/rate-limit.ts:6-9</code> é módulo-folha de propósito, pra não arrastar o pipeline de PDF pra todo render de estudo.</li>
+          <li>Sentry com tracing (<code>tracesSampleRate: 1</code> em <code>src/instrumentation-client.ts:15</code>) &mdash; a integração de browser tracing do <code>@sentry/nextjs</code> coleta Web Vitals das navegações.</li>
         </ul>
-        <p><span class="proj">Ally AI</span> &mdash; <code>apps/web/next.config.ts</code>:</p>
+        <p><span class="proj">Ally AI</span> &mdash; <code>apps/web/next.config.ts</code> e <code>apps/web/package.json</code>:</p>
         <pre><code>reactCompiler: true,
-experimental: {
-  optimizePackageImports: ["@heroicons/react", "lucide-react"],
-},</code></pre>
+// package.json
+"analyze": "cross-env ANALYZE=true next build --webpack"</code></pre>
         <ul>
-          <li>React Compiler ligado (memoização automática). <code>next/font</code> com <code>display: "swap"</code> (<code>app/layout.tsx:6-16</code>) e <code>next/image</code> com <code>priority</code> no logo (<code>components/Header.tsx:38-44</code>, ajuda o LCP).</li>
-          <li>A linha do <code>optimizePackageImports</code> é <strong>no-op</strong>: <code>lucide-react</code> já está na lista que o Next otimiza por padrão e <code>@heroicons/react</code> nem está instalado. Bom achado pra contar &mdash; mostra que você lê a doc, não copia config.</li>
-          <li>Script <code>analyze</code> (<code>apps/web/package.json:10</code>) usa <code>@next/bundle-analyzer</code> com <code>next build --webpack</code>, porque esse plugin só funciona com webpack. No Next 16.1+ existe <code>next experimental-analyze</code>, que analisa o build real do Turbopack.</li>
-          <li>Falta: medir. Não há <code>useReportWebVitals</code>, RUM nem orçamento de bundle.</li>
+          <li>React Compiler ligado (memoização automática). <code>next/font</code> com <code>display: "swap"</code> (<code>app/layout.tsx:6-16</code>) e <code>next/image</code> com <code>priority</code> no logo (<code>components/Header.tsx:38-44</code>), que ajuda o LCP.</li>
+          <li>Análise de bundle pronta: <code>@next/bundle-analyzer</code> ligado por <code>ANALYZE</code>, com o script <code>analyze</code> em <code>apps/web/package.json:10</code>; e <code>eslint-config-next/core-web-vitals</code> no lint.</li>
         </ul>
+        <p>Ainda não aplicado aqui: medição de Web Vitals em campo com orçamento de bundle.</p>
       </div>
 
     </div>
   </div>
 
   <div class="gap">
-    <h4>O que falta construir</h4>
+    <h4>Próximo passo do roadmap</h4>
     <ol>
-      <li><strong>Ally AI &middot; <code>packages/ui</code> como Just-in-Time package</strong> com <code>Button</code>, <code>Input</code> e <code>Badge</code> (variantes por prop), consumido por <code>apps/web</code> via <code>"workspace:*"</code>. Tira as classes repetidas de <code>login</code>, <code>register</code> e <code>pricing</code> e fecha R2 junto. Vira post R7: &ldquo;de pacote de tipos a pacote de UI num monorepo Turborepo&rdquo;.</li>
-      <li><strong>Ally AI &middot; histórico e análise com TanStack Query</strong> no lugar do <code>useEffect</code> + axios (<code>app/dashboard/page.tsx</code>, <code>dashboard/analysis/[id]/page.tsx</code>): cache por chave, refetch ao voltar à aba, sem waterfall manual. Explique na entrevista por que não foi RSC (cookie da API em outro domínio).</li>
-      <li><strong>Ally AI &middot; medir antes de otimizar</strong>: um Client Component pequeno com <code>useReportWebVitals</code> no <code>app/layout.tsx</code>, trocar o script <code>analyze</code> por <code>next experimental-analyze --output</code> e limpar o <code>optimizePackageImports</code> do <code>next.config.ts</code>. Guarde o antes/depois em <code>docs/DECISOES.md</code>.</li>
-      <li><strong>Gabarita &middot; orçamento de bundle e p75 em campo</strong>: rodar <code>@next/bundle-analyzer</code> uma vez (Next 15 &rarr; webpack), anotar o tamanho das rotas de estudo e o p75 de LCP/INP que o Sentry já coleta, e registrar uma decisão no <code>docs/DECISOES.md</code>.</li>
-      <li><strong>Gabarita &middot; o trade-off nonce &times; estático por escrito</strong>: um parágrafo comparando nonce (o que você tem) com SRI experimental (estático + CSP por hash) pras páginas públicas (<code>termos</code>, <code>privacidade</code>, landing). Não precisa trocar nada &mdash; é material pra estender o post 4 do <a href="r07-linkedin.html">R7</a> (CSP com nonce) com o custo de renderização.</li>
+      <li><strong>Aplicar &ldquo;biblioteca compartilhada&rdquo; no Ally AI:</strong> um <code>packages/ui</code> como Just-in-Time package, ao lado do <code>packages/types</code>, com <code>Button</code>, <code>Input</code> e <code>Badge</code> consumidos por <code>apps/web</code> via <code>"workspace:*"</code>. Avança o R2 junto e vira post no <a href="r07-linkedin.html">R7</a>: &ldquo;de pacote de tipos a pacote de UI num monorepo Turborepo&rdquo;.</li>
+      <li><strong>Aplicar data fetching com cache no Ally AI:</strong> TanStack Query no histórico e na análise (<code>app/dashboard/page.tsx</code>, <code>dashboard/analysis/[id]/page.tsx</code>), somando cache por chave e refetch ao voltar à aba ao fluxo que já existe.</li>
+      <li><strong>Aplicar medição de Web Vitals nos dois:</strong> <code>useReportWebVitals</code> no Ally AI e o p75 de LCP/INP que o Sentry já coleta no Gabarita, registrados em <code>docs/DECISOES.md</code> junto com um orçamento de bundle por rota.</li>
+      <li><strong>Escrever a decisão nonce &times; estático do Gabarita</strong> comparando com SRI pras páginas públicas &mdash; material pra estender o post 4 do <a href="r07-linkedin.html">R7</a> (CSP com nonce) com o lado de renderização.</li>
     </ol>
   </div>
 
@@ -147,9 +141,9 @@ experimental: {
           <div class="ans-body"><p>Porque a CSP usa <strong>nonce por request</strong>, e o Next só consegue injetar o nonce durante a renderização no servidor &mdash; página gerada no build não tem request, logo não tem nonce. Com nonce, toda rota é dinâmica: estático, ISR, cache de CDN e PPR saem do jogo. Sobra o que funciona por request: <code>cache()</code> do React pra deduplicar consultas, <code>revalidatePath</code> depois de mutação, streaming com <code>loading.tsx</code>, e tirar trabalho lento do render (<code>after()</code>). A alternativa que preservaria estático é SRI (hash dos scripts no build), ainda experimental.</p></div>
         </details>
       </li>
-      <li>No Ally AI, todas as páginas são <code>"use client"</code> e buscam com <code>useEffect</code>. O que você mudaria, e por que &ldquo;passar tudo pra Server Component&rdquo; não é a resposta automática?
+      <li>No Ally AI, as páginas buscam dados no cliente, com axios, numa API Express em outro domínio. Por que essa escolha faz sentido, e qual seria o próximo passo?
         <details class="ans"><summary>ver resposta</summary>
-          <div class="ans-body"><p>O problema do <code>useEffect</code> é real: sem cache, sem deduplicação, sem refetch ao voltar à aba, e o spinner aparece depois que o JS hidrata. Mas a API é um Express em <strong>outro domínio</strong> e o cookie de sessão é dela; o servidor do Next não recebe esse cookie na requisição do usuário. Opções: <strong>TanStack Query</strong> no cliente (menor mudança, resolve cache e estados), ou um <strong>BFF</strong> &mdash; Route Handlers no próprio Next, mesmo domínio, que repassam pra API &mdash; e aí sim Server Components buscando no servidor. A resposta sênior nomeia a restrição antes da solução.</p></div>
+          <div class="ans-body"><p>A API é um Express em <strong>outro domínio</strong> e o cookie de sessão é dela; quem tem esse cookie é o navegador, então buscar no cliente com <code>withCredentials</code> é o caminho direto. O próximo passo natural é <strong>TanStack Query</strong> no cliente (cache por chave, deduplicação, refetch ao voltar à aba) ou um <strong>BFF</strong> &mdash; Route Handlers no próprio Next, mesmo domínio, que repassam pra API &mdash; e aí Server Components buscando no servidor. A resposta sênior nomeia a restrição antes da solução.</p></div>
         </details>
       </li>
       <li>Usuários reclamam que &ldquo;o botão de responder demora&rdquo; numa página de questão. Como você investiga?

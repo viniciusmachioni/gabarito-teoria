@@ -23,7 +23,7 @@ com 4 itens cada + ativação do LinkedIn. Virou um grupo próprio, **antes do n
 
 | Página | Conteúdo | Checkbox |
 |---|---|---|
-| R0 `r00-mapa` | matriz dos 24 itens × Gabarita × Ally AI (usado/parcial/lacuna), placar, 8 histórias prontas, ordem sugerida pra fechar lacunas | — |
+| R0 `r00-mapa` | cada um dos 24 itens → onde já foi aplicado no Gabarita e no Ally AI (aplicado / em parte / ainda não aplicado), resumo por frente, 8 histórias prontas, próximos passos | — |
 | R1 `r01-ai-frontend` | streaming, tool calling, structured outputs, Generative UI, UX de IA | `w25` |
 | R2 `r02-design-systems` | tokens, variantes, Storybook, Figma, regressão visual, a11y automatizada, WCAG | `w26` |
 | R3 `r03-arquitetura-frontend` | monorepo, microfrontends, rendering/cache no Next, Web Vitals | `w27` |
@@ -32,11 +32,12 @@ com 4 itens cada + ativação do LinkedIn. Virou um grupo próprio, **antes do n
 | R6 `r06-proximo-nivel` | MCP, padrões de AI UX, frontend distribuído, multi-cloud | `w30` |
 | R7 `r07-linkedin` | headline, "Sobre", rede, calendário de posts, candidaturas | `w31` |
 
-Cada R1–R6 tem, além do formato normal (tópicos, leituras resumidas, munição, perguntas), um bloco **"No seu código"**
-(`.evid`) com status por projeto e arquivo/linha, e um bloco **"O que falta construir"** (`.gap`). A evidência foi
-levantada lendo o código do `gabarita` (no produto, Certeon) e do `ally-ai` **só em modo leitura** — nada foi alterado
-nos dois. Os status do R0 e das páginas foram conciliados pela mesma régua: "usado" só quando cobre o que o item do
-roadmap pede. Se o código dos projetos mudar, os números de linha citados podem ficar velhos.
+Cada R1–R6 tem, além do formato normal (tópicos, leituras resumidas, munição, perguntas), um bloco **"Onde você já
+aplicou"** (`.evid`) que liga cada pedido do roadmap ao que já existe nos dois projetos, com arquivo/linha e trecho, e um
+bloco **"Próximo passo do roadmap"** (`.gap`) com os itens ainda não aplicados. **O objetivo é exemplo, não auditoria:**
+o texto descreve o que foi aplicado e não lista defeitos dos projetos. A evidência foi levantada lendo o código do
+`gabarita` (no produto, Certeon) e do `ally-ai` **só em modo leitura** — nada foi alterado nos dois. Se o código dos
+projetos mudar, os números de linha citados podem ficar velhos.
 
 A capa ganhou uma caixa "Foco atual" (`#roadmap`) com o progresso de cada página do roadmap (`assets/js/app.js` preenche
 `.foco-lista li[data-prefix]` sem somar de novo no total).
