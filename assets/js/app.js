@@ -10,6 +10,7 @@
 (function () {
   var KEY = 'gabarito-teoria-progresso';
   var KEY_LEITURAS = 'gabarito-teoria-leituras';
+  var KEY_QUIZ = 'gabarito-teoria-quiz'; // histórico do questionário (escrito por quiz.js)
 
   function load(k) {
     try { var raw = localStorage.getItem(k); return raw ? JSON.parse(raw) : {}; }
@@ -114,7 +115,7 @@
   var bImp = document.getElementById('backup-importar');
   var bBaixar = document.getElementById('backup-baixar');
   function pacote() {
-    return JSON.stringify({ versao: 2, geradoEm: new Date().toISOString(), progresso: load(KEY), leituras: load(KEY_LEITURAS) });
+    return JSON.stringify({ versao: 3, geradoEm: new Date().toISOString(), progresso: load(KEY), leituras: load(KEY_LEITURAS), quiz: load(KEY_QUIZ) });
   }
   if (bExp && txt) {
     bExp.addEventListener('click', function () {
@@ -144,11 +145,17 @@
       // aceita tanto o pacote novo quanto o objeto cru da versão antiga
       var p = dados && dados.progresso ? dados.progresso : dados;
       var l = dados && dados.leituras ? dados.leituras : {};
+      var q = dados && dados.quiz && typeof dados.quiz === 'object' ? dados.quiz : {};
       if (!p || typeof p !== 'object') { aviso('Esse texto não é um backup válido.'); return; }
-      var atual = load(KEY), atualL = load(KEY_LEITURAS);
+      var atual = load(KEY), atualL = load(KEY_LEITURAS), atualQ = load(KEY_QUIZ);
       Object.keys(p).forEach(function (k) { if (p[k]) atual[k] = true; });
       Object.keys(l).forEach(function (k) { if (l[k]) atualL[k] = true; });
-      save(KEY, atual); save(KEY_LEITURAS, atualL);
+      // quiz: por questão, fica o registro mais recente
+      Object.keys(q).forEach(function (k) {
+        var v = q[k];
+        if (v && v.em && (!atualQ[k] || String(v.em) > String(atualQ[k].em))) atualQ[k] = v;
+      });
+      save(KEY, atual); save(KEY_LEITURAS, atualL); save(KEY_QUIZ, atualQ);
       prog = atual; lidas = atualL;
       atualizaCapa();
       aviso('Importado e mesclado com o que já havia neste navegador.');

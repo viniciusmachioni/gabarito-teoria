@@ -13,7 +13,7 @@ rode o build depois de qualquer mudança nas fontes.
 | `_montagem/leituras/<slug>.html` | resumos embutidos: cada `<article data-href>` entra no recurso de mesmo link da página `<slug>`. Quando não existe recurso com aquele link na página (caso do B7), o build cria uma seção "Leituras resumidas" no fim — e aí o `<article>` precisa também de `data-title` |
 | `_montagem/novos/<slug>.html` | páginas dos blocos B10–B19, no mesmo markup das seções originais |
 | `_montagem/quiz-novos.mjs` | questões novas anexadas às 42 originais |
-| `_montagem/roadmap/<slug>.html` | páginas do roadmap da mentoria (R0–R7), grupo `roadmap`, registradas no topo de `PAGINAS` |
+| `_montagem/roadmap/<slug>.html` | páginas do roadmap da mentoria (R0–R8), grupo `roadmap`, registradas no topo de `PAGINAS`. Código em `<pre><code class="esc">` é escrito cru (com `<`, `>`, `&`) e escapado pelo build |
 | `_montagem/roadmap/quiz/<slug>.mjs` | questões do roadmap, um arquivo por página, lidas em ordem alfabética e postas **na frente** das 42 originais |
 
 ## Roadmap da mentoria (05/10/2026)
@@ -41,6 +41,23 @@ projetos mudar, os números de linha citados podem ficar velhos.
 
 A capa ganhou uma caixa "Foco atual" (`#roadmap`) com o progresso de cada página do roadmap (`assets/js/app.js` preenche
 `.foco-lista li[data-prefix]` sem somar de novo no total).
+
+## Quiz sem viés e prática do roadmap (05/10/2026)
+
+- **Todas as 142 questões de múltipla escolha foram reescritas** (roadmap, originais e B10–B19): as alternativas erradas
+  viraram equívocos plausíveis, e a certa deixou de se entregar pelo tamanho. Antes, a certa era a mais longa em 127 das 142;
+  agora em 15%. O build reprova (aviso) qualquer questão em que a certa passe de 1,1× a maior errada, e avisa se a
+  proporção geral passar de 35%.
+- **Motor do quiz** (`assets/js/quiz.js`): alternativas embaralhadas a cada rodada (o `c` das fontes não diz mais a posição na
+  tela), histórico por questão em `localStorage` (`gabarito-teoria-quiz`, pelo `id` que o build gera de tema + hash do
+  enunciado), modos Todas / Nunca respondidas / Para revisar, embaralhar questões, nova rodada e zerar histórico. O histórico
+  entra no backup da capa (pacote `versao: 3`). Explicações (`e`) não podem citar a alternativa pela letra.
+- **R8 `r08-pratica`** (checkbox `w32`): 5 exercícios de live coding (leitor SSE, `useChat`, `fetchWithRetry`, `<Button>` com
+  cva, Generative UI com aprovação) e o caso de system design “interface de um assistente de IA” em RADIO, com 3 variações.
+  Cada exercício: enunciado, o que o entrevistador observa, dicas (`details.dica`), solução (`details.sol`) e follow-ups
+  (`details.ans`, que contam como perguntas abertas).
+- **Decisão do usuário:** os “próximos passos do roadmap” listados no R0 e nas páginas R1–R6 **não** serão aplicados no
+  Gabarita nem no Ally AI. Os dois projetos ficam como estão, só como fonte de exemplo.
 
 ## Status da montagem anterior (15/09/2026)
 

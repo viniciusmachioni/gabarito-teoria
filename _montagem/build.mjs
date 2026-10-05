@@ -39,6 +39,7 @@ const PAGINAS = [
   { slug: 'r05-cloud-aws', fonte: 'roadmap', num: 'R5', grupo: 'roadmap', titulo: 'Cloud & Delivery na AWS', foco: 'Cloud &amp; Delivery &mdash; Next.js na AWS, CI/CD, observabilidade, ambientes, secrets e CDN', tempo: '~8h' },
   { slug: 'r06-proximo-nivel', fonte: 'roadmap', num: 'R6', grupo: 'roadmap', titulo: 'Aprofundamento: MCP, AI UX, multi-cloud', foco: 'Próximo nível &mdash; MCP, padrões de AI UX, frontend distribuído e multi-cloud', tempo: '~6h' },
   { slug: 'r07-linkedin', fonte: 'roadmap', num: 'R7', grupo: 'roadmap', titulo: 'Ativação LinkedIn estratégica', foco: 'Ativação LinkedIn &mdash; headline, rede internacional, posts técnicos e candidaturas', tempo: 'contínuo' },
+  { slug: 'r08-pratica', fonte: 'roadmap', num: 'R8', grupo: 'roadmap', titulo: 'Prática: live coding e system design de IA', foco: 'Prática &mdash; 5 exercícios de live coding e o system design de uma interface de chat com IA, com solução comentada', tempo: '~12h' },
   { slug: '01-javascript-react', fonte: 's1', num: '01', grupo: 'nucleo', titulo: 'JavaScript & React', foco: 'JavaScript &amp; React &mdash; os modelos mentais por trás dos seus hooks', tempo: '~8h' },
   { slug: '02-nextjs-tailwind', fonte: 's2', num: '02', grupo: 'nucleo', titulo: 'Next.js & Tailwind', foco: 'Next.js (renderização, cache, edge) &amp; a filosofia do Tailwind', tempo: '~8h' },
   { slug: '03-postgresql', fonte: 's3', num: '03', grupo: 'nucleo', titulo: 'PostgreSQL', foco: 'PostgreSQL &mdash; MVCC, índices, pooling e por que não é MySQL', tempo: '~10h' },
@@ -150,9 +151,26 @@ if (existe(dirQuizRoadmap)) {
   }
 }
 const quiz = quizRoadmap.concat(quizOriginal, quizNovos);
+// id estável por questão (tema + hash do enunciado): é a chave do histórico do quiz no localStorage.
+// Editar o enunciado zera o histórico só daquela questão.
+const hash = (str) => { let h = 5381; for (const ch of str) h = ((h * 33) ^ ch.codePointAt(0)) >>> 0; return h.toString(36); };
+const idsQuiz = new Set();
+// Qualidade: a alternativa certa não pode se entregar pelo tamanho. Regra dura: certa <= 1,1 x a maior errada.
+const tamanho = (s) => semTags(s).replace(/&[a-z#0-9]+;/gi, 'x').length;
+let certaMaisLonga = 0;
 quiz.forEach((q, i) => {
-  if (!q.t || !q.s || !q.q || !Array.isArray(q.o) || typeof q.c !== 'number' || !q.e || q.c >= q.o.length) avisa('questão ' + (i + 1) + ' mal formada');
+  if (!q.t || !q.s || !q.q || !Array.isArray(q.o) || typeof q.c !== 'number' || !q.e || q.c >= q.o.length) { avisa('questão ' + (i + 1) + ' mal formada'); return; }
+  q.id = q.s + '-' + hash(semTags(q.q));
+  if (idsQuiz.has(q.id)) avisa('quiz: enunciado repetido em ' + q.s + ': ' + semTags(q.q).slice(0, 60));
+  idsQuiz.add(q.id);
+  const certa = tamanho(q.o[q.c]);
+  const maiorErrada = Math.max(...q.o.filter((_, j) => j !== q.c).map(tamanho));
+  if (certa > maiorErrada) certaMaisLonga++;
+  if (certa > 1.1 * maiorErrada) avisa('quiz: a certa é bem mais longa que as erradas (' + certa + ' vs ' + maiorErrada + ') em ' + q.s + ': ' + semTags(q.q).slice(0, 60));
+  if (/[^&](mdash|ndash|hellip|rarr|larr|middot);/.test(q.q + q.o.join('') + q.e)) avisa('quiz: entidade HTML quebrada em ' + q.s + ': ' + semTags(q.q).slice(0, 60));
 });
+const pctMaisLonga = Math.round((100 * certaMaisLonga) / quiz.length);
+if (pctMaisLonga > 35) avisa('quiz: a certa é a mais longa em ' + pctMaisLonga + '% das questões (o esperado num quiz sem viés é ~25%)');
 grava('assets/js/quiz-dados.js',
   '/* Gerado por _montagem/build.mjs — não editar à mão. */\nwindow.QZ_DADOS = [\n' +
   quiz.map((q) => JSON.stringify(q)).join(',\n') + '\n];\n');
@@ -220,14 +238,22 @@ function conteudoDe(p) {
   if (p.fonte === 'quiz') {
     return secoesOriginais.quiz
       .replace(/<div class="qz-bar" id="qz-filtros">[\s\S]*?<\/div>/, '<div class="qz-bar" id="qz-filtros">\n        <span class="qz-score" id="qz-score"></span>\n      </div>')
-      .replace(/42 quest/g, '<span data-qz-total>' + quiz.length + '</span> quest');
+      .replace(/42 quest/g, '<span data-qz-total>' + quiz.length + '</span> quest')
+      .replace(/nada &eacute; salvo/, 'alternativas embaralhadas a cada rodada &middot; histórico salvo neste navegador')
+      .replace(/(Filtre por tema pra revisar antes de uma entrevista espec&iacute;fica\.)/, '$1 O histórico guarda a última resposta de cada questão: <strong>Para revisar</strong> traz de volta só as que você errou, e <strong>Nova rodada</strong> limpa as respostas da tela e embaralha as alternativas de novo, então decorar a letra não adianta. O histórico entra no <a href="../index.html#backup">backup</a> da capa.');
   }
   return secoesOriginais[p.fonte] || null;
 }
 
+// <pre><code class="esc"> nas fontes: o código é escrito cru (com < > & de verdade) e escapado aqui.
+// Evita escrever JSX e TypeScript inteiros com &lt; &gt; à mão.
+const escapaCodigo = (html) => html.replace(/<pre><code class="esc">([\s\S]*?)<\/code><\/pre>/g, (_, c) =>
+  '<pre><code>' + c.replace(/^\r?\n/, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>');
+
 const publicadas = [];
 for (const p of PAGINAS) {
-  const c = conteudoDe(p);
+  const bruto = conteudoDe(p);
+  const c = bruto && escapaCodigo(bruto);
   if (!c) { avisa('pendente: ' + p.slug + ' (' + p.fonte + ')'); continue; }
   const { html, n } = embuteLeituras(p.slug, c);
   const ids = [...html.matchAll(/<input type="checkbox" id="([^"]+)"/g)].map((m) => m[1]);
@@ -416,5 +442,5 @@ grava('index.html', capa);
 /* ------------------------------------------------------------------ */
 console.log('páginas: ' + publicadas.length + '/' + PAGINAS.length +
   ' · tópicos: ' + totais.topicos + ' · leituras: ' + totais.leituras +
-  ' · perguntas: ' + totais.perguntas + ' · quiz: ' + quiz.length);
+  ' · perguntas: ' + totais.perguntas + ' · quiz: ' + quiz.length + ' (certa é a mais longa em ' + pctMaisLonga + '%)');
 if (avisos.length) console.log('\navisos:\n- ' + avisos.join('\n- '));
