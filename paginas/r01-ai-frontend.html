@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-Powered Frontend · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="rm1">
+  <div class="week-head"><span class="week-num">R1</span><h2>AI-Powered Frontend</h2></div>
+  <div class="week-meta">~8h &middot; a parte da IA que o usuário vê: o tempo de espera, o formato da resposta e o que acontece quando ela falha</div>
+  <p class="intro">Vaga de Frontend Engineer com foco em IA não pergunta como treinar um modelo. Pergunta o que a interface faz durante os 10 segundos em que o modelo pensa, como transformar texto livre em dado que um componente consegue renderizar, e o que o usuário vê quando a cota estoura. Este bloco cobre as quatro frentes do roadmap: <strong>streaming e estados assíncronos</strong>, <strong>tool calling e structured outputs</strong>, <strong>Generative UI</strong> e <strong>UX de loading, erro, retry e human-in-the-loop</strong>. A boa notícia: o Gabarita e o Ally AI já resolvem metade disso, e com mais rigor do que muito tutorial. O vocabulário de base (token, RAG, loop agentic) está no <a href="b02-ia-agentes.html">B2</a>, e estado de servidor no cliente está no <a href="b15-react-estado.html">B15</a>.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w25-1"><label for="w25-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM até o navegador: Route Handler devolvendo stream, <code>response.body.getReader()</code> no cliente, e por que streaming melhora o <strong>tempo até o primeiro token</strong> (o que o usuário percebe) sem mudar o tempo total</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-2"><label for="w25-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os estados de uma UI de IA: <code>submitted</code> &rarr; <code>streaming</code> &rarr; <code>ready</code> / <code>error</code> (o modelo do <code>useChat</code>), e <strong>cancelar</strong> (<code>stop()</code>, <code>AbortController</code>) como estado de primeira classe, não como detalhe</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-3"><label for="w25-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs: JSON Schema na chamada pra garantir o <em>formato</em>, Zod depois pra validar o <em>significado</em> &mdash; e por que a saída do modelo é entrada não confiável, mesmo com schema</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-4"><label for="w25-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tool calling: o modelo devolve um <strong>pedido</strong> de chamada (nome + argumentos), quem executa é o seu código, e o resultado volta pro modelo &mdash; os modos <code>auto</code>/<code>any</code>/<code>none</code> e validar argumento como se viesse de um formulário</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-5"><label for="w25-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs vs. tool calling: o primeiro formata a <strong>resposta final</strong>, o segundo pede uma <strong>ação no meio</strong> da conversa &mdash; saber escolher entre os dois é pergunta clássica</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-6"><label for="w25-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Generative UI: o resultado de uma ferramenta vira um <strong>componente tipado</strong> (parts <code>tool-&lt;nome&gt;</code> com estados carregando/pronto/erro) em vez de um parágrafo &mdash; e a diferença entre isso e só renderizar JSON num card fixo</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-7"><label for="w25-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Loading que respeita o tempo da IA: skeleton, mensagem de progresso, <strong>prazo de desistência</strong>, e <code>aria-live</code>/<code>role="status"</code> pra quem usa leitor de tela saber que a resposta chegou</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-8"><label for="w25-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Erro e retry: transitório (429/503/rede) vs. permanente (400/404), backoff que respeita o <code>retryDelay</code> da API, mensagem humanizada &mdash; e retry automático no servidor vs. botão de &ldquo;tentar de novo&rdquo; na UI</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-9"><label for="w25-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Human-in-the-loop: aprovação <strong>antes</strong> de executar ação sensível, revisão humana <strong>antes</strong> de publicar saída da IA, e o botão de reportar do usuário como sinal que reordena a fila</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://ai-sdk.dev/docs/ai-sdk-ui/chatbot" target="_blank" rel="noopener">AI SDK UI &mdash; Chatbot (useChat)</a></div><div class="r-note">A referência de mercado pra UI de LLM em React: streaming, os quatro estados, <code>stop()</code>, <code>regenerate()</code>, erro e throttle de re-render. Mesmo sem usar o SDK, é o vocabulário que a entrevista espera.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia o exemplo inicial (route handler + página), Status, Error State, Modify messages / Cancellation and regeneration e Throttling UI Updates. Pule transports customizados e anexos.</div><div class="r-src">ai-sdk.dev &middot; oficial (Vercel)</div><details class="leitura" data-id="r01-ai-frontend--ai-sdk-dev-docs-ai-sdk-ui-chatbot"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O <code>useChat</code> é a referência de mercado pra UI de LLM em React: ele junta mensagens, <strong>streaming</strong>, um <strong>status</strong> com quatro valores e as ações de parar e regenerar. Mesmo que você nunca use o SDK, é esse o vocabulário que um entrevistador vai usar.</p>
+
+<h5>A arquitetura em duas pontas</h5>
+<ul>
+<li><strong>No servidor</strong>, um Route Handler recebe as mensagens, chama <code>streamText()</code> com o modelo e devolve o stream já no formato de mensagens de UI (<code>toUIMessageStream()</code> embrulhado em <code>createUIMessageStreamResponse()</code>, nas versões atuais). A chave da API nunca sai do servidor.</li>
+<li><strong>No cliente</strong>, o hook mantém a lista de mensagens e vai atualizando a última à medida que os pedaços chegam. Você só renderiza.</li>
+<li>Cada mensagem tem <strong><code>parts</code></strong> em vez de um texto único: texto, chamada de ferramenta, resultado de ferramenta, raciocínio, arquivo. É isso que permite renderizar cada tipo de um jeito (a base da Generative UI).</li>
+</ul>
+
+<h5>Os quatro estados</h5>
+<div class="tbl"><table>
+<tr><th><code>status</code></th><th>Significa</th><th>O que a UI costuma mostrar</th></tr>
+<tr><td><code>submitted</code></td><td>mensagem enviada, stream ainda não começou</td><td>indicador de &ldquo;pensando&rdquo;, botão de enviar desabilitado</td></tr>
+<tr><td><code>streaming</code></td><td>pedaços chegando</td><td>texto crescendo + botão <strong>parar</strong></td></tr>
+<tr><td><code>ready</code></td><td>resposta completa</td><td>libera novo envio</td></tr>
+<tr><td><code>error</code></td><td>a requisição falhou</td><td>mensagem genérica + botão de tentar de novo</td></tr>
+</table></div>
+
+<h5>Ações e eventos</h5>
+<ul>
+<li><strong><code>sendMessage()</code></strong> envia; <strong><code>stop()</code></strong> aborta o stream em andamento; <strong><code>regenerate()</code></strong> refaz a última resposta do assistente.</li>
+<li>Callbacks <code>onFinish</code>, <code>onError</code> e <code>onData</code> servem pra log, analytics e efeitos de UI.</li>
+<li>O guia insiste num ponto de segurança: no estado de erro, mostre <strong>mensagem genérica</strong> ao usuário e não vaze detalhe do servidor.</li>
+</ul>
+
+<h5>Performance: throttle</h5>
+<ul>
+<li>Cada pedaço do stream é uma atualização de estado, ou seja, um re-render. A opção <strong><code>throttle</code></strong> (em ms) agrupa essas atualizações. O stream continua sendo processado na hora; só a pintura é espaçada.</li>
+<li>É o mesmo raciocínio de debounce/throttle do <a href="b14-frontend-system-design.html">B14</a>: o gargalo é o React renderizar 50 vezes por segundo, não a rede.</li>
+</ul>
+
+<h5>Transporte e metadados</h5>
+<ul>
+<li>O transporte padrão é HTTP e aceita headers, body extra e credenciais. Dá pra trocar por um transporte próprio.</li>
+<li>O servidor pode anexar <strong>metadados</strong> à mensagem (modelo usado, tokens, timestamps), lidos no cliente em <code>message.metadata</code>. É útil pra mostrar custo ou origem.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Uma UI de LLM tem pelo menos quatro estados (enviado, transmitindo, pronto, erro) e uma ação que o usuário sempre precisa ter: parar. Eu desenho os quatro antes de escrever o caminho feliz.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai-sdk.dev/docs/ai-sdk-ui/chatbot" target="_blank" rel="noopener">ai-sdk.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams" target="_blank" rel="noopener">MDN &mdash; Using readable streams</a></div><div class="r-note">O que existe por baixo de qualquer SDK: <code>response.body</code> é um <code>ReadableStream</code>, e ler pedaço por pedaço é um laço de <code>read()</code>.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia &ldquo;Consuming a fetch as a stream&rdquo; e &ldquo;Consuming a fetch() using asynchronous iteration&rdquo; (com o cancelamento via <code>AbortController</code>). Criar stream próprio e tee são consulta.</div><div class="r-src">developer.mozilla.org &middot; referência</div><details class="leitura" data-id="r01-ai-frontend--developer-mozilla-org-en-us-docs-web-api-streams-api-using-readable-st"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Todo SDK de streaming de IA, no fim, faz isto: <code>response.body</code> é um <strong><code>ReadableStream</code></strong>, e você lê pedaço por pedaço num laço até <code>done</code>. Saber fazer à mão é o que permite depurar quando o SDK não ajuda.</p>
+
+<h5>Consumir um <code>fetch</code> como stream</h5>
+<ul>
+<li><code>response.body</code> já é um <code>ReadableStream</code>. <code>getReader()</code> cria um leitor e <strong>trava</strong> o stream: só um leitor por vez, até <code>releaseLock()</code>.</li>
+<li><code>reader.read()</code> devolve uma promessa de <code>{ done, value }</code>. O padrão é: ler; se <code>done</code>, parar; processar o pedaço; ler de novo.</li>
+</ul>
+<pre><code>const reader = response.body.getReader();
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  // value é um Uint8Array: decodifique com TextDecoder
+}</code></pre>
+<ul>
+<li>O <code>value</code> vem em bytes. Pra texto de LLM, você decodifica com <code>TextDecoder</code> (ou passa o stream por um <code>TextDecoderStream</code> com <code>pipeThrough</code>).</li>
+</ul>
+
+<h5>Iteração assíncrona e cancelamento</h5>
+<ul>
+<li>A forma mais curta é <code>for await (const chunk of response.body)</code>.</li>
+<li>Cancelar é com <strong><code>AbortController</code></strong>: passe o <code>signal</code> pro <code>fetch</code> e chame <code>abort()</code> no clique do botão &ldquo;parar&rdquo;. Isso fecha a conexão de verdade, e o servidor pode parar de gerar (e de cobrar token).</li>
+<li><code>reader.cancel()</code> descarta o stream e o que estava na fila.</li>
+</ul>
+
+<h5>Criar, dividir e encadear</h5>
+<ul>
+<li>O construtor <code>new ReadableStream({ start, pull, cancel })</code> cria um stream próprio, alimentado com <code>controller.enqueue()</code> e encerrado com <code>controller.close()</code>. É o que um Route Handler faz pra transmitir a resposta do modelo.</li>
+<li><code>tee()</code> divide um stream em dois idênticos (ex.: mostrar ao usuário e gravar em cache ao mesmo tempo).</li>
+<li><code>pipeThrough()</code> passa por um transform stream; <code>pipeTo()</code> despeja num writable.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Por baixo do SDK é um <code>ReadableStream</code>: leitor, laço de <code>read()</code>, <code>TextDecoder</code> e um <code>AbortController</code> no botão de parar, porque parar também precisa parar o custo.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams" target="_blank" rel="noopener">developer.mozilla.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://ai.google.dev/gemini-api/docs/structured-output" target="_blank" rel="noopener">Gemini API &mdash; Structured outputs</a></div><div class="r-note">O provedor que os dois projetos usam. O subconjunto de JSON Schema aceito, saída estruturada em streaming e a comparação com function calling.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a introdução, os tipos e propriedades suportados, as boas práticas e a tabela final &ldquo;structured outputs vs. function calling&rdquo;. Os exemplos em Python são opcionais.</div><div class="r-src">ai.google.dev &middot; oficial</div><details class="leitura" data-id="r01-ai-frontend--ai-google-dev-gemini-api-docs-structured-output"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Structured output é pedir que o modelo responda em <strong>JSON que obedece a um schema</strong>. O Gemini aceita um subconjunto de JSON Schema. Mesmo assim, a própria documentação manda <strong>validar a saída na aplicação</strong>: o schema garante a forma, não a verdade.</p>
+
+<h5>Como pedir</h5>
+<ul>
+<li>Você informa o tipo de mídia JSON e um schema. Os nomes dos campos variam entre a API REST, os SDKs e as versões. No SDK <code>@google/genai</code> que o Ally AI usa, isso fica em <code>config.responseMimeType</code> + <code>config.responseJsonSchema</code> (<code>aiService.ts</code> L102-105).</li>
+<li>Nos SDKs, o schema pode sair de uma biblioteca de tipos: <strong>Pydantic</strong> em Python e <strong>Zod</strong> em JavaScript, convertidos pra JSON Schema. Assim existe uma fonte de verdade só, que é exatamente o que o Ally AI faz à mão com dois schemas espelhados.</li>
+</ul>
+
+<h5>O que o schema aceita</h5>
+<div class="tbl"><table>
+<tr><th>Para</th><th>Propriedades suportadas</th></tr>
+<tr><td>todos</td><td><code>type</code> (string, number, integer, boolean, object, array, null), <code>title</code>, <code>description</code></td></tr>
+<tr><td>objeto</td><td><code>properties</code>, <code>required</code>, <code>additionalProperties</code></td></tr>
+<tr><td>string</td><td><code>enum</code>, <code>format</code> (date-time, date, time)</td></tr>
+<tr><td>número</td><td><code>enum</code>, <code>minimum</code>, <code>maximum</code></td></tr>
+<tr><td>array</td><td><code>items</code>, <code>prefixItems</code>, <code>minItems</code>, <code>maxItems</code></td></tr>
+</table></div>
+<ul>
+<li>Nem todo recurso de JSON Schema é aceito, e schema muito grande ou aninhado pode ser rejeitado. Regras como &ldquo;exatamente uma alternativa correta&rdquo; ficam no seu código (o <code>refine</code> do Zod no Gabarita).</li>
+</ul>
+
+<h5>Streaming de saída estruturada</h5>
+<ul>
+<li>Em streaming, cada pedaço é um <strong>JSON parcial</strong>: a concatenação forma o objeto final. Dá pra mostrar progresso, mas o objeto só é válido no fim.</li>
+</ul>
+
+<h5>Boas práticas que a página lista</h5>
+<ul>
+<li>Use <code>description</code> nos campos pra orientar o modelo.</li>
+<li>Prefira tipos específicos (<code>enum</code>, <code>integer</code>) a strings genéricas. O Ally AI faz isso com <code>priority: enum ["baixa","media","alta"]</code>.</li>
+<li>Combine prompt claro com schema.</li>
+<li><strong>Valide os valores na aplicação</strong> e trate saída semanticamente errada.</li>
+</ul>
+
+<h5>Structured output vs. function calling</h5>
+<ul>
+<li><strong>Structured output</strong> formata a <em>resposta final</em>.</li>
+<li><strong>Function calling</strong> é quando o modelo precisa <em>pedir uma ação</em> antes de responder.</li>
+<li>Nos modelos Gemini 3, os dois podem ser combinados na mesma chamada.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;O schema é contrato de forma; o significado eu valido no código. No Gabarita, uma explicação com o JSON perfeito e a alternativa errada é recusada e refeita.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai.google.dev/gemini-api/docs/structured-output" target="_blank" rel="noopener">ai.google.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://ai.google.dev/gemini-api/docs/function-calling" target="_blank" rel="noopener">Gemini API &mdash; Function calling</a></div><div class="r-note">Os quatro passos do ciclo (declarar, o modelo pede, você executa, devolve o resultado), chamadas paralelas e compostas, modos e boas práticas de segurança.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia &ldquo;How function calling works&rdquo;, o formato da declaração, os modos e as boas práticas. Integrações com MCP e thinking são do <a href="r06-proximo-nivel.html">R6</a>.</div><div class="r-src">ai.google.dev &middot; oficial</div><details class="leitura" data-id="r01-ai-frontend--ai-google-dev-gemini-api-docs-function-calling"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Function calling deixa o modelo <strong>pedir</strong> uma ação: ele devolve o nome da função e os argumentos, <strong>o seu código executa</strong> e devolve o resultado, e só então o modelo responde ao usuário. O modelo nunca executa nada sozinho.</p>
+
+<h5>O ciclo em quatro passos</h5>
+<ol>
+<li><strong>Declarar</strong> as funções: nome, descrição e parâmetros em JSON Schema (<code>type: "object"</code>, <code>properties</code>, <code>required</code>).</li>
+<li><strong>Chamar o modelo</strong> com a mensagem do usuário e as declarações.</li>
+<li>Se o modelo decidir usar uma ferramenta, ele devolve uma <strong>chamada de função</strong> com nome e argumentos. Sua aplicação extrai isso e <strong>executa localmente</strong>.</li>
+<li><strong>Devolver o resultado</strong> ao modelo, que gera a resposta final pro usuário.</li>
+</ol>
+
+<h5>Padrões avançados</h5>
+<ul>
+<li><strong>Paralelo:</strong> várias funções independentes pedidas no mesmo turno (ex.: clima de três cidades).</li>
+<li><strong>Composicional:</strong> o resultado de uma chamada alimenta a próxima (descobrir a localização, depois buscar o clima dela). É o embrião do loop agentic do <a href="b02-ia-agentes.html">B2</a>.</li>
+</ul>
+
+<h5>Modos</h5>
+<div class="tbl"><table>
+<tr><th>Modo</th><th>Comportamento</th></tr>
+<tr><td><code>auto</code> (padrão)</td><td>o modelo decide entre chamar função ou responder direto</td></tr>
+<tr><td><code>any</code></td><td>sempre prevê uma chamada de função</td></tr>
+<tr><td><code>none</code></td><td>nunca chama função</td></tr>
+<tr><td><code>validated</code></td><td>garante aderência estrita ao schema</td></tr>
+</table></div>
+
+<h5>Boas práticas (incluindo segurança)</h5>
+<ul>
+<li><strong>Descrições claras</strong> de cada função e parâmetro: é com elas que o modelo decide quando chamar.</li>
+<li><strong>Nomes descritivos e consistentes.</strong></li>
+<li><strong>Validar os argumentos antes de executar</strong>: o modelo pode errar tipo, inventar valor ou ser induzido por prompt injection.</li>
+<li><strong>Autenticação e autorização</strong> em quem a função acessa; validar argumento contra injeção.</li>
+<li><strong>Tratar falha de execução</strong> e devolver um resultado informativo ao modelo, em vez de quebrar a conversa.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Tool calling é o modelo preenchendo um formulário que o meu código executa. Então eu trato os argumentos como qualquer input de usuário: schema, autorização e menor privilégio.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai.google.dev/gemini-api/docs/function-calling" target="_blank" rel="noopener">ai.google.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces" target="_blank" rel="noopener">AI SDK UI &mdash; Generative User Interfaces</a></div><div class="r-note">A definição prática de Generative UI: ferramenta &rarr; dado tipado &rarr; componente React, renderizado pelo estado da part.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta com um exemplo só (clima). Preste atenção em como a part <code>tool-displayWeather</code> é renderizada por estado.</div><div class="r-src">ai-sdk.dev &middot; oficial (Vercel)</div><details class="leitura" data-id="r01-ai-frontend--ai-sdk-dev-docs-ai-sdk-ui-generative-user-interfaces"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Generative UI é deixar o LLM ir <strong>além do texto</strong>. O modelo chama uma ferramenta, a ferramenta devolve <strong>dado tipado</strong>, e a interface renderiza um <strong>componente React</strong> pra aquele resultado, em vez de um parágrafo descrevendo-o.</p>
+
+<h5>O fluxo</h5>
+<ol>
+<li>O modelo recebe o prompt e uma lista de <strong>ferramentas</strong>, cada uma com descrição, schema de entrada em Zod e uma função <code>execute</code>.</li>
+<li>Pelo contexto, ele decide se chama alguma (&ldquo;como está o tempo em SF?&rdquo; &rarr; <code>displayWeather</code>).</li>
+<li>A ferramenta roda no servidor e devolve dado (<code>{ weather, temperature, location }</code>).</li>
+<li>Esse dado chega ao cliente como uma <strong>part</strong> da mensagem, e um componente <code>&lt;Weather /&gt;</code> o renderiza.</li>
+</ol>
+
+<h5>Renderizar por tipo e por estado</h5>
+<ul>
+<li>As parts de ferramenta são tipadas pelo nome: <code>tool-displayWeather</code>. Você percorre <code>message.parts</code> e faz um <code>switch</code> no tipo.</li>
+<li>Cada part de ferramenta tem um <strong>estado</strong>, e cada estado pede uma UI:</li>
+</ul>
+<div class="tbl"><table>
+<tr><th>Estado</th><th>Significa</th><th>Renderize</th></tr>
+<tr><td><code>input-available</code></td><td>a ferramenta foi chamada e está rodando</td><td>skeleton do componente</td></tr>
+<tr><td><code>output-available</code></td><td>terminou com sucesso</td><td>o componente com o dado</td></tr>
+<tr><td><code>output-error</code></td><td>a ferramenta falhou</td><td>erro localizado naquele bloco, sem derrubar a conversa</td></tr>
+</table></div>
+
+<h5>No servidor</h5>
+<ul>
+<li>O Route Handler chama <code>streamText</code> com o modelo, as instruções, as mensagens convertidas (<code>convertToModelMessages()</code>) e o objeto <code>tools</code>, e devolve o stream de mensagens de UI.</li>
+</ul>
+
+<h5>O que isso muda no desenho</h5>
+<ul>
+<li>A ferramenta vira um <strong>contrato entre o modelo e o design system</strong>: o schema de saída é a prop do componente. Mudar um exige mudar o outro.</li>
+<li>Cada componente gerado precisa dos mesmos cuidados de qualquer componente: acessível, responsivo, com estado de carregando e de erro. É aqui que Design Engineering (<a href="r02-design-systems.html">R2</a>) encontra IA.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Generative UI é o modelo escolhendo qual componente do meu design system mostrar, e com quais dados. O schema da ferramenta é a interface de props.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces" target="_blank" rel="noopener">ai-sdk.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://ai-sdk.dev/docs/agents/tool-approvals" target="_blank" rel="noopener">AI SDK &mdash; Tool Approvals</a></div><div class="r-note">Human-in-the-loop na forma mais concreta: a ferramenta para, a UI pergunta, o usuário aprova ou nega, e o modelo segue sabendo da decisão.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta. Note a diferença entre aprovação estática (por ferramenta) e dinâmica (pelo valor do argumento).</div><div class="r-src">ai-sdk.dev &middot; oficial (Vercel)</div><details class="leitura" data-id="r01-ai-frontend--ai-sdk-dev-docs-agents-tool-approvals"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Tool approval é <strong>human-in-the-loop</strong> no nível da ferramenta: antes de executar algo sensível (rodar comando, processar pagamento), o agente para e a UI pede aprovação. Se o usuário nega, a ferramenta não roda, e o modelo segue sabendo disso.</p>
+
+<h5>Os quatro desfechos de uma chamada</h5>
+<div class="tbl"><table>
+<tr><th>Status</th><th>O que acontece</th></tr>
+<tr><td><code>not-applicable</code></td><td>executa normalmente, sem metadado de aprovação (padrão)</td></tr>
+<tr><td><code>approved</code></td><td>aprovação automática registrada, executa</td></tr>
+<tr><td><code>denied</code></td><td>negação automática registrada, devolve resultado &ldquo;negado&rdquo;</td></tr>
+<tr><td><code>user-approval</code></td><td>emite um pedido de aprovação e espera a resposta</td></tr>
+</table></div>
+
+<h5>Estática ou dinâmica</h5>
+<ul>
+<li><strong>Estática:</strong> um mapa por ferramenta, como <code>{ runCommand: 'user-approval' }</code>.</li>
+<li><strong>Dinâmica:</strong> uma função que olha o <strong>argumento</strong>, por exemplo pagamento acima de 1000 pede aprovação e abaixo passa direto. É o desenho certo na maioria dos casos: pedir aprovação pra tudo treina o usuário a clicar &ldquo;sim&rdquo; sem ler.</li>
+<li>Também dá pra ter uma política única que avalia qualquer chamada pelo nome da ferramenta e pela entrada.</li>
+</ul>
+
+<h5>No cliente</h5>
+<ul>
+<li>O pedido chega como uma part de ferramenta com <code>state: 'approval-requested'</code>. A UI mostra o que vai ser feito, com os argumentos legíveis, e dois botões.</li>
+<li>A resposta volta por <code>addToolApprovalResponse({ id, approved })</code>, do <code>useChat</code>.</li>
+<li>Na negação, a ferramenta não executa e o modelo recebe a negação. A documentação recomenda instruir o modelo a <strong>não tentar de novo</strong> o que foi negado.</li>
+</ul>
+
+<h5>Limites</h5>
+<ul>
+<li>Só vale pra ferramentas que o próprio SDK executa. Ferramentas executadas pelo provedor passam por fora.</li>
+<li>A API mudou de nome entre versões (a forma anterior era a flag <code>needsApproval</code> na ferramenta). Confira a versão instalada antes de citar a assinatura numa entrevista.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Aprovação humana entra onde a ação é irreversível ou cara, e de preferência por regra dinâmica. Se você pede confirmação pra tudo, ninguém lê a confirmação.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai-sdk.dev/docs/agents/tool-approvals" target="_blank" rel="noopener">ai-sdk.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+  </ul>
+
+  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <div class="evid">
+    <div class="evid-head">O que você já fez &middot; arquivo e linha</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Interfaces com LLM, streaming e estados assíncronos <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p><span class="proj">Gabarita</span> &mdash; não tem streaming de token, mas resolve a espera de um jeito melhor pro caso dele: a explicação é gerada <strong>depois que a resposta HTTP já saiu</strong>, e o cliente consulta de novo com intervalo crescente e um prazo pra desistir.</p>
+        <ul>
+          <li><code>src/lib/study/explain-prefetch.ts</code> L18-30 &mdash; <code>agendarExplicacao()</code> usa <code>after()</code> do <code>next/server</code>: &ldquo;nenhum render espera a IA&rdquo;. L75-95 &mdash; <code>agendarExplicacoesEmLote()</code> faz um único <code>after()</code> sequencial com espaçamento contra 429.</li>
+          <li><code>src/app/(app)/estudo/[sessaoId]/[ordem]/question-runner.tsx</code> L117-122 &mdash; polling com <code>router.refresh()</code> e desistência em 23s:</li>
+        </ul>
+        <pre><code>useEffect(() =&gt; {
+  if (!respondida || props.resumo !== null) return;
+  const timers = [3000, 9000, 21000].map((ms) =&gt; setTimeout(() =&gt; router.refresh(), ms));
+  const desistir = setTimeout(() =&gt; setDesistiuDaExplicacao(true), 23000);
+  return () =&gt; { timers.forEach(clearTimeout); clearTimeout(desistir); };
+}, [respondida, props.resumo, router]);</code></pre>
+        <p><span class="proj">Ally AI</span> &mdash; request/response síncrono: a auditoria inteira (Chromium + axe + Gemini) roda dentro de um <code>POST</code>, e a UI só tem <code>isLoading</code>/<code>error</code>/<code>results</code>.</p>
+        <ul>
+          <li><code>apps/web/src/app/page.tsx</code> L62-92 &mdash; <code>handleAnalyze</code> chama <code>api.post("/audit", { url })</code> e diferencia 401, 403 e erro genérico.</li>
+          <li><code>apps/api/src/services/aiService.ts</code> L99-106 &mdash; <code>generateContent</code>, sem <code>generateContentStream</code>. Não há SSE, <code>ReadableStream</code> nem AI SDK nos dois projetos.</li>
+        </ul>
+      </div>
+
+      <div class="evid-item">
+        <h4>Tool calling e structured outputs <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p>Os dois projetos são <strong>fortes em structured output</strong> e <strong>não usam tool calling</strong>. A diferença entre eles é onde a validação mora.</p>
+        <p><span class="proj">Ally AI</span> &mdash; schema duplo: JSON Schema enviado ao Gemini <em>e</em> Zod por item na volta, com allowlist de <code>id</code>.</p>
+        <ul>
+          <li><code>apps/api/src/services/aiService.ts</code> L16-21 (<code>analysisItemSchema</code> em Zod), L24-36 (o mesmo formato em JSON Schema), L102-105 (<code>responseMimeType: "application/json", responseJsonSchema</code>), L64-86 (<code>parseAnalyses</code>):</li>
+        </ul>
+        <pre><code>for (const item of items) {
+  const parsed = analysisItemSchema.safeParse(item);
+  if (!parsed.success || !sentIds.has(parsed.data.id)) continue;
+  const { id, ...analysis } = parsed.data;
+  analyses[id] = analysis;
+}</code></pre>
+        <p><span class="proj">Gabarita</span> &mdash; pede só JSON (<code>src/lib/ai/gemini.ts</code> L53, &ldquo;Zod é o validador de verdade a jusante&rdquo;) e vai além do formato: valida o <strong>significado</strong>.</p>
+        <ul>
+          <li><code>src/lib/ai/schemas.ts</code> L92 (<code>ExplicacaoSchema</code>, com <code>refine</code> que barra markdown e exige exatamente uma correta) e L136-161 (<code>validarExplicacao</code>: as letras da IA têm que ser as do banco, e a correta da IA tem que ser a do gabarito &mdash; senão <code>throw</code>).</li>
+          <li><code>src/lib/study/explain.ts</code> L32 e L85-89 &mdash; até <code>MAX_TENTATIVAS_VALIDACAO = 3</code> chamadas quando a saída é recusada.</li>
+          <li><code>src/lib/ai/gemini.ts</code> L22 &mdash; <code>stripCodeFence</code>, porque o modelo às vezes devolve <code>```json</code> mesmo com <code>responseMimeType</code> JSON.</li>
+        </ul>
+        <p>Tool calling: nenhum <code>functionDeclarations</code>/<code>tools</code> em nenhum dos dois. O mais perto é o Ally AI, que já usa o padrão &ldquo;LLM sobre resultado de ferramenta&rdquo; &mdash; só que a ferramenta (axe-core) é chamada pelo código, não pelo modelo (<code>apps/api/src/services/auditService.ts</code> L37-51).</p>
+      </div>
+
+      <div class="evid-item">
+        <h4>Generative UI <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p>Nos dois, a IA preenche <strong>componentes fixos</strong> com dado estruturado: o modelo não escolhe qual componente aparecer. É o degrau anterior à Generative UI, e vale contar assim, com honestidade.</p>
+        <ul>
+          <li><span class="proj">Gabarita</span> &mdash; <code>src/app/(app)/estudo/[sessaoId]/[ordem]/correcao-card.tsx</code> L34-48: resumo + &ldquo;Alternativa por alternativa&rdquo; com o <code>motivo</code> de cada uma. <code>src/components/aviso-diretriz.tsx</code> L51-58: resumo da IA com a citação literal num <code>&lt;blockquote&gt;</code>. Frases-chave geradas e <strong>editáveis</strong> pelo aluno em <code>src/app/(app)/revisao/caderno/</code>.</li>
+          <li><span class="proj">Ally AI</span> &mdash; <code>apps/web/src/components/Dashboard.tsx</code> L62-136: card por violação, selo de prioridade com cor condicional (L77-87), bloco &ldquo;AI Analysis&rdquo; com <code>Sparkles</code> (L96-101) e a correção num <code>&lt;pre&gt;&lt;code&gt;</code> (L127-131). Não dá pra copiar, filtrar, ordenar nem aplicar a correção.</li>
+        </ul>
+      </div>
+
+      <div class="evid-item">
+        <h4>UX de loading, streaming, erro, retry e human-in-the-loop <span class="st y">Gabarita: usado</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p><span class="proj">Gabarita</span> &mdash; cobre tudo menos streaming:</p>
+        <ul>
+          <li><strong>Loading:</strong> <code>correcao-card.tsx</code> L29-31 (&ldquo;Escrevendo a correção&hellip;&rdquo;) e L54-59 (skeleton com <code>aria-hidden</code>); seis <code>loading.tsx</code> de rota.</li>
+          <li><strong>Desistência:</strong> <code>correcao-card.tsx</code> L49-52 &mdash; &ldquo;Não foi possível gerar a explicação agora. Ela aparece aqui quando estiver pronta.&rdquo;</li>
+          <li><strong>Acessível:</strong> <code>question-runner.tsx</code> L281 (<code>role="alert"</code> no erro) e L286 (<code>role="status" aria-live="polite"</code> em volta do card de correção).</li>
+          <li><strong>Retry consciente:</strong> <code>src/lib/ai/retry.ts</code> L51 (<code>isRetryableAIError</code>: 429/5xx/rede sim, 400/404 não), L39 (<code>parseRetryDelayMs</code> lê o <code>RetryInfo.retryDelay</code> do 429), L85-106 (<code>withRetry</code>: espera o que a API pediu, senão backoff exponencial, sempre com teto), L64 (<code>humanizeAIError</code>).</li>
+          <li><strong>Sem chamada duplicada:</strong> <code>src/lib/study/explain.ts</code> L66-74 &mdash; lease atômica com <code>updateMany</code> condicional em <code>explicacaoIniciadaEm</code>.</li>
+          <li><strong>Human-in-the-loop:</strong> toda questão extraída nasce com <code>needsVerification: true</code> (<code>src/lib/ingestion/create-question.ts</code> L62 e L88); a fila <code>/verificacao</code> tem confirmar/rejeitar/editar (<code>src/app/(app)/verificacao/[id]/actions.ts</code> L10-40); o aluno reporta problema por categoria (<code>src/app/(app)/estudo/[sessaoId]/[ordem]/report-question-button.tsx</code>, com <code>gabarito_errado</code> como padrão).</li>
+        </ul>
+        <p><span class="proj">Ally AI</span> &mdash; o servidor é cuidadoso; a interface, nem tanto:</p>
+        <ul>
+          <li><strong>Erros com taxonomia:</strong> <code>apps/api/src/services/auditErrors.ts</code> L1-42 &mdash; cada <code>AuditErrorCode</code> tem status HTTP (400/422/503/504) e mensagem pra pessoa (&ldquo;Tente de novo em alguns minutos&rdquo;).</li>
+          <li><strong>Compensação:</strong> <code>apps/api/src/controllers/AuditController.ts</code> L27-35 reserva o crédito com <code>updateMany</code> condicional (<code>credits: { gte: 1 }</code>) e L52-53 devolve em qualquer falha (<code>refundCredit</code>, L66-75).</li>
+          <li><strong>Retry no servidor:</strong> <code>aiService.ts</code> L97-121 &mdash; só 429/503, espera de <code>attempt + 1</code> segundos, até 3 tentativas.</li>
+          <li><strong>Degradação graciosa:</strong> <code>apps/api/src/services/auditService.ts</code> L45-51 &mdash; se a IA falhar, o relatório sai sem <code>aiAnalysis</code>. Mas a UI <strong>não avisa</strong> que a análise faltou.</li>
+          <li><strong>Loading:</strong> <code>apps/web/src/components/HeroSearch.tsx</code> L58-62 (botão desabilitado + <code>Loader2</code>), skeletons em <code>DashboardSkeleton.tsx</code>. Nenhum <code>aria-live</code>, nenhum botão de &ldquo;tentar de novo&rdquo;, nenhum human-in-the-loop.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap">
+    <h4>O que falta construir</h4>
+    <ol>
+      <li><strong>Ally AI &middot; streaming da auditoria.</strong> Trocar o <code>POST /audit</code> que espera tudo por uma resposta em stream (NDJSON ou SSE) em <code>apps/api/src/controllers/AuditController.ts</code>: um evento quando o axe termina (os cards aparecem já com a violação), depois um evento por análise da IA, e <code>done</code>/<code>error</code> no fim. No front (<code>apps/web/src/app/page.tsx</code>), <code>fetch</code> + <code>getReader()</code> com <code>AbortController</code> num botão &ldquo;cancelar&rdquo;. Vira o <strong>post 5</strong> do <a href="r07-linkedin.html">R7</a>.</li>
+      <li><strong>Ally AI &middot; estados que a UI ainda não mostra.</strong> Em <code>Dashboard.tsx</code>: aviso quando <code>aiAnalysis</code> veio vazio (a degradação silenciosa), botão &ldquo;tentar análise de novo&rdquo; só pra violações sem análise, e <code>role="status" aria-live="polite"</code> no resultado &mdash; um produto de acessibilidade sem live region é a primeira pergunta de qualquer entrevistador.</li>
+      <li><strong>Ally AI &middot; Generative UI de verdade com tool calling.</strong> Um painel &ldquo;pergunte sobre este relatório&rdquo; em <code>apps/web/src/app/dashboard/analysis/[id]/page.tsx</code>, com ferramentas declaradas no Gemini (<code>listarViolacoes(impacto)</code>, <code>detalharViolacao(id)</code>) que leem o JSONB salvo; cada resultado de ferramenta renderiza um componente (lista filtrada, card com diff antes/depois), não texto. Vira o <strong>post 6</strong>.</li>
+      <li><strong>Ally AI &middot; interações sobre o resultado.</strong> Copiar correção, filtrar e ordenar por prioridade, e mostrar o <code>helpUrl</code> do axe que já é salvo (<code>auditService.ts</code> L58) mas nunca aparece &mdash; é a citação que dá confiança à sugestão da IA (ponte com AI UX no <a href="r06-proximo-nivel.html">R6</a>).</li>
+      <li><strong>Gabarita &middot; streaming só onde não quebra a validação.</strong> A explicação não pode ser transmitida token a token, porque <code>validarExplicacao</code> só decide no fim (ver a munição abaixo). Um candidato honesto: o resumo de diretriz no admin, com rótulo &ldquo;rascunho&rdquo; até a citação ser verificada.</li>
+    </ol>
+  </div>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; &ldquo;a IA propõe, o código verifica&rdquo; no Gabarita</div>
+    <div class="ammo-body">
+      <p>A explicação de uma questão de residência médica que contradiz o gabarito é pior que nenhuma explicação. Por isso, no Gabarita, a saída do Gemini passa por três portas: Zod garante o formato (<code>ExplicacaoSchema</code>), <code>validarExplicacao</code> confere que as letras são as da questão e que a correta da IA é a do banco, e se qualquer uma falha a chamada é refeita até 3 vezes (<code>src/lib/study/explain.ts</code>). Isso roda fora do caminho crítico, num <code>after()</code>, com trava atômica no Postgres pra não pagar duas vezes a mesma explicação; o cliente consulta em 3s, 9s e 21s e, aos 23s, troca o skeleton por uma mensagem honesta, sem travar o estudo.</p>
+      <p>E a consequência que impressiona: <strong>foi uma decisão consciente não usar streaming</strong> ali. Streaming mostraria texto que ainda pode ser recusado; como a aluna leva de 30s a 2min por questão e a geração leva 10-13s, a explicação quase sempre já está pronta quando ela responde.</p>
+      <p class="why"><strong>Por que isso importa:</strong> qualquer um liga um <code>useChat</code>. O que separa sênior é saber quando streaming é a resposta errada, tratar o modelo como entrada não confiável, e desenhar o estado de falha antes do estado feliz.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Por que o Gabarita não faz streaming da explicação, se streaming &ldquo;é melhor pra UX&rdquo;?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Porque a validação é <strong>sobre a resposta inteira</strong>: só no fim dá pra saber se a alternativa que a IA marcou como correta é a do gabarito. Transmitir token a token mostraria à aluna um texto que pode ser recusado e substituído &mdash; numa prova de medicina, uma explicação errada que aparece por 5 segundos já ensinou errado.</p>
+<p>E o ganho de streaming (tempo até o primeiro token) quase não existe ali: a geração começa num <code>after()</code> quando a questão abre e termina antes de a aluna responder. Streaming resolve espera percebida; quando não há espera percebida, ele só traz risco.</p></div>
+        </details>
+      </li>
+      <li>Qual a diferença entre structured output e tool calling, e quando você usaria cada um?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>Structured output</strong> formata a <em>resposta final</em>: você quer que o modelo devolva dado num formato que o código consiga usar (o array de análises do Ally AI, a explicação do Gabarita). <strong>Tool calling</strong> é o modelo pedindo uma <em>ação no meio</em> da conversa: ele devolve nome + argumentos, o seu código executa, e o resultado volta pra ele continuar.</p>
+<p>Regra prática: se você já sabe quais dados o modelo precisa e só quer o formato, structured output. Se o modelo precisa <em>decidir</em> o que buscar ou fazer (consultar o relatório, filtrar por impacto), tool calling. Os dois combinam: o resultado da ferramenta pode alimentar uma resposta final estruturada.</p></div>
+        </details>
+      </li>
+      <li>Num fluxo de tool calling, o modelo &ldquo;chama&rdquo; sua função. O que isso significa em termos de segurança?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>O modelo <strong>não executa nada</strong>: ele devolve um pedido, e quem executa é o seu código, com as permissões do seu servidor. Então os argumentos são entrada não confiável, igual a um formulário: validar com schema, checar autorização do usuário pro recurso (o <code>id</code> pedido é dele?), e nunca dar à ferramenta mais poder que o necessário.</p>
+<p>Prompt injection é o vetor: um texto de terceiro dentro do contexto (o HTML auditado pelo Ally AI, por exemplo) pode tentar convencer o modelo a pedir uma ferramenta perigosa. Por isso ação sensível pede aprovação humana antes de rodar.</p></div>
+        </details>
+      </li>
+      <li>O polling do Gabarita (3s, 9s, 21s, desiste em 23s) é uma boa solução? O que mudaria com SSE ou streaming?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Pro caso dele, sim: são no máximo 3 requisições, o intervalo crescente acompanha a distribuição real do tempo de geração, e o prazo de desistência garante que a tela nunca fica em loading eterno. O custo é latência: a explicação pode ficar pronta aos 10s e só aparecer aos 21s.</p>
+<p>Com SSE (ver <a href="04-concorrencia.html">Semana 4</a>), o servidor avisaria no instante em que a explicação fosse gravada &mdash; menos latência, mas uma conexão aberta por aluna, o que pesa em serverless com limite de duração de função. É o trade-off clássico entre polling (simples, sem estado) e push (imediato, com conexão).</p></div>
+        </details>
+      </li>
+      <li>Dê dois exemplos de human-in-the-loop nos seus projetos e diga por que um deles foi substituído por verificação automática.
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>No Gabarita: questão extraída de PDF pela IA nasce com <code>needsVerification: true</code> e vai pra fila <code>/verificacao</code>, onde um revisor confirma, rejeita ou edita; e o aluno pode reportar &ldquo;gabarito errado&rdquo;, o que prioriza a fila.</p>
+<p>O resumo de diretriz clínica trocou revisão humana por <strong>verificação determinística</strong>: só é publicado se a citação que a IA propõe existir palavra por palavra no texto da fonte (<code>src/lib/diretrizes/citacao.ts</code>). Quando existe um critério objetivo e barato, o código decide; humano fica pro que exige julgamento.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="r00-mapa.html"><div class="dir">&larr; anterior</div><div class="t">Mapa: roadmap × Gabarita e Ally AI</div></a>
+    <a class="next" href="r02-design-systems.html"><div class="dir">próxima &rarr;</div><div class="t">Design Systems &amp; Design Engineering</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 32 blocos &middot; 227 tópicos &middot; 159 leituras resumidas &middot; 124 perguntas abertas com gabarito &middot; 142 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 05/10/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

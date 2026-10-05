@@ -1,0 +1,155 @@
+<article data-href="https://turborepo.dev/docs/core-concepts/internal-packages">
+<p class="tldr">Internal package é uma biblioteca cujo código mora no próprio monorepo e é referenciada pelo protocolo de workspace do gerenciador (<code>"@repo/ui": "workspace:*"</code> no pnpm). A decisão que importa é <strong>quem compila o pacote</strong> &mdash; e há três respostas, cada uma com um custo diferente.</p>
+
+<h5>As três estratégias</h5>
+<div class="tbl"><table>
+<tr><th>Estratégia</th><th>Quem compila</th><th>Ganha</th><th>Perde</th></tr>
+<tr><td><strong>Just-in-Time</strong></td><td>o bundler da app que consome</td><td>quase zero configuração: o <code>package.json</code> exporta os <code>.ts</code> direto, sem build</td><td>só funciona se todo consumidor transpila; o Turborepo não tem build pra cachear; não aceita <code>compilerOptions.paths</code>; erro de tipo do pacote aparece em quem consome</td></tr>
+<tr><td><strong>Compiled</strong></td><td>o próprio pacote (normalmente <code>tsc</code>), gerando <code>dist/</code></td><td>saída cacheada pelo Turborepo; serve pra consumidor que não transpila TypeScript</td><td>mais configuração: opções do compilador, <code>sideEffects</code>, <code>exports</code> com <code>types</code> e <code>default</code></td></tr>
+<tr><td><strong>Publishable</strong></td><td>o pacote, com a configuração mais rígida</td><td>pode ir pro registro npm e ser usado fora do monorepo</td><td>exige ferramenta de versionamento e publicação &mdash; a doc recomenda <code>changesets</code></td></tr>
+</table></div>
+
+<h5>Como reconhecer qual você tem</h5>
+<ul>
+<li>Se o <code>package.json</code> aponta <code>main</code>/<code>types</code>/<code>exports</code> pra <code>./src/index.ts</code> e não existe script de <code>build</code>, é <strong>Just-in-Time</strong>. É o caso do <code>@ally-ai/types</code>.</li>
+<li>Se aponta pra <code>./dist/index.js</code> e há um <code>build</code> que gera esse arquivo, é <strong>Compiled</strong>.</li>
+<li>O <code>dependsOn: ["^build"]</code> no <code>turbo.json</code> é o que garante que o <code>dist/</code> do pacote existe antes da app que o consome buildar.</li>
+</ul>
+
+<h5>Boas práticas que a página pede</h5>
+<ul>
+<li>Declarar <code>exports</code> explícitos no <code>package.json</code> &mdash; é isso que define a <strong>fronteira pública</strong> do pacote. O que não está em <code>exports</code> não pode ser importado de fora, e é assim que se impõe boundary sem depender de disciplina.</li>
+<li>Em Compiled, separar <code>types</code> e <code>default</code> em cada entrada de <code>exports</code>.</li>
+<li>Ter os mesmos scripts de <code>lint</code> e <code>typecheck</code> em todo pacote, pra o Turborepo rodar a mesma task no repo inteiro.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Comecei com o pacote de tipos Just-in-Time porque é só contrato e os dois consumidores transpilam. Se virasse biblioteca de UI usada por várias apps, eu passaria pra Compiled, pelo cache do build e pra o erro de tipo não vazar pra quem consome.&rdquo;</p>
+</article>
+
+<article data-href="https://martinfowler.com/articles/micro-frontends.html">
+<p class="tldr">Micro frontends são &ldquo;um estilo de arquitetura em que aplicações de front-end entregáveis de forma independente são compostas num todo maior&rdquo;. O artigo de Cam Jackson é favorável ao estilo, mas é honesto sobre o preço &mdash; e o preço é o que se cobra numa entrevista.</p>
+
+<h5>Os quatro benefícios</h5>
+<ul>
+<li><strong>Atualização incremental:</strong> trocar um legado aos pedaços em vez de reescrever tudo, e experimentar tecnologia nova num pedaço só.</li>
+<li><strong>Bases de código menores e desacopladas:</strong> menos acoplamento acidental; fluxo de dados e eventos entre partes fica explícito.</li>
+<li><strong>Deploy independente:</strong> cada micro frontend tem seu pipeline; o time decide quando sobe.</li>
+<li><strong>Times autônomos:</strong> organizados por funcionalidade vista pelo usuário, não por camada técnica.</li>
+</ul>
+
+<h5>As cinco formas de integrar</h5>
+<div class="tbl"><table>
+<tr><th>Abordagem</th><th>Resumo</th><th>Veredito do artigo</th></tr>
+<tr><td>Composição no servidor</td><td>server-side includes montando fragmentos de HTML</td><td>simples, mas não dá deploy realmente independente</td></tr>
+<tr><td>Build-time (pacote npm)</td><td>cada micro frontend vira dependência do container</td><td><strong>desaconselhado</strong>: obriga release em lockstep e reintroduz o acoplamento que se queria evitar</td></tr>
+<tr><td>Runtime via iframe</td><td>isolamento forte de estilo e script</td><td>sofre com rota, deep link, responsividade e integração</td></tr>
+<tr><td>Runtime via JavaScript</td><td>cada um expõe uma função global de entrada; o container decide quando e onde renderizar</td><td>a mais flexível e a mais usada</td></tr>
+<tr><td>Runtime via Web Components</td><td>custom elements como ponto de entrada</td><td>alternativa baseada em padrão, com a mesma flexibilidade</td></tr>
+</table></div>
+
+<h5>Os problemas transversais</h5>
+<ul>
+<li><strong>CSS é global:</strong> convenção (BEM), CSS Modules, CSS-in-JS ou shadow DOM &mdash; o requisito é um time não quebrar o estilo do outro.</li>
+<li><strong>Biblioteca compartilhada:</strong> deixe o padrão surgir do uso antes de centralizar; comece por primitivas visuais &ldquo;burras&rdquo; (botão, ícone, label); <strong>nunca regra de negócio</strong>; precisa de um responsável cuidando da qualidade.</li>
+<li><strong>Comunicação entre apps:</strong> o mínimo possível &mdash; custom events, props/callbacks do container, ou a URL. Contratos dirigidos pelo consumidor no lugar de E2E frágil.</li>
+<li><strong>Back-end:</strong> BFF por micro frontend; autenticação centralizada no container.</li>
+</ul>
+
+<h5>Os custos</h5>
+<ul>
+<li><strong>Payload:</strong> builds independentes duplicam dependências (o React, por exemplo). Externalizar a dependência comum devolve o acoplamento de build.</li>
+<li><strong>Ambientes diferentes:</strong> desenvolver isolado esconde problema que só aparece integrado.</li>
+<li><strong>Complexidade operacional:</strong> mais repositórios, pipelines e governança &mdash; exige maturidade de automação.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Micro frontend resolve problema de organização, não de código. Com um time só, eu pagaria payload duplicado e governança sem ganhar deploy independente de ninguém.&rdquo;</p>
+</article>
+
+<article data-href="https://nextjs.org/docs/app/guides/multi-zones">
+<p class="tldr">Multi-zones são a abordagem de micro frontend do próprio Next: várias aplicações Next no <strong>mesmo domínio</strong>, cada uma dona de um conjunto de rotas. Pro usuário parece uma app só; pro time, são builds e deploys separados.</p>
+
+<h5>A ideia</h5>
+<ul>
+<li>Exemplo da doc: <code>/blog/*</code>, <code>/dashboard/*</code> e <code>/*</code> (o resto) viram três apps. Cada uma fica menor, builda mais rápido e não carrega código que só a outra usa &mdash; e pode até usar outro framework.</li>
+<li>Navegar <strong>dentro</strong> de uma zona é soft navigation (sem recarregar). Navegar <strong>entre</strong> zonas é hard navigation: descarrega a página e carrega a outra. Regra prática: páginas visitadas juntas ficam na mesma zona.</li>
+</ul>
+
+<h5>Configuração, em três peças</h5>
+<ul>
+<li><strong>Definir a zona:</strong> uma app Next normal com <code>assetPrefix</code> (ex.: <code>'/blog-static'</code>), pra o JS e o CSS dela saírem em <code>/blog-static/_next/...</code> sem colidir com os da outra. A zona padrão (o <code>/*</code>) não precisa de prefixo. A partir do Next 15, não é mais preciso o rewrite extra dos assets.</li>
+<li><strong>Rotear:</strong> qualquer proxy HTTP serve, mas a própria app principal pode fazer isso com <code>rewrites</code> apontando <code>/blog</code>, <code>/blog/:path+</code> e <code>/blog-static/:path+</code> pro domínio da outra zona. Cada caminho pertence a uma zona só. Rewrite é o recomendado pela latência; <code>proxy</code> (o antigo middleware) é pra decisão dinâmica, como uma feature flag durante migração.</li>
+<li><strong>Linkar:</strong> entre zonas use <code>&lt;a&gt;</code>, não <code>&lt;Link&gt;</code>. O <code>Link</code> tenta prefetch e soft navigation em caminho relativo, e isso não funciona atravessando zonas.</li>
+</ul>
+
+<h5>O resto</h5>
+<ul>
+<li><strong>Código compartilhado:</strong> as zonas podem estar em qualquer repositório, mas monorepo facilita; entre repositórios, pacote npm público ou privado. Como cada zona sobe numa hora diferente, feature flag ajuda a ligar uma funcionalidade em todas ao mesmo tempo.</li>
+<li><strong>Server Actions:</strong> é preciso liberar o domínio que o usuário vê em <code>experimental.serverActions.allowedOrigins</code>, porque o mesmo domínio serve várias apps.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Se eu precisasse separar uma área com time próprio, começaria por multi-zone por rota &mdash; é o microfrontend mais barato: sem runtime compartilhado, o custo é só a hard navigation na fronteira.&rdquo;</p>
+</article>
+
+<article data-href="https://nextjs.org/docs/app/guides/content-security-policy">
+<p class="tldr">Nonce é uma string aleatória, única por request, que autoriza só os scripts que a carregam. O efeito colateral arquitetural é grande: <strong>com nonce, toda página precisa ser renderizada dinamicamente</strong>, porque o nonce só existe quando existe request.</p>
+
+<h5>Como o Next aplica o nonce</h5>
+<ol>
+<li>O <code>proxy</code> (antigo middleware) gera o nonce, monta o header <code>Content-Security-Policy</code> e coloca o nonce também num header próprio (<code>x-nonce</code>) &mdash; tanto na requisição quanto na resposta.</li>
+<li>Durante a renderização no servidor, o Next lê o header da CSP e extrai o valor de <code>'nonce-…'</code>.</li>
+<li>Ele mesmo aplica o nonce nos scripts do framework, nos bundles da página, nos inline gerados e em <code>&lt;Script nonce&gt;</code>. Pra script de terceiro, leia o nonce com <code>headers()</code> num Server Component.</li>
+</ol>
+<p>Página estática é gerada no build, quando não há request nem header &mdash; por isso não há como injetar nonce nela. A doc sugere <code>await connection()</code> pra forçar dinâmico quando necessário.</p>
+
+<h5>O que se perde, segundo a própria doc</h5>
+<ul>
+<li>Otimização estática e <strong>ISR desligados</strong>; cada request gera página nova.</li>
+<li>Página não pode ser cacheada pela <strong>CDN</strong> sem configuração extra.</li>
+<li><strong>Partial Prerendering (PPR) é incompatível</strong>: o shell estático não tem acesso ao nonce.</li>
+<li>Consequências: carga inicial mais lenta, mais carga no servidor, custo de hospedagem maior.</li>
+<li>Quando vale: requisito de segurança que proíbe <code>'unsafe-inline'</code>, dado sensível, compliance.</li>
+</ul>
+
+<h5>As alternativas</h5>
+<ul>
+<li><strong>Sem nonce:</strong> CSP fixa em <code>headers()</code> do <code>next.config</code>, mas aí o <code>script-src</code> precisa de <code>'unsafe-inline'</code>.</li>
+<li><strong>Subresource Integrity (experimental, só App Router):</strong> <code>experimental.sri.algorithm</code> gera hash dos scripts no build e põe <code>integrity</code> nas tags. Mantém geração estática e cache de CDN; limitação: não cobre script gerado dinamicamente, e pode mudar ou sair.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Nonce é uma decisão de arquitetura, não só de segurança: ele troca cache de borda por uma CSP sem <code>'unsafe-inline'</code>. Eu aceitei esse custo numa app com dado de usuário, e sei que SRI é a saída se precisar de estático.&rdquo;</p>
+</article>
+
+<article data-href="https://nextjs.org/docs/app/guides/package-bundling">
+<p class="tldr">Bundle menor carrega mais rápido, executa menos JS, melhora Core Web Vitals e reduz cold start no servidor. O Next já faz code splitting e tree-shaking; este guia é pros casos em que é preciso <strong>medir e intervir</strong>.</p>
+
+<h5>As duas ferramentas de análise</h5>
+<div class="tbl"><table>
+<tr><th>Ferramenta</th><th>Pra qual bundler</th><th>Como usar</th></tr>
+<tr><td>Next.js Bundle Analyzer (experimental, v16.1+)</td><td>Turbopack</td><td><code>next experimental-analyze</code> abre uma visão interativa do grafo de módulos, filtrável por rota, ambiente (cliente/servidor) e tipo; clicar num módulo mostra o tamanho e a cadeia de imports inteira. Com <code>--output</code> grava em <code>.next/diagnostics/analyze</code> pra comparar antes/depois</td></tr>
+<tr><td><code>@next/bundle-analyzer</code></td><td>webpack</td><td>plugin no <code>next.config</code> ligado por <code>ANALYZE=true</code>; o build abre três relatórios no navegador</td></tr>
+</table></div>
+
+<h5>Os três remédios mais comuns</h5>
+<ul>
+<li><strong>Pacote com centenas de exports</strong> (ícones, utilitários): <code>experimental.optimizePackageImports</code> faz carregar só o módulo usado. Atenção: vários pacotes já são otimizados <strong>por padrão</strong> &mdash; <code>lucide-react</code>, <code>date-fns</code>, <code>lodash-es</code>, <code>recharts</code>, os ícones do <code>@heroicons/react</code>, <code>react-icons/*</code>, entre outros &mdash; e não precisam estar na lista.</li>
+<li><strong>Trabalho pesado no cliente:</strong> biblioteca que só transforma dado em UI (realce de sintaxe, gráfico, parser de markdown) dentro de Client Component vai inteira pro bundle. Se não precisa de API do navegador nem de interação, rode num Server Component e mande só o HTML. O exemplo da doc troca Prism no cliente por Shiki no servidor.</li>
+<li><strong>Pacote que não deve ser empacotado no servidor:</strong> <code>serverExternalPackages</code> tira pacotes específicos do bundling de Server Components e Route Handlers.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de otimizar eu meço: rodo o analisador, acho o módulo grande e a cadeia de import que o trouxe, e só então escolho entre <code>optimizePackageImports</code>, mover pra Server Component ou lazy loading.&rdquo;</p>
+</article>
+
+<article data-href="https://web.dev/articles/optimize-inp">
+<p class="tldr">INP (Interaction to Next Paint) é a Core Web Vital de <strong>responsividade</strong>: observa todas as interações da visita e reporta a mais lenta. A meta é <strong>200 ms ou menos</strong> no p75, separado por tipo de aparelho; acima de 500 ms é ruim.</p>
+
+<h5>As três fases de uma interação</h5>
+<div class="tbl"><table>
+<tr><th>Fase</th><th>Vai de&hellip;</th><th>Causa típica</th><th>Remédio</th></tr>
+<tr><td><strong>Input delay</strong></td><td>o clique até o handler começar</td><td>thread principal ocupada &mdash; script sendo carregado, parseado, compilado, hidratação</td><td>reduzir trabalho de inicialização; entender a relação entre avaliação de script e long tasks</td></tr>
+<tr><td><strong>Processing duration</strong></td><td>o handler rodando</td><td>callback fazendo trabalho demais</td><td>ceder a thread com frequência (<code>setTimeout</code>), rodar primeiro só o que afeta a tela e adiar o resto (<code>requestAnimationFrame</code> + <code>setTimeout</code>); evitar layout thrashing (ler estilo logo depois de escrever força layout síncrono)</td></tr>
+<tr><td><strong>Presentation delay</strong></td><td>o fim do handler até o próximo frame</td><td>renderização grande</td><td>DOM menor, <code>content-visibility</code> pro que está fora da tela, menos HTML renderizado por JS no cliente</td></tr>
+</table></div>
+<p>A soma das três é a latência da interação. O ponto sobre renderização no cliente é direto: HTML que chega por streaming do servidor cede a thread naturalmente; HTML montado por JavaScript bloqueia até terminar.</p>
+
+<h5>Como achar a interação lenta</h5>
+<ul>
+<li><strong>Comece pelo campo:</strong> um provedor de RUM ou os dados do CrUX (via PageSpeed Insights) dizem qual interação e qual página.</li>
+<li><strong>Depois o laboratório:</strong> reproduza o fluxo e teste as interações <strong>durante o carregamento</strong>, quando a thread principal está mais ocupada.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Quando INP piora, eu não chuto <code>useMemo</code>: separo a interação em input delay, processamento e apresentação, e ataco a fase que a medição apontou.&rdquo;</p>
+</article>

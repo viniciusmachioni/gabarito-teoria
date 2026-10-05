@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI + Full Stack Integration · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="rm4">
+  <div class="week-head"><span class="week-num">R4</span><h2>AI + Full Stack Integration</h2></div>
+  <div class="week-meta">~8h &middot; a chamada ao modelo é a parte fácil; o difícil é tudo em volta dela</div>
+  <p class="intro">Uma vaga de Frontend/Design Engineer com foco em IA não te pede pra treinar modelo &mdash; pede pra entregar o produto em volta dele: quem pode chamar (auth), como a resposta chega na tela (streaming), onde mora o arquivo que o usuário mandou (upload e storage), o que acontece quando o trabalho demora mais que um request (fila), onde a saída fica guardada (Postgres) e como provar que tudo isso funciona sem gastar cota de API em cada teste. A boa notícia: o Gabarita e o Ally AI já fazem boa parte disso. Esta página dá nome ao que você fez, aponta o arquivo e mostra o que falta &mdash; principalmente streaming, embeddings/pgvector e Playwright.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w28-1"><label for="w28-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As duas formas de ligar Next.js a um back-end Node: <strong>Next full stack</strong> (Server Actions + Route Handlers + worker separado, como o Gabarita) vs. <strong>Next como cliente de uma API Express</strong> (como o Ally AI) &mdash; o que cada uma ganha em deploy, CORS, cookie e tipos compartilhados</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-2"><label for="w28-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM ponta a ponta: o provider entrega em pedaços, o Route Handler devolve um <code>ReadableStream</code> (ou SSE), o cliente lê com <code>getReader()</code> &mdash; e por que streaming muda a percepção de latência sem mudar a latência total</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-3"><label for="w28-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Trabalho que não cabe num request: <code>after()</code> do Next, fila com worker (pg-boss/SQS/BullMQ) e semáforo em memória &mdash; o que cada um aguenta quando o processo reinicia, e como o cliente fica sabendo que terminou (polling, SSE, WebSocket)</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-4"><label for="w28-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Upload: passar o arquivo pelo seu servidor vs. <strong>URL pré-assinada</strong> direto pro S3/R2 &mdash; limite de corpo, custo de memória da função, e quem valida tipo e tamanho em cada caso</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-5"><label for="w28-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Auth em app de IA: sessão/JWT em cookie <code>httpOnly</code>, a mesma autenticação valendo pro WebSocket, e rate limit por usuário como proteção de <strong>custo</strong> (cada request é dinheiro de token), não só de abuso</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-6"><label for="w28-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Embeddings e RAG no Postgres: o que é um embedding, coluna <code>vector(n)</code> do pgvector, distância de cosseno <code>&lt;=&gt;</code>, índice HNSW vs. IVFFlat, e por que filtro + índice aproximado pode devolver menos linhas do que você pediu</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-7"><label for="w28-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Grounding sem vetor: quando dar ao modelo os <em>fatos</em> (achados do axe, questões reais do banco, texto completo da fonte) e verificar a saída contra eles resolve o problema melhor que RAG</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-8"><label for="w28-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Testar fluxo de IA de forma determinística: <strong>fake provider</strong> atrás de uma interface, mock do SDK, stream simulado, fake timers pra polling &mdash; e Playwright com <code>page.route</code> pra rodar o E2E sem chamar o modelo</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://nextjs.org/docs/app/api-reference/file-conventions/route" target="_blank" rel="noopener">Next.js &mdash; route.js (Route Handlers)</a></div><div class="r-note">A referência do arquivo que vira endpoint no App Router: métodos, <code>params</code> como promessa, cookies, webhooks e a seção de <strong>Streaming</strong> com <code>ReadableStream</code> puro.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia Parameters, Streaming, Request Body FormData, Webhooks e Segment Config. Pule Cookies/Headers se já usa.</div><div class="r-src">nextjs.org &middot; oficial</div><details class="leitura" data-id="r04-ai-fullstack--nextjs-org-docs-app-api-reference-file-conventions-route"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Um <code>route.ts</code> dentro de <code>app/</code> vira endpoint HTTP usando as APIs <strong>padrão da web</strong> &mdash; <code>Request</code> e <code>Response</code>. Isso inclui devolver um <code>ReadableStream</code>: streaming de LLM no Next não exige biblioteca nenhuma, só a Web Streams API.</p>
+
+<h5>O básico que cai em entrevista</h5>
+<ul>
+<li>Métodos suportados: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>, <code>HEAD</code> e <code>OPTIONS</code>. Se você não define <code>OPTIONS</code>, o Next implementa sozinho e preenche o header <code>Allow</code>.</li>
+<li>O primeiro argumento é um <code>NextRequest</code> (extensão do <code>Request</code>, com <code>cookies</code> e <code>nextUrl</code> já parseados). O segundo traz <code>params</code> &mdash; que <strong>desde o Next 15 é uma promessa</strong>: <code>const { id } = await params</code>.</li>
+<li>Também desde o 15, <code>GET</code> deixou de ser estático por padrão e passou a ser <strong>dinâmico</strong>. Cache em route handler agora é opt-in (<code>export const revalidate = 60</code>, ou Cache Components).</li>
+<li>Route handlers usam a mesma configuração de segmento que páginas: <code>dynamic</code>, <code>revalidate</code>, <code>runtime</code> (<code>'nodejs'</code> ou edge) etc.</li>
+</ul>
+
+<h5>Streaming: as duas formas mostradas</h5>
+<ul>
+<li><strong>Com o AI SDK:</strong> o handler recebe as mensagens, chama <code>streamText</code> e devolve a resposta já em formato de stream. A doc mostra o exemplo com OpenAI; o modelo é trocável.</li>
+<li><strong>Com Web APIs puras:</strong> um gerador assíncrono produz pedaços (<code>TextEncoder</code> transforma string em bytes), e uma função converte o iterador em <code>ReadableStream</code> &mdash; o <code>pull(controller)</code> pede o próximo valor, faz <code>enqueue</code> ou <code>close</code>. O handler só faz <code>return new Response(stream)</code>.</li>
+</ul>
+<pre><code>return new ReadableStream({
+  async pull(controller) {
+    const { value, done } = await iterator.next()
+    if (done) controller.close()
+    else controller.enqueue(value)
+  },
+})</code></pre>
+<p>O ponto conceitual: <strong>&ldquo;essas abstrações usam as Web APIs pra criar o stream&rdquo;</strong>. Trocar o iterador por um iterador sobre os chunks do provider de LLM é o caso real.</p>
+
+<h5>Outros recortes úteis pro roadmap</h5>
+<ul>
+<li><strong>FormData:</strong> <code>await request.formData()</code> lê upload multipart; como tudo chega string, a doc sugere validar com <code>zod-form-data</code>.</li>
+<li><strong>Webhooks:</strong> leia o corpo com <code>request.text()</code> (cru, pra verificar assinatura). Diferente do Pages Router, não precisa desligar <code>bodyParser</code>.</li>
+<li><strong>CORS:</strong> headers na própria <code>Response</code> pra um handler; pra vários, use Proxy (o antigo middleware) ou <code>next.config</code>.</li>
+<li><strong>Respostas não-UI:</strong> RSS, XML, qualquer <code>Content-Type</code> &mdash; sitemap, robots e imagens OG já têm convenção própria.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;No App Router, um endpoint de streaming é só um Route Handler que devolve um <code>ReadableStream</code>. Eu sei fazer com o SDK e sem ele &mdash; o que muda é quem converte os chunks do modelo em bytes.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/docs/app/api-reference/file-conventions/route" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://ai.google.dev/gemini-api/docs/embeddings" target="_blank" rel="noopener">Gemini API &mdash; Embeddings</a></div><div class="r-note">Os dois projetos já usam <code>@google/genai</code>; este é o mesmo SDK gerando vetores com <code>embedContent</code> &mdash; o primeiro passo de qualquer RAG ou busca semântica.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia o exemplo em JavaScript, task types, controle de dimensão e casos de uso. Pule a parte de multimodal se o seu caso é só texto.</div><div class="r-src">ai.google.dev &middot; oficial</div><details class="leitura" data-id="r04-ai-fullstack--ai-google-dev-gemini-api-docs-embeddings"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Embedding é o texto (ou imagem, PDF, áudio) convertido num vetor de números em que <strong>coisas parecidas ficam perto</strong>. É a matéria-prima de RAG, busca semântica, classificação e clustering &mdash; e sai do mesmo SDK <code>@google/genai</code> que o Gabarita e o Ally AI já usam.</p>
+
+<h5>Modelos e chamada</h5>
+<ul>
+<li><strong><code>gemini-embedding-2</code>:</strong> multimodal (texto, imagem, vídeo, áudio, PDF), até 8.192 tokens de entrada.</li>
+<li><strong><code>gemini-embedding-001</code>:</strong> só texto, até 2.048 tokens &mdash; o legado.</li>
+<li>A chamada é <code>ai.models.embedContent({ model, contents })</code> e a resposta traz <code>embeddings</code>.</li>
+<li><strong>Os espaços vetoriais dos dois modelos são incompatíveis:</strong> trocar de modelo obriga a re-gerar todos os vetores guardados. Guarde qual modelo gerou cada vetor.</li>
+</ul>
+
+<h5>Task type: o mesmo texto, vetores diferentes conforme o uso</h5>
+<div class="tbl"><table>
+<tr><th>Task type</th><th>Pra quê</th></tr>
+<tr><td><code>RETRIEVAL_DOCUMENT</code> / <code>RETRIEVAL_QUERY</code></td><td>busca: um pro que é guardado, outro pra pergunta do usuário</td></tr>
+<tr><td><code>SEMANTIC_SIMILARITY</code></td><td>recomendação, detecção de duplicata</td></tr>
+<tr><td><code>CLASSIFICATION</code></td><td>categorizar por rótulos pré-definidos</td></tr>
+<tr><td><code>CLUSTERING</code></td><td>agrupar por semelhança, achar anomalia</td></tr>
+<tr><td><code>QUESTION_ANSWERING</code>, <code>FACT_VERIFICATION</code>, <code>CODE_RETRIEVAL_QUERY</code></td><td>casos específicos de recuperação</td></tr>
+</table></div>
+<p>No <code>001</code> isso é o parâmetro <code>taskType</code>; no <code>2</code>, a instrução vai no próprio texto (ex.: <code>"task: search result | query: ..."</code>). Documento e pergunta embutidos com o mesmo propósito de busca casam melhor.</p>
+
+<h5>Dimensão: o trade-off de armazenamento</h5>
+<ul>
+<li>Padrão de <strong>3.072</strong> dimensões; configurável de 128 a 3.072 com <code>outputDimensionality</code>. Recomendados: 768, 1.536 ou 3.072.</li>
+<li>O <code>embedding-2</code> normaliza sozinho quando você trunca; no <code>001</code> você normaliza na mão (divide o vetor pela norma).</li>
+<li>Pro pgvector, 768 dimensões dá <code>4 &times; 768 + 8</code> &asymp; 3 KB por linha &mdash; conta que você deve saber fazer antes de escolher.</li>
+</ul>
+
+<h5>Custo e armazenamento</h5>
+<ul>
+<li>A Batch API custa 50% do preço normal &mdash; bom pra indexar o acervo inteiro de uma vez, onde latência não importa (um job no worker, por exemplo).</li>
+<li>Pra guardar, a doc cita serviços do Google Cloud (AlloyDB, Cloud SQL, BigQuery, Vector Search) e bancos vetoriais de terceiros. O Postgres com pgvector entra na mesma categoria.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de escolher a dimensão do embedding eu faço a conta de armazenamento, e guardo o nome do modelo junto do vetor &mdash; trocar de modelo significa re-indexar tudo.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai.google.dev/gemini-api/docs/embeddings" target="_blank" rel="noopener">ai.google.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://github.com/pgvector/pgvector" target="_blank" rel="noopener">pgvector &mdash; README</a></div><div class="r-note">A extensão que transforma o Postgres que você já tem num banco vetorial: tipo <code>vector</code>, operadores de distância, HNSW/IVFFlat, filtro com índice aproximado.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia Getting Started, Querying, Indexing (HNSW e IVFFlat) e Filtering. Half-precision, binary e sparse são consulta pra quando escala virar problema.</div><div class="r-src">github.com &middot; oficial</div><details class="leitura" data-id="r04-ai-fullstack--github-com-pgvector-pgvector"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">pgvector põe busca por similaridade <strong>dentro do Postgres</strong>, ao lado dos seus dados relacionais, com transação, backup e replicação de graça. Busca exata por padrão; índices aproximados (HNSW, IVFFlat) trocam um pouco de precisão por muita velocidade.</p>
+
+<h5>O mínimo pra começar</h5>
+<pre><code>CREATE EXTENSION vector;
+CREATE TABLE items (id bigserial PRIMARY KEY, embedding vector(3));
+SELECT * FROM items ORDER BY embedding &lt;-&gt; '[3,1,2]' LIMIT 5;</code></pre>
+<ul>
+<li>Até 16.000 dimensões; cada vetor ocupa <code>4 &times; dimensões + 8</code> bytes.</li>
+<li>Operadores: <code>&lt;-&gt;</code> L2 (euclidiana), <code>&lt;#&gt;</code> produto interno <strong>negativo</strong> (multiplique por -1), <code>&lt;=&gt;</code> distância de cosseno, <code>&lt;+&gt;</code> L1, e <code>&lt;~&gt;</code>/<code>&lt;%&gt;</code> pra vetores binários.</li>
+<li>Pra embeddings de texto, cosseno é o mais comum; com vetor normalizado, produto interno dá o mesmo ranking e é mais rápido.</li>
+</ul>
+
+<h5>Exata vs. aproximada</h5>
+<ul>
+<li><strong>Sem índice:</strong> varre a tabela inteira, recall perfeito, lento em tabela grande (dá pra paralelizar com <code>max_parallel_workers_per_gather</code>).</li>
+<li><strong>Com índice aproximado:</strong> rápido, mas <strong>pode devolver resultados diferentes</strong> da busca exata. Só é usado com <code>ORDER BY ... LIMIT</code>.</li>
+</ul>
+<div class="tbl"><table>
+<tr><th></th><th>HNSW</th><th>IVFFlat</th></tr>
+<tr><td>Estrutura</td><td>grafo em camadas</td><td>vetores divididos em listas</td></tr>
+<tr><td>Consulta</td><td>melhor relação velocidade/recall</td><td>mais lenta</td></tr>
+<tr><td>Build</td><td>mais lento, mais memória; sem fase de treino</td><td>rápido, pouca memória; crie <strong>depois</strong> de ter dados</td></tr>
+<tr><td>Ajuste</td><td><code>m</code> (16), <code>ef_construction</code> (64); na consulta <code>hnsw.ef_search</code> (40)</td><td><code>lists</code> &asymp; linhas/1000 até 1M; na consulta <code>ivfflat.probes</code> (1)</td></tr>
+</table></div>
+
+<h5>A pegadinha: filtro + índice aproximado</h5>
+<ul>
+<li>O filtro (<code>WHERE categoria = ...</code>) é aplicado <strong>depois</strong> do scan do índice. Se 10% das linhas casam e <code>ef_search</code> é 40, sobram em média ~4 resultados &mdash; você pediu 10 e recebe 4.</li>
+<li>Saídas: <strong>iterative index scan</strong> (<code>SET hnsw.iterative_scan = strict_order</code> ou <code>relaxed_order</code>, com teto em <code>hnsw.max_scan_tuples</code>), índice parcial por categoria (<code>CREATE INDEX ... WHERE category_id = 123</code>), ou particionar a tabela.</li>
+</ul>
+
+<h5>Quando escalar virar problema</h5>
+<ul>
+<li><code>halfvec</code> (meia precisão) corta o armazenamento pela metade; <code>binary_quantize</code> encolhe mais ainda, com re-ranking pelo vetor original pra recuperar recall.</li>
+<li>Carga em massa com <code>COPY</code>, índice criado depois da carga, <code>maintenance_work_mem</code> suficiente pro grafo caber em memória.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de adicionar um banco vetorial, eu adicionaria uma extensão. pgvector no Postgres que já existe mantém o embedding na mesma transação e no mesmo backup que o dado &mdash; e eu sei que filtro com HNSW pode devolver menos linhas do que o LIMIT.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://github.com/pgvector/pgvector" target="_blank" rel="noopener">github.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html" target="_blank" rel="noopener">Amazon S3 &mdash; Uploading objects with presigned URLs</a></div><div class="r-note">Como deixar o navegador mandar o arquivo direto pro bucket, sem credencial AWS e sem passar o corpo pelo seu servidor. O mesmo vale pro R2, que fala a API do S3.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia a introdução, a parte de SDK (o exemplo é Python, mas o conceito é o mesmo no <code>@aws-sdk</code>) e o troubleshooting de <code>SignatureDoesNotMatch</code>. Pule o Visual Studio.</div><div class="r-src">docs.aws.amazon.com &middot; oficial</div><details class="leitura" data-id="r04-ai-fullstack--docs-aws-amazon-com-amazons3-latest-userguide-presignedurluploadobject"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Uma URL pré-assinada é uma <strong>permissão de uso único no tempo</strong>: o servidor, que tem credencial, assina uma URL que autoriza exatamente um <code>PUT</code> numa key, por um prazo. O navegador manda o arquivo direto pro bucket &mdash; sem credencial AWS e sem o corpo passar pelo seu servidor.</p>
+
+<h5>O que a URL carrega (e o que não carrega)</h5>
+<ul>
+<li>Ela está <strong>limitada às permissões de quem a criou</strong>: se o usuário/role que assinou não pode gravar naquele bucket, a URL também não pode.</li>
+<li>Se já existe objeto com a mesma key, o upload <strong>substitui</strong> o anterior. Depois do upload, o dono do bucket é o dono do objeto.</li>
+<li>Prazo: pelo CLI ou SDK, até <strong>7 dias</strong>. Na prática, pra upload de navegador, minutos bastam &mdash; quanto menor, menor a janela se a URL vazar.</li>
+</ul>
+
+<h5>O fluxo</h5>
+<ol>
+<li>O cliente pede uma URL ao seu back-end (que autentica o usuário e decide a key).</li>
+<li>O back-end gera a URL com o SDK pra operação <code>put_object</code>/<code>PutObjectCommand</code>, com bucket, key, <code>ContentType</code> e expiração.</li>
+<li>O cliente faz <code>PUT</code> do arquivo nessa URL, <strong>com o mesmo <code>Content-Type</code></strong> usado na assinatura.</li>
+<li>O cliente avisa o back-end que terminou; o back-end registra a key (e, num app como o Gabarita, enfileira o processamento).</li>
+</ol>
+
+<h5><code>SignatureDoesNotMatch</code>: as causas listadas</h5>
+<ul>
+<li>Relógio da máquina dessincronizado.</li>
+<li>URL modificada (ou não colocada entre aspas no <code>curl</code>, quebrando caracteres especiais).</li>
+<li>URL expirada.</li>
+<li><strong><code>Content-Type</code> do upload diferente do assinado</strong> &mdash; a mais comum.</li>
+<li>Região errada do bucket.</li>
+</ul>
+
+<h5>O que isso muda no seu desenho</h5>
+<ul>
+<li>O limite de corpo da função (o <code>bodySizeLimit</code> de Server Action, o limite de payload de serverless) deixa de importar pro arquivo.</li>
+<li>A validação muda de lugar: o servidor não viu os bytes, então tipo e tamanho precisam estar amarrados na assinatura e ser conferidos <strong>depois</strong> do upload, antes de processar.</li>
+<li>O exemplo da doc é em Python, mas o conceito é idêntico no <code>@aws-sdk/s3-request-presigner</code> &mdash; e serve pro Cloudflare R2, que implementa a API do S3.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Arquivo grande não passa pela minha função: eu assino uma URL curta pra uma key específica, o navegador sobe direto pro bucket, e eu valido o objeto antes de processar.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html" target="_blank" rel="noopener">docs.aws.amazon.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://ai-sdk.dev/docs/ai-sdk-core/testing" target="_blank" rel="noopener">AI SDK &mdash; Testing</a></div><div class="r-note">Modelos falsos (<code>MockLanguageModel</code>) e <code>simulateReadableStream</code>: a referência de como testar streaming e saída estruturada sem chamar o modelo de verdade.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta, quase só código. Mesmo sem usar o AI SDK, o exemplo de Route Handler que devolve SSE simulado serve pra qualquer front que consome stream.</div><div class="r-src">ai-sdk.dev &middot; oficial</div><details class="leitura" data-id="r04-ai-fullstack--ai-sdk-dev-docs-ai-sdk-core-testing"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Testar código que chama LLM é difícil por três motivos que a doc nomeia: o modelo é <strong>não determinístico</strong>, é <strong>lento</strong> e é <strong>caro</strong>. A resposta é a mesma de qualquer dependência externa: um modelo falso que devolve exatamente o que o teste mandou.</p>
+
+<h5>As peças (de <code>ai/test</code> e <code>ai</code>)</h5>
+<ul>
+<li><strong><code>MockLanguageModelV4</code></strong> &mdash; implementa a especificação de modelo de linguagem; você fornece <code>doGenerate</code> (resposta inteira) ou <code>doStream</code> (resposta em pedaços).</li>
+<li><strong><code>MockEmbeddingModelV4</code></strong> &mdash; o mesmo pra embeddings.</li>
+<li><strong><code>simulateReadableStream</code></strong> &mdash; cria um stream a partir de uma lista de chunks, com atraso configurável (<code>initialDelayInMs</code>, <code>chunkDelayInMs</code>).</li>
+<li><strong><code>mockId</code></strong> (id incremental) e <strong><code>mockValues</code></strong> (devolve um valor diferente a cada chamada &mdash; útil pra simular retry).</li>
+</ul>
+
+<h5>Os cenários cobertos</h5>
+<ul>
+<li><strong>Texto inteiro e texto em stream:</strong> o stream simulado é uma sequência explícita &mdash; <code>text-start</code>, vários <code>text-delta</code>, <code>text-end</code> e um <code>finish</code> com motivo e uso de tokens. O teste controla cada pedaço.</li>
+<li><strong>Saída estruturada:</strong> o mock devolve o JSON e o schema Zod valida &mdash; inclusive em stream, montando o objeto aos poucos.</li>
+<li><strong>Agente com ferramenta:</strong> uma lista de respostas, a primeira pedindo uma tool call e a segunda dando a resposta final &mdash; testa o loop multi-turno.</li>
+</ul>
+
+<h5>O exemplo mais útil pro front: SSE simulado num Route Handler</h5>
+<p>Um <code>POST</code> do Next devolve <code>simulateReadableStream</code> com linhas <code>data: {...}\n\n</code>, passado por <code>TextEncoderStream</code>, com <code>Content-Type: text/event-stream</code> e <code>Cache-Control: no-cache</code>. Serve pra desenvolver e testar a UI de streaming (loading, texto chegando, fim, erro) <strong>sem gastar um token</strong> &mdash; e com atraso controlado, pra ver os estados intermediários.</p>
+
+<h5>O que levar mesmo sem usar o AI SDK</h5>
+<ul>
+<li>O Gabarita faz o equivalente com <code>createFakeAIProvider</code> atrás da interface <code>AIProvider</code>; o Ally AI com <code>vi.mock("@google/genai")</code>. A ideia é a mesma: fixar a saída do modelo e testar o que o seu código faz com ela.</li>
+<li>O que falta nos dois é o lado do <strong>stream</strong>: um teste que entrega chunks com atraso e verifica a UI no meio do caminho.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;O modelo é uma dependência não determinística e cara, então nos testes ele é um fake que eu controlo &mdash; inclusive o stream, chunk por chunk, pra testar os estados intermediários da UI.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai-sdk.dev/docs/ai-sdk-core/testing" target="_blank" rel="noopener">ai-sdk.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://playwright.dev/docs/mock" target="_blank" rel="noopener">Playwright &mdash; Mock APIs</a></div><div class="r-note"><code>page.route</code> + <code>route.fulfill</code>, editar resposta real, gravar/reproduzir HAR e mockar WebSocket &mdash; tudo o que um E2E de fluxo de IA precisa pra ser rápido e reprodutível.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta. A seção de WebSocket é exatamente o caso do saldo de créditos do Ally AI.</div><div class="r-src">playwright.dev &middot; oficial</div><details class="leitura" data-id="r04-ai-fullstack--playwright-dev-docs-mock"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O Playwright intercepta, observa, modifica e <strong>falsifica</strong> tráfego de rede (HTTP, HTTPS, fetch, XHR e WebSocket) do navegador. Pra fluxo de IA, isso significa E2E de verdade na sua UI com a resposta do back-end fixada &mdash; rápido, grátis e reprodutível.</p>
+
+<h5>Falsificar a resposta: <code>page.route</code> + <code>route.fulfill</code></h5>
+<pre><code>await page.route('*/**/api/v1/fruits', async route =&gt; {
+  const json = [{ name: 'Strawberry', id: 21 }];
+  await route.fulfill({ json });
+});</code></pre>
+<p>Toda chamada que casa o padrão é interceptada e <strong>não chega ao servidor</strong>. Troque <code>fruits</code> por <code>/api/audit</code> e o JSON por um relatório de auditoria e você tem o E2E do Ally AI sem Puppeteer nem Gemini rodando.</p>
+
+<h5>Corrigir a resposta real: <code>route.fetch</code></h5>
+<p>Quando você quer o servidor de verdade mas precisa ajustar um campo: <code>const response = await route.fetch()</code>, altera o JSON e devolve com <code>route.fulfill({ response, json })</code>. Útil pra forçar um caso raro (lista vazia, item com erro) em cima de dado real.</p>
+
+<h5>Gravar e reproduzir: HAR</h5>
+<ul>
+<li><code>page.routeFromHAR('./hars/x.har', { url, update: true })</code> grava o tráfego real num arquivo HAR.</li>
+<li>Com <code>update: false</code>, o teste passa a ser servido pelo arquivo. A correspondência é estrita por URL e método, e entre candidatos ganha o que casar mais headers.</li>
+<li>Dá pra editar o conteúdo gravado e versionar no repositório &mdash; uma resposta real do modelo, congelada como fixture.</li>
+</ul>
+
+<h5>WebSocket</h5>
+<ul>
+<li><code>page.routeWebSocket(url, ws =&gt; ...)</code> mocka a conexão inteira: você responde mensagens com <code>ws.send</code>.</li>
+<li>Ou intercepta no meio: <code>ws.connectToServer()</code> liga ao servidor real e você filtra/altera mensagens nos dois sentidos.</li>
+<li>No Ally AI, é o caminho pra testar o saldo atualizando quando chega <code>credits_updated</code> &mdash; sem Stripe, sem webhook.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;No E2E eu não chamo o modelo: intercepto a rota com <code>page.route</code> e sirvo uma resposta real gravada. O teste fica determinístico e cobre o que é meu &mdash; a UI, os estados e a navegação.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://playwright.dev/docs/mock" target="_blank" rel="noopener">playwright.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+  </ul>
+  <p class="intro" style="margin-top:12px">Base que este bloco assume: MVCC e transação em <a href="03-postgresql.html">03 &middot; PostgreSQL</a>, filas e tempo real em <a href="04-concorrencia.html">04 &middot; Concorrência</a>, RAG e vocabulário de LLM em <a href="b02-ia-agentes.html">B2 &middot; IA &amp; agentes</a>, OAuth em <a href="b06-oauth.html">B6</a>, Testing Library/MSW/Playwright em <a href="b10-testes.html">B10 &middot; Testes</a> e BFF/webhooks em <a href="b16-apis.html">B16 &middot; APIs</a>.</p>
+
+  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <div class="evid">
+    <div class="evid-head">Onde cada item do roadmap já aparece &middot; caminhos relativos à raiz de cada projeto</div>
+    <div class="evid-body">
+
+      <div class="evid-item">
+        <h4>App de IA completo: React/Next.js + Node <span class="st y">Gabarita: usado</span> <span class="st y">Ally AI: usado</span></h4>
+        <p><span class="proj">Gabarita</span> &mdash; Next.js full stack (Server Actions, Route Handlers, RSC lendo direto do Prisma) <strong>mais um worker Node separado</strong> que consome a fila. São dois processos a partir do mesmo código: <code>worker/index.ts</code> importa <code>../src/lib/...</code> e registra três consumidores (L59&ndash;62: <code>extract-document</code>, <code>generate-questions</code>, <code>caderno-key-points</code>), com <code>startWithRetry</code> (L32&ndash;47) pra sobreviver ao banco subindo depois do worker e desligamento limpo em <code>SIGTERM</code> (L65&ndash;70).</p>
+        <p><span class="proj">Ally AI</span> &mdash; o outro desenho: Next.js 16 como cliente de uma API Express 5, num monorepo com tipos compartilhados (<code>packages/types</code>). O caminho de uma auditoria: <code>apps/web/src/lib/api.ts</code> (axios com <code>withCredentials</code>, L4&ndash;7) &rarr; <code>apps/api/src/controllers/AuditController.ts</code> (<code>analyze</code>, L13&ndash;63) &rarr; <code>runAudit</code> (Puppeteer + axe) &rarr; Gemini &rarr; <code>prisma.analysis.create</code> (L39&ndash;46) &rarr; JSON de volta.</p>
+        <p>Detalhe que mostra maturidade: em <code>apps/api/src/index.ts</code> o webhook do Stripe é registrado com <code>express.raw</code> (L43&ndash;47) <strong>antes</strong> do <code>express.json()</code> (L49) &mdash; a assinatura do webhook é calculada sobre o corpo cru, e o parser JSON destruiria isso.</p>
+      </div>
+
+      <div class="evid-item">
+        <h4>Autenticação, streaming, upload e processamento assíncrono <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p><strong>Autenticação &mdash; os dois têm.</strong> <span class="proj">Gabarita</span>: Auth.js (next-auth v5) com Credentials + Google em <code>src/lib/auth/index.ts</code>; o rate limit de login mora <em>dentro</em> do <code>authorize</code> (L24&ndash;32), porque <code>POST /api/auth/callback/credentials</code> aceita request direto sem passar pela tela. <span class="proj">Ally AI</span>: argon2 + JWT de 7 dias em cookie <code>httpOnly</code>/<code>secure</code>/<code>sameSite=none</code> (<code>AuthController.ts</code> L89&ndash;107), e o <strong>mesmo cookie autentica o WebSocket</strong>: <code>io.use</code> em <code>index.ts</code> L55&ndash;87 lê <code>ally-ai.token</code>, verifica o JWT e põe o socket na sala do usuário (L89&ndash;97).</p>
+        <p><strong>Upload &mdash; só o Gabarita.</strong> <code>src/app/(app)/ingestao/actions.ts</code> L16&ndash;56: Server Action recebe o PDF (<code>bodySizeLimit: "25mb"</code> em <code>next.config.ts</code> L13), valida tipo/tamanho, salva com <code>getStorage()</code> e enfileira <code>EXTRACT_DOCUMENT</code>. Atenção ao detalhe honesto: o PDF vai pra <strong>disco local</strong> (<code>src/lib/storage/index.ts</code>, <code>UPLOAD_DIR</code>), não pro R2 &mdash; web e worker precisam do mesmo volume, o que amarra o deploy.</p>
+        <pre><code>const buffer = Buffer.from(await file.arrayBuffer());
+const storagePath = await getStorage().save(buffer, file.name);
+// ...
+const queue = await getQueue();
+await queue.enqueue(EXTRACT_DOCUMENT, { docId: doc.id });</code></pre>
+        <p><strong>Assíncrono &mdash; os dois, de jeitos diferentes.</strong> <span class="proj">Gabarita</span>: fila durável no próprio Postgres com pg-boss (<code>src/lib/queue/pg-boss.ts</code> L19&ndash;43), com prazo de 2h só pra extração (L16) depois que duas provas foram mortas no meio pelo default de 15 min; e <code>after()</code> do Next pra gerar explicação depois que a resposta HTTP saiu (<code>src/lib/study/explain-prefetch.ts</code> L18&ndash;30). <span class="proj">Ally AI</span>: semáforo em memória com fila FIFO e recusa imediata quando lota (<code>apps/api/src/services/auditQueue.ts</code> L14&ndash;44) &mdash; controla concorrência, mas a auditoria ainda roda <strong>dentro</strong> do request (<code>AuditController.ts</code> L37). Evento de volta pro cliente: webhook do Stripe &rarr; <code>io.to(userId).emit("credits_updated")</code> (<code>WebhookController.ts</code> L42) &rarr; hook <code>apps/web/src/hooks/useCreditSocket.ts</code> com cleanup no unmount (L29&ndash;32).</p>
+        <p><strong>Streaming de LLM &mdash; nenhum dos dois.</strong> Não há <code>generateContentStream</code>, SSE nem leitura de stream de modelo. O Gabarita resolve a espera com <code>after()</code> + polling com desistência (<code>question-runner.tsx</code> L117&ndash;122: refresh em 3s, 9s e 21s, desiste em 23s). O mais perto de stream que existe é <code>lerAteOTeto</code> em <code>src/lib/diretrizes/url-segura.ts</code> (L133&ndash;149): lê o corpo de um download em pedaços com <code>getReader()</code> e cancela ao passar do teto de bytes &mdash; <strong>o mesmo laço que o cliente usaria pra consumir tokens</strong>.</p>
+      </div>
+
+      <div class="evid-item">
+        <h4>LLM + PostgreSQL + serviços cloud <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p><strong>Saída da IA guardada com consistência.</strong> <span class="proj">Gabarita</span>: <code>src/lib/study/explain.ts</code> &mdash; trava atômica com <code>updateMany</code> condicional (L66&ndash;74) pra duas abas não pagarem duas chamadas, e motivos + marca de &ldquo;pronta&rdquo; gravados na mesma <code>$transaction</code> (L105&ndash;117). <span class="proj">Ally AI</span>: o relatório enriquecido pela IA vai inteiro numa coluna <code>results Json</code> (JSONB) do modelo <code>Analysis</code> (<code>apps/api/prisma/schema.prisma</code> L21&ndash;32), e o crédito é reservado com <code>updateMany</code> condicional e devolvido em qualquer falha (<code>AuditController.ts</code> L27&ndash;35, L53, L66&ndash;75).</p>
+        <p><strong>Grounding sem vetor.</strong> <span class="proj">Gabarita</span>: <code>fetchStyleReferences</code> (<code>src/lib/generation/generate-question.ts</code> L5&ndash;24) busca até 3 questões aprovadas do mesmo tema como referência de estilo &mdash; recuperação por filtro relacional, não por similaridade; e <code>citacaoVerificada</code> (<code>src/lib/diretrizes/citacao.ts</code> L20&ndash;24) só publica o resumo se a citação existir palavra por palavra no texto da fonte. <span class="proj">Ally AI</span>: o modelo recebe os achados do axe (fatos determinísticos), não o site inteiro.</p>
+        <p><strong>Cloud storage &mdash; Gabarita.</strong> <code>src/lib/storage/image-storage-r2.ts</code> usa <code>@aws-sdk/client-s3</code> apontado pro Cloudflare R2 (L18&ndash;31), com timeout explícito (L29) depois de um PUT pendurado ~15 min ter vencido o job de extração; <code>image-storage.ts</code> L6&ndash;13 escolhe R2, Vercel Blob ou disco por variável de ambiente.</p>
+        <p><strong>Lacuna nos dois:</strong> nenhum embedding, nenhum <code>vector</code> no schema, nenhum pgvector, nenhuma busca semântica. É o item do roadmap com maior distância entre o que você tem e o que vai ser perguntado.</p>
+      </div>
+
+      <div class="evid-item">
+        <h4>Testes de integração (RTL + Playwright) pra fluxos de IA <span class="st p">Gabarita: parcial</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p><span class="proj">Gabarita</span> &mdash; a parte de RTL está boa. <code>AIProvider</code> é uma interface (<code>src/lib/ai/types.ts</code> L90&ndash;110) com <code>createFakeAIProvider</code> determinístico (<code>src/lib/ai/fake.ts</code> L23&ndash;34), e o teste do fluxo de resposta (<code>src/app/(app)/estudo/[sessaoId]/[ordem]/question-runner.test.tsx</code>) consulta por papel acessível e usa fake timers pra provar o fallback do polling:</p>
+        <pre><code>vi.useFakeTimers();
+// ...responde a questão...
+expect(screen.getByText(/escrevendo a correção/i)).toBeInTheDocument();
+await act(async () =&gt; { vi.advanceTimersByTime(23000); });
+expect(screen.getByText(/não foi possível gerar a explicação agora/i)).toBeInTheDocument();</code></pre>
+        <p>(L328&ndash;345.) O resto da suíte roda contra Postgres real de teste, em série (<code>vitest.config.ts</code> L29). <strong>Playwright: nenhum.</strong></p>
+        <p><span class="proj">Ally AI</span> &mdash; só back-end, com Vitest. <code>apps/api/src/services/aiService.test.ts</code> mocka o SDK com <code>vi.mock("@google/genai", importOriginal)</code> (L6&ndash;14) e cobre descarte de item fora do formato (L109), JSON inválido (L125), retry em 429/503 (L131) e não-retry em erro permanente (L160). <strong>Zero teste no front, zero Playwright, zero MSW.</strong></p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="gap">
+    <h4>O que falta construir</h4>
+    <ol>
+      <li><strong>Streaming da explicação (Gabarita).</strong> Um Route Handler <code>src/app/api/explicacao/[id]/route.ts</code> que chama <code>generateContentStream</code> e devolve <code>ReadableStream</code>; no cliente, trocar o polling de <code>question-runner.tsx</code> L117&ndash;122 por leitura com <code>getReader()</code> (o mesmo laço de <code>lerAteOTeto</code>). Validação Zod continua no fim, sobre o texto completo. Vira o post 5 do calendário em <a href="r07-linkedin.html">R7</a>.</li>
+      <li><strong>Auditoria fora do request (Ally AI).</strong> Enfileirar o job (pg-boss no mesmo Postgres) em vez de rodar em <code>AuditController.ts</code> L37, devolver <code>202</code> com o <code>analysisId</code>, e emitir progresso pelo Socket.io que já existe (<code>io.to(userId).emit("audit_progress", ...)</code>). Elimina o <code>--timeout 600</code> do Cloud Run e o risco de perder a auditoria num restart.</li>
+      <li><strong>Busca semântica com pgvector (Gabarita).</strong> Migration com <code>CREATE EXTENSION vector</code>, coluna <code>embedding vector(768)</code> em <code>Question</code> (no Prisma, <code>Unsupported("vector(768)")</code>), job <code>embed-question</code> no worker, consulta via <code>$queryRaw</code> com <code>&lt;=&gt;</code> &mdash; &ldquo;questões parecidas com esta que você errou&rdquo;. Post: &ldquo;RAG no Postgres que eu já tinha&rdquo;, continuação natural do post do pg-boss.</li>
+      <li><strong>Upload direto pro R2 com URL pré-assinada (Gabarita).</strong> <code>@aws-sdk/s3-request-presigner</code> + <code>PutObjectCommand</code> numa action que só assina; o navegador faz o <code>PUT</code>; a action seguinte só registra a key e enfileira. Remove os 25 MB do <code>bodySizeLimit</code> e desamarra o worker do disco local.</li>
+      <li><strong>Primeiro E2E com Playwright (Ally AI).</strong> <code>apps/web/e2e/audit.spec.ts</code>: <code>page.route('**/api/audit', ...)</code> com um fixture de resposta real, <code>page.routeWebSocket</code> pro saldo de créditos e <code>@axe-core/playwright</code> no fim &mdash; o produto de acessibilidade auditando a própria tela.</li>
+    </ol>
+  </div>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; a explicação que nunca bloqueia a tela (Gabarita)</div>
+    <div class="ammo-body">
+      <p>&ldquo;A revelação de certo/errado chegou a levar 15 segundos porque a explicação da IA estava no caminho do render. Tirei a IA do caminho crítico: a página agenda a geração com <code>after()</code> assim que a questão abre, então ela fica pronta enquanto o aluno lê (<code>explain-prefetch.ts</code>). Uma trava atômica no Postgres &mdash; <code>updateMany</code> condicional, não <em>select</em> seguido de <em>update</em> &mdash; garante que duas abas não paguem duas chamadas (<code>explain.ts</code> L66&ndash;74). No cliente, polling com desistência em 23 segundos e um fallback explícito, testado com fake timers. O próximo passo é trocar o polling por streaming.&rdquo;</p>
+      <p class="why"><strong>Por que isso importa:</strong> é uma história de full stack de IA inteira &mdash; latência percebida, custo de cota, concorrência no banco, estado de erro na UI e teste determinístico &mdash; num fluxo só. E terminar com &ldquo;o próximo passo é streaming&rdquo; mostra que você sabe onde está o limite da solução atual.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Por que a auditoria do Ally AI rodar dentro do request HTTP é um problema, mesmo com o semáforo de concorrência?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>O semáforo limita <strong>quantas</strong> rodam ao mesmo tempo, mas não muda <strong>onde</strong> elas vivem: dentro de um request que pode levar dezenas de segundos. Isso obriga timeout alto na plataforma, prende uma conexão aberta, e um restart ou deploy no meio perde a auditoria (o crédito é devolvido, mas o trabalho foi jogado fora). Com fila durável, o request só enfileira e responde <code>202</code>; o worker processa; o cliente acompanha por WebSocket ou polling. A fila também sobrevive ao restart &mdash; o semáforo em memória, não.</p></div>
+        </details>
+      </li>
+      <li>Streaming de tokens deixa a resposta do LLM mais rápida?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Não a latência total &mdash; o modelo gera os mesmos tokens no mesmo tempo. Muda o <strong>tempo até o primeiro conteúdo útil</strong>: em vez de 10 segundos de spinner, o texto começa em meio segundo. É uma melhoria de latência <em>percebida</em>. O custo: a validação estruturada (Zod) só pode rodar sobre o texto completo, então a UI precisa saber mostrar texto parcial e lidar com um stream que termina inválido ou é cortado no meio.</p></div>
+        </details>
+      </li>
+      <li>Quando vale a pena usar URL pré-assinada pra upload em vez de mandar o arquivo pela sua Server Action?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Quando o arquivo é grande ou a função é serverless: o corpo inteiro passando pelo seu servidor ocupa memória, conta no limite de corpo (o Gabarita precisou de <code>bodySizeLimit: "25mb"</code>) e na duração da função. Com URL pré-assinada, o servidor só <strong>assina</strong> uma permissão curta e limitada (uma key, um método, um prazo); o navegador manda direto pro bucket. O preço: a validação de tipo e tamanho precisa ir pra assinatura (content-type amarrado) e pra um passo de confirmação depois do upload, porque o servidor não viu os bytes.</p></div>
+        </details>
+      </li>
+      <li>O Gabarita não tem pgvector. Ele faz RAG?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Faz <strong>grounding</strong>, não RAG vetorial. <code>fetchStyleReferences</code> recupera questões reais por filtro relacional (especialidade e tema) e as põe no prompt; o resumo de diretriz é ancorado no texto completo da fonte e só sai se a citação existir literalmente nele. Pra esses casos, o critério de recuperação é exato e conhecido, então SQL comum é melhor que similaridade. Embedding passa a valer quando a pergunta é &ldquo;o que é <em>parecido</em> com isto?&rdquo; &mdash; questões semelhantes à que o aluno errou, por exemplo, que nenhum filtro de tema captura bem.</p></div>
+        </details>
+      </li>
+      <li>Como você testaria, sem chamar o Gemini, o fluxo &ldquo;responder questão &rarr; ver explicação&rdquo; de ponta a ponta?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Em dois níveis. <strong>Integração (já existe):</strong> RTL com a action mockada e fake timers, provando os estados &ldquo;escrevendo&rdquo;, &ldquo;pronto&rdquo; e o fallback. <strong>E2E (falta):</strong> Playwright contra o app real com o <code>AIProvider</code> trocado pelo fake via variável de ambiente (hoje <code>getAIProvider()</code> sempre cria o Gemini &mdash; seria uma linha a mais na fábrica), ou interceptando a chamada com <code>page.route</code> quando ela parte do navegador. O princípio é o mesmo nos dois: o modelo é uma dependência não determinística e cara, então o teste fixa a saída dele e verifica o que o <strong>seu</strong> código faz com ela.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="r03-arquitetura-frontend.html"><div class="dir">&larr; anterior</div><div class="t">Frontend Architecture</div></a>
+    <a class="next" href="r05-cloud-aws.html"><div class="dir">próxima &rarr;</div><div class="t">Cloud &amp; Delivery na AWS</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 32 blocos &middot; 227 tópicos &middot; 159 leituras resumidas &middot; 124 perguntas abertas com gabarito &middot; 142 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 05/10/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

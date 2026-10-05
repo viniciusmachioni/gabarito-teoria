@@ -983,8 +983,107 @@
   .pager .t { font-weight: 600; font-size: 14.5px; margin-top: 3px; }
   .pager .next { text-align: right; grid-column: 2; }
 
+
+  /* ---------- Roadmap da mentoria ---------- */
+  .foco {
+    border: 1px solid color-mix(in srgb, var(--amber) 45%, var(--line));
+    border-left: 4px solid var(--amber);
+    border-radius: var(--radius-m);
+    background: var(--paper-raised);
+    padding: 18px 20px 16px;
+    margin-top: 28px;
+  }
+  .foco .week-num { background: var(--amber); }
+  .foco-lista { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; }
+  .foco-lista li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .foco-lista a { color: var(--ink); text-decoration: none; font-weight: 500; }
+  .foco-lista a:hover { color: var(--blue); }
+  .foco-lista .wk-n { display: inline-block; min-width: 28px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); font-weight: 600; }
+  .foco-lista .p { white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); }
+
+  /* selo de status: já usado / parcial / lacuna */
+  .st {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .03em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .st.y { background: var(--teal-soft); color: var(--teal); }
+  .st.p { background: var(--amber-soft); color: var(--amber); }
+  .st.n { background: var(--paper-sunken); color: var(--ink-faint); border: 1px dashed var(--line-strong); }
+  .st-legenda { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--ink-soft); margin: 8px 0 4px; }
+
+  /* matriz roadmap × projetos */
+  .rm-tbl { margin-top: 12px; width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .rm-tbl th, .rm-tbl td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .rm-tbl th { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); font-weight: 500; }
+  .rm-tbl td { color: var(--ink-soft); }
+  .rm-tbl td.item { color: var(--ink); min-width: 200px; }
+  .rm-tbl td.item a { color: var(--ink); }
+  .rm-tbl td .st { margin-bottom: 4px; }
+  .rm-tbl code, .evid code, .gap code { font-size: 12px; overflow-wrap: anywhere; }
+  .rm-tbl tr.rm-grupo td { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); background: var(--paper-sunken); }
+
+  /* "no seu código": evidência concreta nos projetos */
+  .evid {
+    margin-top: 26px;
+    border: 1px solid color-mix(in srgb, var(--teal) 35%, var(--line));
+    border-radius: var(--radius-m);
+    background: var(--paper-raised);
+    overflow: hidden;
+  }
+  .evid-head {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--teal);
+    background: var(--teal-soft);
+    padding: 9px 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--teal) 25%, var(--line));
+  }
+  .evid-body { padding: 14px 16px 6px; }
+  .evid-item { padding: 0 0 14px; margin: 0 0 14px; border-bottom: 1px dashed var(--line); }
+  .evid-item:last-child { border-bottom: 0; margin-bottom: 0; }
+  .evid-item h4 { margin: 0 0 6px; font-size: 14.5px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .evid-item p { font-size: 14px; margin: 0 0 8px; max-width: none; color: var(--ink-soft); }
+  .evid-item ul { margin: 0 0 8px; padding-left: 20px; display: grid; gap: 4px; font-size: 13.5px; color: var(--ink-soft); }
+  .evid-item li { padding: 0; background: none; border: 0; }
+  .evid-item .proj { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); }
+  .evid pre {
+    margin: 0 0 8px;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 10px 12px;
+    border-radius: var(--radius-s);
+    overflow-x: auto;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .evid pre code { background: none; padding: 0; font-family: 'IBM Plex Mono', monospace; color: inherit; font-size: inherit; }
+
+  /* "o que falta construir": a lacuna vira tarefa */
+  .gap {
+    margin-top: 18px;
+    border: 1px dashed color-mix(in srgb, var(--amber) 55%, var(--line-strong));
+    border-radius: var(--radius-m);
+    background: var(--amber-soft);
+    padding: 14px 16px 6px;
+  }
+  .gap h4 { margin: 0 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--amber); }
+  .gap ol, .gap ul { margin: 0 0 10px; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; color: var(--ink); }
+  .gap li { padding: 0; background: none; border: 0; }
+  .gap p { font-size: 14px; margin: 0 0 10px; max-width: none; }
+
   @media (max-width: 560px) {
     .trilha-grid { grid-template-columns: 1fr; }
+    .foco-lista { grid-template-columns: 1fr; }
+    .foco { padding: 16px 14px 14px; }
     .pager { grid-template-columns: 1fr; }
     .pager .next { grid-column: 1; }
     .hero-mark img { width: 56px; height: 56px; border-radius: 14px; }

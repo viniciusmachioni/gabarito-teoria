@@ -86,6 +86,15 @@
         cel.innerHTML = '<span class="mini"><i style="width:' + pct + '%"></i></span>' + f + '/' + n;
       }
     });
+    // caixa "foco atual" do roadmap: repete o progresso das mesmas páginas, sem somar de novo no total
+    document.querySelectorAll('.foco-lista li[data-prefix]').forEach(function (li) {
+      var prefix = li.getAttribute('data-prefix');
+      var n = parseInt(li.getAttribute('data-total'), 10) || 0;
+      var f = 0;
+      for (var i = 1; i <= n; i++) if (prog[prefix + i]) f++;
+      var cel = li.querySelector('.p');
+      if (cel) cel.innerHTML = '<span class="mini"><i style="width:' + (n ? Math.round((f / n) * 100) : 0) + '%"></i></span>' + f + '/' + n;
+    });
     var pct = total ? Math.round((feitos / total) * 100) : 0;
     var label = document.getElementById('progress-label');
     var fill = document.getElementById('progress-fill');

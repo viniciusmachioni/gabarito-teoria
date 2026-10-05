@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Systems &amp; Design Engineering · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="rm2">
+  <div class="week-head"><span class="week-num">R2</span><h2>Design Systems &amp; Design Engineering</h2></div>
+  <div class="week-meta">~8h &middot; a frente que justifica o título &ldquo;Design Engineer&rdquo; na headline</div>
+  <p class="intro">Uma vaga de Design Engineer não pergunta se você sabe Tailwind &mdash; pergunta como você transforma uma decisão de design em algo que <strong>não precisa ser decidido de novo</strong>: um token, uma variante, um componente documentado, um teste que reprova o build quando alguém quebra o contraste. O roadmap pede quatro coisas: evoluir o design system que você já tem pra tokens/variantes/composição/documentação, ter uma biblioteca no Storybook ligada ao Figma, regressão visual e acessibilidade testadas automaticamente, e componentes responsivos e acessíveis pela WCAG 2.1. A boa notícia: o Gabarita já tem metade da fundação, e o Ally AI <em>é</em> um motor de teste automatizado de acessibilidade. Base teórica de apoio em <a href="b11-acessibilidade.html">B11 &middot; Acessibilidade</a>, <a href="b12-css.html">B12 &middot; CSS moderno</a> e <a href="b10-testes.html">B10 &middot; Testes</a>.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w26-1"><label for="w26-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tokens em camadas: primitivo (<code>orange-560</code>) &rarr; semântico (<code>color-brand</code>, <code>color-ink-soft</code>) &rarr; de componente (<code>button-bg</code>) &mdash; e por que o componente só deve enxergar o semântico (é o que deixa trocar tema sem tocar em componente)</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-2"><label for="w26-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O formato padrão de tokens do W3C Design Tokens Community Group (<code>$value</code>, <code>$type</code>, aliases <code>{color.brand}</code>) e o caminho JSON &rarr; CSS custom properties / <code>@theme</code> do Tailwind v4</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-3"><label for="w26-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Variantes tipadas com <code>cva</code>: <code>variants</code>, <code>compoundVariants</code>, <code>defaultVariants</code> e <code>VariantProps</code> &mdash; o salto de &ldquo;classe <code>.btn-primary</code> no CSS&rdquo; pra &ldquo;<code>&lt;Button intent=&quot;danger&quot; size=&quot;sm&quot;&gt;</code> que o TypeScript valida&rdquo;</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-4"><label for="w26-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição sobre configuração: compound components e <code>children</code>/slots em vez de um componente com 15 props booleanas (ponte com <a href="b15-react-estado.html">B15</a>)</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-5"><label for="w26-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Storybook e o Component Story Format: meta + stories nomeadas, <code>args</code>, <code>decorators</code> (tema claro/escuro), <code>play</code> functions &mdash; a story como documentação <em>e</em> como caso de teste</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-6"><label for="w26-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Figma &harr; código com Code Connect: mapear propriedades do componente do Figma (<code>figma.enum</code>, <code>figma.boolean</code>) pras props reais, pra o Dev Mode mostrar o seu código e não um CSS gerado</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-7"><label for="w26-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Regressão visual: <code>toHaveScreenshot()</code> do Playwright (ou Chromatic sobre o Storybook), baseline versionada, tolerância (<code>maxDiffPixels</code>) e por que a baseline tem de ser gerada no mesmo SO/navegador do CI</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-8"><label for="w26-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acessibilidade automatizada em dois níveis: por componente (<code>@storybook/addon-a11y</code>) e por página/fluxo (<code>@axe-core/playwright</code> com <code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) &mdash; e o limite honesto: o axe pega só uma parte dos critérios</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-9"><label for="w26-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">WCAG 2.1 na prática de componente: 1.4.1 (não depender só de cor), 1.4.3 / 1.4.11 (contraste de texto e de componente), 2.1.1 (teclado), 2.4.7 (foco visível), 1.4.10 (reflow sem rolagem horizontal) &mdash; e o que a 2.2 acrescentou (alvo mínimo, foco não encoberto)</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://www.designtokens.org/tr/2025.10/format/" target="_blank" rel="noopener">Design Tokens Format Module 2025.10</a></div><div class="r-note">O formato de arquivo de tokens do W3C Design Tokens Community Group, publicado como relatório final estável em outubro de 2025. É a língua comum entre Figma, Style Dictionary, Tokens Studio e o seu código.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia a introdução, a definição de token, grupos, aliases e a lista de tipos (color, dimension, typography, shadow). Pule as seções de conformidade e as regras de parsing.</div><div class="r-src">designtokens.org &middot; W3C Community Group</div><details class="leitura" data-id="r02-design-systems--designtokens-org-tr-2025-10-format"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Um design token é, no mínimo, <strong>um nome legível ligado a um valor</strong> (<code>color-text-primary: #000000</code>). A especificação do Design Tokens Community Group padroniza o <strong>arquivo</strong> que guarda esses pares, pra Figma, ferramentas de tradução e o seu código trocarem decisões de design sem conversor feito à mão. A versão 2025.10 é um relatório final, marcado como estável e &ldquo;intended for implementation&rdquo; &mdash; não é um padrão W3C oficial, é um relatório de Community Group.</p>
+
+<h5>O arquivo</h5>
+<ul>
+<li>É <strong>JSON</strong>, com extensão recomendada <code>.tokens</code> ou <code>.tokens.json</code> e MIME <code>application/design-tokens+json</code>.</li>
+<li>Todo token tem <strong><code>$value</code></strong> (obrigatório, o dado) e <strong><code>$type</code></strong> (obrigatório ou herdado). Opcionais: <code>$description</code>, <code>$deprecated</code> e <code>$extensions</code> (metadado de fornecedor, em notação de domínio reverso).</li>
+<li>O prefixo <code>$</code> é reservado: é o que separa propriedade do formato de nome de token ou grupo.</li>
+</ul>
+
+<h5>Grupos e herança de tipo</h5>
+<ul>
+<li><strong>Grupo é qualquer objeto sem <code>$value</code></strong>. Serve pra organizar (<code>color.accent.light</code>), não implica tipo nem propósito.</li>
+<li>Um token sem <code>$type</code> herda o tipo do <strong>grupo-pai mais próximo</strong> que declara <code>$type</code> &mdash; declare <code>"$type": "color"</code> uma vez no grupo <code>color</code> e todos os filhos são cor.</li>
+<li><code>$root</code> dá ao grupo um valor-base (o &ldquo;accent&rdquo; sem sufixo), e <code>$extends</code> permite um grupo herdar de outro, com as propriedades locais sobrescrevendo.</li>
+</ul>
+
+<h5>Aliases: a parte que importa pra tema</h5>
+<ul>
+<li><strong>Chaves</strong>: <code>"$value": "{colors.blue}"</code> resolve pro valor inteiro de outro token. É assim que um token <strong>semântico</strong> (<code>semantic.primary</code>) aponta pra um <strong>primitivo</strong> (<code>colors.blue</code>).</li>
+<li><strong>JSON Pointer</strong> (<code>{"$ref": "#/colors/blue/$value/components/0"}</code>) acessa uma propriedade específica, como só o matiz de uma cor.</li>
+<li>Referência circular é proibida e deve gerar erro.</li>
+</ul>
+
+<h5>Tipos</h5>
+<div class="tbl"><table>
+<tr><th>Categoria</th><th>Tipos</th></tr>
+<tr><td>Básicos</td><td>color (com <code>colorSpace</code> e <code>components</code>), dimension (<code>{ value, unit: "px" | "rem" }</code>), fontFamily, fontWeight, duration, cubicBezier, number</td></tr>
+<tr><td>Compostos</td><td>strokeStyle, border, transition, shadow (um ou vários), gradient, typography (família + tamanho + peso + entrelinha)</td></tr>
+</table></div>
+<p>Repare que cor não é mais uma string hex solta: é um objeto com espaço de cor &mdash; o que casa com quem já escreve token em OKLCH.</p>
+
+<p><strong>Frase de entrevista:</strong> &ldquo;Token é decisão de design com nome. Eu separo primitivo de semântico por alias, e o componente só conhece o semântico &mdash; é isso que deixa trocar tema ou marca sem tocar em componente. O formato do DTCG é o que faz essa camada viajar entre Figma e código.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.designtokens.org/tr/2025.10/format/" target="_blank" rel="noopener">designtokens.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://cva.style/docs/getting-started/variants" target="_blank" rel="noopener">cva &mdash; Variants</a></div><div class="r-note">A API de variantes que o shadcn/ui popularizou: base, variants, compoundVariants e defaultVariants, com tipo derivado das variantes.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta, um exemplo de botão que cobre tudo. Leia junto a página de TypeScript (<code>VariantProps</code>).</div><div class="r-src">cva.style &middot; oficial</div><details class="leitura" data-id="r02-design-systems--cva-style-docs-getting-started-variants"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O <code>cva</code> (class-variance-authority) transforma &ldquo;qual combinação de classes este botão usa?&rdquo; numa <strong>tabela declarativa e tipada</strong>. Você descreve base, variantes, combinações e defaults; ele devolve uma função que recebe props e devolve a string de classes certa. É a peça por trás dos componentes do shadcn/ui.</p>
+
+<h5>As quatro partes</h5>
+<pre><code>const button = cva(["font-semibold", "border", "rounded"], {
+  variants: {
+    intent: { primary: ["bg-blue-500", "text-white"], secondary: ["bg-white", "text-gray-800"] },
+    size:   { small: ["text-sm", "py-1", "px-2"], medium: ["text-base", "py-2", "px-4"] },
+    disabled: { false: null, true: ["opacity-50", "cursor-not-allowed"] },
+  },
+  compoundVariants: [{ intent: "primary", disabled: false, class: "hover:bg-blue-600" }],
+  defaultVariants: { intent: "primary", size: "medium", disabled: false },
+});</code></pre>
+<ul>
+<li><strong>Base</strong> (primeiro argumento): classes aplicadas em toda instância.</li>
+<li><strong><code>variants</code></strong>: cada chave é uma dimensão (intent, size) e cada valor é uma opção. <code>null</code> numa opção significa &ldquo;não aplica nada&rdquo; &mdash; é o truque do <code>disabled: false</code>.</li>
+<li><strong><code>compoundVariants</code></strong>: classes que só entram quando <strong>várias condições batem juntas</strong> (hover só no primário habilitado; <code>uppercase</code> só no primário médio). É o que substitui o CSS de &ldquo;<code>.btn-primary.btn-small:not(:disabled)</code>&rdquo;.</li>
+<li><strong><code>defaultVariants</code></strong>: o que vale quando a prop não é passada.</li>
+<li><code>class</code> e <code>className</code> funcionam igual; use o do seu framework.</li>
+</ul>
+
+<h5>Por que existe</h5>
+<ul>
+<li>A documentação cita a dor original: com CSS tradicional você <strong>casa classe e prop na mão e escreve os tipos na mão</strong>. Bibliotecas CSS-in-TS (Stitches) tinham variantes tipadas, mas não servem pra todo projeto.</li>
+<li>Com o helper <code>VariantProps&lt;typeof button&gt;</code>, as props do componente <strong>derivam</strong> da tabela de variantes: adicionar <code>size: "large"</code> já aparece no autocomplete e um valor inválido reprova no TypeScript.</li>
+<li>É pequeno (~600 bytes comprimido) e agnóstico: funciona com Tailwind ou com qualquer classe.</li>
+</ul>
+
+<p><strong>Frase de entrevista:</strong> &ldquo;Variante de componente é uma tabela, não um if espalhado. Com cva a tabela vira o tipo das props, então uma combinação que o design não prevê nem compila.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://cva.style/docs/getting-started/variants" target="_blank" rel="noopener">cva.style</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://storybook.js.org/docs/writing-stories" target="_blank" rel="noopener">Storybook &mdash; How to write stories</a></div><div class="r-note">O que é uma story, o Component Story Format (CSF), args, decorators, parameters e play functions.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>É a página-base. Os subtópicos (args, decorators, play) têm páginas próprias &mdash; abra só quando for implementar.</div><div class="r-src">storybook.js.org &middot; oficial</div><details class="leitura" data-id="r02-design-systems--storybook-js-org-docs-writing-stories"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Uma story <strong>captura o estado renderizado de um componente sob condições específicas</strong>: um objeto com anotações que descrevem comportamento e aparência dados certos argumentos. O formato padrão é o CSF (Component Story Format), que é só um módulo ES &mdash; e a mesma story serve de documentação e de caso de teste.</p>
+
+<h5>A anatomia do CSF</h5>
+<pre><code>import type { Meta, StoryObj } from '@storybook/your-framework';
+import { Button } from './Button';
+
+const meta = { component: Button } satisfies Meta&lt;typeof Button&gt;;
+export default meta;
+type Story = StoryObj&lt;typeof meta&gt;;
+
+export const Primary: Story = { args: { label: 'Button', primary: true } };</code></pre>
+<ul>
+<li><strong>Export default (meta)</strong>: metadados que dizem como o Storybook lista as stories e o que os addons recebem. Precisa de <code>title</code> ou de <code>component</code> (que gera o título).</li>
+<li><strong>Exports nomeados</strong>: cada um é uma story, em UpperCamelCase. Cada story é um objeto dizendo com que argumentos renderizar.</li>
+</ul>
+
+<h5>Os quatro conceitos</h5>
+<div class="tbl"><table>
+<tr><th>Conceito</th><th>O que é</th><th>Uso típico</th></tr>
+<tr><td><code>args</code></td><td>as props do componente, editáveis ao vivo no painel Controls</td><td>uma story por variante: <code>Primary</code>, <code>Danger</code>, <code>Disabled</code></td></tr>
+<tr><td><code>decorators</code></td><td>wrappers em volta da story, em nível global, de componente ou de story</td><td>tema claro/escuro, layout, provider de contexto</td></tr>
+<tr><td><code>parameters</code></td><td>metadado estático que configura addons</td><td>fundos disponíveis, regras do addon de acessibilidade</td></tr>
+<tr><td><code>play</code></td><td>código que roda depois da renderização, simulando interação e afirmando resultado</td><td>&ldquo;clicar no botão abre o menu&rdquo; como teste</td></tr>
+</table></div>
+
+<h5>Por que isso é mais que um catálogo</h5>
+<ul>
+<li>A story <strong>centraliza a definição</strong> dos estados de um componente: o mesmo objeto alimenta a página de documentação, o teste de interação (<code>play</code>), o teste de acessibilidade e o snapshot visual. Menos lugares pra manter.</li>
+<li>Estados difíceis de alcançar no app real (erro, vazio, carregando, texto muito longo) viram uma story cada &mdash; é onde o design system prova que cobriu os &ldquo;estados obrigatórios&rdquo;.</li>
+</ul>
+
+<p><strong>Frase de entrevista:</strong> &ldquo;Pra mim cada estado que o design exige vira uma story. A partir daí ela é ao mesmo tempo documentação viva e o caso que o teste visual e o de acessibilidade usam.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://storybook.js.org/docs/writing-stories" target="_blank" rel="noopener">storybook.js.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://storybook.js.org/docs/writing-tests/accessibility-testing" target="_blank" rel="noopener">Storybook &mdash; Accessibility tests</a></div><div class="r-note"><code>@storybook/addon-a11y</code>: axe-core rodando em cada story, com <code>parameters.a11y.test</code> decidindo se a violação reprova o CI.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Preste atenção nos três valores de <code>test</code> (<code>error</code>/<code>todo</code>/<code>off</code>) e na aba &ldquo;incomplete&rdquo;.</div><div class="r-src">storybook.js.org &middot; oficial</div><details class="leitura" data-id="r02-design-systems--storybook-js-org-docs-writing-tests-accessibility-testing"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O <code>@storybook/addon-a11y</code> roda o <strong>axe-core da Deque</strong> em cada story, avaliando o DOM renderizado contra as regras WCAG 2.0/2.1 A/AA e boas práticas. Segundo a própria documentação, isso pega <strong>até ~57% dos problemas de WCAG</strong> &mdash; e a configuração decide se a violação é aviso ou build vermelho.</p>
+
+<h5>Instalação e o que aparece</h5>
+<ul>
+<li><code>npx storybook add @storybook/addon-a11y</code>.</li>
+<li>Um painel com três abas: <strong>violations</strong>, <strong>passes</strong> e <strong>incomplete</strong>. A última lista o que o axe <em>não conseguiu decidir</em> e você precisa conferir na mão.</li>
+<li>Botões na toolbar pra simular deficiências de visão sobre a story.</li>
+</ul>
+
+<h5><code>parameters.a11y</code>: a chave que importa</h5>
+<pre><code>// .storybook/preview.ts
+parameters: {
+  a11y: {
+    context: 'body',
+    config: { rules: [{ id: 'region', enabled: false }] },
+    test: 'error', // 'error' | 'todo' | 'off'
+  },
+}</code></pre>
+<div class="tbl"><table>
+<tr><th><code>test</code></th><th>Efeito</th></tr>
+<tr><td><code>'error'</code></td><td>violação reprova o teste na UI do Storybook e no CI</td></tr>
+<tr><td><code>'todo'</code></td><td>violação aparece como aviso &mdash; pra dívida conhecida que você está pagando</td></tr>
+<tr><td><code>'off'</code></td><td>desliga a checagem automática (o painel manual continua)</td></tr>
+</table></div>
+<ul>
+<li>Pode ser global (em <code>preview.ts</code>) e sobrescrito por story: uma story com problema conhecido vai pra <code>'todo'</code> sem afrouxar o resto.</li>
+<li>Com <code>@storybook/addon-vitest</code>, as checagens rodam como teste de componente e aparecem como status ao lado de cada story; no CI, as stories com <code>'error'</code> reprovam o build.</li>
+</ul>
+
+<h5>O limite, dito pela própria doc</h5>
+<p>Teste automatizado pega o óbvio; <strong>não substitui</strong> auditoria manual nem teste com usuário de tecnologia assistiva. A aba <em>incomplete</em> existe exatamente pra lembrar disso.</p>
+
+<p><strong>Frase de entrevista:</strong> &ldquo;Eu ponho o axe no nível do componente, em modo <code>error</code>, pra regressão de acessibilidade quebrar o build cedo &mdash; e trato o que sobra (ordem de foco, leitor de tela) como teste manual, sem chamar isso de conformidade.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://storybook.js.org/docs/writing-tests/accessibility-testing" target="_blank" rel="noopener">storybook.js.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://developers.figma.com/docs/code-connect/react" target="_blank" rel="noopener">Figma Code Connect &mdash; React</a></div><div class="r-note">Como ligar o componente do Figma ao componente React, pra o Dev Mode mostrar o snippet real com as props mapeadas.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia <code>figma.connect()</code>, a tabela de helpers de propriedade e &ldquo;variant restrictions&rdquo;. A configuração do CLI é consulta.</div><div class="r-src">developers.figma.com &middot; oficial</div><details class="leitura" data-id="r02-design-systems--developers-figma-com-docs-code-connect-react"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Code Connect liga um componente do Figma ao seu componente React, pra o <strong>Dev Mode mostrar o snippet do seu código</strong>, com as props certas, em vez de CSS gerado. Funciona sozinho ou integrado a arquivos do Storybook. Detalhe que muda tudo: <strong>os arquivos não são executados</strong> &mdash; o CLI trata o exemplo como string.</p>
+
+<h5>As duas formas de <code>figma.connect()</code></h5>
+<ul>
+<li><code>figma.connect(Button, "https://figma.com/...")</code> &mdash; liga um componente do seu código ao nó do Figma.</li>
+<li><code>figma.connect("https://figma.com/...")</code> &mdash; liga direto a um elemento HTML, sem importar componente.</li>
+<li>O <code>example</code> devolve o JSX que aparece no Dev Mode, recebendo as props já mapeadas.</li>
+</ul>
+
+<h5>Mapeamento de propriedades</h5>
+<div class="tbl"><table>
+<tr><th>Helper</th><th>Mapeia</th></tr>
+<tr><td><code>figma.string('Label')</code></td><td>propriedade de texto (rótulo, título)</td></tr>
+<tr><td><code>figma.boolean('Disabled')</code></td><td>estado binário; normaliza Yes/No, True/False, On/Off</td></tr>
+<tr><td><code>figma.enum('Variant', {...})</code></td><td>variante com várias opções &rarr; valor da prop (não normaliza sozinho)</td></tr>
+<tr><td><code>figma.instance('Icon')</code></td><td>instância aninhada (ícone dentro do botão)</td></tr>
+<tr><td><code>figma.children('Layer')</code></td><td>filhos, com curinga <code>*</code></td></tr>
+<tr><td><code>figma.slot</code>, <code>figma.nestedProps</code>, <code>figma.textContent</code>, <code>figma.className</code></td><td>slots compostos, props de instância aninhada, texto de camada, concatenação de classes</td></tr>
+</table></div>
+
+<h5>Variant restrictions</h5>
+<p>Quando um componente do Figma representa vários do código (um &ldquo;Button&rdquo; com Type = Primary/Secondary que no código são <code>PrimaryButton</code> e <code>SecondaryButton</code>), você cria uma ligação por variante: <code>figma.connect(PrimaryButton, url, { variant: { Type: 'Primary' }, example: () =&gt; &lt;PrimaryButton /&gt; })</code>. Aceita combinação de variantes.</p>
+
+<h5>A consequência de &ldquo;não é executado&rdquo;</h5>
+<ul>
+<li>Condicional e construção dinâmica dentro do exemplo não funcionam como em React de verdade: escreva o exemplo como o desenvolvedor deveria escrever o uso.</li>
+<li>O ganho é de <strong>contrato</strong>: o nome da prop no Figma e no código passam a ter um mapa explícito, e divergência vira algo que se vê.</li>
+</ul>
+
+<p><strong>Frase de entrevista:</strong> &ldquo;Handoff bom é quando o designer e eu falamos o mesmo nome de prop. Code Connect torna esse mapa explícito: o Dev Mode mostra o meu componente com a variante certa, não um CSS que ninguém vai usar.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://developers.figma.com/docs/code-connect/react" target="_blank" rel="noopener">developers.figma.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://playwright.dev/docs/test-snapshots" target="_blank" rel="noopener">Playwright &mdash; Visual comparisons</a></div><div class="r-note"><code>toHaveScreenshot()</code>: baseline no primeiro run, comparação nos seguintes, <code>--update-snapshots</code> e o aviso sobre SO/hardware.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta. O parágrafo sobre variação de renderização entre ambientes é o que mais cai em entrevista.</div><div class="r-src">playwright.dev &middot; oficial</div><details class="leitura" data-id="r02-design-systems--playwright-dev-docs-test-snapshots"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr"><code>await expect(page).toHaveScreenshot()</code> é regressão visual em uma linha: <strong>no primeiro run gera a imagem de referência</strong>, nos seguintes compara pixel a pixel. O problema não é escrever o teste &mdash; é manter a baseline confiável, porque a renderização muda de máquina pra máquina.</p>
+
+<h5>Como a baseline nasce e se chama</h5>
+<ul>
+<li>Fica numa pasta com o nome do arquivo de teste (<code>example.spec.ts-snapshots/</code>) e <strong>deve ir pro controle de versão</strong>.</li>
+<li>O nome leva o identificador de navegador e plataforma: <code>example-test-1-chromium-darwin.png</code>. Dá pra nomear: <code>toHaveScreenshot('landing.png')</code>.</li>
+<li>Mudou de propósito? <code>npx playwright test --update-snapshots</code> regrava as referências &mdash; e a revisão do PR passa a incluir as imagens.</li>
+</ul>
+
+<h5>O aviso que separa suíte útil de suíte flaky</h5>
+<p>A documentação é direta: a renderização do navegador varia com <strong>SO, versão, configurações, hardware, fonte de energia (bateria ou tomada), modo headless</strong> e outros fatores. Baseline gerada no seu Windows e comparada num runner Linux vai falhar em tudo. Regra: gere e compare <strong>no mesmo ambiente</strong> &mdash; na prática, o container do CI.</p>
+
+<h5>Controlando o ruído</h5>
+<div class="tbl"><table>
+<tr><th>Opção</th><th>Pra quê</th></tr>
+<tr><td><code>maxDiffPixels: 100</code></td><td>tolera uma quantidade pequena de pixels diferentes (comparação via pixelmatch)</td></tr>
+<tr><td><code>stylePath</code></td><td>aplica um CSS só no screenshot pra esconder o que muda sozinho (data, avatar, animação)</td></tr>
+<tr><td><code>toMatchSnapshot()</code></td><td>o mesmo princípio pra texto ou binário: <code>expect(await page.textContent('.hero__title')).toMatchSnapshot('hero.txt')</code></td></tr>
+</table></div>
+
+<h5>Onde aplicar</h5>
+<ul>
+<li>Componente isolado (uma página de stories ou de referência, como o <code>/admin/design</code> do Gabarita) dá screenshot estável e barato.</li>
+<li>Página inteira com dado real dá screenshot instável: esconda o dinâmico ou não faça.</li>
+</ul>
+
+<p><strong>Frase de entrevista:</strong> &ldquo;Regressão visual só vale se a baseline for determinística: mesmo container no CI, conteúdo dinâmico escondido, e tolerância pequena só pra ruído de antialiasing.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://playwright.dev/docs/test-snapshots" target="_blank" rel="noopener">playwright.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+  </ul>
+
+  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <div class="evid">
+    <div class="evid-head">Onde você já fez isso &middot; e onde ainda não</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Tokens, variantes, composição e documentação <span class="st p">Gabarita: parcial (tokens fortes, sem lib de variantes)</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p class="proj">Gabarita</p>
+        <ul>
+          <li><strong>Tokens semânticos em OKLCH</strong> no <code>@theme</code> do Tailwind v4: <code>src/app/globals.css</code> L8&ndash;38 (<code>--color-paper</code>, <code>--color-ink-soft</code>, <code>--color-brand</code>, <code>--color-on-brand</code>, raios, sombras). Os comentários registram o contraste (&ldquo;texto secundário (&ge;4.5:1)&rdquo;, &ldquo;Fill tunado para AA&rdquo;).</li>
+          <li><strong>Tema escuro trocando só os tokens</strong>: <code>:root[data-theme=&quot;dark&quot;]</code> em <code>globals.css</code> L43&ndash;59 &mdash; nenhum componente sabe que existe dark mode. Escolha explícita da usuária, nunca herdada do SO (decisão D85), aplicada antes do primeiro paint por <code>src/components/script-tema.tsx</code> com o nonce da CSP.</li>
+          <li><strong>Variantes como classes de componente</strong> em <code>@layer components</code> (<code>globals.css</code> L100+): <code>.btn-primary</code> / <code>.btn-ghost</code> / <code>.btn-danger</code> (L143&ndash;160), <code>.chip</code>/<code>.chip-on</code>, <code>.input</code>, <code>.select</code>, <code>.card</code> (L163), <code>.skeleton</code> (L174). Funciona, mas não é tipado: nada impede <code>className=&quot;btn-primary btn-danger&quot;</code>.</li>
+          <li><strong>Variante por prop, tipada</strong>: <code>src/components/grade-numerada.tsx</code> &mdash; <code>type Escala = &quot;trilha&quot; | &quot;mini&quot; | &quot;completa&quot; | &quot;mobile&quot;</code> (L8) e mapas <code>Record&lt;Escala, string&gt;</code> (L10&ndash;22). É o padrão do <code>cva</code> escrito à mão.</li>
+          <li><strong>Documentação</strong>: <code>DESIGN.md</code> (seções Tokens, Componentes, Estados obrigatórios e &ldquo;Refusos&rdquo;) e a página <code>src/app/(app)/admin/design/page.tsx</code>, um &ldquo;Storybook caseiro&rdquo; só pra admin que mostra a <code>GradeNumerada</code> em todos os estados.</li>
+        </ul>
+<pre><code>const TAMANHO: Record&lt;Escala, string&gt; = {
+  trilha: "size-2.5",
+  mini: "size-5 text-[10px]",
+  completa: "size-7 text-xs",
+  mobile: "size-8 text-xs",
+};</code></pre>
+        <p class="proj">Ally AI</p>
+        <ul>
+          <li>Quatro tokens de cor e duas fontes no <code>@theme</code>: <code>apps/web/src/app/globals.css</code> L3&ndash;11. Sem variantes e sem componentes de base: as classes de botão e input se repetem em <code>login/page.tsx</code>, <code>register/page.tsx</code> e <code>pricing/page.tsx</code>, e há cor fora de token (<code>slate-*</code>, <code>indigo-*</code>) em <code>components/HeroSearch.tsx</code> e <code>DashboardSkeleton.tsx</code>.</li>
+          <li><code>animate-in fade-in slide-in-from-*</code> (<code>Dashboard.tsx</code> L22, <code>HeroSearch.tsx</code> L70, <code>DashboardSkeleton.tsx</code> L3) não faz nada: o plugin <code>tw-animate-css</code> não está instalado.</li>
+        </ul>
+      </div>
+
+      <div class="evid-item">
+        <h4>Biblioteca de componentes com Storybook e Figma <span class="st n">Gabarita: lacuna</span> <span class="st n">Ally AI: lacuna</span></h4>
+        <p>Nenhum dos dois tem Storybook, <code>*.stories.tsx</code> ou Code Connect. O mais perto disso é o <code>/admin/design</code> do Gabarita. O protótipo de design do Gabarita vive fora do repositório (o <code>DESIGN.md</code> diz isso explicitamente). No Ally AI, o pacote compartilhado <code>packages/types</code> é só de tipos &mdash; a fundação de monorepo pra um <code>packages/ui</code> já existe (ver <a href="r03-arquitetura-frontend.html">R3</a>), falta o pacote.</p>
+      </div>
+
+      <div class="evid-item">
+        <h4>Regressão visual e acessibilidade automatizada <span class="st n">Gabarita: lacuna (só getByRole)</span> <span class="st p">Ally AI: parcial (é o produto, não o teste)</span></h4>
+        <p class="proj">Gabarita</p>
+        <ul>
+          <li>Sem axe, sem Playwright, sem screenshot. Mas os testes de componente (Vitest + Testing Library) já consultam por papel e nome acessível, o que reprova componente sem semântica: <code>src/components/grade-numerada.test.tsx</code> L18 (<code>getByRole(&quot;img&quot;, { name: &quot;Questão 1 — Acerto&quot; })</code>) e L27 (&ldquo;todo estado tem legenda textual, não só cor&rdquo;); <code>question-runner.test.tsx</code> L49&ndash;51.</li>
+        </ul>
+        <p class="proj">Ally AI</p>
+        <ul>
+          <li>O produto <strong>é</strong> um motor de teste automatizado de acessibilidade: <code>apps/api/src/services/auditService.ts</code> L96 (<code>scanPage</code>) abre a página no Chromium e roda <code>new AxePuppeteer(page).analyze()</code> (L156).</li>
+          <li>Só que o front do próprio Ally AI não é auditado: o dogfooding é item P0 pendente em <code>docs/DIAGNOSTICO.md</code> (L21), e a seção 4 (L119+) mede o contraste dos tokens &mdash; <code>secondary #475569</code> dá <strong>2,36:1</strong> sobre o fundo, <code>primary #6366F1</code> dá 4,00:1, branco sobre <code>primary</code> reprova por 0,03.</li>
+        </ul>
+      </div>
+
+      <div class="evid-item">
+        <h4>Componentes responsivos e acessíveis (WCAG 2.1) <span class="st y">Gabarita: usado</span> <span class="st p">Ally AI: responsivo sim, acessível não</span></h4>
+        <p class="proj">Gabarita</p>
+        <ul>
+          <li><strong>1.4.1 &mdash; não depender só de cor</strong>: <code>grade-numerada.tsx</code> L33&ndash;53 diferencia acerto/erro/atual/em-branco/anulada por <em>padrão de borda</em> (sólida, pontilhada, tracejada, line-through), não só por cor, e sempre com legenda textual (L108&ndash;121). Item clicável vira <code>&lt;button aria-label&gt;</code> (L87&ndash;97); não clicável vira <code>role=&quot;img&quot;</code> (L101).</li>
+          <li><strong>Foco e movimento</strong>: <code>:focus-visible</code> com outline de marca (<code>globals.css</code> L77&ndash;81) e <code>prefers-reduced-motion</code> global (L91&ndash;97).</li>
+          <li><strong>Alvo de toque e zoom do iOS</strong>: <code>min-h-11</code> (44px) nos botões; <code>@media (width &lt; 48rem)</code> sobe a fonte do input pra 1rem (L215+) &mdash; abaixo de 16px o Safari dá zoom no foco.</li>
+          <li><strong>Navegação mobile própria</strong>: <code>src/app/(app)/mobile-tab-bar.tsx</code> &mdash; <code>md:hidden</code> (L46), <code>nav aria-label</code> (L86), <code>aria-current=&quot;page&quot;</code> (L91), <code>aria-expanded</code>/<code>aria-controls</code> no &ldquo;Mais&rdquo; (L101&ndash;102).</li>
+          <li>Diálogos com papel: <code>entregar-prova.tsx</code> L36 (<code>role=&quot;dialog&quot; aria-modal=&quot;true&quot;</code>), <code>multi-select.tsx</code> L84&ndash;96 (dialog + searchbox + teclado, Escape fecha em L39).</li>
+        </ul>
+        <p class="proj">Ally AI</p>
+        <ul>
+          <li>Responsivo com breakpoints do Tailwind (<code>Dashboard.tsx</code> <code>md:flex-row</code>, <code>grid-cols-1 lg:grid-cols-3</code>), mas a navegação some no celular sem alternativa (<code>components/Header.tsx</code> L51, <code>hidden ... md:flex</code>).</li>
+          <li>Zero atributo <code>aria-*</code>, <code>role</code> ou <code>htmlFor</code> em <code>apps/web/src</code>; <code>&lt;label&gt;</code> sem associação em <code>login/page.tsx</code> L49 e L64; input de URL sem label (<code>HeroSearch.tsx</code> L43); modal de créditos sem <code>role=&quot;dialog&quot;</code> e botão de fechar só com ícone (<code>HeroSearch.tsx</code> L76&ndash;84).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap">
+    <h4>O que falta construir</h4>
+    <ol>
+      <li><strong>Ally AI &middot; tokens que passam no AA.</strong> Trocar <code>--color-secondary</code>/<code>--color-primary</code> em <code>apps/web/src/app/globals.css</code> pelos candidatos já medidos no <code>DIAGNOSTICO.md</code> (ex.: <code>indigo-400</code> 5,98:1 pra texto) e eliminar as cores soltas. Uma tarde de trabalho, antes/depois mensurável. <em>Post R7:</em> &ldquo;Minha ferramenta de acessibilidade reprovava na própria auditoria&rdquo;.</li>
+      <li><strong>Ally AI &middot; <code>packages/ui</code> com Button/Input/Dialog em <code>cva</code></strong> + Storybook com <code>@storybook/addon-a11y</code> em <code>test: 'error'</code>. Resolve de uma vez as classes repetidas, o label solto e o modal sem papel. <em>Post R7:</em> &ldquo;Do design system ao Storybook&rdquo; (post 7 do calendário).</li>
+      <li><strong>Ally AI &middot; dogfooding no CI.</strong> Um teste Playwright com <code>@axe-core/playwright</code> (<code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) nas rotas <code>/</code>, <code>/login</code>, <code>/dashboard</code>. É o item P0 do diagnóstico virando build vermelho.</li>
+      <li><strong>Gabarita &middot; Storybook da <code>GradeNumerada</code></strong> substituindo (ou alimentando) o <code>/admin/design</code>: uma story por escala, decorator de tema claro/escuro, e <code>toHaveScreenshot()</code> das quatro escalas nos dois temas &mdash; regressão visual barata no componente-assinatura.</li>
+      <li><strong>Gabarita &middot; tokens exportáveis.</strong> Escrever os tokens do <code>@theme</code> num <code>tokens.json</code> no formato DTCG e gerar o CSS a partir dele. É o passo que permite sincronizar com o Figma (Tokens Studio / variables) e falar de &ldquo;fonte única da verdade&rdquo; com prova.</li>
+    </ol>
+  </div>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; a <code>GradeNumerada</code> do Gabarita</div>
+    <div class="ammo-body">
+      <p>O componente-assinatura do produto mostra o estado de cada questão de uma prova. A decisão de design foi que <strong>nenhum estado depende só de cor</strong> (WCAG 1.4.1): acerto é borda sólida, erro é borda pontilhada, em branco é tracejada, anulada é riscada &mdash; legível em escala de cinza e por quem tem daltonismo &mdash; e toda grade tem legenda textual. O mesmo componente roda em quatro escalas tipadas (trilha, mini, completa, mobile), e vira <code>&lt;button&gt;</code> com <code>aria-label</code> só quando é navegável. E a regra está travada por teste: &ldquo;todo estado tem legenda textual, não só cor&rdquo; é literalmente o nome de um caso em <code>grade-numerada.test.tsx</code>.</p>
+      <p class="why"><strong>Por que isso importa:</strong> é a história completa de Design Engineering em um componente &mdash; decisão de design documentada (<code>DESIGN.md</code>), implementação com variantes tipadas, critério WCAG nomeado e um teste que impede regressão. Quando perguntarem &ldquo;o que é um design system pra você?&rdquo;, responda com ela.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual a diferença entre um token primitivo e um token semântico, e por que o componente deveria usar só o segundo?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Primitivo nomeia o <strong>valor</strong> (<code>orange-560</code>); semântico nomeia a <strong>intenção</strong> (<code>color-brand</code>, <code>color-ink-soft</code>) e aponta pra um primitivo. Se o botão usa <code>color-brand</code>, trocar a marca ou ligar o dark mode é trocar o alias num lugar só &mdash; é exatamente o que o <code>:root[data-theme=&quot;dark&quot;]</code> do Gabarita faz sem tocar em componente nenhum. Componente que usa o primitivo direto precisa ser editado em toda mudança de tema.</p></div>
+        </details>
+      </li>
+      <li>O Gabarita tem <code>.btn-primary</code> e <code>.btn-danger</code> como classes em <code>@layer components</code>. O que você ganharia migrando pra um <code>&lt;Button&gt;</code> com <code>cva</code>? E o que perderia?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Ganha: variante <strong>tipada</strong> (o TypeScript reprova <code>intent=&quot;danjer&quot;</code>), combinações explícitas por <code>compoundVariants</code> em vez de duas classes conflitando no mesmo elemento, defaults num lugar só, e um ponto único pra semântica (o <code>&lt;button type=&quot;button&quot;&gt;</code>, o foco, o estado <code>disabled</code>). Perde: uma dependência e uma camada de JS pra algo que hoje é CSS puro, e as classes deixam de servir em markup que não é React. A resposta sênior é dizer quando vale: a partir do momento em que há variantes combináveis ou mais de uma pessoa criando tela.</p></div>
+        </details>
+      </li>
+      <li>Seu teste de regressão visual passa na sua máquina e falha no CI em todas as telas, com diferença de poucos pixels no texto. O que aconteceu e como resolver?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>A baseline foi gerada num ambiente diferente do CI: a renderização de fonte e antialiasing muda com SO, versão do navegador, hardware e até modo headless (a própria doc do Playwright avisa). Por isso o nome do snapshot leva navegador e plataforma (<code>-chromium-linux</code>). Solução: gerar e atualizar a baseline <strong>no mesmo ambiente do CI</strong> (um container fixo), e usar tolerância (<code>maxDiffPixels</code>) só pra ruído, nunca pra esconder mudança real.</p></div>
+        </details>
+      </li>
+      <li>O Ally AI audita acessibilidade dos sites dos clientes com axe-core. Um entrevistador pergunta: &ldquo;e o seu próprio front passa?&rdquo;. Qual é a resposta honesta e o que ela mostra?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Hoje não passa, e você sabe exatamente por quê: o <code>DIAGNOSTICO.md</code> mediu o contraste dos tokens (2,36:1 no <code>secondary</code>), listou label sem associação, modal sem papel e navegação mobile ausente, e pôs o dogfooding como P0. A resposta mostra duas coisas boas: você mede antes de afirmar, e sabe que a correção certa é <strong>no token</strong>, não caso a caso. Melhor ainda se, quando a entrevista chegar, o teste com <code>@axe-core/playwright</code> já estiver no CI.</p></div>
+        </details>
+      </li>
+      <li>Se o axe-core não acusa nenhuma violação, o componente está conforme a WCAG 2.1 AA?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Não. Teste automatizado pega só uma parte dos critérios (a doc do Storybook fala em até ~57% dos problemas): contraste calculável, nome acessível ausente, ARIA inválido. Ordem de foco que faz sentido, texto alternativo que descreve o que importa, foco que não se perde num fluxo, leitor de tela anunciando a coisa certa &mdash; isso é teclado e NVDA/VoiceOver na mão. Por isso o Ally AI tem como regra &ldquo;nunca afirmar conformidade&rdquo;, e a aba <em>incomplete</em> do addon-a11y existe.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="r01-ai-frontend.html"><div class="dir">&larr; anterior</div><div class="t">AI-Powered Frontend</div></a>
+    <a class="next" href="r03-arquitetura-frontend.html"><div class="dir">próxima &rarr;</div><div class="t">Frontend Architecture</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 32 blocos &middot; 227 tópicos &middot; 159 leituras resumidas &middot; 124 perguntas abertas com gabarito &middot; 142 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 05/10/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

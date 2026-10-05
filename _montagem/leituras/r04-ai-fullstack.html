@@ -1,0 +1,205 @@
+<article data-href="https://nextjs.org/docs/app/api-reference/file-conventions/route">
+<p class="tldr">Um <code>route.ts</code> dentro de <code>app/</code> vira endpoint HTTP usando as APIs <strong>padrão da web</strong> &mdash; <code>Request</code> e <code>Response</code>. Isso inclui devolver um <code>ReadableStream</code>: streaming de LLM no Next não exige biblioteca nenhuma, só a Web Streams API.</p>
+
+<h5>O básico que cai em entrevista</h5>
+<ul>
+<li>Métodos suportados: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>, <code>HEAD</code> e <code>OPTIONS</code>. Se você não define <code>OPTIONS</code>, o Next implementa sozinho e preenche o header <code>Allow</code>.</li>
+<li>O primeiro argumento é um <code>NextRequest</code> (extensão do <code>Request</code>, com <code>cookies</code> e <code>nextUrl</code> já parseados). O segundo traz <code>params</code> &mdash; que <strong>desde o Next 15 é uma promessa</strong>: <code>const { id } = await params</code>.</li>
+<li>Também desde o 15, <code>GET</code> deixou de ser estático por padrão e passou a ser <strong>dinâmico</strong>. Cache em route handler agora é opt-in (<code>export const revalidate = 60</code>, ou Cache Components).</li>
+<li>Route handlers usam a mesma configuração de segmento que páginas: <code>dynamic</code>, <code>revalidate</code>, <code>runtime</code> (<code>'nodejs'</code> ou edge) etc.</li>
+</ul>
+
+<h5>Streaming: as duas formas mostradas</h5>
+<ul>
+<li><strong>Com o AI SDK:</strong> o handler recebe as mensagens, chama <code>streamText</code> e devolve a resposta já em formato de stream. A doc mostra o exemplo com OpenAI; o modelo é trocável.</li>
+<li><strong>Com Web APIs puras:</strong> um gerador assíncrono produz pedaços (<code>TextEncoder</code> transforma string em bytes), e uma função converte o iterador em <code>ReadableStream</code> &mdash; o <code>pull(controller)</code> pede o próximo valor, faz <code>enqueue</code> ou <code>close</code>. O handler só faz <code>return new Response(stream)</code>.</li>
+</ul>
+<pre><code>return new ReadableStream({
+  async pull(controller) {
+    const { value, done } = await iterator.next()
+    if (done) controller.close()
+    else controller.enqueue(value)
+  },
+})</code></pre>
+<p>O ponto conceitual: <strong>&ldquo;essas abstrações usam as Web APIs pra criar o stream&rdquo;</strong>. Trocar o iterador por um iterador sobre os chunks do provider de LLM é o caso real.</p>
+
+<h5>Outros recortes úteis pro roadmap</h5>
+<ul>
+<li><strong>FormData:</strong> <code>await request.formData()</code> lê upload multipart; como tudo chega string, a doc sugere validar com <code>zod-form-data</code>.</li>
+<li><strong>Webhooks:</strong> leia o corpo com <code>request.text()</code> (cru, pra verificar assinatura). Diferente do Pages Router, não precisa desligar <code>bodyParser</code>.</li>
+<li><strong>CORS:</strong> headers na própria <code>Response</code> pra um handler; pra vários, use Proxy (o antigo middleware) ou <code>next.config</code>.</li>
+<li><strong>Respostas não-UI:</strong> RSS, XML, qualquer <code>Content-Type</code> &mdash; sitemap, robots e imagens OG já têm convenção própria.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;No App Router, um endpoint de streaming é só um Route Handler que devolve um <code>ReadableStream</code>. Eu sei fazer com o SDK e sem ele &mdash; o que muda é quem converte os chunks do modelo em bytes.&rdquo;</p>
+</article>
+
+<article data-href="https://ai.google.dev/gemini-api/docs/embeddings">
+<p class="tldr">Embedding é o texto (ou imagem, PDF, áudio) convertido num vetor de números em que <strong>coisas parecidas ficam perto</strong>. É a matéria-prima de RAG, busca semântica, classificação e clustering &mdash; e sai do mesmo SDK <code>@google/genai</code> que o Gabarita e o Ally AI já usam.</p>
+
+<h5>Modelos e chamada</h5>
+<ul>
+<li><strong><code>gemini-embedding-2</code>:</strong> multimodal (texto, imagem, vídeo, áudio, PDF), até 8.192 tokens de entrada.</li>
+<li><strong><code>gemini-embedding-001</code>:</strong> só texto, até 2.048 tokens &mdash; o legado.</li>
+<li>A chamada é <code>ai.models.embedContent({ model, contents })</code> e a resposta traz <code>embeddings</code>.</li>
+<li><strong>Os espaços vetoriais dos dois modelos são incompatíveis:</strong> trocar de modelo obriga a re-gerar todos os vetores guardados. Guarde qual modelo gerou cada vetor.</li>
+</ul>
+
+<h5>Task type: o mesmo texto, vetores diferentes conforme o uso</h5>
+<div class="tbl"><table>
+<tr><th>Task type</th><th>Pra quê</th></tr>
+<tr><td><code>RETRIEVAL_DOCUMENT</code> / <code>RETRIEVAL_QUERY</code></td><td>busca: um pro que é guardado, outro pra pergunta do usuário</td></tr>
+<tr><td><code>SEMANTIC_SIMILARITY</code></td><td>recomendação, detecção de duplicata</td></tr>
+<tr><td><code>CLASSIFICATION</code></td><td>categorizar por rótulos pré-definidos</td></tr>
+<tr><td><code>CLUSTERING</code></td><td>agrupar por semelhança, achar anomalia</td></tr>
+<tr><td><code>QUESTION_ANSWERING</code>, <code>FACT_VERIFICATION</code>, <code>CODE_RETRIEVAL_QUERY</code></td><td>casos específicos de recuperação</td></tr>
+</table></div>
+<p>No <code>001</code> isso é o parâmetro <code>taskType</code>; no <code>2</code>, a instrução vai no próprio texto (ex.: <code>"task: search result | query: ..."</code>). Documento e pergunta embutidos com o mesmo propósito de busca casam melhor.</p>
+
+<h5>Dimensão: o trade-off de armazenamento</h5>
+<ul>
+<li>Padrão de <strong>3.072</strong> dimensões; configurável de 128 a 3.072 com <code>outputDimensionality</code>. Recomendados: 768, 1.536 ou 3.072.</li>
+<li>O <code>embedding-2</code> normaliza sozinho quando você trunca; no <code>001</code> você normaliza na mão (divide o vetor pela norma).</li>
+<li>Pro pgvector, 768 dimensões dá <code>4 &times; 768 + 8</code> &asymp; 3 KB por linha &mdash; conta que você deve saber fazer antes de escolher.</li>
+</ul>
+
+<h5>Custo e armazenamento</h5>
+<ul>
+<li>A Batch API custa 50% do preço normal &mdash; bom pra indexar o acervo inteiro de uma vez, onde latência não importa (um job no worker, por exemplo).</li>
+<li>Pra guardar, a doc cita serviços do Google Cloud (AlloyDB, Cloud SQL, BigQuery, Vector Search) e bancos vetoriais de terceiros. O Postgres com pgvector entra na mesma categoria.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de escolher a dimensão do embedding eu faço a conta de armazenamento, e guardo o nome do modelo junto do vetor &mdash; trocar de modelo significa re-indexar tudo.&rdquo;</p>
+</article>
+
+<article data-href="https://github.com/pgvector/pgvector">
+<p class="tldr">pgvector põe busca por similaridade <strong>dentro do Postgres</strong>, ao lado dos seus dados relacionais, com transação, backup e replicação de graça. Busca exata por padrão; índices aproximados (HNSW, IVFFlat) trocam um pouco de precisão por muita velocidade.</p>
+
+<h5>O mínimo pra começar</h5>
+<pre><code>CREATE EXTENSION vector;
+CREATE TABLE items (id bigserial PRIMARY KEY, embedding vector(3));
+SELECT * FROM items ORDER BY embedding &lt;-&gt; '[3,1,2]' LIMIT 5;</code></pre>
+<ul>
+<li>Até 16.000 dimensões; cada vetor ocupa <code>4 &times; dimensões + 8</code> bytes.</li>
+<li>Operadores: <code>&lt;-&gt;</code> L2 (euclidiana), <code>&lt;#&gt;</code> produto interno <strong>negativo</strong> (multiplique por -1), <code>&lt;=&gt;</code> distância de cosseno, <code>&lt;+&gt;</code> L1, e <code>&lt;~&gt;</code>/<code>&lt;%&gt;</code> pra vetores binários.</li>
+<li>Pra embeddings de texto, cosseno é o mais comum; com vetor normalizado, produto interno dá o mesmo ranking e é mais rápido.</li>
+</ul>
+
+<h5>Exata vs. aproximada</h5>
+<ul>
+<li><strong>Sem índice:</strong> varre a tabela inteira, recall perfeito, lento em tabela grande (dá pra paralelizar com <code>max_parallel_workers_per_gather</code>).</li>
+<li><strong>Com índice aproximado:</strong> rápido, mas <strong>pode devolver resultados diferentes</strong> da busca exata. Só é usado com <code>ORDER BY ... LIMIT</code>.</li>
+</ul>
+<div class="tbl"><table>
+<tr><th></th><th>HNSW</th><th>IVFFlat</th></tr>
+<tr><td>Estrutura</td><td>grafo em camadas</td><td>vetores divididos em listas</td></tr>
+<tr><td>Consulta</td><td>melhor relação velocidade/recall</td><td>mais lenta</td></tr>
+<tr><td>Build</td><td>mais lento, mais memória; sem fase de treino</td><td>rápido, pouca memória; crie <strong>depois</strong> de ter dados</td></tr>
+<tr><td>Ajuste</td><td><code>m</code> (16), <code>ef_construction</code> (64); na consulta <code>hnsw.ef_search</code> (40)</td><td><code>lists</code> &asymp; linhas/1000 até 1M; na consulta <code>ivfflat.probes</code> (1)</td></tr>
+</table></div>
+
+<h5>A pegadinha: filtro + índice aproximado</h5>
+<ul>
+<li>O filtro (<code>WHERE categoria = ...</code>) é aplicado <strong>depois</strong> do scan do índice. Se 10% das linhas casam e <code>ef_search</code> é 40, sobram em média ~4 resultados &mdash; você pediu 10 e recebe 4.</li>
+<li>Saídas: <strong>iterative index scan</strong> (<code>SET hnsw.iterative_scan = strict_order</code> ou <code>relaxed_order</code>, com teto em <code>hnsw.max_scan_tuples</code>), índice parcial por categoria (<code>CREATE INDEX ... WHERE category_id = 123</code>), ou particionar a tabela.</li>
+</ul>
+
+<h5>Quando escalar virar problema</h5>
+<ul>
+<li><code>halfvec</code> (meia precisão) corta o armazenamento pela metade; <code>binary_quantize</code> encolhe mais ainda, com re-ranking pelo vetor original pra recuperar recall.</li>
+<li>Carga em massa com <code>COPY</code>, índice criado depois da carga, <code>maintenance_work_mem</code> suficiente pro grafo caber em memória.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de adicionar um banco vetorial, eu adicionaria uma extensão. pgvector no Postgres que já existe mantém o embedding na mesma transação e no mesmo backup que o dado &mdash; e eu sei que filtro com HNSW pode devolver menos linhas do que o LIMIT.&rdquo;</p>
+</article>
+
+<article data-href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html">
+<p class="tldr">Uma URL pré-assinada é uma <strong>permissão de uso único no tempo</strong>: o servidor, que tem credencial, assina uma URL que autoriza exatamente um <code>PUT</code> numa key, por um prazo. O navegador manda o arquivo direto pro bucket &mdash; sem credencial AWS e sem o corpo passar pelo seu servidor.</p>
+
+<h5>O que a URL carrega (e o que não carrega)</h5>
+<ul>
+<li>Ela está <strong>limitada às permissões de quem a criou</strong>: se o usuário/role que assinou não pode gravar naquele bucket, a URL também não pode.</li>
+<li>Se já existe objeto com a mesma key, o upload <strong>substitui</strong> o anterior. Depois do upload, o dono do bucket é o dono do objeto.</li>
+<li>Prazo: pelo CLI ou SDK, até <strong>7 dias</strong>. Na prática, pra upload de navegador, minutos bastam &mdash; quanto menor, menor a janela se a URL vazar.</li>
+</ul>
+
+<h5>O fluxo</h5>
+<ol>
+<li>O cliente pede uma URL ao seu back-end (que autentica o usuário e decide a key).</li>
+<li>O back-end gera a URL com o SDK pra operação <code>put_object</code>/<code>PutObjectCommand</code>, com bucket, key, <code>ContentType</code> e expiração.</li>
+<li>O cliente faz <code>PUT</code> do arquivo nessa URL, <strong>com o mesmo <code>Content-Type</code></strong> usado na assinatura.</li>
+<li>O cliente avisa o back-end que terminou; o back-end registra a key (e, num app como o Gabarita, enfileira o processamento).</li>
+</ol>
+
+<h5><code>SignatureDoesNotMatch</code>: as causas listadas</h5>
+<ul>
+<li>Relógio da máquina dessincronizado.</li>
+<li>URL modificada (ou não colocada entre aspas no <code>curl</code>, quebrando caracteres especiais).</li>
+<li>URL expirada.</li>
+<li><strong><code>Content-Type</code> do upload diferente do assinado</strong> &mdash; a mais comum.</li>
+<li>Região errada do bucket.</li>
+</ul>
+
+<h5>O que isso muda no seu desenho</h5>
+<ul>
+<li>O limite de corpo da função (o <code>bodySizeLimit</code> de Server Action, o limite de payload de serverless) deixa de importar pro arquivo.</li>
+<li>A validação muda de lugar: o servidor não viu os bytes, então tipo e tamanho precisam estar amarrados na assinatura e ser conferidos <strong>depois</strong> do upload, antes de processar.</li>
+<li>O exemplo da doc é em Python, mas o conceito é idêntico no <code>@aws-sdk/s3-request-presigner</code> &mdash; e serve pro Cloudflare R2, que implementa a API do S3.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Arquivo grande não passa pela minha função: eu assino uma URL curta pra uma key específica, o navegador sobe direto pro bucket, e eu valido o objeto antes de processar.&rdquo;</p>
+</article>
+
+<article data-href="https://ai-sdk.dev/docs/ai-sdk-core/testing">
+<p class="tldr">Testar código que chama LLM é difícil por três motivos que a doc nomeia: o modelo é <strong>não determinístico</strong>, é <strong>lento</strong> e é <strong>caro</strong>. A resposta é a mesma de qualquer dependência externa: um modelo falso que devolve exatamente o que o teste mandou.</p>
+
+<h5>As peças (de <code>ai/test</code> e <code>ai</code>)</h5>
+<ul>
+<li><strong><code>MockLanguageModelV4</code></strong> &mdash; implementa a especificação de modelo de linguagem; você fornece <code>doGenerate</code> (resposta inteira) ou <code>doStream</code> (resposta em pedaços).</li>
+<li><strong><code>MockEmbeddingModelV4</code></strong> &mdash; o mesmo pra embeddings.</li>
+<li><strong><code>simulateReadableStream</code></strong> &mdash; cria um stream a partir de uma lista de chunks, com atraso configurável (<code>initialDelayInMs</code>, <code>chunkDelayInMs</code>).</li>
+<li><strong><code>mockId</code></strong> (id incremental) e <strong><code>mockValues</code></strong> (devolve um valor diferente a cada chamada &mdash; útil pra simular retry).</li>
+</ul>
+
+<h5>Os cenários cobertos</h5>
+<ul>
+<li><strong>Texto inteiro e texto em stream:</strong> o stream simulado é uma sequência explícita &mdash; <code>text-start</code>, vários <code>text-delta</code>, <code>text-end</code> e um <code>finish</code> com motivo e uso de tokens. O teste controla cada pedaço.</li>
+<li><strong>Saída estruturada:</strong> o mock devolve o JSON e o schema Zod valida &mdash; inclusive em stream, montando o objeto aos poucos.</li>
+<li><strong>Agente com ferramenta:</strong> uma lista de respostas, a primeira pedindo uma tool call e a segunda dando a resposta final &mdash; testa o loop multi-turno.</li>
+</ul>
+
+<h5>O exemplo mais útil pro front: SSE simulado num Route Handler</h5>
+<p>Um <code>POST</code> do Next devolve <code>simulateReadableStream</code> com linhas <code>data: {...}\n\n</code>, passado por <code>TextEncoderStream</code>, com <code>Content-Type: text/event-stream</code> e <code>Cache-Control: no-cache</code>. Serve pra desenvolver e testar a UI de streaming (loading, texto chegando, fim, erro) <strong>sem gastar um token</strong> &mdash; e com atraso controlado, pra ver os estados intermediários.</p>
+
+<h5>O que levar mesmo sem usar o AI SDK</h5>
+<ul>
+<li>O Gabarita faz o equivalente com <code>createFakeAIProvider</code> atrás da interface <code>AIProvider</code>; o Ally AI com <code>vi.mock("@google/genai")</code>. A ideia é a mesma: fixar a saída do modelo e testar o que o seu código faz com ela.</li>
+<li>O que falta nos dois é o lado do <strong>stream</strong>: um teste que entrega chunks com atraso e verifica a UI no meio do caminho.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;O modelo é uma dependência não determinística e cara, então nos testes ele é um fake que eu controlo &mdash; inclusive o stream, chunk por chunk, pra testar os estados intermediários da UI.&rdquo;</p>
+</article>
+
+<article data-href="https://playwright.dev/docs/mock">
+<p class="tldr">O Playwright intercepta, observa, modifica e <strong>falsifica</strong> tráfego de rede (HTTP, HTTPS, fetch, XHR e WebSocket) do navegador. Pra fluxo de IA, isso significa E2E de verdade na sua UI com a resposta do back-end fixada &mdash; rápido, grátis e reprodutível.</p>
+
+<h5>Falsificar a resposta: <code>page.route</code> + <code>route.fulfill</code></h5>
+<pre><code>await page.route('*/**/api/v1/fruits', async route =&gt; {
+  const json = [{ name: 'Strawberry', id: 21 }];
+  await route.fulfill({ json });
+});</code></pre>
+<p>Toda chamada que casa o padrão é interceptada e <strong>não chega ao servidor</strong>. Troque <code>fruits</code> por <code>/api/audit</code> e o JSON por um relatório de auditoria e você tem o E2E do Ally AI sem Puppeteer nem Gemini rodando.</p>
+
+<h5>Corrigir a resposta real: <code>route.fetch</code></h5>
+<p>Quando você quer o servidor de verdade mas precisa ajustar um campo: <code>const response = await route.fetch()</code>, altera o JSON e devolve com <code>route.fulfill({ response, json })</code>. Útil pra forçar um caso raro (lista vazia, item com erro) em cima de dado real.</p>
+
+<h5>Gravar e reproduzir: HAR</h5>
+<ul>
+<li><code>page.routeFromHAR('./hars/x.har', { url, update: true })</code> grava o tráfego real num arquivo HAR.</li>
+<li>Com <code>update: false</code>, o teste passa a ser servido pelo arquivo. A correspondência é estrita por URL e método, e entre candidatos ganha o que casar mais headers.</li>
+<li>Dá pra editar o conteúdo gravado e versionar no repositório &mdash; uma resposta real do modelo, congelada como fixture.</li>
+</ul>
+
+<h5>WebSocket</h5>
+<ul>
+<li><code>page.routeWebSocket(url, ws =&gt; ...)</code> mocka a conexão inteira: você responde mensagens com <code>ws.send</code>.</li>
+<li>Ou intercepta no meio: <code>ws.connectToServer()</code> liga ao servidor real e você filtra/altera mensagens nos dois sentidos.</li>
+<li>No Ally AI, é o caminho pra testar o saldo atualizando quando chega <code>credits_updated</code> &mdash; sem Stripe, sem webhook.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;No E2E eu não chamo o modelo: intercepto a rota com <code>page.route</code> e sirvo uma resposta real gravada. O teste fica determinístico e cobre o que é meu &mdash; a UI, os estados e a navegação.&rdquo;</p>
+</article>

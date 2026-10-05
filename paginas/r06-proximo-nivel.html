@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aprofundamento: MCP, AI UX, multi-cloud · O Gabarito da Teoria</title>
+<link rel="icon" href="../assets/img/icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/estilo.css">
+</head>
+<body>
+<div class="wrap pagina">
+  <header class="topbar">
+    <a class="brand" href="../index.html"><img src="../assets/img/icone.svg" alt=""><span>O <em>Gabarito</em> da Teoria</span></a>
+    <nav class="topbar-links">
+      <a href="../index.html#indice">índice</a>
+      <a href="../index.html#trilhas">trilhas</a>
+      <a href="quiz.html">quiz</a>
+      <span class="topbar-prog" data-prog-pagina></span>
+    </nav>
+  </header>
+
+  <section class="week" id="rm6">
+  <div class="week-head"><span class="week-num">R6</span><h2>Aprofundamento: MCP, AI UX, frontend distribuído &amp; multi-cloud</h2></div>
+  <div class="week-meta">~6h &middot; a frente amarela: o vocabulário que separa &ldquo;usa IA&rdquo; de &ldquo;desenha produto com IA&rdquo;</div>
+  <p class="intro">As frentes R1&ndash;R5 são o que você precisa <em>fazer</em>. Esta é o que você precisa <em>saber discutir</em> numa vaga de Design Engineer ou Frontend Engineer com foco em IA: como uma interface de IA se conecta a ferramentas externas (MCP), como ela ganha ou perde a confiança de quem usa (AI UX), quando faz sentido quebrar o front em pedaços independentes (microfrontends) e o que &ldquo;multi-cloud&rdquo; significa de verdade. Nenhum dos quatro é obrigatório no dia 1 de uma vaga, mas todos aparecem na conversa de arquitetura, e o seu Gabarita já tem um dos melhores exemplos de AI UX que dá pra levar pra uma entrevista: <strong>citação verificada pelo código, não pela IA</strong>.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w30-1"><label for="w30-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP em uma frase: um protocolo padrão (JSON-RPC 2.0) pra um <strong>host</strong> de IA (Claude Code, VS Code) plugar ferramentas e contexto de qualquer <strong>servidor</strong>, com um <strong>client</strong> dedicado por servidor &mdash; e por que isso transforma N&times;M integrações em N+M</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-2"><label for="w30-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As primitivas do servidor: <strong>tools</strong> (ação que o modelo invoca, descrita por <code>inputSchema</code> em JSON Schema), <strong>resources</strong> (dado de contexto) e <strong>prompts</strong> (templates) &mdash; o ciclo <code>tools/list</code> &rarr; <code>tools/call</code>, e a primitiva do cliente, <strong>elicitation</strong> (o servidor pede input ou confirmação ao usuário)</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-3"><label for="w30-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Transportes e segurança: <strong>stdio</strong> (processo local, um cliente) vs. <strong>Streamable HTTP</strong> (remoto, POST + SSE opcional, OAuth recomendado) &mdash; e os ataques que a spec nomeia: token passthrough, confused deputy, SSRF, servidor local malicioso, escopo amplo demais</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-4"><label for="w30-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tool calling vs. MCP: o primeiro é o <em>mecanismo</em> do modelo (a API devolve &ldquo;quero chamar <code>x</code> com estes argumentos&rdquo;); o segundo é o <em>protocolo</em> pra distribuir essas ferramentas entre aplicações &mdash; ver <a href="r01-ai-frontend.html">R1</a> pro lado do front e o loop agentic no <a href="b02-ia-agentes.html">B2</a></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-5"><label for="w30-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">AI UX &mdash; calibrar confiança, não maximizar: mostrar a <strong>fonte</strong> (citação), ligar a explicação à ação do usuário, e preferir confiança <strong>categórica</strong> (alta/média/baixa com ação associada) ou <strong>N-best</strong> a uma porcentagem crua</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-6"><label for="w30-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As 18 diretrizes de interação humano-IA da Microsoft (HAX) nas quatro fases &mdash; no início, durante, quando a IA erra, ao longo do tempo &mdash; e as que mais caem em revisão de produto: deixar claro o que o sistema faz e <em>quão bem</em> (G1/G2), correção e descarte eficientes (G8/G9), feedback granular (G15)</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-7"><label for="w30-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">AI UX de agente: mostrar <strong>progresso por etapa</strong> (não só um spinner), pedir <strong>aprovação humana</strong> antes de ação com efeito colateral, marcar o que é gerado por IA, e degradar com aviso quando a IA falha &mdash; nunca em silêncio</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-8"><label for="w30-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Microfrontends: as cinco formas de integrar (template no servidor, build-time, iframe, JavaScript em runtime, Web Components), o que se ganha (deploy e time independentes, migração incremental) e o que se paga (payload duplicado, governança) &mdash; e por que <a href="r03-arquitetura-frontend.html">monorepo/monolito modular</a> costuma vir antes (o mesmo argumento de &ldquo;monolito modular primeiro&rdquo; do <a href="b09-arquiteturas.html">B9</a>)</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-9"><label for="w30-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Multi-cloud: a tabela de equivalência AWS/Azure/GCP pra uma app web, e a diferença entre <strong>multi-cloud</strong> (a mesma carga rodando em duas nuvens) e <strong>portabilidade multi-fornecedor</strong> (interfaces que deixam trocar uma peça) &mdash; o segundo é o que quase todo mundo deveria querer (escala e cache em camadas no <a href="b01-system-design.html">B1</a>)</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <p class="leituras-bar" data-leituras-pagina></p>
+    <ul class="resources">
+    <li><div class="r-title"><a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">MCP &mdash; Architecture overview</a></div><div class="r-note">A página oficial que define host/client/server, as duas camadas (dados e transporte), as primitivas e um exemplo passo a passo em JSON-RPC.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia &ldquo;Participants&rdquo;, &ldquo;Layers&rdquo; e &ldquo;Primitives&rdquo; inteiros; no exemplo, foque em <code>tools/list</code> e <code>tools/call</code>. Os blocos de JSON de notificação são consulta.</div><div class="r-src">modelcontextprotocol.io &middot; oficial</div><details class="leitura" data-id="r06-proximo-nivel--modelcontextprotocol-io-docs-learn-architecture"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">MCP é um protocolo de <strong>troca de contexto</strong>: ele não diz como a aplicação usa o LLM, só como ela descobre e chama ferramentas e dados de fora. A arquitetura é <strong>host &rarr; um client por servidor &rarr; servidor</strong>, sobre JSON-RPC 2.0, com duas camadas separadas: dados e transporte.</p>
+
+<h5>Participantes</h5>
+<ul>
+<li><strong>Host</strong> &mdash; a aplicação de IA que coordena tudo (Claude Code, Claude Desktop, VS Code).</li>
+<li><strong>Client</strong> &mdash; um componente dentro do host que mantém a conexão com <em>um</em> servidor. O host cria um client por servidor: conectar ao Sentry e ao sistema de arquivos são dois clients.</li>
+<li><strong>Server</strong> &mdash; o programa que fornece contexto. &ldquo;Local&rdquo; quando roda na máquina via stdio (normalmente serve um client só); &ldquo;remoto&rdquo; quando roda numa plataforma via Streamable HTTP (serve muitos).</li>
+</ul>
+
+<h5>As duas camadas</h5>
+<div class="tbl"><table>
+<tr><th>Camada</th><th>O que define</th></tr>
+<tr><td>Dados (interna)</td><td>O protocolo JSON-RPC: descoberta de versão e capacidades, primitivas (tools, resources, prompts), notificações, progresso</td></tr>
+<tr><td>Transporte (externa)</td><td>Canal, enquadramento de mensagem e autorização. <strong>stdio</strong>: processos locais, sem rede. <strong>Streamable HTTP</strong>: POST do cliente pro servidor + Server-Sent Events opcional; autenticação HTTP padrão, com OAuth recomendado</td></tr>
+</table></div>
+<p>O mesmo formato de mensagem vale nos dois transportes: trocar stdio por HTTP não muda a lógica do servidor.</p>
+
+<h5>Primitivas</h5>
+<ul>
+<li><strong>Do servidor:</strong> <em>tools</em> (funções executáveis: consultar banco, chamar API), <em>resources</em> (dado de contexto: conteúdo de arquivo, schema do banco) e <em>prompts</em> (templates reutilizáveis, few-shot). Cada uma tem <code>*/list</code> pra descobrir, e as tools têm <code>tools/call</code> pra executar.</li>
+<li><strong>Do cliente:</strong> <em>elicitation</em>, que permite ao servidor pedir mais informação ou confirmação ao usuário. Na versão <code>2026-07-28</code> do protocolo, <em>sampling</em> (o servidor pedir completion ao LLM do host) e <em>logging</em> foram marcados como obsoletos.</li>
+</ul>
+
+<h5>O ciclo de uma ferramenta</h5>
+<ol>
+<li><strong>Descoberta</strong>: na versão atual o protocolo é <em>stateless</em>. Cada request leva versão e capacidades no <code>_meta</code>, e o cliente pode chamar <code>server/discover</code> pra saber o que o servidor suporta.</li>
+<li><strong><code>tools/list</code></strong>: o servidor devolve cada tool com <code>name</code> (identificador único, ex. <code>weather_current</code>), <code>title</code>, <code>description</code> e <code>inputSchema</code> em JSON Schema. O host junta as tools de todos os servidores num registro único que entrega ao modelo.</li>
+<li><strong><code>tools/call</code></strong>: quando o modelo decide usar uma tool, o host intercepta, roteia pro servidor certo, executa e devolve o resultado (um array <code>content</code> com texto, imagem etc.) pra conversa.</li>
+<li><strong>Notificações</strong>: opt-in. O cliente abre um stream (<code>subscriptions/listen</code>) e recebe, por exemplo, <code>notifications/tools/list_changed</code> quando as tools mudam. São <em>best effort</em>: o cliente também deve fazer polling.</li>
+</ol>
+<p><strong>Frase de entrevista:</strong> &ldquo;MCP não substitui tool calling, ele distribui as ferramentas. O modelo continua chamando função por JSON Schema; o MCP padroniza como o host descobre essas funções em qualquer servidor.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">modelcontextprotocol.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices" target="_blank" rel="noopener">MCP &mdash; Security Best Practices</a></div><div class="r-note">Os ataques específicos de MCP com mitigação: confused deputy, token passthrough, SSRF, session hijacking, servidor local comprometido, escopo mínimo.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia a descrição e a mitigação de cada ataque; pule os diagramas de sequência na primeira passada. A seção de SSRF conversa direto com o <code>urlGuard</code> do Ally AI.</div><div class="r-src">modelcontextprotocol.io &middot; especificação</div><details class="leitura" data-id="r06-proximo-nivel--modelcontextprotocol-io-specification-2025-06-18-basic-security-best-p"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Ligar um LLM a ferramentas reais cria superfícies de ataque novas. A spec nomeia cada uma com mitigação obrigatória. As que mais caem em conversa: <strong>token passthrough é proibido</strong>, servidor local exige <strong>consentimento explícito</strong> antes de rodar comando, e todo escopo começa <strong>mínimo</strong>.</p>
+
+<h5>Os ataques e as defesas</h5>
+<div class="tbl"><table>
+<tr><th>Ataque</th><th>Como acontece</th><th>Mitigação</th></tr>
+<tr><td>Confused deputy</td><td>Servidor MCP que faz proxy pra API de terceiro com um <em>client ID estático</em>: um cookie de consentimento antigo deixa um client malicioso registrado dinamicamente pular a tela de consentimento e receber o código de autorização</td><td>Consentimento <strong>por client</strong> no próprio servidor MCP, antes de redirecionar; <code>redirect_uri</code> com comparação exata; <code>state</code> aleatório, de uso único, gravado só depois do consentimento</td></tr>
+<tr><td>Token passthrough</td><td>Servidor aceita token que não foi emitido pra ele e repassa pra API de baixo: fura rate limit e auditoria, e vira proxy de exfiltração</td><td>O servidor <strong>MUST NOT</strong> aceitar token que não tenha sido explicitamente emitido pra ele</td></tr>
+<tr><td>SSRF</td><td>Servidor malicioso põe URLs internas (<code>169.254.169.254</code>, <code>localhost</code>, IP privado) nos metadados de OAuth que o cliente segue</td><td>HTTPS obrigatório, bloquear faixas privadas e link-local, validar cada redirect, proxy de saída; cuidado com DNS rebinding (TOCTOU)</td></tr>
+<tr><td>Session hijacking</td><td>Atacante adivinha ou obtém um session ID e injeta evento numa fila compartilhada ou se passa pelo usuário</td><td>Sessão <strong>nunca</strong> é autenticação; IDs aleatórios seguros; chave <code>&lt;user_id&gt;:&lt;session_id&gt;</code></td></tr>
+<tr><td>Servidor local comprometido</td><td>Configuração &ldquo;um clique&rdquo; com comando de inicialização malicioso, que roda com os privilégios do cliente</td><td>Mostrar o comando exato, sem truncar, e exigir aprovação; sandbox; preferir stdio ou exigir token em HTTP local</td></tr>
+<tr><td>URL de autorização maliciosa</td><td><code>javascript:</code> aberto com <code>window.open</code> (XSS) ou URL passada pra shell (RCE)</td><td>Aceitar só <code>https://</code> (ou <code>http://</code> em loopback), nunca abrir URL via shell, CSP no cliente web</td></tr>
+<tr><td>Escopo amplo demais</td><td>Token roubado com <code>files:*</code>/<code>admin:*</code> abre tudo de uma vez</td><td>Escopo inicial mínimo e elevação progressiva por desafio <code>WWW-Authenticate</code></td></tr>
+</table></div>
+
+<h5>A ligação com o que você já fez</h5>
+<ul>
+<li>A seção de SSRF descreve o mesmo problema que o <code>urlGuard</code> do Ally AI resolve: bloquear faixas IANA, validar redirect, e a ressalva de DNS rebinding, que o seu código já documenta como limite conhecido.</li>
+<li>A recomendação de CSP com nonce pra clientes web é a mesma do Gabarita.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Num servidor MCP eu trato a ferramenta como API pública: autorização em toda request, token emitido pra mim e não repassado, escopo mínimo, e qualquer URL que vem de fora passa pelo mesmo filtro de SSRF.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices" target="_blank" rel="noopener">modelcontextprotocol.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://pair.withgoogle.com/chapter/explainability-trust/" target="_blank" rel="noopener">People + AI Guidebook &mdash; Explainability + Trust</a></div><div class="r-note">O capítulo do Google PAIR sobre calibrar confiança: fontes de dado, explicação ligada à ação, e como (e quando não) mostrar a confiança do modelo.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~30 min</span>Capítulo único. A seção &ldquo;Manage influence on user decisions&rdquo; é a que mais rende em entrevista de AI UX.</div><div class="r-src">pair.withgoogle.com &middot; Google</div><details class="leitura" data-id="r06-proximo-nivel--pair-withgoogle-com-chapter-explainability-trust"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">O objetivo não é fazer o usuário confiar na IA, é fazer ele confiar <strong>na medida certa</strong>: nem aceitar tudo às cegas, nem descartar tudo. O capítulo dá quatro alavancas: explicar a fonte, explicar no momento certo, explicar só o que ajuda a decidir, e escolher com cuidado <em>se</em> e <em>como</em> mostrar a confiança do modelo.</p>
+
+<h5>1. Ajudar a calibrar a confiança</h5>
+<ul>
+<li><strong>Articule as fontes de dado</strong>: o que está sendo usado, se é pessoal ou agregado, como remover. Isso evita surpresa de privacidade e mostra ao usuário quando ele deve passar por cima do sistema.</li>
+<li><strong>Ligue a explicação à ação do usuário</strong>: &ldquo;só aparecem restaurantes italianos porque o raio é de uma quadra&rdquo;. A relação de causa e efeito ensina rápido.</li>
+<li><strong>Considere o que está em jogo</strong>: o trajeto de todo dia não precisa de explicação; o trajeto pro aeroporto precisa avisar que o trânsito só atualiza de hora em hora.</li>
+</ul>
+
+<h5>2. Confiança ao longo do produto</h5>
+<p>Estabelecer (deixar claros capacidades e limites desde o onboarding), crescer (privacidade explícita, poder testar sem risco), manter (aumentar a automação aos poucos) e recuperar (plano pra quando errar, e ensinar o usuário a corrigir).</p>
+
+<h5>3. Otimizar pra entendimento</h5>
+<ul>
+<li>Explicação <strong>parcial</strong> que serve à decisão, não o algoritmo inteiro.</li>
+<li>Tipos: explicação geral do sistema, explicação de uma saída específica, <strong>contrafactual</strong> (&ldquo;não é um bordo porque não tem 5 pontas&rdquo;), exemplos parecidos, e explicação por interação (&ldquo;e se eu mudar isso?&rdquo;).</li>
+</ul>
+
+<h5>4. Mostrar (ou não) a confiança do modelo</h5>
+<div class="tbl"><table>
+<tr><th>Formato</th><th>Quando serve</th></tr>
+<tr><td>Categórico (alta/média/baixa)</td><td>Cada faixa tem uma ação clara pro usuário</td></tr>
+<tr><td>N-best (&ldquo;pode ser A, B ou C&rdquo;)</td><td>Confiança baixa: convida o usuário a julgar</td></tr>
+<tr><td>Numérico (%)</td><td>Arriscado: o usuário não sabe o que 80% quer dizer e espera 100% no óbvio</td></tr>
+<tr><td>Visualização (barra de erro)</td><td>Público especialista</td></tr>
+</table></div>
+<p>A primeira pergunta é se mostrar a confiança muda a decisão. Se não muda, ou pode enganar quem não é técnico, não mostre. E teste com usuários reais antes de implementar.</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Eu não mostro porcentagem de confiança. Mostro a fonte. No Gabarita, o resumo da IA vem com o trecho literal do documento, e o que não dá pra verificar não é exibido.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://pair.withgoogle.com/chapter/explainability-trust/" target="_blank" rel="noopener">pair.withgoogle.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://www.microsoft.com/en-us/haxtoolkit/library/" target="_blank" rel="noopener">HAX Toolkit &mdash; Guidelines for Human-AI Interaction</a></div><div class="r-note">As 18 diretrizes da Microsoft Research (CHI 2019), cada uma com padrões de design e exemplos de produto real.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia os 18 títulos e abra G1, G2, G9, G11 e G15. O resto é consulta pra quando for desenhar uma tela específica.</div><div class="r-src">microsoft.com &middot; Microsoft Research</div><details class="leitura" data-id="r06-proximo-nivel--microsoft-com-en-us-haxtoolkit-library"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Dezoito diretrizes de design pra produtos com IA, da Microsoft Research (CHI 2019, validadas com 49 designers em 20 produtos). Elas se organizam por <strong>quando</strong> a interação acontece: no início, durante, quando a IA erra, e ao longo do tempo. Servem de checklist de revisão de tela.</p>
+
+<h5>As 18, por fase</h5>
+<div class="tbl"><table>
+<tr><th>Fase</th><th>Diretrizes</th></tr>
+<tr><td>No início</td><td>G1 Deixar claro o que o sistema faz &middot; G2 Deixar claro <em>quão bem</em> ele faz</td></tr>
+<tr><td>Durante a interação</td><td>G3 Agir no momento certo pelo contexto &middot; G4 Mostrar informação relevante ao contexto &middot; G5 Respeitar normas sociais &middot; G6 Mitigar vieses sociais</td></tr>
+<tr><td>Quando a IA erra</td><td>G7 Invocação eficiente &middot; G8 Descarte eficiente &middot; G9 Correção eficiente &middot; G10 Limitar o escopo na dúvida &middot; G11 Explicar por que fez o que fez</td></tr>
+<tr><td>Ao longo do tempo</td><td>G12 Lembrar interações recentes &middot; G13 Aprender com o comportamento &middot; G14 Atualizar e adaptar com cautela &middot; G15 Incentivar feedback granular &middot; G16 Mostrar a consequência das ações do usuário &middot; G17 Controles globais &middot; G18 Avisar sobre mudanças</td></tr>
+</table></div>
+
+<h5>As que mais rendem numa revisão de produto</h5>
+<ul>
+<li><strong>G2</strong>: a maioria das telas de IA diz o que faz e esquece o quão bem. O Ally AI deveria dizer que o teste automático cobre só parte do WCAG, como o próprio <code>CLAUDE.md</code> exige.</li>
+<li><strong>G9 + G8</strong>: quando a IA erra, corrigir ou dispensar tem de custar um clique. No Gabarita, editar a frase-chave do caderno e reportar a questão fazem esse papel.</li>
+<li><strong>G10</strong>: na dúvida, faça menos. É o que o Gabarita faz quando a citação não confere: publica a diretriz sem resumo.</li>
+<li><strong>G11</strong>: explicar o porquê. A citação literal é uma forma de G11.</li>
+<li><strong>G15</strong>: feedback granular (por item, não &ldquo;avalie o app&rdquo;). O report por categoria do Gabarita é G15; o Ally AI ainda não tem.</li>
+</ul>
+<p>Cada diretriz na biblioteca tem <em>padrões</em> de design associados, com exemplos. Use como consulta quando for desenhar uma tela específica.</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de lançar uma tela de IA eu passo pelas 18 do HAX como checklist. As que mais pegam são G2 (dizer quão bem funciona) e G15 (feedback por item).&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.microsoft.com/en-us/haxtoolkit/library/" target="_blank" rel="noopener">microsoft.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">Micro Frontends (Cam Jackson, martinfowler.com)</a></div><div class="r-note">O artigo de referência: definição, benefícios, as cinco formas de integração, estilo, biblioteca compartilhada, comunicação entre apps e as desvantagens.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia &ldquo;Benefits&rdquo;, &ldquo;Integration approaches&rdquo;, &ldquo;Shared component libraries&rdquo; e &ldquo;Downsides&rdquo;. O exemplo completo de código é opcional.</div><div class="r-src">martinfowler.com</div><details class="leitura" data-id="r06-proximo-nivel--martinfowler-com-articles-micro-frontends-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">Microfrontend é &ldquo;aplicações de front entregáveis de forma independente, compostas num todo maior&rdquo;. O ganho é <strong>organizacional</strong>: times autônomos, deploy independente, migração aos poucos. O preço é <strong>payload, ambiente e governança</strong>. Não é ferramenta de performance nem de time pequeno.</p>
+
+<h5>Benefícios</h5>
+<ul>
+<li><strong>Upgrade incremental</strong>: trocar o legado pedaço a pedaço (strangler), decidindo a tecnologia caso a caso.</li>
+<li><strong>Bases simples e desacopladas</strong>: fronteira por domínio de negócio dificulta acoplamento acidental.</li>
+<li><strong>Deploy independente</strong>: cada parte com seu pipeline, sem coordenar release.</li>
+<li><strong>Times autônomos</strong>: organizados por funcionalidade vertical, não por camada técnica.</li>
+</ul>
+
+<h5>As cinco formas de integrar</h5>
+<div class="tbl"><table>
+<tr><th>Abordagem</th><th>Como</th><th>Trade-off</th></tr>
+<tr><td>Template no servidor</td><td>Fragmentos HTML compostos no servidor (SSI)</td><td>Simples; cada pipeline cuida do seu fragmento</td></tr>
+<tr><td>Build-time</td><td>Cada micro é um pacote npm do container</td><td><strong>Release em lockstep</strong>: perde o deploy independente, que é o ponto todo</td></tr>
+<tr><td>Iframe em runtime</td><td>Cada app num iframe</td><td>Isolamento grátis; roteamento, deep link e responsividade ficam difíceis</td></tr>
+<tr><td>JavaScript em runtime</td><td>Cada bundle expõe uma função global que o container chama</td><td>A mais flexível e a mais usada</td></tr>
+<tr><td>Web Components em runtime</td><td>Cada micro define um custom element</td><td>Mesma flexibilidade, dentro do padrão da plataforma</td></tr>
+</table></div>
+
+<h5>Estilo, biblioteca compartilhada e comunicação</h5>
+<ul>
+<li>CSS é global: precisa de convenção (BEM), CSS Modules, CSS-in-JS ou shadow DOM.</li>
+<li><strong>Biblioteca de componentes compartilhada</strong>: só UI, sem lógica de domínio, e só depois que o padrão emergiu (criar cedo demais gera churn). Funciona melhor com um time guardião que aceita contribuição.</li>
+<li>Comunicação mínima entre micros: custom events, callbacks do container pra baixo, ou a própria URL. Cada micro tem seu estado, sem store global.</li>
+<li>Backend: um <strong>BFF</strong> por micro; autenticação no container, com token injetado nos micros.</li>
+</ul>
+
+<h5>Desvantagens</h5>
+<ul>
+<li><strong>Payload</strong>: dependências duplicadas. Extrair as comuns reintroduz acoplamento de build.</li>
+<li><strong>Diferença de ambiente</strong>: desenvolver isolado e quebrar quando integrado.</li>
+<li><strong>Complexidade operacional e de governança</strong>: mais repositórios, pipelines e decisões descentralizadas. Exige maturidade de automação antes de adotar.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Microfrontend resolve um problema de times, não de tráfego. Antes dele eu iria de monorepo com fronteiras de módulo e uma biblioteca de componentes.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">martinfowler.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+    <li><div class="r-title"><a href="https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison" target="_blank" rel="noopener">Compare AWS and Azure services to Google Cloud</a></div><div class="r-note">A tabela oficial de equivalência entre as três nuvens, por categoria de serviço.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~15 min</span>Não é pra ler inteira: encontre as linhas de uma app web (compute, container serverless, storage, CDN, Postgres, secrets, observabilidade, fila).</div><div class="r-src">docs.cloud.google.com &middot; oficial</div><details class="leitura" data-id="r06-proximo-nivel--docs-cloud-google-com-docs-get-started-aws-azure-gcp-service-compariso"><summary>Resumo aqui na página</summary><div class="leitura-body">
+<p class="tldr">A tabela oficial do Google que mapeia cada serviço do GCP pro equivalente &ldquo;semelhante ou comparável&rdquo; da AWS e do Azure. Pra uma app web, umas quinze linhas cobrem quase tudo. Decore essas e você consegue traduzir qualquer desenho de arquitetura entre as três.</p>
+
+<h5>As linhas de uma app web</h5>
+<div class="tbl"><table>
+<tr><th>Categoria</th><th>AWS</th><th>Azure</th><th>Google Cloud</th></tr>
+<tr><td>VM</td><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
+<tr><td>Kubernetes</td><td>EKS</td><td>AKS</td><td>GKE</td></tr>
+<tr><td>Container serverless</td><td>Fargate, App Runner</td><td>Container Instances, Container Apps</td><td>Cloud Run</td></tr>
+<tr><td>Funções</td><td>Lambda</td><td>Functions</td><td>Cloud Run functions</td></tr>
+<tr><td>Object storage</td><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
+<tr><td>CDN</td><td>CloudFront</td><td>Front Door</td><td>Cloud CDN</td></tr>
+<tr><td>PostgreSQL gerenciado</td><td>Aurora (e RDS)</td><td>Azure Database for PostgreSQL</td><td>Cloud SQL, AlloyDB</td></tr>
+<tr><td>DNS</td><td>Route 53</td><td>DNS</td><td>Cloud DNS</td></tr>
+<tr><td>Load balancer</td><td>Elastic Load Balancing</td><td>Load Balancer</td><td>Cloud Load Balancing</td></tr>
+<tr><td>Segredos</td><td>Secrets Manager</td><td>Key Vault</td><td>Secret Manager</td></tr>
+<tr><td>Monitoramento/logs</td><td>CloudWatch</td><td>Monitor</td><td>Cloud Monitoring, Cloud Logging</td></tr>
+<tr><td>Identidade</td><td>IAM</td><td>Entra ID</td><td>Cloud IAM, Cloud Identity</td></tr>
+<tr><td>Fila / pub-sub</td><td>SQS, SNS, Kinesis</td><td>Service Bus</td><td>Pub/Sub</td></tr>
+<tr><td>API gateway</td><td>API Gateway</td><td>API Management</td><td>API Gateway, Apigee</td></tr>
+<tr><td>Site estático / front</td><td>Amplify</td><td>Static Web Apps</td><td>Firebase Hosting</td></tr>
+<tr><td>Plataforma de IA</td><td>SageMaker</td><td>Azure AI</td><td>Vertex AI</td></tr>
+</table></div>
+
+<h5>Como usar sem cair em armadilha</h5>
+<ul>
+<li>&ldquo;Comparável&rdquo; não é &ldquo;idêntico&rdquo;: limites, preço e modelo de cobrança diferem. A tabela serve pra traduzir o desenho, não pra estimar custo.</li>
+<li>Os seus projetos, traduzidos: a API do Ally AI no <strong>Cloud Run</strong> seria <strong>App Runner/Fargate</strong> na AWS ou <strong>Container Apps</strong> no Azure. O R2 do Gabarita, falando a API do S3, vira <strong>S3</strong> trocando endpoint e credencial.</li>
+<li>Multi-cloud de verdade (a mesma carga em duas nuvens) cobra IAM duplicado, egress entre provedores e limita você ao menor denominador comum. Na maioria dos produtos, a meta certa é <strong>portabilidade</strong>: container, interfaces trocáveis, protocolo padrão (S3, Postgres, OpenTelemetry).</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Eu desenho numa nuvem e deixo as costuras pra sair dela: container, Postgres padrão e storage pela API do S3. Multi-cloud ativo só com uma exigência concreta que pague o custo.&rdquo;</p>
+<div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison" target="_blank" rel="noopener">docs.cloud.google.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
+  </ul>
+
+  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <div class="evid">
+    <div class="evid-head">Onde você já fez isso &middot; e onde ainda não</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>MCP &mdash; conectar interfaces de IA a ferramentas externas <span class="st n">Gabarita: lacuna</span> <span class="st n">Ally AI: lacuna</span></h4>
+        <p>Nenhum dos dois produtos expõe nem consome um servidor MCP. O contato que você tem é como <strong>usuário de host</strong>: os dois repositórios ativam plugins do Claude Code em <code>.claude/settings.json</code> &mdash; no Ally AI, <code>context7</code>, <code>playwright</code> e <code>stripe</code>, entre outros. Isso conta como vocabulário (você sabe o que é um host carregando vários servidores), não como entrega.</p>
+        <p>O ponto de partida mais natural está no Ally AI: o motor já é uma &ldquo;ferramenta&rdquo; com entrada estreita (uma URL) e saída estruturada. <code>runAudit</code> + <code>urlGuard</code> (<code>apps/api/src/services/auditService.ts</code>, <code>urlGuard.ts</code>) viram o corpo de uma tool <code>audit_url</code> quase sem mudança &mdash; e a defesa de SSRF que você já tem é exatamente o que a spec de segurança do MCP cobra.</p>
+      </div>
+      <div class="evid-item">
+        <h4>AI UX &mdash; citações, confiança e feedback <span class="st p">Gabarita: parcial (citação e feedback fortes)</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p><span class="proj">Gabarita</span> &mdash; o melhor exemplo do guia inteiro:</p>
+        <ul>
+          <li><strong>Citação verificada pelo código:</strong> <code>src/lib/diretrizes/citacao.ts</code> L20&ndash;24. O resumo da IA só é publicado se o trecho que ela propõe como prova existir <em>literalmente</em> no texto que ela leu; a única tolerância é espaço em branco (acento e caixa contam).</li>
+          <li><strong>Descarte em vez de exibir dúvida:</strong> <code>src/lib/diretrizes/resumir.ts</code> L68 (<code>resumirDocumento</code>) e L95: se a citação não confere, a função devolve <code>null</code> e a diretriz entra sem resumo, só com metadado e link. A IA nunca bloqueia o fluxo.</li>
+          <li><strong>A citação aparece na tela:</strong> <code>src/components/aviso-diretriz.tsx</code> L51&ndash;58 mostra o resumo e, logo abaixo, o trecho literal num <code>&lt;blockquote&gt;</code>. O link passa por <code>hrefSeguro</code> (L35), porque o React não filtra <code>javascript:</code>.</li>
+          <li><strong>Origem sempre marcada:</strong> selo &ldquo;Explicação por IA&rdquo; (<code>src/components/explanation-card.tsx</code> L4&ndash;6) e &ldquo;Gerada por IA &middot; data&rdquo; vs. sigla da instituição (<code>src/lib/domain/origem.ts</code> L26&ndash;33), em texto e não em emoji, pra funcionar em leitor de tela.</li>
+          <li><strong>Feedback e humano no circuito:</strong> o aluno reporta problema por categoria (<code>src/app/(app)/estudo/[sessaoId]/[ordem]/report-question-button.tsx</code>, padrão <code>gabarito_errado</code> na L14, fecha com Escape na L28). O report prioriza a fila de revisão pelo índice <code>[needsVerification, reportPendingSince, createdAt]</code> (<code>prisma/schema.prisma</code> L368), e toda questão extraída por IA nasce com <code>needsVerification: true</code> (<code>src/lib/ingestion/create-question.ts</code> L62 e L88), até um revisor confirmar, rejeitar ou editar (<code>src/app/(app)/verificacao/[id]/actions.ts</code> L10&ndash;40).</li>
+        </ul>
+        <pre><code>export function citacaoVerificada(citacao: string, textoFonte: string): boolean {
+  const c = normalizarEspacos(citacao);
+  if (c.length === 0) return false;
+  return normalizarEspacos(textoFonte).includes(c);
+}</code></pre>
+        <p><span class="proj">Ally AI</span> &mdash; marca o que é IA, mas falta citação, confiança e feedback:</p>
+        <ul>
+          <li>Bloco &ldquo;AI Analysis&rdquo; com ícone <code>Sparkles</code> (<code>apps/web/src/components/Dashboard.tsx</code> L96&ndash;100) e <code>priority</code> como sinal de severidade.</li>
+          <li>Defesa contra prompt injection no prompt: o <code>htmlSnippet</code> é tratado como dado de terceiro (<code>apps/api/src/services/aiService.ts</code> L49&ndash;50).</li>
+          <li><strong>A citação existe e não aparece:</strong> o <code>helpUrl</code> do axe (a regra oficial por trás de cada violação) é gravado em <code>auditService.ts</code> L58, mas nenhum componente do front o exibe.</li>
+          <li><strong>A UI quebra a regra do próprio projeto:</strong> o <code>CLAUDE.md</code> (L127) manda &ldquo;nunca afirmar conformidade&rdquo;, e a tela de análise sem violações diz que a página &ldquo;atende aos principais critérios de acessibilidade&rdquo; (<code>apps/web/src/app/dashboard/analysis/[id]/page.tsx</code> L115&ndash;119).</li>
+          <li>Sem feedback (&ldquo;isso ajudou?&rdquo;) e sem aviso quando a IA falha: o relatório sai sem <code>aiAnalysis</code> e o usuário não fica sabendo.</li>
+        </ul>
+      </div>
+      <div class="evid-item">
+        <h4>Frontend distribuído &amp; microfrontends <span class="st n">Gabarita: lacuna</span> <span class="st n">Ally AI: lacuna</span></h4>
+        <p>Nenhum dos dois tem microfrontend, e isso é a decisão <strong>certa</strong> pro tamanho deles. O que existe é a etapa anterior, que é o que você deve defender:</p>
+        <ul>
+          <li><span class="proj">Gabarita</span>: monólito modular com dois deployables (web + worker) saídos do mesmo código, com fronteiras por interface trocável &mdash; <code>AIProvider</code> (<code>src/lib/ai/types.ts</code> L90), <code>Queue</code> (<code>src/lib/queue/types.ts</code> L10), <code>ImageStorage</code>.</li>
+          <li><span class="proj">Ally AI</span>: monorepo Turborepo + pnpm com <code>apps/web</code>, <code>apps/api</code> e o contrato compartilhado <code>packages/types</code>, que é a peça que um microfrontend também precisaria (contrato explícito entre partes).</li>
+        </ul>
+      </div>
+      <div class="evid-item">
+        <h4>Multi-cloud AWS / Azure / GCP <span class="st n">Gabarita: lacuna (multi-fornecedor)</span> <span class="st n">Ally AI: lacuna (portável, uma nuvem)</span></h4>
+        <ul>
+          <li><span class="proj">Gabarita</span>: Vercel + Neon + Cloudflare R2 + Google (Gemini/OAuth) + Stripe + Resend + Sentry. A portabilidade é real no storage: <code>src/lib/storage/image-storage.ts</code> L6&ndash;13 (<code>resolveImageStorageKind</code>) escolhe R2, Vercel Blob ou disco por variável de ambiente &mdash; e o R2 é falado pelo SDK do S3, então trocar pra S3 de verdade é mudar endpoint e credencial.</li>
+          <li><span class="proj">Ally AI</span>: o mesmo <code>Dockerfile</code> roda em qualquer lugar; a decisão de provedor foi tomada por <strong>medição</strong>, em <code>docs/DECISOES.md</code> D06 (L39&ndash;55): 0,1 CPU dava timeout de navegação em 48 s, 1 CPU auditava em 6,5 s, e por isso a API vai pro Google Cloud Run (com Koyeb, Fly.io, Railway e Oracle descartados).</li>
+        </ul>
+        <p>Nenhum é multi-cloud no sentido estrito, e nenhum precisa ser. A história boa é: <em>&ldquo;escolhi uma nuvem por medição e deixei as costuras pra trocar de fornecedor por interface&rdquo;</em>. Ver <a href="r05-cloud-aws.html">R5</a> pro lado AWS.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap">
+    <h4>O que falta construir</h4>
+    <ol>
+      <li><strong>Servidor MCP do Ally AI</strong> (stdio, SDK TypeScript oficial) com uma tool <code>audit_url</code> que chama <code>runAudit</code> + <code>urlGuard</code> e devolve as violações com a análise da IA. Testar pelo Claude Code como host. Vira o post R7 &ldquo;transformei meu SaaS numa ferramenta pro meu agente de código&rdquo; &mdash; e cobre MCP com prova.</li>
+      <li><strong>Citação no Ally AI</strong>: mostrar o <code>helpUrl</code> do axe como &ldquo;regra oficial&rdquo; em cada card (<code>Dashboard.tsx</code> e <code>analysis/[id]/page.tsx</code>), avisar quando a análise da IA não veio, e trocar o &ldquo;atende aos principais critérios&rdquo; por &ldquo;nenhuma violação <em>automática</em> encontrada &mdash; teste manual ainda é necessário&rdquo;. Três mudanças pequenas, uma história inteira de AI UX honesta.</li>
+      <li><strong>Feedback granular no Ally AI</strong> (HAX G15): &ldquo;essa correção ajudou?&rdquo; por violação, gravado junto da análise. Dá número pra contar (&ldquo;X% das correções marcadas como úteis&rdquo;) e fecha o ciclo de melhoria do prompt.</li>
+      <li><strong>Explicar a verificação no Gabarita</strong>: um selo &ldquo;trecho conferido no documento original&rdquo; ao lado do <code>&lt;blockquote&gt;</code> em <code>aviso-diretriz.tsx</code>. Hoje a verificação é invisível pro usuário; mostrá-la é o &ldquo;articulate data sources&rdquo; do PAIR. Post R7: &ldquo;como impedi a IA de inventar citação sem pôr um humano no meio&rdquo;.</li>
+      <li><strong>Uma decisão escrita &ldquo;por que não multi-cloud&rdquo;</strong> no <code>docs/DECISOES.md</code> do Ally AI, com a tabela de equivalência das três nuvens pra API (Cloud Run &harr; App Runner/Fargate &harr; Container Apps). Material direto pra resposta de system design.</li>
+    </ol>
+  </div>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; src/lib/diretrizes/citacao.ts</div>
+    <div class="ammo-body">
+      <p>O Gabarita resume diretrizes clínicas novas com IA, num domínio em que uma frase inventada pode ensinar conduta errada a um futuro médico. A saída fácil seria pôr um revisor humano em cada resumo. A escolhida foi outra: a IA tem de devolver, junto do resumo, o trecho do documento que o sustenta, e o código confere que esse trecho existe palavra por palavra no texto que ela leu, já truncado (pra que &ldquo;citar&rdquo; não vire adivinhar o resto do documento). Se não confere, o resumo é descartado e a diretriz entra só com título e link. Na tela, a citação aparece embaixo do resumo: é ela, e não a síntese, que carrega a autoridade.</p>
+      <p class="why"><strong>Por que isso importa:</strong> é o padrão &ldquo;a IA propõe, o código verifica&rdquo; aplicado a AI UX. Responde de uma vez três perguntas que toda vaga de IA faz: como você lida com alucinação, como mostra fonte, e quando dispensa humano no circuito (quando dá pra ter uma verificação determinística no lugar dele).</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual a diferença entre tool calling e MCP? Se a API do modelo já faz tool calling, pra que MCP?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>Tool calling</strong> é o mecanismo do modelo: você descreve funções com JSON Schema e a API responde &ldquo;quero chamar <code>x</code> com estes argumentos&rdquo;; executar é problema da sua aplicação. <strong>MCP</strong> é o protocolo que padroniza <em>de onde vêm</em> essas ferramentas: um servidor publica tools/resources/prompts uma vez, e qualquer host (Claude Code, VS Code, seu app) descobre com <code>tools/list</code> e executa com <code>tools/call</code>.</p>
+<p>O ganho é de distribuição: sem padrão, cada app integra cada serviço (N&times;M); com MCP, cada serviço escreve um servidor e cada app escreve um cliente (N+M). Os dois convivem: o host converte as tools MCP em definições de tool calling pro modelo.</p></div>
+        </details>
+      </li>
+      <li>Você vai publicar um servidor MCP. Quando usar stdio e quando usar Streamable HTTP?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>stdio</strong> quando o servidor roda na máquina do usuário, como processo filho do host: um cliente só, sem rede, e acesso restrito a quem iniciou o processo. É o certo pra ferramenta local (sistema de arquivos, git, um CLI seu). <strong>Streamable HTTP</strong> quando o servidor é remoto e atende muitos clientes: POST do cliente pro servidor, SSE opcional pra streaming, e autenticação HTTP. A spec recomenda OAuth e proíbe <em>token passthrough</em> (aceitar e repassar token que não foi emitido pro próprio servidor).</p></div>
+        </details>
+      </li>
+      <li>Como mostrar ao usuário o quanto confiar numa resposta de IA, sem jogar uma porcentagem na tela?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>O PAIR desaconselha porcentagem crua: o usuário não sabe o que &ldquo;80%&rdquo; significa e espera 100% no óbvio. As alternativas: <strong>categorias</strong> (alta/média/baixa) com uma ação clara pra cada uma, <strong>N-best</strong> (&ldquo;pode ser A, B ou C&rdquo;, que convida o julgamento quando a confiança é baixa) e, acima de tudo, <strong>mostrar a fonte</strong>.</p>
+<p>No Gabarita, a confiança é comunicada pela citação literal verificada, embaixo do resumo. E quando não dá pra verificar, a resposta não é exibida: às vezes a melhor indicação de confiança é não mostrar o que não passou.</p></div>
+        </details>
+      </li>
+      <li>Um time de 4 pessoas propõe migrar o front pra microfrontends &ldquo;pra escalar&rdquo;. O que você pergunta antes?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Microfrontend resolve problema de <strong>organização</strong>, não de tráfego: vários times autônomos que precisam fazer deploy sem coordenar, ou uma migração incremental (strangler) de um front legado. Com 4 pessoas num time só, você paga os custos (dependências duplicadas no payload, ambientes que divergem, pipelines e governança multiplicados) sem colher o benefício.</p>
+<p>As perguntas: quantos times vão ser donos de partes diferentes? O deploy conjunto é um gargalo hoje? Um monorepo com fronteiras de módulo e uma biblioteca de componentes resolveria? Quase sempre resolve, e é o passo que vem antes de microfrontends de qualquer forma.</p></div>
+        </details>
+      </li>
+      <li>&ldquo;Seu sistema é multi-cloud?&rdquo; Como responder com o que você tem, sem inflar?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>&ldquo;Não, e de propósito. Multi-cloud de verdade, a mesma carga rodando em duas nuvens, custa IAM duplicado, egress entre provedores e ficar preso ao menor denominador comum dos serviços. Faz sentido por exigência regulatória ou de cliente, ou por resiliência num nível que um produto do meu tamanho não tem. O que eu fiz foi <strong>portabilidade</strong>: no Gabarita, o storage é uma interface que escolhe R2, Vercel Blob ou disco por variável de ambiente, falando o protocolo do S3. No Ally AI, a API é um container que rodou no Render e vai pro Cloud Run, e a escolha foi por benchmark de CPU.&rdquo; Depois disso, a tabela de equivalência (Cloud Run &harr; App Runner/Fargate &harr; Container Apps) mostra que você sabe para onde iria.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="r05-cloud-aws.html"><div class="dir">&larr; anterior</div><div class="t">Cloud &amp; Delivery na AWS</div></a>
+    <a class="next" href="r07-linkedin.html"><div class="dir">próxima &rarr;</div><div class="t">Ativação LinkedIn estratégica</div></a>
+  </nav>
+
+  <footer>
+    O Gabarito da Teoria &middot; 32 blocos &middot; 227 tópicos &middot; 159 leituras resumidas &middot; 124 perguntas abertas com gabarito &middot; 142 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 05/10/2026
+  </footer>
+</div>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

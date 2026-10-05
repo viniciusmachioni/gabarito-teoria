@@ -13,8 +13,35 @@ rode o build depois de qualquer mudança nas fontes.
 | `_montagem/leituras/<slug>.html` | resumos embutidos: cada `<article data-href>` entra no recurso de mesmo link da página `<slug>`. Quando não existe recurso com aquele link na página (caso do B7), o build cria uma seção "Leituras resumidas" no fim — e aí o `<article>` precisa também de `data-title` |
 | `_montagem/novos/<slug>.html` | páginas dos blocos B10–B19, no mesmo markup das seções originais |
 | `_montagem/quiz-novos.mjs` | questões novas anexadas às 42 originais |
+| `_montagem/roadmap/<slug>.html` | páginas do roadmap da mentoria (R0–R7), grupo `roadmap`, registradas no topo de `PAGINAS` |
+| `_montagem/roadmap/quiz/<slug>.mjs` | questões do roadmap, um arquivo por página, lidas em ordem alfabética e postas **na frente** das 42 originais |
 
-## Status: montagem completa (15/09/2026)
+## Roadmap da mentoria (05/10/2026)
+
+Fonte: `Roadmap Vinicius Machioni _ Front-End Developer.pdf` (First Trial, Whimsical da Mundo Dev). Seis frentes técnicas
+com 4 itens cada + ativação do LinkedIn. Virou um grupo próprio, **antes do núcleo**, pra ser o foco sem apagar nada:
+
+| Página | Conteúdo | Checkbox |
+|---|---|---|
+| R0 `r00-mapa` | matriz dos 24 itens × Gabarita × Ally AI (usado/parcial/lacuna), placar, 8 histórias prontas, ordem sugerida pra fechar lacunas | — |
+| R1 `r01-ai-frontend` | streaming, tool calling, structured outputs, Generative UI, UX de IA | `w25` |
+| R2 `r02-design-systems` | tokens, variantes, Storybook, Figma, regressão visual, a11y automatizada, WCAG | `w26` |
+| R3 `r03-arquitetura-frontend` | monorepo, microfrontends, rendering/cache no Next, Web Vitals | `w27` |
+| R4 `r04-ai-fullstack` | Next + Node, auth/upload/filas, LLM + Postgres (pgvector/RAG), testes de fluxo de IA | `w28` |
+| R5 `r05-cloud-aws` | Next na AWS, CI/CD, observabilidade, ambientes/secrets/CDN | `w29` |
+| R6 `r06-proximo-nivel` | MCP, padrões de AI UX, frontend distribuído, multi-cloud | `w30` |
+| R7 `r07-linkedin` | headline, "Sobre", rede, calendário de posts, candidaturas | `w31` |
+
+Cada R1–R6 tem, além do formato normal (tópicos, leituras resumidas, munição, perguntas), um bloco **"No seu código"**
+(`.evid`) com status por projeto e arquivo/linha, e um bloco **"O que falta construir"** (`.gap`). A evidência foi
+levantada lendo o código do `gabarita` (no produto, Certeon) e do `ally-ai` **só em modo leitura** — nada foi alterado
+nos dois. Os status do R0 e das páginas foram conciliados pela mesma régua: "usado" só quando cobre o que o item do
+roadmap pede. Se o código dos projetos mudar, os números de linha citados podem ficar velhos.
+
+A capa ganhou uma caixa "Foco atual" (`#roadmap`) com o progresso de cada página do roadmap (`assets/js/app.js` preenche
+`.foco-lista li[data-prefix]` sem somar de novo no total).
+
+## Status da montagem anterior (15/09/2026)
 
 - 27/27 páginas geradas · 168 tópicos · **123 leituras resumidas embutidas** · 91 perguntas abertas com gabarito · **102 de múltipla escolha**
 - **Todos os 24 blocos de conteúdo têm resumo em português na própria página** — núcleo (5 semanas), B1–B9 e B10–B19.

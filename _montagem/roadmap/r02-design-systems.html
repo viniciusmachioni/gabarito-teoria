@@ -1,0 +1,142 @@
+<section class="week" id="rm2">
+  <div class="week-head"><span class="week-num">R2</span><h2>Design Systems &amp; Design Engineering</h2></div>
+  <div class="week-meta">~8h &middot; a frente que justifica o título &ldquo;Design Engineer&rdquo; na headline</div>
+  <p class="intro">Uma vaga de Design Engineer não pergunta se você sabe Tailwind &mdash; pergunta como você transforma uma decisão de design em algo que <strong>não precisa ser decidido de novo</strong>: um token, uma variante, um componente documentado, um teste que reprova o build quando alguém quebra o contraste. O roadmap pede quatro coisas: evoluir o design system que você já tem pra tokens/variantes/composição/documentação, ter uma biblioteca no Storybook ligada ao Figma, regressão visual e acessibilidade testadas automaticamente, e componentes responsivos e acessíveis pela WCAG 2.1. A boa notícia: o Gabarita já tem metade da fundação, e o Ally AI <em>é</em> um motor de teste automatizado de acessibilidade. Base teórica de apoio em <a href="b11-acessibilidade.html">B11 &middot; Acessibilidade</a>, <a href="b12-css.html">B12 &middot; CSS moderno</a> e <a href="b10-testes.html">B10 &middot; Testes</a>.</p>
+
+  <h3 class="sub">Tópicos</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="w26-1"><label for="w26-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tokens em camadas: primitivo (<code>orange-560</code>) &rarr; semântico (<code>color-brand</code>, <code>color-ink-soft</code>) &rarr; de componente (<code>button-bg</code>) &mdash; e por que o componente só deve enxergar o semântico (é o que deixa trocar tema sem tocar em componente)</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-2"><label for="w26-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O formato padrão de tokens do W3C Design Tokens Community Group (<code>$value</code>, <code>$type</code>, aliases <code>{color.brand}</code>) e o caminho JSON &rarr; CSS custom properties / <code>@theme</code> do Tailwind v4</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-3"><label for="w26-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Variantes tipadas com <code>cva</code>: <code>variants</code>, <code>compoundVariants</code>, <code>defaultVariants</code> e <code>VariantProps</code> &mdash; o salto de &ldquo;classe <code>.btn-primary</code> no CSS&rdquo; pra &ldquo;<code>&lt;Button intent=&quot;danger&quot; size=&quot;sm&quot;&gt;</code> que o TypeScript valida&rdquo;</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-4"><label for="w26-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição sobre configuração: compound components e <code>children</code>/slots em vez de um componente com 15 props booleanas (ponte com <a href="b15-react-estado.html">B15</a>)</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-5"><label for="w26-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Storybook e o Component Story Format: meta + stories nomeadas, <code>args</code>, <code>decorators</code> (tema claro/escuro), <code>play</code> functions &mdash; a story como documentação <em>e</em> como caso de teste</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-6"><label for="w26-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Figma &harr; código com Code Connect: mapear propriedades do componente do Figma (<code>figma.enum</code>, <code>figma.boolean</code>) pras props reais, pra o Dev Mode mostrar o seu código e não um CSS gerado</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-7"><label for="w26-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Regressão visual: <code>toHaveScreenshot()</code> do Playwright (ou Chromatic sobre o Storybook), baseline versionada, tolerância (<code>maxDiffPixels</code>) e por que a baseline tem de ser gerada no mesmo SO/navegador do CI</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-8"><label for="w26-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acessibilidade automatizada em dois níveis: por componente (<code>@storybook/addon-a11y</code>) e por página/fluxo (<code>@axe-core/playwright</code> com <code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) &mdash; e o limite honesto: o axe pega só uma parte dos critérios</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-9"><label for="w26-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">WCAG 2.1 na prática de componente: 1.4.1 (não depender só de cor), 1.4.3 / 1.4.11 (contraste de texto e de componente), 2.1.1 (teclado), 2.4.7 (foco visível), 1.4.10 (reflow sem rolagem horizontal) &mdash; e o que a 2.2 acrescentou (alvo mínimo, foco não encoberto)</span></label></li>
+  </ul>
+
+  <h3 class="sub">Onde estudar (grátis)</h3>
+  <ul class="resources">
+    <li><div class="r-title"><a href="https://www.designtokens.org/tr/2025.10/format/" target="_blank" rel="noopener">Design Tokens Format Module 2025.10</a></div><div class="r-note">O formato de arquivo de tokens do W3C Design Tokens Community Group, publicado como relatório final estável em outubro de 2025. É a língua comum entre Figma, Style Dictionary, Tokens Studio e o seu código.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia a introdução, a definição de token, grupos, aliases e a lista de tipos (color, dimension, typography, shadow). Pule as seções de conformidade e as regras de parsing.</div><div class="r-src">designtokens.org &middot; W3C Community Group</div></li>
+    <li><div class="r-title"><a href="https://cva.style/docs/getting-started/variants" target="_blank" rel="noopener">cva &mdash; Variants</a></div><div class="r-note">A API de variantes que o shadcn/ui popularizou: base, variants, compoundVariants e defaultVariants, com tipo derivado das variantes.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta, um exemplo de botão que cobre tudo. Leia junto a página de TypeScript (<code>VariantProps</code>).</div><div class="r-src">cva.style &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://storybook.js.org/docs/writing-stories" target="_blank" rel="noopener">Storybook &mdash; How to write stories</a></div><div class="r-note">O que é uma story, o Component Story Format (CSF), args, decorators, parameters e play functions.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~20 min</span>É a página-base. Os subtópicos (args, decorators, play) têm páginas próprias &mdash; abra só quando for implementar.</div><div class="r-src">storybook.js.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://storybook.js.org/docs/writing-tests/accessibility-testing" target="_blank" rel="noopener">Storybook &mdash; Accessibility tests</a></div><div class="r-note"><code>@storybook/addon-a11y</code>: axe-core rodando em cada story, com <code>parameters.a11y.test</code> decidindo se a violação reprova o CI.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Preste atenção nos três valores de <code>test</code> (<code>error</code>/<code>todo</code>/<code>off</code>) e na aba &ldquo;incomplete&rdquo;.</div><div class="r-src">storybook.js.org &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://developers.figma.com/docs/code-connect/react" target="_blank" rel="noopener">Figma Code Connect &mdash; React</a></div><div class="r-note">Como ligar o componente do Figma ao componente React, pra o Dev Mode mostrar o snippet real com as props mapeadas.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia <code>figma.connect()</code>, a tabela de helpers de propriedade e &ldquo;variant restrictions&rdquo;. A configuração do CLI é consulta.</div><div class="r-src">developers.figma.com &middot; oficial</div></li>
+    <li><div class="r-title"><a href="https://playwright.dev/docs/test-snapshots" target="_blank" rel="noopener">Playwright &mdash; Visual comparisons</a></div><div class="r-note"><code>toHaveScreenshot()</code>: baseline no primeiro run, comparação nos seguintes, <code>--update-snapshots</code> e o aviso sobre SO/hardware.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta. O parágrafo sobre variação de renderização entre ambientes é o que mais cai em entrevista.</div><div class="r-src">playwright.dev &middot; oficial</div></li>
+  </ul>
+
+  <h3 class="sub">No seu código: Gabarita e Ally AI</h3>
+  <div class="evid">
+    <div class="evid-head">Onde você já fez isso &middot; e onde ainda não</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Tokens, variantes, composição e documentação <span class="st p">Gabarita: parcial (tokens fortes, sem lib de variantes)</span> <span class="st p">Ally AI: parcial</span></h4>
+        <p class="proj">Gabarita</p>
+        <ul>
+          <li><strong>Tokens semânticos em OKLCH</strong> no <code>@theme</code> do Tailwind v4: <code>src/app/globals.css</code> L8&ndash;38 (<code>--color-paper</code>, <code>--color-ink-soft</code>, <code>--color-brand</code>, <code>--color-on-brand</code>, raios, sombras). Os comentários registram o contraste (&ldquo;texto secundário (&ge;4.5:1)&rdquo;, &ldquo;Fill tunado para AA&rdquo;).</li>
+          <li><strong>Tema escuro trocando só os tokens</strong>: <code>:root[data-theme=&quot;dark&quot;]</code> em <code>globals.css</code> L43&ndash;59 &mdash; nenhum componente sabe que existe dark mode. Escolha explícita da usuária, nunca herdada do SO (decisão D85), aplicada antes do primeiro paint por <code>src/components/script-tema.tsx</code> com o nonce da CSP.</li>
+          <li><strong>Variantes como classes de componente</strong> em <code>@layer components</code> (<code>globals.css</code> L100+): <code>.btn-primary</code> / <code>.btn-ghost</code> / <code>.btn-danger</code> (L143&ndash;160), <code>.chip</code>/<code>.chip-on</code>, <code>.input</code>, <code>.select</code>, <code>.card</code> (L163), <code>.skeleton</code> (L174). Funciona, mas não é tipado: nada impede <code>className=&quot;btn-primary btn-danger&quot;</code>.</li>
+          <li><strong>Variante por prop, tipada</strong>: <code>src/components/grade-numerada.tsx</code> &mdash; <code>type Escala = &quot;trilha&quot; | &quot;mini&quot; | &quot;completa&quot; | &quot;mobile&quot;</code> (L8) e mapas <code>Record&lt;Escala, string&gt;</code> (L10&ndash;22). É o padrão do <code>cva</code> escrito à mão.</li>
+          <li><strong>Documentação</strong>: <code>DESIGN.md</code> (seções Tokens, Componentes, Estados obrigatórios e &ldquo;Refusos&rdquo;) e a página <code>src/app/(app)/admin/design/page.tsx</code>, um &ldquo;Storybook caseiro&rdquo; só pra admin que mostra a <code>GradeNumerada</code> em todos os estados.</li>
+        </ul>
+<pre><code>const TAMANHO: Record&lt;Escala, string&gt; = {
+  trilha: "size-2.5",
+  mini: "size-5 text-[10px]",
+  completa: "size-7 text-xs",
+  mobile: "size-8 text-xs",
+};</code></pre>
+        <p class="proj">Ally AI</p>
+        <ul>
+          <li>Quatro tokens de cor e duas fontes no <code>@theme</code>: <code>apps/web/src/app/globals.css</code> L3&ndash;11. Sem variantes e sem componentes de base: as classes de botão e input se repetem em <code>login/page.tsx</code>, <code>register/page.tsx</code> e <code>pricing/page.tsx</code>, e há cor fora de token (<code>slate-*</code>, <code>indigo-*</code>) em <code>components/HeroSearch.tsx</code> e <code>DashboardSkeleton.tsx</code>.</li>
+          <li><code>animate-in fade-in slide-in-from-*</code> (<code>Dashboard.tsx</code> L22, <code>HeroSearch.tsx</code> L70, <code>DashboardSkeleton.tsx</code> L3) não faz nada: o plugin <code>tw-animate-css</code> não está instalado.</li>
+        </ul>
+      </div>
+
+      <div class="evid-item">
+        <h4>Biblioteca de componentes com Storybook e Figma <span class="st n">Gabarita: lacuna</span> <span class="st n">Ally AI: lacuna</span></h4>
+        <p>Nenhum dos dois tem Storybook, <code>*.stories.tsx</code> ou Code Connect. O mais perto disso é o <code>/admin/design</code> do Gabarita. O protótipo de design do Gabarita vive fora do repositório (o <code>DESIGN.md</code> diz isso explicitamente). No Ally AI, o pacote compartilhado <code>packages/types</code> é só de tipos &mdash; a fundação de monorepo pra um <code>packages/ui</code> já existe (ver <a href="r03-arquitetura-frontend.html">R3</a>), falta o pacote.</p>
+      </div>
+
+      <div class="evid-item">
+        <h4>Regressão visual e acessibilidade automatizada <span class="st n">Gabarita: lacuna (só getByRole)</span> <span class="st p">Ally AI: parcial (é o produto, não o teste)</span></h4>
+        <p class="proj">Gabarita</p>
+        <ul>
+          <li>Sem axe, sem Playwright, sem screenshot. Mas os testes de componente (Vitest + Testing Library) já consultam por papel e nome acessível, o que reprova componente sem semântica: <code>src/components/grade-numerada.test.tsx</code> L18 (<code>getByRole(&quot;img&quot;, { name: &quot;Questão 1 — Acerto&quot; })</code>) e L27 (&ldquo;todo estado tem legenda textual, não só cor&rdquo;); <code>question-runner.test.tsx</code> L49&ndash;51.</li>
+        </ul>
+        <p class="proj">Ally AI</p>
+        <ul>
+          <li>O produto <strong>é</strong> um motor de teste automatizado de acessibilidade: <code>apps/api/src/services/auditService.ts</code> L96 (<code>scanPage</code>) abre a página no Chromium e roda <code>new AxePuppeteer(page).analyze()</code> (L156).</li>
+          <li>Só que o front do próprio Ally AI não é auditado: o dogfooding é item P0 pendente em <code>docs/DIAGNOSTICO.md</code> (L21), e a seção 4 (L119+) mede o contraste dos tokens &mdash; <code>secondary #475569</code> dá <strong>2,36:1</strong> sobre o fundo, <code>primary #6366F1</code> dá 4,00:1, branco sobre <code>primary</code> reprova por 0,03.</li>
+        </ul>
+      </div>
+
+      <div class="evid-item">
+        <h4>Componentes responsivos e acessíveis (WCAG 2.1) <span class="st y">Gabarita: usado</span> <span class="st p">Ally AI: responsivo sim, acessível não</span></h4>
+        <p class="proj">Gabarita</p>
+        <ul>
+          <li><strong>1.4.1 &mdash; não depender só de cor</strong>: <code>grade-numerada.tsx</code> L33&ndash;53 diferencia acerto/erro/atual/em-branco/anulada por <em>padrão de borda</em> (sólida, pontilhada, tracejada, line-through), não só por cor, e sempre com legenda textual (L108&ndash;121). Item clicável vira <code>&lt;button aria-label&gt;</code> (L87&ndash;97); não clicável vira <code>role=&quot;img&quot;</code> (L101).</li>
+          <li><strong>Foco e movimento</strong>: <code>:focus-visible</code> com outline de marca (<code>globals.css</code> L77&ndash;81) e <code>prefers-reduced-motion</code> global (L91&ndash;97).</li>
+          <li><strong>Alvo de toque e zoom do iOS</strong>: <code>min-h-11</code> (44px) nos botões; <code>@media (width &lt; 48rem)</code> sobe a fonte do input pra 1rem (L215+) &mdash; abaixo de 16px o Safari dá zoom no foco.</li>
+          <li><strong>Navegação mobile própria</strong>: <code>src/app/(app)/mobile-tab-bar.tsx</code> &mdash; <code>md:hidden</code> (L46), <code>nav aria-label</code> (L86), <code>aria-current=&quot;page&quot;</code> (L91), <code>aria-expanded</code>/<code>aria-controls</code> no &ldquo;Mais&rdquo; (L101&ndash;102).</li>
+          <li>Diálogos com papel: <code>entregar-prova.tsx</code> L36 (<code>role=&quot;dialog&quot; aria-modal=&quot;true&quot;</code>), <code>multi-select.tsx</code> L84&ndash;96 (dialog + searchbox + teclado, Escape fecha em L39).</li>
+        </ul>
+        <p class="proj">Ally AI</p>
+        <ul>
+          <li>Responsivo com breakpoints do Tailwind (<code>Dashboard.tsx</code> <code>md:flex-row</code>, <code>grid-cols-1 lg:grid-cols-3</code>), mas a navegação some no celular sem alternativa (<code>components/Header.tsx</code> L51, <code>hidden ... md:flex</code>).</li>
+          <li>Zero atributo <code>aria-*</code>, <code>role</code> ou <code>htmlFor</code> em <code>apps/web/src</code>; <code>&lt;label&gt;</code> sem associação em <code>login/page.tsx</code> L49 e L64; input de URL sem label (<code>HeroSearch.tsx</code> L43); modal de créditos sem <code>role=&quot;dialog&quot;</code> e botão de fechar só com ícone (<code>HeroSearch.tsx</code> L76&ndash;84).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap">
+    <h4>O que falta construir</h4>
+    <ol>
+      <li><strong>Ally AI &middot; tokens que passam no AA.</strong> Trocar <code>--color-secondary</code>/<code>--color-primary</code> em <code>apps/web/src/app/globals.css</code> pelos candidatos já medidos no <code>DIAGNOSTICO.md</code> (ex.: <code>indigo-400</code> 5,98:1 pra texto) e eliminar as cores soltas. Uma tarde de trabalho, antes/depois mensurável. <em>Post R7:</em> &ldquo;Minha ferramenta de acessibilidade reprovava na própria auditoria&rdquo;.</li>
+      <li><strong>Ally AI &middot; <code>packages/ui</code> com Button/Input/Dialog em <code>cva</code></strong> + Storybook com <code>@storybook/addon-a11y</code> em <code>test: 'error'</code>. Resolve de uma vez as classes repetidas, o label solto e o modal sem papel. <em>Post R7:</em> &ldquo;Do design system ao Storybook&rdquo; (post 7 do calendário).</li>
+      <li><strong>Ally AI &middot; dogfooding no CI.</strong> Um teste Playwright com <code>@axe-core/playwright</code> (<code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) nas rotas <code>/</code>, <code>/login</code>, <code>/dashboard</code>. É o item P0 do diagnóstico virando build vermelho.</li>
+      <li><strong>Gabarita &middot; Storybook da <code>GradeNumerada</code></strong> substituindo (ou alimentando) o <code>/admin/design</code>: uma story por escala, decorator de tema claro/escuro, e <code>toHaveScreenshot()</code> das quatro escalas nos dois temas &mdash; regressão visual barata no componente-assinatura.</li>
+      <li><strong>Gabarita &middot; tokens exportáveis.</strong> Escrever os tokens do <code>@theme</code> num <code>tokens.json</code> no formato DTCG e gerar o CSS a partir dele. É o passo que permite sincronizar com o Figma (Tokens Studio / variables) e falar de &ldquo;fonte única da verdade&rdquo; com prova.</li>
+    </ol>
+  </div>
+
+  <div class="ammo">
+    <div class="ammo-head">Munição da sua entrevista &middot; a <code>GradeNumerada</code> do Gabarita</div>
+    <div class="ammo-body">
+      <p>O componente-assinatura do produto mostra o estado de cada questão de uma prova. A decisão de design foi que <strong>nenhum estado depende só de cor</strong> (WCAG 1.4.1): acerto é borda sólida, erro é borda pontilhada, em branco é tracejada, anulada é riscada &mdash; legível em escala de cinza e por quem tem daltonismo &mdash; e toda grade tem legenda textual. O mesmo componente roda em quatro escalas tipadas (trilha, mini, completa, mobile), e vira <code>&lt;button&gt;</code> com <code>aria-label</code> só quando é navegável. E a regra está travada por teste: &ldquo;todo estado tem legenda textual, não só cor&rdquo; é literalmente o nome de um caso em <code>grade-numerada.test.tsx</code>.</p>
+      <p class="why"><strong>Por que isso importa:</strong> é a história completa de Design Engineering em um componente &mdash; decisão de design documentada (<code>DESIGN.md</code>), implementação com variantes tipadas, critério WCAG nomeado e um teste que impede regressão. Quando perguntarem &ldquo;o que é um design system pra você?&rdquo;, responda com ela.</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual a diferença entre um token primitivo e um token semântico, e por que o componente deveria usar só o segundo?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Primitivo nomeia o <strong>valor</strong> (<code>orange-560</code>); semântico nomeia a <strong>intenção</strong> (<code>color-brand</code>, <code>color-ink-soft</code>) e aponta pra um primitivo. Se o botão usa <code>color-brand</code>, trocar a marca ou ligar o dark mode é trocar o alias num lugar só &mdash; é exatamente o que o <code>:root[data-theme=&quot;dark&quot;]</code> do Gabarita faz sem tocar em componente nenhum. Componente que usa o primitivo direto precisa ser editado em toda mudança de tema.</p></div>
+        </details>
+      </li>
+      <li>O Gabarita tem <code>.btn-primary</code> e <code>.btn-danger</code> como classes em <code>@layer components</code>. O que você ganharia migrando pra um <code>&lt;Button&gt;</code> com <code>cva</code>? E o que perderia?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Ganha: variante <strong>tipada</strong> (o TypeScript reprova <code>intent=&quot;danjer&quot;</code>), combinações explícitas por <code>compoundVariants</code> em vez de duas classes conflitando no mesmo elemento, defaults num lugar só, e um ponto único pra semântica (o <code>&lt;button type=&quot;button&quot;&gt;</code>, o foco, o estado <code>disabled</code>). Perde: uma dependência e uma camada de JS pra algo que hoje é CSS puro, e as classes deixam de servir em markup que não é React. A resposta sênior é dizer quando vale: a partir do momento em que há variantes combináveis ou mais de uma pessoa criando tela.</p></div>
+        </details>
+      </li>
+      <li>Seu teste de regressão visual passa na sua máquina e falha no CI em todas as telas, com diferença de poucos pixels no texto. O que aconteceu e como resolver?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>A baseline foi gerada num ambiente diferente do CI: a renderização de fonte e antialiasing muda com SO, versão do navegador, hardware e até modo headless (a própria doc do Playwright avisa). Por isso o nome do snapshot leva navegador e plataforma (<code>-chromium-linux</code>). Solução: gerar e atualizar a baseline <strong>no mesmo ambiente do CI</strong> (um container fixo), e usar tolerância (<code>maxDiffPixels</code>) só pra ruído, nunca pra esconder mudança real.</p></div>
+        </details>
+      </li>
+      <li>O Ally AI audita acessibilidade dos sites dos clientes com axe-core. Um entrevistador pergunta: &ldquo;e o seu próprio front passa?&rdquo;. Qual é a resposta honesta e o que ela mostra?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Hoje não passa, e você sabe exatamente por quê: o <code>DIAGNOSTICO.md</code> mediu o contraste dos tokens (2,36:1 no <code>secondary</code>), listou label sem associação, modal sem papel e navegação mobile ausente, e pôs o dogfooding como P0. A resposta mostra duas coisas boas: você mede antes de afirmar, e sabe que a correção certa é <strong>no token</strong>, não caso a caso. Melhor ainda se, quando a entrevista chegar, o teste com <code>@axe-core/playwright</code> já estiver no CI.</p></div>
+        </details>
+      </li>
+      <li>Se o axe-core não acusa nenhuma violação, o componente está conforme a WCAG 2.1 AA?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Não. Teste automatizado pega só uma parte dos critérios (a doc do Storybook fala em até ~57% dos problemas): contraste calculável, nome acessível ausente, ARIA inválido. Ordem de foco que faz sentido, texto alternativo que descreve o que importa, foco que não se perde num fluxo, leitor de tela anunciando a coisa certa &mdash; isso é teclado e NVDA/VoiceOver na mão. Por isso o Ally AI tem como regra &ldquo;nunca afirmar conformidade&rdquo;, e a aba <em>incomplete</em> do addon-a11y existe.</p></div>
+        </details>
+      </li>
+    </ol>
+  </div>
+</section>

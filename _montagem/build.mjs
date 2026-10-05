@@ -22,13 +22,23 @@ const semTags = (s) => s.replace(/<[^>]+>/g, '');
 /* Registro das páginas, na ordem de leitura                          */
 /* ------------------------------------------------------------------ */
 const GRUPOS = {
+  roadmap: 'Roadmap da mentoria · First Trial · foco atual',
   nucleo: 'Núcleo · 5 semanas',
   bonus: 'Bônus · material de consulta',
   novos: 'Lacunas de sênior · Brasil e exterior',
   pratica: 'Prática',
 };
 
+// As páginas do roadmap vêm primeiro: são o foco atual. O resto do guia continua igual logo depois.
 const PAGINAS = [
+  { slug: 'r00-mapa', fonte: 'roadmap', num: 'R0', grupo: 'roadmap', titulo: 'Mapa: roadmap × Gabarita e Ally AI', foco: 'Mapa do roadmap &mdash; cada item, o que você já fez no Gabarita e no Ally AI, e o que falta', tempo: '~30min' },
+  { slug: 'r01-ai-frontend', fonte: 'roadmap', num: 'R1', grupo: 'roadmap', titulo: 'AI-Powered Frontend', foco: 'AI-Powered Frontend &mdash; streaming, tool calling, structured outputs, Generative UI', tempo: '~8h' },
+  { slug: 'r02-design-systems', fonte: 'roadmap', num: 'R2', grupo: 'roadmap', titulo: 'Design Systems & Design Engineering', foco: 'Design Systems &amp; Design Engineering &mdash; tokens, variantes, Storybook, Figma, regressão visual', tempo: '~8h' },
+  { slug: 'r03-arquitetura-frontend', fonte: 'roadmap', num: 'R3', grupo: 'roadmap', titulo: 'Frontend Architecture', foco: 'Frontend Architecture &mdash; monorepo, microfrontends, rendering/caching no Next.js, Web Vitals', tempo: '~8h' },
+  { slug: 'r04-ai-fullstack', fonte: 'roadmap', num: 'R4', grupo: 'roadmap', titulo: 'AI + Full Stack Integration', foco: 'AI + Full Stack &mdash; Next.js com Node/.NET, auth, upload, filas, LLM + PostgreSQL, testes de fluxo de IA', tempo: '~8h' },
+  { slug: 'r05-cloud-aws', fonte: 'roadmap', num: 'R5', grupo: 'roadmap', titulo: 'Cloud & Delivery na AWS', foco: 'Cloud &amp; Delivery &mdash; Next.js na AWS, CI/CD, observabilidade, ambientes, secrets e CDN', tempo: '~8h' },
+  { slug: 'r06-proximo-nivel', fonte: 'roadmap', num: 'R6', grupo: 'roadmap', titulo: 'Aprofundamento: MCP, AI UX, multi-cloud', foco: 'Próximo nível &mdash; MCP, padrões de AI UX, frontend distribuído e multi-cloud', tempo: '~6h' },
+  { slug: 'r07-linkedin', fonte: 'roadmap', num: 'R7', grupo: 'roadmap', titulo: 'Ativação LinkedIn estratégica', foco: 'Ativação LinkedIn &mdash; headline, rede internacional, posts técnicos e candidaturas', tempo: 'contínuo' },
   { slug: '01-javascript-react', fonte: 's1', num: '01', grupo: 'nucleo', titulo: 'JavaScript & React', foco: 'JavaScript &amp; React &mdash; os modelos mentais por trás dos seus hooks', tempo: '~8h' },
   { slug: '02-nextjs-tailwind', fonte: 's2', num: '02', grupo: 'nucleo', titulo: 'Next.js & Tailwind', foco: 'Next.js (renderização, cache, edge) &amp; a filosofia do Tailwind', tempo: '~8h' },
   { slug: '03-postgresql', fonte: 's3', num: '03', grupo: 'nucleo', titulo: 'PostgreSQL', foco: 'PostgreSQL &mdash; MVCC, índices, pooling e por que não é MySQL', tempo: '~10h' },
@@ -130,7 +140,16 @@ const quizOriginal = JSON.parse(original.match(/<script id="qz-dados" type="appl
 let quizNovos = [];
 const arqQuizNovos = path.join(MONT, 'quiz-novos.mjs');
 if (existe(arqQuizNovos)) quizNovos = (await import(pathToFileURL(arqQuizNovos).href)).default;
-const quiz = quizOriginal.concat(quizNovos);
+// Questões do roadmap: um arquivo por página em _montagem/roadmap/quiz/, e entram NA FRENTE
+// (os filtros do quiz seguem a ordem de aparição, então os temas do roadmap ficam primeiro).
+let quizRoadmap = [];
+const dirQuizRoadmap = path.join(MONT, 'roadmap', 'quiz');
+if (existe(dirQuizRoadmap)) {
+  for (const f of fs.readdirSync(dirQuizRoadmap).filter((f) => f.endsWith('.mjs')).sort()) {
+    quizRoadmap = quizRoadmap.concat((await import(pathToFileURL(path.join(dirQuizRoadmap, f)).href)).default);
+  }
+}
+const quiz = quizRoadmap.concat(quizOriginal, quizNovos);
 quiz.forEach((q, i) => {
   if (!q.t || !q.s || !q.q || !Array.isArray(q.o) || typeof q.c !== 'number' || !q.e || q.c >= q.o.length) avisa('questão ' + (i + 1) + ' mal formada');
 });
@@ -193,8 +212,8 @@ function embuteLeituras(slug, html) {
 /* Montagem das páginas                                               */
 /* ------------------------------------------------------------------ */
 function conteudoDe(p) {
-  if (p.fonte === 'novo') {
-    const arq = path.join(MONT, 'novos', p.slug + '.html');
+  if (p.fonte === 'novo' || p.fonte === 'roadmap') {
+    const arq = path.join(MONT, p.fonte === 'novo' ? 'novos' : 'roadmap', p.slug + '.html');
     return existe(arq) ? ler(arq).trim() : null;
   }
   if (p.fonte === 'star') return secoesOriginais.star;
@@ -230,6 +249,7 @@ const totais = {
   leituras: publicadas.reduce((s, p) => s + p.leituras, 0),
   perguntas: publicadas.reduce((s, p) => s + p.perguntas, 0),
   blocos: publicadas.filter((p) => p.grupo !== 'pratica').length,
+  roadmap: publicadas.filter((p) => p.grupo === 'roadmap').length,
 };
 
 const HOJE = new Date().toLocaleDateString('pt-BR');
@@ -288,7 +308,7 @@ const trilhas = TRILHAS.map((t) =>
 const linhas = Object.keys(GRUPOS).map((g) => {
   const ps = publicadas.filter((p) => p.grupo === g);
   if (!ps.length) return '';
-  return '      <tr class="grupo"><td colspan="4">' + GRUPOS[g] + (g === 'novos' ? ' <span class="tag-novo">novo</span>' : '') + '</td></tr>\n' +
+  return '      <tr class="grupo"><td colspan="4">' + GRUPOS[g] + (g === 'roadmap' ? ' <span class="tag-novo">comece aqui</span>' : '') + '</td></tr>\n' +
     ps.map((p) => {
       const attrs = p.topicos ? ' data-prefix="' + p.prefixo + '" data-total="' + p.topicos + '"' : '';
       return '      <tr' + attrs + '><td class="wk">' + p.num + '</td><td><a href="paginas/' + p.slug + '.html">' + p.foco + '</a>' +
@@ -297,6 +317,22 @@ const linhas = Object.keys(GRUPOS).map((g) => {
 }).join('\n');
 
 const primeira = publicadas[0];
+
+// Caixa "foco atual" da capa: as páginas do roadmap, em ordem, com o progresso de cada uma.
+const paginasRoadmap = publicadas.filter((p) => p.grupo === 'roadmap');
+const focoRoadmap = !paginasRoadmap.length ? '' :
+`  <section class="week foco" id="roadmap">
+    <div class="week-head"><span class="week-num">R</span><h2 style="font-size:22px;">Foco atual: o roadmap da mentoria</h2></div>
+    <div class="week-meta">First Trial &middot; Design Engineer / Frontend Engineer com foco em IA &middot; tudo o que já existia continua aqui embaixo</div>
+    <p class="intro">O roadmap tem sete frentes. Cada página abaixo cobre uma delas com o mesmo formato do resto do guia &mdash; tópicos, leituras resumidas, munição de entrevista e perguntas &mdash; e acrescenta uma coisa: <strong>onde você já fez aquilo no Gabarita e no Ally AI</strong>, com o arquivo exato, e o que ainda falta construir. Comece pelo mapa: ele mostra num lugar só o que já é história pra contar e o que ainda é lacuna.</p>
+    <ol class="foco-lista">
+` + paginasRoadmap.map((p) => {
+  const attrs = p.topicos ? ' data-prefix="' + p.prefixo + '" data-total="' + p.topicos + '"' : '';
+  return '      <li' + attrs + '><a href="paginas/' + p.slug + '.html"><span class="wk-n">' + p.num + '</span> ' + esc(p.titulo) + '</a><span class="p">' + (p.topicos ? '' : '&mdash;') + '</span></li>';
+}).join('\n') + `
+    </ol>
+  </section>`;
+
 const capa = cabeca('O Gabarito da Teoria', '') +
 `<div class="wrap">
 
@@ -308,7 +344,7 @@ const capa = cabeca('O Gabarito da Teoria', '') +
   <p class="lede">Você já escreveu autenticação com invalidação de sessão, um scheduler SM-2, uma fila com retry e uma CSP com nonce por request. A parte que falta não é prática &mdash; é <strong>saber nomear e defender</strong> o que você já fez, e preencher os buracos ao redor. Este roteiro usa o próprio Gabarita como estudo de caso, e agora cobre o que uma vaga sênior cobra aqui e lá fora.</p>
 
   <div class="stats">
-    <div class="stat"><div class="n">${totais.blocos}</div><div class="d">blocos: 5 semanas de núcleo, 9 bônus e 10 lacunas de sênior</div></div>
+    <div class="stat"><div class="n">${totais.blocos}</div><div class="d">blocos: ${totais.roadmap} do roadmap da mentoria, 5 semanas de núcleo, 9 bônus e 10 lacunas de sênior</div></div>
     <div class="stat"><div class="n" id="stat-total">${totais.topicos}</div><div class="d">tópicos, a maioria ancorada no seu código</div></div>
     <div class="stat"><div class="n">${totais.leituras}</div><div class="d">leituras resumidas na própria página &middot; <span id="stat-leituras-lidas">0</span> lidas</div></div>
   </div>
@@ -330,6 +366,8 @@ const capa = cabeca('O Gabarito da Teoria', '') +
       <li><span class="r-tag t-ref">Consulta</span> Referência. Não é pra estudar: é pra saber que existe e voltar quando o problema aparecer.</li>
     </ul>
   </div>
+
+${focoRoadmap}
 
   <section class="week" id="trilhas">
     <div class="week-head"><h2 style="font-size:22px;">Trilhas por vaga</h2></div>
