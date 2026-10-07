@@ -14,6 +14,8 @@
     <li class="item"><input type="checkbox" id="w26-7"><label for="w26-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Regressão visual: <code>toHaveScreenshot()</code> do Playwright (ou Chromatic sobre o Storybook), baseline versionada, tolerância (<code>maxDiffPixels</code>) e por que a baseline tem de ser gerada no mesmo SO/navegador do CI</span></label></li>
     <li class="item"><input type="checkbox" id="w26-8"><label for="w26-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acessibilidade automatizada em dois níveis: por componente (<code>@storybook/addon-a11y</code>) e por página/fluxo (<code>@axe-core/playwright</code> com <code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) &mdash; e o limite honesto: o axe pega só uma parte dos critérios</span></label></li>
     <li class="item"><input type="checkbox" id="w26-9"><label for="w26-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">WCAG 2.1 na prática de componente: 1.4.1 (não depender só de cor), 1.4.3 / 1.4.11 (contraste de texto e de componente), 2.1.1 (teclado), 2.4.7 (foco visível), 1.4.10 (reflow sem rolagem horizontal) &mdash; e o que a 2.2 acrescentou (alvo mínimo, foco não encoberto)</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-10"><label for="w26-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição (compound components e <code>asChild</code>), documentação gerada do código e responsivo em componente: container queries, <code>clamp()</code>, alvo de toque e reflow a 320 px</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-11"><label for="w26-11"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acabamento de movimento e interação: durações e easing, animar só <code>transform</code> e <code>opacity</code>, spring vs. easing, <code>prefers-reduced-motion</code>, <code>document.startViewTransition</code> e estados de foco e hover</span></label></li>
   </ul>
 
   <h3 class="sub">Onde estudar (grátis)</h3>
@@ -101,14 +103,97 @@
     </div>
   </div>
 
-  <div class="gap">
-    <h4>Próximo passo do roadmap</h4>
-    <ol>
-      <li><strong>Aplicar Storybook no Ally AI</strong> criando um <code>packages/ui</code> no monorepo (Button, Input, Dialog com variantes em <code>cva</code>) e o <code>@storybook/addon-a11y</code> com <code>test: 'error'</code>. <em>Post R7:</em> &ldquo;Do design system ao Storybook&rdquo; (post 7 do calendário).</li>
-      <li><strong>Aplicar a ideia do motor do Ally AI na própria interface</strong>: um teste Playwright com <code>@axe-core/playwright</code> (<code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) nas rotas <code>/</code>, <code>/login</code> e <code>/dashboard</code>, rodando no CI. <em>Post R7:</em> &ldquo;A ferramenta de acessibilidade que audita a si mesma&rdquo;.</li>
-      <li><strong>Aplicar regressão visual no Gabarita</strong> com stories da <code>GradeNumerada</code> (uma por escala, decorator de tema claro/escuro) e <code>toHaveScreenshot()</code> das quatro escalas nos dois temas.</li>
-      <li><strong>Aplicar tokens exportáveis no Gabarita</strong>: os tokens do <code>@theme</code> num <code>tokens.json</code> no formato DTCG, gerando o CSS a partir dele &mdash; o passo que conecta o design system ao Figma (variables / Tokens Studio).</li>
-    </ol>
+  <h3 class="sub">Composição, documentação e responsivo em componente</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <h4>Composição em vez de prop pra tudo</h4>
+      <p>Um <code>&lt;Card title icon actions footer ...&gt;</code> ganha uma prop nova a cada pedido de design. A alternativa é expor <strong>partes que se encaixam</strong>: <code>&lt;Card&gt;&lt;Card.Header/&gt;&lt;Card.Body/&gt;&lt;/Card&gt;</code>, com o estado compartilhado por contexto (é como Tabs, Accordion e Select funcionam). Quem usa decide a ordem e o conteúdo; o componente continua dono do que não pode errar: ids, <code>aria-*</code>, gerenciamento de foco e teclado. O padrão <code>asChild</code> (o <code>Slot</code> do Radix) deixa trocar o elemento renderizado, um <code>&lt;a&gt;</code> no lugar de um <code>&lt;button&gt;</code>, sem perder o comportamento. Quando <strong>não</strong> usar: componente pequeno e fechado, onde as partes só adicionam cerimônia. Variantes visuais continuam em <code>cva</code>; composição resolve <em>estrutura</em>, variante resolve <em>aparência</em>.</p>
+      <h4>Documentação que não desatualiza</h4>
+      <p>O que documentar: quando usar e quando não usar, anatomia, variantes e estados, comportamento de teclado e ARIA, e exemplos que se copiam. Gerada do próprio código (as stories e os tipos das props) pra mudar junto com ele, e com as decisões que não aparecem no código escritas à parte, num registro curto de decisões.</p>
+      <h4>Responsivo dentro do componente</h4>
+      <ul>
+        <li><strong>Container queries</strong> (<code>@container</code>) fazem o componente se adaptar ao espaço onde está, e não à largura da janela. Num design system é o que importa: o mesmo card aparece numa coluna estreita e numa grade larga.</li>
+        <li><strong>Unidades relativas e <code>clamp()</code></strong> pra tipografia e espaçamento fluidos; <code>rem</code> respeita a fonte que a pessoa escolheu no navegador.</li>
+        <li><strong>Alvo de toque de 44 &times; 44 px</strong> é a recomendação das plataformas e o critério AAA 2.5.5 da WCAG 2.1; o mínimo de AA (WCAG 2.2) é 24 px.</li>
+        <li><strong>Reflow (1.4.10):</strong> sem rolagem horizontal a 320 px de largura, o equivalente a 400% de zoom numa tela de 1280 px. E nunca bloquear o zoom (<code>user-scalable=no</code> reprova).</li>
+        <li><strong>Testar:</strong> o Playwright troca o viewport por teste, e a story de cada componente em larguras estreita e larga pega o que a leitura do código não pega.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="sub">Acabamento visual: movimento, foco e hover</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <p>A diferença entre um componente que &ldquo;funciona&rdquo; e um que parece pronto está nos detalhes de estado e de movimento, e é o que o título <em>Design Engineer</em> promete. Movimento não é enfeite: ele mostra causa e efeito, de onde algo veio e o que mudou.</p>
+      <h4>Duração e easing</h4>
+      <ul>
+        <li><strong>Feedback imediato</strong> (hover, pressionar): 100 a 150 ms. <strong>Entrada e saída</strong> de elementos (menu, toast, diálogo): 150 a 300 ms. Acima de 500 ms só em transição grande, e a saída é sempre mais rápida que a entrada.</li>
+        <li><strong>Easing:</strong> <code>ease-out</code> pra entrada (começa rápido e assenta, parece responder ao usuário), <code>ease-in</code> pra saída, <code>ease-in-out</code> pra mover algo dentro da tela. <code>linear</code> parece mecânico, exceto em barra de progresso e rotação contínua.</li>
+        <li><strong>Anime só <code>transform</code> e <code>opacity</code>:</strong> rodam no compositor, sem recalcular layout. Animar <code>width</code>, <code>height</code>, <code>top</code> ou <code>left</code> força layout a cada quadro. E evite <code>transition: all</code>, que anima o que você não pensou e custa caro.</li>
+      </ul>
+      <h4>Spring versus easing</h4>
+      <p>O easing tem duração fixa e curva fixa. O <strong>spring</strong> é descrito por rigidez e amortecimento e <strong>preserva a velocidade</strong> quando é interrompido: se o usuário solta e pega de novo um elemento no meio do movimento, ele continua de onde está, sem pulo. Por isso o spring vale pra arrastar, gestos e qualquer coisa que se interrompe; o easing basta pra estado que vai de A a B e pronto. Em CSS puro, a função <code>linear()</code> aproxima um spring com várias paradas; spring de verdade vem de bibliotecas como a Motion.</p>
+      <h4><code>prefers-reduced-motion</code></h4>
+      <p>Não significa &ldquo;sem animação&rdquo;, significa <strong>sem movimento que enjoa</strong>: tire deslocamento, zoom, parallax e vídeo em loop, e mantenha a mudança de cor e de opacidade, que ainda comunica o estado. Há também a WCAG 2.2.2 (nível A): conteúdo que se move sozinho por mais de 5 s precisa de um jeito de pausar.</p>
+<pre><code class="esc">
+.btn {
+  transition: background-color 150ms ease-out, transform 100ms ease-out;
+}
+/* hover só onde existe ponteiro de verdade: no toque ele "gruda" depois do toque */
+@media (hover: hover) {
+  .btn:hover { background-color: var(--btn-hover); }
+}
+.btn:active { transform: scale(0.98); }
+/* outline, e não box-shadow: sobrevive ao modo de alto contraste (forced-colors) */
+.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: background-color 150ms ease-out; } /* mantém a cor, tira o movimento */
+  .btn:active { transform: none; }
+}
+</code></pre>
+      <h4>View Transitions</h4>
+      <p><code>document.startViewTransition(callback)</code> tira uma foto do estado atual, executa a atualização do DOM e anima da foto antiga pra nova com pseudo-elementos (<code>::view-transition-old</code> e <code>::view-transition-new</code>). <code>view-transition-name</code> num elemento faz ele &ldquo;viajar&rdquo; entre os dois estados (a miniatura que vira a imagem grande). Duas regras: sempre tenha o <strong>fallback</strong> (nem todo navegador suporta) e respeite o <code>reduce</code>. No React, a atualização precisa estar concluída quando o callback devolve, por isso o <code>flushSync</code>.</p>
+<pre><code class="esc">
+import { flushSync } from 'react-dom';
+
+function comTransicao(atualiza: () => void) {
+  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || semMovimento) return atualiza();
+  document.startViewTransition(() => flushSync(atualiza));
+}
+
+comTransicao(() => setAberto(true));
+</code></pre>
+      <h4>Estados que um componente acabado tem</h4>
+      <p>Padrão, hover, <code>:focus-visible</code>, pressionado, desabilitado e carregando &mdash; e o anel de foco com contraste de pelo menos 3:1 contra o fundo ao lado (WCAG 1.4.11). Mostrar a lista dos estados no Storybook é a forma mais rápida de ver o que falta. O <a href="r08-pratica.html#ex12">exercício 12</a> do R8 treina isso num toast feito a partir de um mock.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Você já usou...? A resposta honesta</h3>
+  <div class="evid">
+    <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Você já usou Storybook? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Em produção, não; no Gabarita a vitrine dos componentes é a página <code>/admin/design</code>. Eu faria assim: uma story por componente no formato CSF, com <code>args</code> pras variantes e uma <code>play</code> function pro comportamento; o addon de acessibilidade com <code>a11y.test: 'error'</code>, pra violação nova quebrar o CI; um decorator pra alternar tema claro e escuro; e a documentação gerada das próprias stories. Por quê: a story vira, ao mesmo tempo, documentação, caso de teste e alvo de regressão visual, em vez de três coisas que se desatualizam.</p>
+        <p><strong>In English:</strong> &ldquo;Not in production; Gabarita uses an internal <code>/admin/design</code> page as its showcase. I'd write CSF stories with args for variants and a play function for behavior, turn the a11y addon to error so new violations fail CI, add a theme decorator, and generate docs from the stories, so one artifact is docs, test and visual-regression target.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex10">exercício 10</a> (story CSF do <code>&lt;Button&gt;</code>).</p>
+      </div>
+      <div class="evid-item">
+        <h4>Você já conectou o design system ao Figma (variables, Code Connect)? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não. Os tokens estão em OKLCH no <code>@theme</code> do Tailwind, mas vivem só no código. Eu faria assim: os tokens num <code>tokens.json</code> no formato DTCG como fonte única, gerando o CSS e importados pelas variables do Figma (ou pelo Tokens Studio); e o Code Connect ligando cada componente do Figma ao componente de código, pra o modo Dev mostrar o snippet real e não um CSS aproximado. Por quê: designer e dev passam a falar do mesmo nome, e mudar um token é uma mudança só.</p>
+        <p><strong>In English:</strong> &ldquo;Not yet. My tokens live in code only. I'd keep a DTCG <code>tokens.json</code> as the single source, generate CSS from it, sync it with Figma variables, and use Code Connect so Dev Mode shows the real component snippet, so designers and devs share the same names.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex12">exercício 12</a> (construir a partir de um mock do Figma).</p>
+      </div>
+      <div class="evid-item">
+        <h4>Você já fez teste de regressão visual e de acessibilidade automatizado na própria interface? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não na interface: o Ally AI é, ele mesmo, um motor de acessibilidade automatizada, mas eu não rodo o axe nas telas dele no CI. Eu faria: <code>@axe-core/playwright</code> com as tags <code>wcag2a</code>, <code>wcag2aa</code>, <code>wcag21a</code> e <code>wcag21aa</code> nas rotas principais, falhando em violação nova; e <code>toHaveScreenshot()</code> (ou Chromatic) nas stories, com uma baseline por tema, rodando no mesmo container pra a fonte não mudar o pixel. Por quê: o automático pega só uma parte dos problemas, então ele guarda o piso e a revisão manual com teclado e leitor de tela continua.</p>
+        <p><strong>In English:</strong> &ldquo;Not on my own UI yet. I'd run <code>@axe-core/playwright</code> with the WCAG 2.1 A/AA tags on key routes and fail on new violations, plus screenshot tests per theme in the same container image; automation protects the floor, manual keyboard and screen-reader checks still matter.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex6">exercício 6</a> (Playwright + axe).</p>
+      </div>
+    </div>
   </div>
 
   <div class="ammo">
@@ -145,6 +230,12 @@
       <li>Se o axe-core não acusa nenhuma violação, o componente está conforme a WCAG 2.1 AA?
         <details class="ans"><summary>ver resposta</summary>
           <div class="ans-body"><p>Não. Teste automatizado pega só uma parte dos critérios (a doc do Storybook fala em até ~57% dos problemas): contraste calculável, nome acessível ausente, ARIA inválido. Ordem de foco que faz sentido, texto alternativo que descreve o que importa, foco que não se perde num fluxo, leitor de tela anunciando a coisa certa &mdash; isso é teclado e NVDA/VoiceOver na mão. Por isso o Ally AI tem como regra &ldquo;nunca afirmar conformidade&rdquo;, e a aba <em>incomplete</em> do addon-a11y existe.</p></div>
+        </details>
+      </li>
+      <li>Como o Storybook e o Figma se encaixam num fluxo de design system? O que cada um resolve?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>O <strong>Figma</strong> é a fonte do <em>design</em>: componentes, variantes e variables (cores, espaçamentos). O <strong>Storybook</strong> é a fonte do <em>componente de código</em>: estados reais, documentação e testes (acessibilidade, interação, regressão visual). Cada um sozinho desatualiza o outro.</p>
+<p>A ligação é feita em três pontos: os <strong>tokens</strong> (as variables do Figma e as CSS variables dizem a mesma coisa, de preferência geradas de um <code>tokens.json</code>), o <strong>Code Connect</strong> (liga cada componente do Figma ao componente de código, e o modo Dev mostra o snippet real) e a <strong>convenção de nomes</strong> (a variante <code>destructive</code> do Figma é a mesma do <code>cva</code>). O risco é ter duas fontes de verdade que divergem; a regra é um dono por token, e a mudança passando por um lado só.</p></div>
         </details>
       </li>
     </ol>

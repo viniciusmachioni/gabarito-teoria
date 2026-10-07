@@ -1,7 +1,7 @@
 <section class="week" id="rm8">
   <div class="week-head"><span class="week-num">R8</span><h2>Prática: live coding e system design de IA</h2></div>
-  <div class="week-meta">~12h, em sessões de 45 min &middot; o que a entrevista pede pra você <em>fazer</em>, não pra explicar</div>
-  <p class="intro">As páginas R1&ndash;R6 ensinam a explicar. Esta treina o outro formato da entrevista: alguém te dá um enunciado e 45 minutos. São <strong>cinco exercícios de live coding</strong> tirados das frentes do roadmap (streaming, estado de chat, retry, componente de design system e Generative UI com aprovação humana) e <strong>um caso completo de front-end system design</strong>: a interface de um assistente de IA, a pergunta mais comum em vaga de Frontend com foco em IA. Cada exercício tem enunciado do jeito que o entrevistador fala, o que ele observa, dicas que você abre só se travar, solução comentada e as perguntas que vêm depois. Base teórica: <a href="r01-ai-frontend.html">R1</a> pros exercícios 1, 2, 3 e 5, <a href="r02-design-systems.html">R2</a> pro 4, e o framework RADIO do <a href="b14-frontend-system-design.html">B14</a> pro caso de system design.</p>
+  <div class="week-meta">~16h, em sessões de 45 min &middot; o que a entrevista pede pra você <em>fazer</em>, não pra explicar</div>
+  <p class="intro">As páginas R1&ndash;R6 ensinam a explicar. Esta treina o outro formato da entrevista: alguém te dá um enunciado e 45 minutos. São <strong>doze exercícios de live coding</strong> tirados das frentes do roadmap (streaming, estado de chat, retry, componente de design system, Generative UI com aprovação humana, Playwright com axe, <code>ci.yml</code> com deploy por OIDC, servidor MCP, RAG com pgvector, stories com teste de acessibilidade, refatoração pra Server Component e um toast construído a partir de um mock) e <strong>um caso completo de front-end system design</strong>: a interface de um assistente de IA, a pergunta mais comum em vaga de Frontend com foco em IA. Cada exercício tem enunciado do jeito que o entrevistador fala, o que ele observa, dicas que você abre só se travar, solução comentada e as perguntas que vêm depois. Base teórica: <a href="r01-ai-frontend.html">R1</a> pros exercícios 1, 2, 3 e 5; <a href="r02-design-systems.html">R2</a> pros 4, 10 e 12; <a href="r03-arquitetura-frontend.html">R3</a> pro 11; <a href="r04-ai-fullstack.html">R4</a> pros 6 e 9; <a href="r05-cloud-aws.html">R5</a> pro 7; <a href="r06-proximo-nivel.html">R6</a> pro 8; e o framework RADIO do <a href="b14-frontend-system-design.html">B14</a> pro caso de system design. Os exercícios 6 a 12 cobrem os pedidos do roadmap que os dois projetos ainda não fazem, e é aqui que a resposta &ldquo;não usei em produção, mas fiz o exercício&rdquo; ganha corpo.</p>
 
   <h3 class="sub">Tópicos</h3>
   <ul class="checklist">
@@ -12,6 +12,13 @@
     <li class="item"><input type="checkbox" id="w32-5"><label for="w32-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 5 &mdash; renderizar <code>parts</code> de uma resposta de IA por tipo e por estado, com cartão de aprovação humana pra ação sensível</span></label></li>
     <li class="item"><input type="checkbox" id="w32-6"><label for="w32-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">System design &mdash; a interface de um assistente de IA em 45 min, em voz alta e gravado, cobrindo as cinco etapas do RADIO</span></label></li>
     <li class="item"><input type="checkbox" id="w32-7"><label for="w32-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As três variações de system design (agente de tarefa longa, autocomplete com IA, resumo com citações) em 20 min cada</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-8"><label for="w32-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 6 &mdash; teste e2e do chat com Playwright: <code>page.route</code> devolvendo SSE gravado, o caso do 503 com retry e <code>@axe-core/playwright</code> no fim</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-9"><label for="w32-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 7 &mdash; <code>ci.yml</code> no quadro: cache do pnpm, <code>concurrency</code>, <code>services: postgres</code>, permissões mínimas e deploy por OIDC com a trust policy</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-10"><label for="w32-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 8 &mdash; servidor MCP mínimo com uma tool de <code>inputSchema</code> em Zod, filtro de SSRF e nenhum log no stdout</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-11"><label for="w32-11"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 9 &mdash; questões parecidas com pgvector: coluna, índice HNSW, consulta com filtro e o limite de 2.000 dimensões</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-12"><label for="w32-12"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 10 &mdash; stories do <code>&lt;Button&gt;</code> em CSF com <code>play</code> function e <code>a11y.test: 'error'</code></span></label></li>
+    <li class="item"><input type="checkbox" id="w32-13"><label for="w32-13"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 11 &mdash; refatorar busca no cliente pra Server Component: <code>Promise.all</code>, <code>Suspense</code> e <code>'use cache'</code> só no dado compartilhado</span></label></li>
+    <li class="item"><input type="checkbox" id="w32-14"><label for="w32-14"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 12 &mdash; construir um toast a partir de um mock do Figma: tokens, movimento com versão reduzida, regiões de anúncio e tempo que pausa</span></label></li>
   </ul>
 
   <h3 class="sub">Como treinar</h3>
@@ -86,11 +93,13 @@ export async function streamChat(prompt, { onDelta, signal } = {}) {
       const { done, value } = await reader.read();
       buffer += done ? decoder.decode() : decoder.decode(value, { stream: true });
       const eventos = buffer.split('\n\n');
-      buffer = done ? '' : eventos.pop(); // o último pode estar pela metade
+      buffer = eventos.pop(); // o último pode estar pela metade (ou ser só o '' depois do \n\n)
       for (const evento of eventos) {
         if (processa(evento)) return { texto, completo: true };
       }
-      if (done) return { texto, completo: false }; // fechou sem [DONE]: truncada
+      // fechou sem [DONE]: truncada. O que sobrou no buffer é evento sem a linha em branco
+      // no fim; a spec de SSE manda descartá-lo, e processá-lo daria SyntaxError
+      if (done) return { texto, completo: false };
     }
   } finally {
     // saiu antes do fim (erro de parse, [DONE], abort): fecha a conexão de verdade
@@ -126,6 +135,14 @@ for (let corte = 1; corte < bytes.length; corte++) {
   vi.stubGlobal('fetch', async () => new Response(body));
   expect(await streamChat('x')).toEqual({ texto: 'olá ação', completo: true });
 }
+
+// o caso que o loop acima NÃO cobre: a conexão cai no meio de um evento e o stream fecha.
+// O evento cortado tem que ser descartado, não virar SyntaxError
+const cortado = new TextEncoder().encode('data: {"delta":"olá"}\n\ndata: {"del');
+vi.stubGlobal('fetch', async () => new Response(new ReadableStream({
+  start(c) { c.enqueue(cortado); c.close(); },
+})));
+expect(await streamChat('x')).toEqual({ texto: 'olá', completo: false });
 </code></pre>
       </div></details>
       <div class="quiz">
@@ -159,7 +176,7 @@ type Msg = { id: string; role: 'user' | 'assistant'; text: string; incompleta?: 
 
 function useChat(): {
   messages: Msg[]; status: Status; error: Error | null;
-  send(text: string): void; stop(): void; retry(): void;
+  send(text: string): boolean; stop(): void; retry(): void; // send diz se aceitou o envio
 };
 </code></pre>
       <h4>Requisitos</h4>
@@ -234,11 +251,12 @@ export function useChat() {
     }
   }, []);
 
-  const send = useCallback((texto: string) => {
+  const send = useCallback((texto: string): boolean => {
     const t = texto.trim();
-    if (!t || ctrlRef.current) return; // uma requisição por vez
+    if (!t || ctrlRef.current) return false; // uma requisição por vez
     setMessages((ms) => [...ms, { id: crypto.randomUUID(), role: 'user', text: t }]);
     void run(t);
+    return true;
   }, [run]);
 
   const retry = useCallback(() => {
@@ -282,8 +300,8 @@ function Chat() {
         onSubmit={(e) => {
           e.preventDefault();
           const form = e.currentTarget;
-          send(String(new FormData(form).get('q') ?? ''));
-          form.reset();
+          // Enter ainda submete o form durante a resposta (envio implícito): só limpa se o envio foi aceito
+          if (send(String(new FormData(form).get('q') ?? ''))) form.reset();
         }}
       >
         <label htmlFor="q">Sua pergunta</label>
@@ -683,6 +701,832 @@ function Reserva({ part, voo, onAprovar }: {
           </li>
           <li>Pedir aprovação pra toda ferramenta não seria mais seguro?
             <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Seria mais seguro no papel e menos na prática: confirmação pra tudo treina o usuário a clicar &ldquo;sim&rdquo; sem ler. Aprovação entra onde a ação é irreversível, custa dinheiro ou fala em nome do usuário, e de preferência por regra dinâmica (reserva acima de um valor, e-mail pra fora da empresa). Buscar voos é leitura: roda direto.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 6 ===================== -->
+  <div class="ex" id="ex6">
+    <div class="ex-head"><span class="ex-n">EX 6</span><h3>Teste end-to-end do chat com Playwright e axe</h3><span class="ex-meta">40 min &middot; Playwright + TS &middot; R2/R4</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Escreva o teste end-to-end do chat dos exercícios 1 e 2. O CI não pode chamar o modelo de verdade. Quero um teste em que a resposta aparece, outro em que o servidor devolve 503 e o usuário consegue tentar de novo, e uma checagem de acessibilidade da tela com a resposta na página.&rdquo;</p>
+      <h4>Requisitos que você deve levantar</h4>
+      <ul>
+        <li>O modelo é lento, caro e não determinístico: a rede é interceptada, e a resposta vem de um corpo SSE gravado.</li>
+        <li>Seletores por papel e nome acessível (<code>getByRole</code>, <code>getByLabel</code>), não por classe nem por <code>data-testid</code>.</li>
+        <li>Sem <code>waitForTimeout</code>: o Playwright espera as asserções sozinho.</li>
+        <li>O axe roda com as tags da WCAG 2.1 A e AA, e <strong>depois</strong> que a resposta apareceu.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você sabe <em>o que</em> um teste e2e cobre que o unitário não cobre, e vice-versa.</li>
+        <li>Se o teste do erro conta as chamadas dentro do handler da rota, pra provar que o retry foi de fato uma segunda requisição.</li>
+        <li>Se você lembra que acessibilidade automatizada acha só uma parte dos problemas.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>route.fulfill({ status, headers, body })</code> responde sem ir à rede. Pra SSE, o <code>content-type</code> é <code>text/event-stream</code> e o corpo é o texto <code>data: {...}\n\n</code> repetido, terminando em <code>data: [DONE]\n\n</code>.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>No segundo teste, o handler da rota decide pela contagem de chamadas: a primeira devolve 503, a segunda devolve a resposta boa. Assim a mesma URL se comporta como uma API instável de verdade.</p></div></details>
+      <details class="dica"><summary>dica 3</summary><div class="dica-body"><p><code>new AxeBuilder({ page }).analyze()</code> audita o DOM do momento. Se rodar antes de a resposta chegar, você audita a tela vazia e o teste passa sem provar nada. Espere a asserção do texto antes.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+// monta o corpo SSE que o endpoint real devolveria
+const sse = (...deltas: string[]) =>
+  deltas.map((d) => `data: ${JSON.stringify({ delta: d })}\n\n`).join('') + 'data: [DONE]\n\n';
+
+const resposta = (body: string) => ({
+  status: 200,
+  headers: { 'content-type': 'text/event-stream' },
+  body,
+});
+
+test('mostra a resposta e não tem violação de acessibilidade', async ({ page }) => {
+  await page.route('**/api/chat', (route) =>
+    route.fulfill(resposta(sse('Nonce é ', 'um valor ', 'por request.'))),
+  );
+  await page.goto('/chat');
+
+  await page.getByLabel('Sua pergunta').fill('O que é nonce?');
+  await page.getByRole('button', { name: 'Enviar' }).click();
+
+  // espera pelo resultado, nunca por tempo
+  await expect(page.getByText('Nonce é um valor por request.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Enviar' })).toBeVisible(); // voltou ao estado "ready"
+
+  const axe = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .analyze();
+  expect(axe.violations).toEqual([]);
+});
+
+test('503 mostra "Tentar de novo" e a segunda tentativa funciona', async ({ page }) => {
+  let chamadas = 0;
+  await page.route('**/api/chat', (route) => {
+    chamadas += 1;
+    return chamadas === 1
+      ? route.fulfill({ status: 503, body: 'indisponível' })
+      : route.fulfill(resposta(sse('Pronto.')));
+  });
+  await page.goto('/chat');
+  await page.getByLabel('Sua pergunta').fill('Oi');
+  await page.getByRole('button', { name: 'Enviar' }).click();
+
+  await expect(page.getByRole('alert')).toContainText('Falha HTTP 503');
+  await page.getByRole('button', { name: 'Tentar de novo' }).click();
+
+  await expect(page.getByText('Pronto.')).toBeVisible();
+  expect(chamadas).toBe(2); // o retry foi uma segunda requisição de verdade
+});
+</code></pre>
+<h5>Configuração mínima</h5>
+<pre><code class="esc">
+// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './e2e',
+  retries: process.env.CI ? 1 : 0,
+  use: { baseURL: 'http://localhost:3000', trace: 'on-first-retry' },
+  webServer: {
+    command: 'pnpm build && pnpm start',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+  },
+});
+</code></pre>
+<p><strong>Por que o <code>trace: 'on-first-retry'</code>:</strong> o trace (DOM, rede e console de cada passo) só é gravado quando o teste falha e roda de novo, então o custo some no caso comum e o diagnóstico aparece quando precisa.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>O <code>route.fulfill</code> entrega o corpo inteiro de uma vez. Então esse teste não prova o streaming. Como você testa o streaming de verdade?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>O end-to-end valida a <strong>integração</strong> (a tela, o endpoint e os estados); as <strong>bordas do protocolo</strong> (evento e caractere partidos entre pedaços, conexão que cai) são do teste unitário do leitor, como o do exercício 1. Quando for preciso atrasar ou fatiar a resposta no e2e, o caminho é um servidor de teste pequeno que escreve o corpo em intervalos, ou, pra WebSocket, o <code>page.routeWebSocket</code>.</p></div></details>
+          </li>
+          <li>O axe passou sem violação. Pode dizer que a tela é acessível?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não. A ferramenta automática acha uma <strong>parte</strong> dos problemas: contraste, nome faltando, ARIA inválido, id repetido. Não acha se a ordem do foco faz sentido, se o texto alternativo descreve a imagem, se o fluxo é possível só com o teclado, ou como um leitor de tela lê a página. O axe guarda o piso (nada novo quebra em silêncio); a revisão manual com teclado e leitor de tela continua.</p></div></details>
+          </li>
+          <li>O teste passa localmente e falha às vezes no CI. Por onde você começa?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Pelo <strong>trace</strong> da execução que falhou, não por um <code>waitForTimeout</code> maior. As causas comuns: assertar antes de a tela estar pronta (use as asserções com espera automática), depender de ordem ou de dado compartilhado entre testes, relógio e fuso diferentes, e ambiente mais lento. Teste instável não se resolve com <code>retries</code> alto: o retry esconde o sintoma, e o trace mostra a causa.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 7 ===================== -->
+  <div class="ex" id="ex7">
+    <div class="ex-head"><span class="ex-n">EX 7</span><h3><code>ci.yml</code> no quadro: do pull request ao deploy na AWS</h3><span class="ex-meta">35 min &middot; GitHub Actions &middot; R5</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Escreva o pipeline do nosso monorepo Next.js com Postgres. Em todo pull request roda lint, typecheck, testes e build; os testes usam um Postgres de verdade. Quando algo entra na main, faz deploy na AWS, e eu não quero chave da AWS guardada no GitHub.&rdquo;</p>
+      <h4>Requisitos que você deve levantar</h4>
+      <ul>
+        <li>Feedback rápido e barato: cache do gerenciador de pacotes e cancelamento de execução obsoleta.</li>
+        <li>Postgres descartável, com espera até ficar saudável antes dos testes.</li>
+        <li>Permissões mínimas por padrão; só o job de deploy pode pedir o token OIDC.</li>
+        <li>O deploy só roda depois do CI, só na main, e a role da AWS só aceita esse repositório e essa branch.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você escreve <code>permissions</code> explícito (o padrão do token pode ser largo demais).</li>
+        <li>Se sabe o que <code>concurrency</code> e <code>needs</code> fazem, e onde o <code>cancel-in-progress</code> é perigoso.</li>
+        <li>Se a trust policy tem a condição <code>sub</code>: sem ela, qualquer repositório com o mesmo provider poderia tentar assumir a role.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Dois jobs: <code>qualidade</code> (roda em PR e em push) e <code>deploy</code> com <code>needs: qualidade</code> e um <code>if</code> que exige push na main. O token OIDC só é pedido no segundo.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>O container do Postgres demora a aceitar conexão. O <code>options</code> do service com <code>--health-cmd pg_isready</code> faz o GitHub esperar ele ficar saudável antes de iniciar os passos.</p></div></details>
+      <details class="dica"><summary>dica 3</summary><div class="dica-body"><p>Pra role: um provider de identidade pra <code>token.actions.githubusercontent.com</code> no IAM, e uma trust policy com <code>sts:AssumeRoleWithWebIdentity</code>, <code>aud</code> igual a <code>sts.amazonaws.com</code> e <code>sub</code> igual a <code>repo:ORG/REPO:ref:refs/heads/main</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+name: ci
+on:
+  pull_request:
+  push: { branches: [main] }
+
+concurrency:                       # push novo no mesmo PR cancela a execução anterior
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: { contents: read }    # o mínimo pra todo job
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: app_test }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo lint typecheck test build
+
+  deploy:
+    needs: qualidade
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions: { id-token: write, contents: read }   # só aqui o OIDC
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/deploy-web
+          aws-region: eu-west-1
+      - run: ./scripts/deploy.sh   # build da imagem, push pro ECR, atualiza o serviço
+</code></pre>
+<h5>A trust policy da role</h5>
+<pre><code class="esc">
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {
+      "Federated": "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+    },
+    "Action": "sts:AssumeRoleWithWebIdentity",
+    "Condition": {
+      "StringEquals": {
+        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+        "token.actions.githubusercontent.com:sub": "repo:ORG/REPO:ref:refs/heads/main"
+      }
+    }
+  }]
+}
+</code></pre>
+<p><strong>Como defender cada linha:</strong> <code>--frozen-lockfile</code> faz o CI falhar se o lockfile não bate com o <code>package.json</code>, em vez de instalar outra coisa em silêncio; <code>timeout-minutes</code> impede um job travado de consumir a cota; o job de PR nem tem permissão de pedir o token, então código de um PR nunca assume role nenhuma; e a condição <code>sub</code> é o controle de verdade da role. Versões das actions são ilustrativas: use as atuais e, em produção, fixe por SHA.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Posso pôr <code>cancel-in-progress: true</code> no job de deploy também?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Com cuidado. Em PR é ótimo, porque só importa o último commit. No deploy de produção, cancelar no meio pode deixar o ambiente <strong>pela metade</strong> (imagem enviada e serviço não atualizado). O mais seguro é um grupo de <code>concurrency</code> próprio pro deploy, com <code>cancel-in-progress: false</code>: o novo espera o anterior terminar, em fila.</p></div></details>
+          </li>
+          <li>O CI do monorepo está levando 25 minutos. Como acelera?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Primeiro medir qual passo domina. Depois: cache do pnpm (já feito), <strong>cache remoto do Turborepo</strong> pra não refazer o que não mudou, rodar só o que o PR afetou (<code>turbo --filter</code> a partir da branch base), separar lint, typecheck e testes em jobs paralelos, e dividir a suíte lenta em partes (<code>matrix</code> ou <code>--shard</code>). O build do Next também tem cache (<code>.next/cache</code>) que vale guardar.</p></div></details>
+          </li>
+          <li>Um PR vem de um fork. Ele tem acesso aos segredos?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não, e é de propósito: no evento <code>pull_request</code> de um fork, os segredos não são entregues e o token é só de leitura. O perigo está no <code>pull_request_target</code>, que roda com os segredos do repositório base: nunca faça checkout e execute o código do PR nele. Pro deploy, o desenho com OIDC e a condição <code>sub</code> na <code>main</code> já impede que código de PR assuma a role.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 8 ===================== -->
+  <div class="ex" id="ex8">
+    <div class="ex-head"><span class="ex-n">EX 8</span><h3>Um servidor MCP mínimo com uma ferramenta</h3><span class="ex-meta">40 min &middot; Node + TS &middot; R6</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Exponha a auditoria de acessibilidade como ferramenta pra um agente de código. Crie um servidor MCP com uma tool <code>audit_url</code>: recebe uma URL, roda a auditoria e devolve as violações mais graves. Use o SDK oficial em TypeScript e o transporte stdio. Cuidado com o que o modelo pode pedir.&rdquo;</p>
+      <h4>Requisitos que você deve levantar</h4>
+      <ul>
+        <li>O <code>inputSchema</code> é um schema Zod, e a <strong>descrição</strong> diz quando usar e quando não usar: é o que o modelo lê pra decidir.</li>
+        <li>A URL vem do modelo, ou seja, de fora: ela passa por um filtro de SSRF (nada de <code>localhost</code>, IP privado ou link-local) antes de qualquer requisição.</li>
+        <li>No transporte stdio, <strong>stdout é o protocolo</strong>: nenhum <code>console.log</code>. Log vai pra stderr.</li>
+        <li>Falha de negócio volta como resultado com <code>isError: true</code>, não como exceção que derruba o servidor.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você trata os argumentos da ferramenta como entrada não confiável, igual a um formulário.</li>
+        <li>Se limita o tamanho da resposta (o resultado volta pro contexto do modelo e custa tokens).</li>
+        <li>Se sabe a diferença entre tool, resource e prompt.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>A estrutura é: criar o <code>McpServer</code> com nome e versão, registrar a tool com <code>registerTool(nome, config, handler)</code>, criar um <code>StdioServerTransport</code> e chamar <code>server.connect(transport)</code>.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>O handler devolve <code>{ content: [{ type: 'text', text }] }</code>. Pra sinalizar falha ao modelo sem lançar exceção, acrescente <code>isError: true</code> e escreva no texto o que ele pode fazer de diferente.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { McpServer } from '@modelcontextprotocol/server';
+import { StdioServerTransport } from '@modelcontextprotocol/server/stdio';
+import { z } from 'zod';
+import { runAudit } from './audit';         // seu código: Puppeteer + axe-core
+import { urlPermitida } from './url-guard'; // bloqueia localhost, IP privado e link-local
+
+const server = new McpServer({ name: 'ally-audit', version: '0.1.0' });
+
+server.registerTool(
+  'audit_url',
+  {
+    description:
+      'Audita a acessibilidade (WCAG 2.1) de uma página pública com axe-core e devolve ' +
+      'as violações, da mais grave para a menos grave. Use quando o usuário pedir pra ' +
+      'checar uma página. Não use para páginas que exigem login.',
+    inputSchema: z.object({
+      url: z.string().url().describe('URL pública, começando com https://'),
+    }),
+  },
+  async ({ url }) => {
+    if (!(await urlPermitida(url))) {
+      return {
+        isError: true,
+        content: [{ type: 'text', text: 'URL não permitida (interna ou inválida). Informe uma URL pública.' }],
+      };
+    }
+    const violacoes = await runAudit(url);
+    const maisGraves = violacoes.slice(0, 20); // o resultado volta pro contexto: tamanho tem teto
+    return {
+      content: [{ type: 'text', text: JSON.stringify(maisGraves, null, 2) }],
+    };
+  },
+);
+
+async function main() {
+  await server.connect(new StdioServerTransport());
+  console.error('ally-audit rodando em stdio'); // stderr: stdout é o protocolo
+}
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+</code></pre>
+<h5>Plugando num agente</h5>
+<pre><code class="esc">
+npm install @modelcontextprotocol/server zod
+npm run build
+claude mcp add ally-audit -- node dist/server.js
+</code></pre>
+<p><strong>Detalhes pra mencionar:</strong> a descrição da ferramenta é <em>prompt</em>: ela decide se o modelo escolhe a tool. Versões anteriores do SDK (1.x) usam o pacote <code>@modelcontextprotocol/sdk</code>, então confira a documentação da versão que você instalou. E o filtro de SSRF precisa resolver o DNS e conferir o IP final, senão <code>meusite.com</code> apontando pra <code>169.254.169.254</code> passa.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Por que um <code>console.log</code> quebra um servidor MCP em stdio?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Porque no stdio o protocolo <strong>é</strong> o stdout: o cliente lê mensagens JSON-RPC linha a linha, e uma linha de log no meio vira JSON inválido. Todo log vai pra <code>stderr</code> (<code>console.error</code>) ou pra arquivo. Num servidor HTTP o problema não existe, porque o protocolo viaja na conexão e não no stdout.</p></div></details>
+          </li>
+          <li>Quando eu levo esse servidor de stdio pra HTTP remoto, o que muda?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Muda quem fala com ele: deixa de ser um processo seu, com as suas permissões, e passa a ser um serviço exposto a clientes de terceiros. Entram <strong>autorização</strong> (OAuth, token emitido pra esse servidor e nunca repassado adiante), escopos mínimos, limites de uso, e as defesas que a spec nomeia, como token passthrough e SSRF. O código da ferramenta quase não muda; o perímetro em volta dela muda quase tudo.</p></div></details>
+          </li>
+          <li>E se a auditoria devolvesse um gráfico interativo em vez de JSON?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>É o caso do <strong>MCP Apps</strong>: a ferramenta declara um recurso <code>ui://</code> e o host o mostra num iframe isolado dentro da conversa, com comunicação por <code>postMessage</code>. Vale quando a pessoa precisa explorar o resultado (filtrar por impacto, abrir uma violação); se um texto resolve, não compensa a complexidade. Detalhes na página <a href="r06-proximo-nivel.html">R6</a>.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 9 ===================== -->
+  <div class="ex" id="ex9">
+    <div class="ex-head"><span class="ex-n">EX 9</span><h3>Questões parecidas com pgvector</h3><span class="ex-meta">45 min &middot; SQL + TS &middot; R4</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Temos a tabela <code>questions(id, stem, specialty)</code> no Postgres. Quero o endpoint <code>GET /api/similar?id=...</code> que devolve as 5 questões mais parecidas com a pedida, da mesma especialidade, sem repetir a própria. Use o Gemini pra gerar os embeddings e o pgvector pra buscar. Crie a coluna, o índice, a consulta e o endpoint.&rdquo;</p>
+      <h4>Requisitos que você deve levantar</h4>
+      <ul>
+        <li>Qual a dimensão do vetor? Ela decide o armazenamento e se o índice cabe (<code>vector</code> indexa até 2.000 dimensões; o padrão do Gemini é 3.072).</li>
+        <li>Qual a métrica? Pra texto, distância de cosseno.</li>
+        <li>O filtro por especialidade vai junto do índice aproximado. Isso tem uma pegadinha.</li>
+        <li>Guardar o nome do modelo: trocar de modelo exige reindexar tudo.</li>
+        <li>Quando gerar o embedding: na criação da questão, num job, e não no request do usuário.</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você escolhe <code>vector_cosine_ops</code> com <code>&lt;=&gt;</code> e não mistura operador com classe do índice.</li>
+        <li>Se percebe que filtro + HNSW pode devolver menos linhas que o <code>LIMIT</code>.</li>
+        <li>Se o embedding da <em>pergunta</em> e o do <em>documento</em> usam o mesmo propósito de tarefa.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>768 dimensões com <code>outputDimensionality</code> cabe no índice e custa uns 3 KB por linha. No <code>gemini-embedding-001</code> os vetores truncados não vêm normalizados: pra cosseno não importa, mas pra produto interno (<code>&lt;#&gt;</code>) você normaliza na mão.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>No HNSW, o filtro <code>WHERE</code> é aplicado <strong>depois</strong> do scan do índice. Se a especialidade tem 10% das linhas, o scan padrão traz poucos candidatos que casam. O pgvector tem <code>hnsw.iterative_scan</code> pra continuar buscando até completar o <code>LIMIT</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+-- migration
+CREATE EXTENSION IF NOT EXISTS vector;
+
+ALTER TABLE questions
+  ADD COLUMN embedding vector(768),
+  ADD COLUMN embedding_model text;       -- o vetor só vale pra comparar com o MESMO modelo
+
+CREATE INDEX questions_embedding_hnsw
+  ON questions USING hnsw (embedding vector_cosine_ops);
+</code></pre>
+<h5>O job que gera o embedding (no worker, na criação da questão)</h5>
+<pre><code class="esc">
+import { GoogleGenAI } from '@google/genai';
+import type { Pool } from 'pg';
+import pgvector from 'pgvector';
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const MODELO = 'gemini-embedding-001';
+
+async function embute(texto: string, tarefa: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY') {
+  const res = await ai.models.embedContent({
+    model: MODELO,
+    contents: texto,
+    config: { outputDimensionality: 768, taskType: tarefa },
+  });
+  const valores = res.embeddings?.[0]?.values;
+  if (!valores) throw new Error('embedding vazio');
+  return valores;
+}
+
+export async function indexaQuestao(db: Pool, id: number, enunciado: string) {
+  const v = await embute(enunciado, 'RETRIEVAL_DOCUMENT');
+  await db.query(
+    'UPDATE questions SET embedding = $1::vector, embedding_model = $2 WHERE id = $3',
+    [pgvector.toSql(v), MODELO, id],
+  );
+}
+</code></pre>
+<h5>A consulta e o endpoint</h5>
+<pre><code class="esc">
+// app/api/similar/route.ts
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+
+export async function GET(req: Request) {
+  const id = Number(new URL(req.url).searchParams.get('id'));
+  if (!Number.isInteger(id)) return NextResponse.json({ erro: 'id inválido' }, { status: 400 });
+
+  const cliente = await db.connect();
+  try {
+    await cliente.query('BEGIN');
+    // com filtro, o scan do índice pode trazer menos linhas que o LIMIT: continua até completar
+    await cliente.query("SET LOCAL hnsw.iterative_scan = 'relaxed_order'");
+    const { rows } = await cliente.query(
+      `SELECT id, stem,
+              1 - (embedding <=> (SELECT embedding FROM questions WHERE id = $1)) AS similaridade
+         FROM questions
+        WHERE id <> $1
+          AND specialty = (SELECT specialty FROM questions WHERE id = $1)
+          AND embedding IS NOT NULL
+        ORDER BY embedding <=> (SELECT embedding FROM questions WHERE id = $1)
+        LIMIT 5`,
+      [id],
+    );
+    await cliente.query('COMMIT');
+    return NextResponse.json(rows);
+  } finally {
+    cliente.release();
+  }
+}
+</code></pre>
+<p><strong>Detalhes pra mencionar:</strong> a consulta usa o embedding já salvo da questão (não chama o Gemini no request, então é rápida e de graça); o <code>ORDER BY</code> usa o mesmo operador da classe do índice e compara com uma <em>subconsulta escalar</em>, o formato que a documentação do pgvector usa para achar os vizinhos de uma linha, e que deixa o índice ser usado no <code>ORDER BY</code>; <code>SET LOCAL</code> vale só dentro da transação; e a pegadinha de entrevista é a dimensão: 3.072 (o padrão) não indexa em <code>vector</code>, então ou pede menos dimensões, ou indexa como <code>halfvec</code> (até 4.000).</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Isso é RAG?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>É a metade da recuperação (R de <em>retrieval</em>). RAG completo é buscar os trechos relevantes e <strong>entregá-los ao modelo como contexto</strong> pra ele responder ancorado neles. Aqui o resultado vai pra interface como lista; se os 5 enunciados fossem colocados no prompt pra explicar um conceito comum a eles, aí sim seria RAG. Vale dizer também que os dois projetos já ancoram o prompt em dado real do banco, só que por filtro, não por similaridade.</p></div></details>
+          </li>
+          <li>Trocamos de modelo de embedding. O que acontece?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Os vetores antigos deixam de ser comparáveis com os novos: cada modelo tem o seu espaço. É preciso <strong>reindexar tudo</strong>: reembutir cada linha (um job em lote, de preferência pela Batch API, que custa metade), gravar o nome do modelo novo e só então trocar a consulta. Por isso a coluna <code>embedding_model</code>: ela permite migrar aos poucos e saber o que ainda é do modelo velho.</p></div></details>
+          </li>
+          <li>HNSW ou IVFFlat?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>HNSW tem melhor relação velocidade e recall, não precisa de dados pra ser criado, e custa mais memória e tempo de build. IVFFlat constrói rápido e ocupa pouco, mas precisa ser criado <em>depois</em> de ter dados (ele aprende as listas) e consulta mais devagar. Na dúvida, e com tabela que cresce aos poucos, HNSW. Sem índice nenhum, a busca é exata e perfeita em recall, e pra uma tabela de poucos milhares de linhas isso costuma bastar.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 10 ===================== -->
+  <div class="ex" id="ex10">
+    <div class="ex-head"><span class="ex-n">EX 10</span><h3>As stories do <code>&lt;Button&gt;</code> com teste de interação e de acessibilidade</h3><span class="ex-meta">35 min &middot; Storybook + TS &middot; R2</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Pegue o <code>&lt;Button&gt;</code> do exercício 4 e escreva as stories. Quero uma por variante que importa, uma do estado de carregamento que <em>prove</em> que o clique é ignorado e o foco continua no botão, e o Storybook tem que falhar o CI se aparecer violação de acessibilidade. Documentação gerada, sem escrever à mão.&rdquo;</p>
+      <h4>Requisitos que você deve levantar</h4>
+      <ul>
+        <li>CSF com <code>satisfies Meta&lt;typeof Button&gt;</code>: os <code>args</code> ficam tipados pelo componente.</li>
+        <li>O addon de acessibilidade em <code>test: 'error'</code> (e não só como painel de aviso).</li>
+        <li>Uma <code>play</code> function que simula o clique e <strong>assere</strong> o comportamento.</li>
+        <li>Uma maneira de ver os dois temas (claro e escuro).</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se a story é <em>teste</em> e não só vitrine: tem asserção.</li>
+        <li>Se você sabe o que o <code>test: 'error'</code> muda em relação ao padrão (que só mostra violação na interface).</li>
+        <li>Se pensa em quais combinações valem uma story, em vez de uma por combinação possível.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>tags: ['autodocs']</code> no <code>meta</code> gera a página de documentação a partir dos tipos das props e das próprias stories.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>No contexto da <code>play</code> function você recebe <code>canvas</code> (consultas escopadas à story), <code>userEvent</code> e <code>args</code>. <code>fn()</code> de <code>storybook/test</code> cria um mock que dá pra assertar com <code>expect</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fn } from 'storybook/test';
+import { Button } from './button';
+import { IconeLixeira } from '../icons';
+
+const meta = {
+  title: 'Design System/Button',
+  component: Button,
+  tags: ['autodocs'],                       // documentação gerada dos tipos e das stories
+  parameters: {
+    a11y: { test: 'error' },                // violação de acessibilidade REPROVA o teste
+  },
+  args: { children: 'Salvar', onClick: fn() },
+} satisfies Meta<typeof Button>;
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Primario: Story = {};
+export const Secundario: Story = { args: { intent: 'secondary' } };
+export const Perigo: Story = { args: { intent: 'danger', children: 'Excluir' } };
+export const Pequeno: Story = { args: { size: 'sm' } };
+
+export const SoIcone: Story = {
+  args: { children: undefined, icon: <IconeLixeira />, 'aria-label': 'Excluir questão', intent: 'ghost' },
+};
+
+export const Carregando: Story = {
+  args: { loading: true },
+  play: async ({ canvas, args, userEvent }) => {
+    const botao = canvas.getByRole('button', { name: 'Salvar' });
+    await userEvent.click(botao);
+    await expect(args.onClick).not.toHaveBeenCalled();          // clique ignorado
+    botao.focus();
+    await expect(botao).toHaveFocus();                          // continua focável
+    await expect(botao).toHaveAttribute('aria-busy', 'true');
+  },
+};
+
+// mesma story no tema escuro: o decorator só troca o atributo que os tokens leem
+export const PrimarioEscuro: Story = {
+  decorators: [
+    (Story) => (
+      <div data-theme="dark" style={{ padding: 16, background: 'var(--paper)' }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
+</code></pre>
+<p><strong>O que muda a vida do time:</strong> o <code>test: 'error'</code>. Com ele, rodar as stories como testes (o addon de testes do Storybook com Vitest) reprova a story que tiver violação, e o CI barra o PR. Salve este arquivo como <code>button.stories.tsx</code>.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Qual a diferença entre o addon de acessibilidade como painel e como teste?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Como painel (o padrão em <code>'todo'</code>), a violação aparece na interface do Storybook, mas nada falha: depende de alguém abrir e olhar. Com <code>test: 'error'</code>, a mesma checagem roda nos testes e <strong>reprova</strong>, então entra no CI. Um meio-termo útil pra migrar um sistema legado é o <code>'todo'</code> por story, que marca a dívida sem quebrar a build, e o <code>'error'</code> como padrão pro que é novo.</p></div></details>
+          </li>
+          <li>Quantas stories um componente precisa?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Uma por <strong>estado que muda o comportamento ou a aparência de forma relevante</strong>, não uma por combinação possível (com 4 intents, 3 tamanhos e carregando seriam dezenas). Eu faria: a base, cada intent, o tamanho mais distante do padrão, só-ícone, carregando, desabilitado e os dois temas. Pra ver todas as combinações de uma vez sem escrever uma story pra cada, uma story &ldquo;matriz&rdquo; que renderiza o produto cartesiano é útil na regressão visual.</p></div></details>
+          </li>
+          <li>Como a story entra na regressão visual?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Cada story vira uma captura: com o Chromatic, ele tira e compara o screenshot de todas as stories a cada PR; sem ele, o Playwright navega até a página isolada de cada story e usa <code>toHaveScreenshot()</code>. Em qualquer caso, a baseline por tema, o mesmo container no CI (fonte e antialiasing diferentes mudam o pixel) e um diff tratado como revisão de PR: aprovar uma mudança de aparência intencional é um clique, não um bug.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 11 ===================== -->
+  <div class="ex" id="ex11">
+    <div class="ex-head"><span class="ex-n">EX 11</span><h3>Refatorar uma busca no cliente pra Server Component com cache</h3><span class="ex-meta">40 min &middot; Next 16 + TS &middot; R3</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;Esta página de questões foi escrita toda no cliente: busca no <code>useEffect</code>, tem estado de carregamento e de erro à mão, e as duas buscas acontecem uma depois da outra. A tela pisca &lsquo;carregando&rsquo; a cada visita e o LCP está ruim. Reescreva pro App Router do Next 16 e explique o que muda.&rdquo;</p>
+<pre><code class="esc">
+'use client';
+import { useEffect, useState } from 'react';
+
+export default function QuestoesPage() {
+  const [questoes, setQuestoes] = useState<Questao[] | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [erro, setErro] = useState(false);
+  const [esp, setEsp] = useState('todas');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const q = await fetch(`/api/questoes?esp=${esp}`).then((r) => r.json());
+        const s = await fetch('/api/minhas-estatisticas').then((r) => r.json()); // espera a de cima
+        setQuestoes(q);
+        setStats(s);
+      } catch {
+        setErro(true);
+      }
+    })();
+  }, [esp]);
+
+  if (erro) return <p>Erro</p>;
+  if (!questoes || !stats) return <p>Carregando…</p>;
+  return <Lista questoes={questoes} stats={stats} onFiltro={setEsp} esp={esp} />;
+}
+</code></pre>
+      <h4>Requisitos que você deve levantar</h4>
+      <ul>
+        <li>Quais dados são <strong>compartilhados entre usuários</strong> (a lista de questões) e quais são <strong>da pessoa</strong> (as estatísticas)? Só o primeiro pode ser cacheado.</li>
+        <li>O filtro de especialidade pode virar parâmetro de URL (compartilhável, funciona com o botão voltar)?</li>
+        <li>As duas buscas são independentes: por que estão em fila?</li>
+        <li>O que continua precisando ser componente de cliente?</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você nomeia o <strong>waterfall</strong> e o corrige com <code>Promise.all</code>.</li>
+        <li>Se decide <em>onde</em> fica a fronteira <code>Suspense</code> e o que aparece enquanto o dado dinâmico chega.</li>
+        <li>Se sabe que dado de usuário não vai pra um cache compartilhado.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>No Next 16 com <code>cacheComponents: true</code>, <strong>nada é cacheado por padrão</strong>. Você marca a função com <code>'use cache'</code> e define <code>cacheLife</code> e <code>cacheTag</code>. Dado que depende de <code>cookies()</code> ou <code>searchParams</code> é dinâmico e precisa estar atrás de um <code>Suspense</code>.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>A página pode receber <code>searchParams</code> como <em>promessa</em> e repassá-la a um componente que a resolve lá dentro, atrás do <code>Suspense</code>. Assim a casca (título e esqueleto) é estática e sai na hora.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+// app/questoes/page.tsx  (Server Component: nada de 'use client')
+import { Suspense } from 'react';
+import { Filtro } from './filtro';
+import { listarQuestoes, estatisticasDoUsuario } from '@/lib/questoes';
+
+export default function QuestoesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ esp?: string }>;
+}) {
+  return (
+    <>
+      <h1>Questões</h1>                         {/* casca estática: sai na hora */}
+      <Suspense fallback={<ListaSkeleton />}>
+        <Conteudo searchParams={searchParams} />
+      </Suspense>
+    </>
+  );
+}
+
+async function Conteudo({ searchParams }: { searchParams: Promise<{ esp?: string }> }) {
+  const { esp = 'todas' } = await searchParams;
+  // independentes: em paralelo, não em fila
+  const [questoes, stats] = await Promise.all([listarQuestoes(esp), estatisticasDoUsuario()]);
+  return (
+    <>
+      <Filtro atual={esp} />
+      <Lista questoes={questoes} stats={stats} />
+    </>
+  );
+}
+</code></pre>
+<pre><code class="esc">
+// lib/questoes.ts
+import { cacheLife, cacheTag } from 'next/cache';
+import { cookies } from 'next/headers';
+
+export async function listarQuestoes(esp: string) {
+  'use cache';                 // dado COMPARTILHADO: pode ficar em cache
+  cacheLife('minutes');
+  cacheTag('questoes');        // uma Server Action invalida por esta tag quando editar uma questão
+  return db.questao.findMany({ where: esp === 'todas' ? {} : { especialidade: esp } });
+}
+
+export async function estatisticasDoUsuario() {
+  // sem 'use cache': depende da sessão (cookies), então é dinâmico e fica atrás do Suspense
+  const sessao = (await cookies()).get('sessao')?.value;
+  return db.estatisticas.porSessao(sessao);
+}
+</code></pre>
+<pre><code class="esc">
+// app/questoes/filtro.tsx: a única ilha de cliente, porque precisa de evento
+'use client';
+import { useRouter } from 'next/navigation';
+
+export function Filtro({ atual }: { atual: string }) {
+  const router = useRouter();
+  return (
+    <select aria-label="Especialidade" value={atual} onChange={(e) => router.push(`?esp=${e.target.value}`)}>
+      <option value="todas">Todas</option>
+      <option value="pediatria">Pediatria</option>
+    </select>
+  );
+}
+</code></pre>
+<p><strong>O que melhorou, em ordem do que o usuário sente:</strong> a casca e o título saem do servidor sem esperar dado; a lista chega no HTML (sem cadeia JavaScript &rarr; <code>fetch</code> &rarr; render), o que ajuda o LCP; as duas buscas rodam juntas (o tempo é o da mais lenta, não a soma); a lista compartilhada vem do cache e as estatísticas, que são da pessoa, ficam dinâmicas; e o estado de erro vira um <code>error.tsx</code> da rota. O filtro na URL funciona com voltar e com link compartilhado.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Então nunca mais uso <code>useEffect</code> pra buscar dado?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Quase nunca <em>pra carga inicial</em>. Ainda faz sentido buscar no cliente quando o dado depende de interação contínua ou de algo que só existe no navegador (posição do mouse, tamanho da janela, um pedido que o usuário dispara a cada tecla), e aí o ideal é uma biblioteca de dados de servidor no cliente (TanStack Query), que cuida de cache, deduplicação, refetch e erro, em vez de efeito escrito à mão. O que sai do <code>useEffect</code> é a carga inicial da página.</p></div></details>
+          </li>
+          <li>Como a lista em cache é atualizada quando alguém edita uma questão?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Pela <strong>tag</strong>: a Server Action que grava a edição chama <code>revalidateTag('questoes', 'max')</code> (que marca como velho e serve o antigo enquanto regenera) ou <code>updateTag</code> (quando a própria pessoa precisa ver a mudança na hora). O <code>cacheLife</code> é o teto de segurança, a tag é a invalidação precisa. Em várias instâncias, o cache tem que ser compartilhado, senão cada uma invalida só a sua (ver <a href="r05-cloud-aws.html">R5</a>).</p></div></details>
+          </li>
+          <li>O que acontece se eu acessar <code>cookies()</code> fora de um <code>Suspense</code>?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Com Cache Components ligado, o Next recusa em tempo de build: dado dinâmico fora de uma fronteira <code>Suspense</code> obriga você a decidir. Ou o dado é cacheado, ou existe um fallback pra mostrar enquanto ele chega. O efeito é o <strong>PPR por padrão</strong>: casca estática pré-renderizada e buracos dinâmicos preenchidos no request.</p></div></details>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCÍCIO 12 ===================== -->
+  <div class="ex" id="ex12">
+    <div class="ex-head"><span class="ex-n">EX 12</span><h3>Construir um toast a partir de um mock do Figma</h3><span class="ex-meta">45 min &middot; React + CSS &middot; R2</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">&ldquo;A designer entregou este mock de toast. Implemente. Quero fiel ao mock <em>e</em> acessível. Pode perguntar o que o mock não diz.&rdquo;</p>
+      <div class="table-scroll"><table class="roteiro">
+        <thead><tr><th>Item do mock</th><th>Especificação</th></tr></thead>
+        <tbody>
+          <tr><td>Posição e largura</td><td>canto inferior direito, 16 px da borda; 360 px de largura (cabe em tela estreita)</td></tr>
+          <tr><td>Caixa</td><td>padding 12 &times; 16, raio 12, sombra <code>elevation-3</code>, fundo <code>surface-inverse</code>, texto <code>on-inverse</code></td></tr>
+          <tr><td>Conteúdo</td><td>ícone de status de 20 px; título 14/20 semibold; descrição 13/18; ação <em>Desfazer</em> (texto, não botão cheio); fechar de 32 &times; 32 com ícone de 16</td></tr>
+          <tr><td>Movimento</td><td>entra subindo 16 px com fade em 200 ms <code>ease-out</code>; sai em 150 ms <code>ease-in</code>; empilha com 8 px de espaço</td></tr>
+          <tr><td>Tempo</td><td>some em 5 s</td></tr>
+        </tbody>
+      </table></div>
+      <h4>Perguntas que o mock não responde (e você faz)</h4>
+      <ul>
+        <li>E pra quem tem <code>prefers-reduced-motion</code>? (O mock só tem movimento.)</li>
+        <li>O leitor de tela anuncia? Erro e informação têm a mesma urgência?</li>
+        <li>5 s é suficiente pra ler e clicar em <em>Desfazer</em>? Pausa quando a pessoa passa o mouse ou foca?</li>
+        <li>O teclado fecha? O toast rouba o foco de quem está digitando?</li>
+      </ul>
+      <h4>O que o entrevistador observa</h4>
+      <ul>
+        <li>Se você usa os <strong>tokens</strong> do mock (<code>surface-inverse</code>) e não cor crua.</li>
+        <li>Se o movimento usa só <code>transform</code> e <code>opacity</code> e tem a versão sem movimento.</li>
+        <li>Se a região de anúncio <strong>já existe</strong> na página (leitor de tela só anuncia mudança em região que já estava lá) e se o foco não é roubado.</li>
+        <li>Se tempo limite é tratado (WCAG 2.2.1): pausa em hover e foco, e ação importante não some sozinha.</li>
+      </ul>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Dois contêineres sempre presentes: um com <code>role="status"</code> pros avisos e outro com <code>role="alert"</code> pros erros. O toast é adicionado <em>dentro</em> deles; criar o contêiner junto com o toast faz o leitor de tela não anunciar nada.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>Pra pausar o tempo, guarde quanto faltava: ao pausar, subtraia o que já passou; ao retomar, agende só o resto. Um <code>setTimeout</code> reiniciado do zero a cada hover nunca fecharia um toast que o mouse visita.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { useEffect, useRef, useState, useCallback } from 'react';
+
+export type Toast = {
+  id: string;
+  tipo: 'info' | 'erro';
+  titulo: string;
+  descricao?: string;
+  desfazer?: () => void;
+  saindo?: boolean;
+};
+
+export function useToasts() {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const mostrar = useCallback((t: Omit<Toast, 'id' | 'saindo'>) => {
+    setToasts((ts) => [...ts, { ...t, id: crypto.randomUUID() }]);
+  }, []);
+  const fechar = useCallback((id: string) => {          // 1º passo: marca pra animar a saída
+    setToasts((ts) => ts.map((t) => (t.id === id ? { ...t, saindo: true } : t)));
+  }, []);
+  const remover = useCallback((id: string) => {          // 2º passo: tira do DOM
+    setToasts((ts) => ts.filter((t) => t.id !== id));
+  }, []);
+  return { toasts, mostrar, fechar, remover };
+}
+
+export function Toaster({ toasts, fechar, remover }: {
+  toasts: Toast[]; fechar: (id: string) => void; remover: (id: string) => void;
+}) {
+  const lista = (tipo: Toast['tipo']) =>
+    toasts.filter((t) => t.tipo === tipo).map((t) => (
+      <ToastItem key={t.id} toast={t} fechar={fechar} remover={remover} />
+    ));
+  return (
+    <section aria-label="Notificações" className="toasts">
+      {/* as duas regiões existem SEMPRE, vazias ou não: é isso que faz o anúncio funcionar */}
+      <div role="status" className="toasts-lista">{lista('info')}</div>
+      <div role="alert" className="toasts-lista">{lista('erro')}</div>
+    </section>
+  );
+}
+
+function ToastItem({ toast, fechar, remover }: {
+  toast: Toast; fechar: (id: string) => void; remover: (id: string) => void;
+}) {
+  const [pausado, setPausado] = useState(false);
+  const restante = useRef(5000);
+  const inicio = useRef(0);
+
+  // contagem de 5 s que pausa em hover/foco e retoma de onde parou
+  useEffect(() => {
+    if (pausado || toast.saindo) return;
+    inicio.current = Date.now();
+    const t = setTimeout(() => fechar(toast.id), restante.current);
+    return () => {
+      clearTimeout(t);
+      restante.current -= Date.now() - inicio.current;
+    };
+  }, [pausado, toast.saindo, toast.id, fechar]);
+
+  // depois da animação de saída, remove; o timer de segurança cobre quem desligou animação
+  useEffect(() => {
+    if (!toast.saindo) return;
+    const t = setTimeout(() => remover(toast.id), 400);
+    return () => clearTimeout(t);
+  }, [toast.saindo, toast.id, remover]);
+
+  return (
+    <div
+      className="toast"
+      data-saindo={toast.saindo ? 'true' : 'false'}
+      onMouseEnter={() => setPausado(true)}
+      onMouseLeave={() => setPausado(false)}
+      onFocus={() => setPausado(true)}
+      onBlur={() => setPausado(false)}
+      onKeyDown={(e) => { if (e.key === 'Escape') fechar(toast.id); }}
+      onAnimationEnd={() => { if (toast.saindo) remover(toast.id); }}
+    >
+      <span aria-hidden="true" className="toast-icone">{toast.tipo === 'erro' ? '!' : 'i'}</span>
+      <div className="toast-texto">
+        <p className="toast-titulo">{toast.titulo}</p>
+        {toast.descricao && <p className="toast-desc">{toast.descricao}</p>}
+      </div>
+      {toast.desfazer && (
+        <button type="button" className="toast-acao" onClick={() => { toast.desfazer?.(); fechar(toast.id); }}>
+          Desfazer
+        </button>
+      )}
+      <button type="button" className="toast-fechar" aria-label="Fechar notificação" onClick={() => fechar(toast.id)}>
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  );
+}
+</code></pre>
+<pre><code class="esc">
+.toasts {
+  position: fixed; right: 16px; bottom: 16px; z-index: 50;
+  display: grid; gap: 8px;
+  width: min(360px, calc(100vw - 32px));
+}
+.toasts-lista { display: grid; gap: 8px; }
+
+.toast {
+  display: grid; grid-template-columns: 20px 1fr auto auto; column-gap: 12px; align-items: start;
+  padding: 12px 16px; border-radius: 12px;
+  background: var(--surface-inverse); color: var(--on-inverse);
+  box-shadow: var(--elevation-3);
+  animation: toast-in 200ms ease-out both;
+}
+.toast[data-saindo='true'] { animation: toast-out 150ms ease-in both; }
+
+.toast-titulo { margin: 0; font: 600 14px/20px var(--font-sans); }
+.toast-desc   { margin: 0; font: 400 13px/18px var(--font-sans); opacity: .85; }
+.toast-acao, .toast-fechar {
+  min-height: 32px; min-width: 32px; border: 0; background: transparent; color: inherit; cursor: pointer;
+  border-radius: 8px;
+}
+.toast-acao { font: 600 13px/18px var(--font-sans); padding: 0 8px; text-decoration: underline; }
+.toast-acao:focus-visible, .toast-fechar:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+@keyframes toast-in  { from { opacity: 0; transform: translateY(16px); } }
+@keyframes toast-out { to   { opacity: 0; transform: translateY(8px); } }
+
+/* sem movimento: só o fade, que ainda comunica a entrada e a saída */
+@media (prefers-reduced-motion: reduce) {
+  .toast { animation-name: toast-fade-in; }
+  .toast[data-saindo='true'] { animation-name: toast-fade-out; }
+}
+@keyframes toast-fade-in  { from { opacity: 0; } }
+@keyframes toast-fade-out { to   { opacity: 0; } }
+</code></pre>
+<p><strong>Decisões pra verbalizar:</strong> o toast <em>não</em> rouba o foco (quem está digitando continua digitando); as regiões <code>status</code> e <code>alert</code> existem desde o carregamento da página; a pausa em hover <strong>e</strong> em foco atende a WCAG 2.2.1 (o usuário controla o tempo); o botão fechar tem nome acessível porque o &times; é decorativo; só <code>transform</code> e <code>opacity</code> animam; e o texto do toast tem contraste calculado sobre <code>surface-inverse</code>, não sobre o fundo da página. Pra uma ação que a pessoa <em>precisa</em> tomar, um toast que some sozinho é o componente errado: use um diálogo ou um aviso que fica.</p>
+      </div></details>
+      <div class="quiz">
+        <div class="quiz-head">Perguntas que vêm depois</div>
+        <ol>
+          <li>Por que dois contêineres, <code>status</code> e <code>alert</code>?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>São <strong>urgências diferentes</strong>. <code>role="status"</code> é <code>aria-live="polite"</code>: o leitor de tela espera terminar o que está lendo e então anuncia (bom pra &ldquo;Salvo&rdquo;). <code>role="alert"</code> é <code>assertive</code>: interrompe (reservado a erro que impede a pessoa de seguir). Tudo como <code>alert</code> vira ruído e treina o usuário a ignorar o anúncio.</p></div></details>
+          </li>
+          <li>O toast some em 5 s. Isso é aceitável?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Só com controle. A WCAG 2.2.1 (Timing Adjustable) pede que quem precisa de mais tempo consiga pausar, estender ou desligar o limite; por isso pausa em hover e em foco. E o tempo depende do conteúdo: uma confirmação curta (&ldquo;Salvo&rdquo;) aguenta 5 s; um aviso com ação (&ldquo;Desfazer&rdquo;) merece mais, ou ficar até ser dispensado. Informação que a pessoa não pode perder nunca deve estar só num toast.</p></div></details>
+          </li>
+          <li>O mock só trazia o estado feliz. O que você leva de volta pra designer?
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Os estados que faltam: erro (cor e ícone que não dependam só de cor), toast com descrição longa (quebra de linha e limite), vários empilhados (o máximo visível e o que acontece com o excedente), tela estreita, tema claro e escuro, e o movimento reduzido. É uma conversa curta, com os tokens e as stories na mão, e o resultado vira variante documentada no Storybook, não um combinado de reunião.</p></div></details>
           </li>
         </ol>
       </div>

@@ -476,3 +476,22 @@
     .ex-body { padding: 12px 12px 14px; }
     .roteiro td:first-child { white-space: normal; }
   }
+
+  /* ---------- Múltipla escolha dentro das páginas do roadmap ---------- */
+  .qz-pagina { margin-top: 34px; padding-top: 6px; border-top: 1px solid var(--line); }
+  .qz-pagina-intro { margin: 6px 0 14px; font-family: 'Source Serif 4', serif; font-size: 14px; color: var(--ink-soft); }
+  .qz-pagina-barra { margin-bottom: 14px; }
+  .qz-pagina-barra .qz-acao { border-style: dashed; }
+  .qz-pagina-barra .qz-score { margin-left: 0; white-space: normal; }
+  .qz-pagina-barra .qz-acao { margin-left: auto; }
+  @media (max-width: 560px) {
+    .qz-pagina-barra .qz-acao { margin-left: 0; }
+  }
+
+  /* tópicos com código comprido (cadeias de tokens, caminhos) não podem alargar a página no celular */
+  ul.checklist > li { min-width: 0; }
+  .item .txt { overflow-wrap: anywhere; min-width: 0; }
+  .leitura-body :not(pre) > code, .ex-body :not(pre) > code, .evid-body :not(pre) > code { overflow-wrap: anywhere; }
+  ul.resources > li { min-width: 0; } /* sem isso, um <pre> largo numa leitura alarga o item da grade em vez de rolar */
+  ul.resources { grid-template-columns: minmax(0, 1fr); }
+  .qz-q code, .qz-opt code, .qz-why code { overflow-wrap: anywhere; }

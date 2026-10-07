@@ -88,14 +88,53 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
     </div>
   </div>
 
-  <div class="gap">
-    <h4>Próximo passo do roadmap</h4>
-    <ol>
-      <li><strong>Aplicar CI/CD com GitHub Actions no Ally AI:</strong> um <code>.github/workflows/ci.yml</code> que rode <code>pnpm turbo lint typecheck test</code> em todo PR, aproveitando as tasks que o <code>turbo.json</code> já define, mais o <code>docker build</code> da API. <em>Post:</em> &ldquo;CI de monorepo com Turborepo: só roda o que mudou&rdquo;.</li>
-      <li><strong>Aplicar CI de testes no Gabarita:</strong> um workflow com <code>services: postgres</code> criando o banco <code>_test</code> que a suíte já usa (<code>src/lib/testing/guard-banco-de-teste.ts</code>), pra os testes do Vitest rodarem em cada PR, ao lado do workflow de backup que já existe.</li>
-      <li><strong>Aplicar deploy de Next.js na AWS no Ally AI:</strong> levar o <code>apps/web</code> como container standalone (ECS Fargate ou App Runner) pra <code>eu-west-1</code>, perto do mercado da D04, com CloudFront na frente e o GitHub Actions assumindo uma role por OIDC. É o post 8 do <a href="r07-linkedin.html">calendário do R7</a>: &ldquo;Next.js na AWS: o que muda em relação à Vercel&rdquo;.</li>
-      <li><strong>Aplicar observabilidade no Ally AI:</strong> estender ao Ally AI o mesmo Sentry que o Gabarita já tem (<code>@sentry/nextjs</code> no web, <code>@sentry/node</code> na API), com o fluxo de auditoria como primeira transação monitorada.</li>
-    </ol>
+  <h3 class="sub">Segredos e app internacional: o que faltava nas leituras</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <h4>Secrets Manager ou SSM Parameter Store?</h4>
+      <div class="table-scroll"><table class="roteiro">
+        <thead><tr><th></th><th>Secrets Manager</th><th>SSM Parameter Store</th></tr></thead>
+        <tbody>
+          <tr><td>Feito pra</td><td>segredos: senha de banco, chave de API</td><td>configuração, e segredos simples (<code>SecureString</code>)</td></tr>
+          <tr><td>Rotação</td><td>automática, com integração pronta pra bancos da AWS</td><td>não tem nativa</td></tr>
+          <tr><td>Custo</td><td>pago por segredo e por chamada</td><td>o nível padrão não tem custo</td></tr>
+          <tr><td>Organização</td><td>nome do segredo, versões</td><td>hierarquia por caminho (<code>/app/prod/db-url</code>)</td></tr>
+        </tbody>
+      </table></div>
+      <p>Regra prática: configuração e segredo que não gira, no <strong>SSM</strong>; segredo que precisa de rotação (a senha do banco), no <strong>Secrets Manager</strong>. Nos dois casos o valor é entregue <strong>em runtime</strong>: no ECS, a task definition tem o campo <code>secrets</code> com <code>valueFrom</code> apontando pro ARN, e o valor vira variável de ambiente do container sem passar pelo repositório nem pela imagem. A exceção que prende é o <code>NEXT_PUBLIC_*</code>, que é embutido no build.</p>
+      <h4>i18n: subcaminho ou domínio?</h4>
+      <ul>
+        <li><strong>Subcaminho</strong> (<code>/pt-BR/</code>, <code>/en/</code>): um domínio, um certificado, um deploy, e a autoridade de SEO concentrada. É o padrão: no App Router vira o segmento <code>[locale]</code>, com <code>generateStaticParams</code> pros idiomas e o <code>proxy</code> escolhendo o idioma na primeira visita pelo <code>Accept-Language</code> (e lembrando num cookie).</li>
+        <li><strong>Domínio por país</strong> (<code>.ie</code>, <code>.co.uk</code>): sinal geográfico forte pro buscador e confiança local, ao custo de N domínios, certificados e configurações.</li>
+        <li>Em qualquer um: <code>hreflang</code> e <code>canonical</code> por idioma, formatação de data, número e moeda com <code>Intl</code>, e espaço pra texto que cresce (o alemão costuma ficar uns 30% mais longo que o inglês).</li>
+        <li><strong>Residência de dado</strong> (LGPD, GDPR) é restrição que escolhe a região <em>antes</em> da latência: a pergunta &ldquo;onde ficam os dados dessa pessoa?&rdquo; vem primeiro.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="sub">Você já usou...? A resposta honesta</h3>
+  <div class="evid">
+    <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Você já fez deploy de Next.js na AWS? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não: o Gabarita roda na Vercel e o Ally AI tem um runbook de container. Eu faria o caminho mais próximo do que já tenho, o container <em>standalone</em> (o <code>Dockerfile.web</code> já existe) no ECS Fargate ou App Runner, com CloudFront na frente. Com mais de uma instância, o cache do Next (inclusive o <code>revalidateTag</code>) precisa de um handler compartilhado, porque por padrão cada instância tem o seu. Segredos no Secrets Manager ou no SSM, e a região perto do banco. Por quê: a diferença pra Vercel é que cache, imagens e ISR deixam de vir prontos e passam a ser decisões minhas.</p>
+        <p><strong>In English:</strong> &ldquo;Not on AWS. I'd containerize the standalone build and run it on ECS Fargate or App Runner behind CloudFront, plug in a shared cache handler once there is more than one instance, keep secrets in Secrets Manager or SSM, and place it near the database, because caching, images and ISR stop being managed for me.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex7">exercício 7</a> (<code>ci.yml</code> com job de deploy).</p>
+      </div>
+      <div class="evid-item">
+        <h4>Você já montou CI de pull request? <span class="st p">em parte</span></h4>
+        <p><strong>Em voz alta:</strong> Em parte: tenho um workflow agendado de backup do banco e o deploy contínuo pela Vercel, mas não um CI que rode a suíte em cada PR. Eu faria um <code>ci.yml</code> em <code>pull_request</code> com <code>concurrency</code> e <code>cancel-in-progress</code> (um push novo cancela o anterior), cache do pnpm, <code>services: postgres</code> pra suíte que usa banco de teste, <code>permissions</code> mínimas, e o Turborepo rodando só o que mudou. Por quê: o objetivo é feedback rápido e barato, e a suíte só protege se rodar sozinha.</p>
+        <p><strong>In English:</strong> &ldquo;Partly: I have a scheduled backup workflow and Vercel deploys, but no PR pipeline. I'd add <code>pull_request</code> CI with concurrency cancel-in-progress, pnpm caching, a Postgres service container, minimal permissions, and Turborepo running only affected tasks, for fast, cheap feedback.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex7">exercício 7</a>.</p>
+      </div>
+      <div class="evid-item">
+        <h4>Você já configurou o GitHub Actions pra fazer deploy na AWS com OIDC? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não. Eu faria assim: nada de chave de acesso de longa duração guardada no GitHub; o workflow pede um token de curta duração ao provedor OIDC, assume uma <em>role</em> da AWS, e a <strong>trust policy</strong> da role limita quem pode assumir (o repositório e a branch, pela claim <code>sub</code>). O job precisa de <code>permissions: id-token: write</code>. Por quê: um segredo que não existe não vaza, e a role pode ter só o poder de fazer aquele deploy.</p>
+        <p><strong>In English:</strong> &ldquo;Not yet. I'd use GitHub's OIDC provider so the workflow gets a short-lived token and assumes an AWS role, with a trust policy scoped to the repo and branch through the <code>sub</code> claim, and <code>id-token: write</code> permission, so there are no long-lived keys to leak.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex7">exercício 7</a> (a trust policy está na solução).</p>
+      </div>
+    </div>
   </div>
 
   <div class="ammo">
@@ -128,13 +167,19 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
       </li>
       <li>Você põe o CloudFront na frente do Gabarita com um cache policy de TTL mínimo de 1 dia, &ldquo;pra acelerar&rdquo;. O que pode dar errado?
         <details class="ans"><summary>ver resposta</summary>
-          <div class="ans-body"><p>Com TTL mínimo maior que zero, o CloudFront guarda o objeto <strong>mesmo com <code>Cache-Control: private</code>, <code>no-cache</code> ou <code>no-store</code></strong> vindos da origem. As páginas dinâmicas do Next (que saem com <code>private, no-store</code>) e as rotas de imagem privadas do Gabarita passariam a ser servidas da borda. Isso significa a página logada de uma aluna entregue a outra, ou o gabarito antes da resposta.</p>
+          <div class="ans-body"><p>Com TTL mínimo maior que zero, o CloudFront guarda o objeto <strong>mesmo com <code>Cache-Control: private</code>, <code>no-cache</code> ou <code>no-store</code></strong> vindos da origem. As páginas dinâmicas do Next (que saem com <code>private, no-store</code>) e as rotas de imagem privadas do Gabarita passariam a ser servidas da borda. Como a cache key padrão não leva o cookie de sessão, a página logada de uma aluna pode ser entregue a outra, ou o gabarito aparecer antes da resposta, enquanto o objeto estiver dentro do TTL (passado o prazo, o CloudFront revalida na origem, mas até lá o <code>private</code> não vale).</p>
 <p>A forma certa é ter comportamentos separados. <code>/_next/static/*</code> fica com cache longo, porque o arquivo tem hash no nome. O resto respeita o <code>Cache-Control</code> da origem (TTL mínimo 0), e a cache key leva só o que muda a resposta. Cookie de sessão na cache key derruba a taxa de acerto a quase zero, e ficar sem ele nas páginas dinâmicas é exatamente o motivo de não cachear essas páginas na borda.</p></div>
         </details>
       </li>
       <li>Dois containers do mesmo Next atrás de um load balancer, e de vez em quando aparece &ldquo;Failed to find Server Action&rdquo; logo depois de um deploy. Qual a causa provável e o conserto?
         <details class="ans"><summary>ver resposta</summary>
           <div class="ans-body"><p>Há duas causas que se somam. Primeira: o Next cifra as variáveis capturadas das Server Actions com uma chave <strong>gerada por build</strong>. Se as instâncias vieram de builds diferentes, uma não decifra o que a outra cifrou, e o conserto é fixar <code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code>. Segunda: durante o deploy gradual, o navegador com o JavaScript antigo chama uma action que o servidor novo não conhece (<em>version skew</em>). O conserto é configurar <code>deploymentId</code>: o Next detecta a diferença e faz navegação completa em vez de quebrar. Com várias instâncias, também vale lembrar que <code>revalidateTag</code> só invalida o cache local se não houver um cache handler compartilhado.</p></div>
+        </details>
+      </li>
+      <li>Além de erro e lentidão, como você mede se um recurso de IA está sendo bem usado?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>Métricas de <strong>produto</strong>, que o monitor de erro não vê: <strong>TTFT</strong> (tempo até o primeiro token, o que o usuário sente), tempo total, tokens e <strong>custo por conversa</strong> e por usuário, a <strong>taxa de parar</strong> a resposta no meio e a de <strong>regenerar</strong> (as duas são sinais de insatisfação), polegar pra cima ou pra baixo, taxa de retry e de erro por tipo (429 e 5xx são problemas diferentes) e conversas abandonadas.</p>
+<p>Como coletar: <strong>OpenTelemetry</strong> com um span por chamada ao modelo (atributos como modelo, tokens de entrada e saída, resultado) exportado pra CloudWatch e X-Ray, pelo coletor da AWS, ou pro Sentry; e eventos de produto à parte das métricas de infraestrutura. Cuidado com privacidade: não registre o prompt inteiro quando houver dado pessoal.</p></div>
         </details>
       </li>
     </ol>

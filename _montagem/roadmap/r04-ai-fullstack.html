@@ -104,14 +104,23 @@ expect(screen.getByText(/não foi possível gerar a explicação agora/i)).toBeI
     </div>
   </div>
 
-  <div class="gap">
-    <h4>Próximo passo do roadmap</h4>
-    <ol>
-      <li><strong>Aplicar streaming de LLM no Gabarita:</strong> um Route Handler que chama <code>generateContentStream</code> e devolve <code>ReadableStream</code>, lido no cliente com <code>getReader()</code> (o mesmo laço de <code>lerAteOTeto</code>), mantendo a validação Zod sobre o texto completo. Vira o post 5 do calendário em <a href="r07-linkedin.html">R7</a>.</li>
-      <li><strong>Aplicar pgvector no Gabarita:</strong> coluna <code>embedding vector(768)</code> em <code>Question</code>, um job <code>embed-question</code> no worker que já existe e uma consulta com <code>&lt;=&gt;</code> &mdash; &ldquo;questões parecidas com esta&rdquo;. Post: &ldquo;RAG no Postgres que eu já tinha&rdquo;, continuação do post do pg-boss.</li>
-      <li><strong>Aplicar processamento em fila no Ally AI:</strong> o request enfileira a auditoria e devolve <code>202</code> com o <code>analysisId</code>, e o progresso chega pelo Socket.io que já autentica por cookie.</li>
-      <li><strong>Aplicar Playwright no Ally AI:</strong> <code>apps/web/e2e/audit.spec.ts</code> com <code>page.route</code> pra resposta da auditoria, <code>page.routeWebSocket</code> pro saldo de créditos e <code>@axe-core/playwright</code> no fim.</li>
-    </ol>
+  <h3 class="sub">Você já usou...? A resposta honesta</h3>
+  <div class="evid">
+    <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Você já usou pgvector ou fez RAG? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não. No Gabarita o prompt já é aterrado em questões reais do banco, mas por filtro, não por similaridade. Eu faria assim: uma coluna <code>embedding vector(768)</code> (o Gemini aceita <code>outputDimensionality</code>), um job no worker que já existe gerando o embedding quando a questão é criada, um índice HNSW com <code>vector_cosine_ops</code> e a consulta com <code>&lt;=&gt;</code> junto dos filtros SQL de sempre. Guardo o nome do modelo ao lado do vetor, porque trocar de modelo obriga a reindexar tudo. Cuidado de entrevista: o índice só aceita até 2.000 dimensões em <code>vector</code>, e o padrão do Gemini é 3.072.</p>
+        <p><strong>In English:</strong> &ldquo;Not in production. I'd add a <code>vector(768)</code> column using the Gemini <code>outputDimensionality</code> option, embed in a background job, index with HNSW and cosine ops, and query with <code>&lt;=&gt;</code> plus the usual SQL filters, storing the model name beside the vector because switching models means reindexing. The index limit for <code>vector</code> is 2,000 dimensions.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex9">exercício 9</a> (RAG com pgvector).</p>
+      </div>
+      <div class="evid-item">
+        <h4>Você já testou um fluxo de IA com Playwright? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não: nos dois projetos uso Testing Library e Vitest com a IA trocada por um provedor falso, o que deixa o teste determinístico. Eu faria o end-to-end assim: <code>page.route</code> devolvendo um corpo SSE gravado (a resposta do modelo vira um arquivo), asserções nos estados da tela (pensando, escrevendo, pronto, erro), e o <code>@axe-core/playwright</code> no final. Nunca chamo o modelo de verdade no CI. Por quê: o modelo é lento, caro e não determinístico, e o que quero testar é a interface, não o modelo.</p>
+        <p><strong>In English:</strong> &ldquo;Not yet; I use a fake provider with Testing Library and Vitest. For end-to-end I'd intercept the request with <code>page.route</code> and return a recorded SSE body, assert on each UI state, add axe at the end, and never call the real model in CI, because I'm testing the interface, not the model.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex6">exercício 6</a> (Playwright com SSE gravado).</p>
+      </div>
+    </div>
   </div>
 
   <div class="ammo">
@@ -148,6 +157,12 @@ expect(screen.getByText(/não foi possível gerar a explicação agora/i)).toBeI
       <li>Como você testaria, sem chamar o Gemini, o fluxo &ldquo;responder questão &rarr; ver explicação&rdquo; de ponta a ponta?
         <details class="ans"><summary>ver resposta</summary>
           <div class="ans-body"><p>Em dois níveis. <strong>Integração (o que o Gabarita já faz):</strong> RTL com a action mockada e fake timers, cobrindo os estados &ldquo;escrevendo&rdquo;, &ldquo;pronto&rdquo; e o fallback. <strong>E2E:</strong> Playwright contra o app real com o <code>AIProvider</code> fake selecionado por variável de ambiente, ou interceptando a chamada com <code>page.route</code> quando ela parte do navegador. O princípio é o mesmo nos dois: o modelo é uma dependência não determinística e cara, então o teste fixa a saída dele e verifica o que o <strong>seu</strong> código faz com ela.</p></div>
+        </details>
+      </li>
+      <li>Como você protege um endpoint de IA e uma rota de upload?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p><strong>Quem é a pessoa:</strong> sessão em cookie <code>httpOnly</code>, <code>Secure</code> e <code>SameSite</code>, verificada <strong>no servidor</strong> (Server Component, Server Action e Route Handler), e não só no <code>proxy</code>, que é uma primeira barreira. <strong>O que ela pode:</strong> autorização por recurso (o <code>id</code> pedido é dela?). <strong>Quanto pode gastar:</strong> o custo do LLM é superfície de abuso, então rate limit por usuário e IP, e um orçamento de tokens ou créditos reservado de forma atômica e devolvido se a chamada falhar (o Ally AI faz isso).</p>
+<p><strong>Upload:</strong> validar o tipo pelo conteúdo (os primeiros bytes), não pelo nome nem pelo <code>Content-Type</code>; limite de tamanho; nome gerado por você; armazenamento fora da raiz do site (S3 ou R2), de preferência com URL pré-assinada de curta duração, pro arquivo não passar pela função serverless; processamento assíncrono em fila. E o texto de um arquivo enviado é <strong>dado não confiável</strong> pro modelo: pode conter instrução (prompt injection), então a saída dele passa pelas mesmas validações de sempre.</p></div>
         </details>
       </li>
     </ol>

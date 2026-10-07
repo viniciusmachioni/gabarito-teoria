@@ -14,12 +14,13 @@
     <li class="item"><input type="checkbox" id="w30-7"><label for="w30-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">AI UX de agente: mostrar <strong>progresso por etapa</strong> (não só um spinner), pedir <strong>aprovação humana</strong> antes de ação com efeito colateral, marcar o que é gerado por IA, e degradar com aviso quando a IA falha &mdash; nunca em silêncio</span></label></li>
     <li class="item"><input type="checkbox" id="w30-8"><label for="w30-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Microfrontends: as cinco formas de integrar (template no servidor, build-time, iframe, JavaScript em runtime, Web Components), o que se ganha (deploy e time independentes, migração incremental) e o que se paga (payload duplicado, governança) &mdash; e por que <a href="r03-arquitetura-frontend.html">monorepo/monolito modular</a> costuma vir antes (o mesmo argumento de &ldquo;monolito modular primeiro&rdquo; do <a href="b09-arquiteturas.html">B9</a>)</span></label></li>
     <li class="item"><input type="checkbox" id="w30-9"><label for="w30-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Multi-cloud: a tabela de equivalência AWS/Azure/GCP pra uma app web, e a diferença entre <strong>multi-cloud</strong> (a mesma carga rodando em duas nuvens) e <strong>portabilidade multi-fornecedor</strong> (interfaces que deixam trocar uma peça) &mdash; o segundo é o que quase todo mundo deveria querer (escala e cache em camadas no <a href="b01-system-design.html">B1</a>)</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-10"><label for="w30-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP Apps (extensão oficial): a ferramenta aponta pra um recurso <code>ui://</code>, o host o renderiza num iframe isolado dentro da conversa, e a interface conversa com o host por <code>postMessage</code> &mdash; quando vale mais que texto ou um link</span></label></li>
   </ul>
 
   <h3 class="sub">Onde estudar (grátis)</h3>
   <ul class="resources">
     <li><div class="r-title"><a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">MCP &mdash; Architecture overview</a></div><div class="r-note">A página oficial que define host/client/server, as duas camadas (dados e transporte), as primitivas e um exemplo passo a passo em JSON-RPC.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia &ldquo;Participants&rdquo;, &ldquo;Layers&rdquo; e &ldquo;Primitives&rdquo; inteiros; no exemplo, foque em <code>tools/list</code> e <code>tools/call</code>. Os blocos de JSON de notificação são consulta.</div><div class="r-src">modelcontextprotocol.io &middot; oficial</div></li>
-    <li><div class="r-title"><a href="https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices" target="_blank" rel="noopener">MCP &mdash; Security Best Practices</a></div><div class="r-note">Os ataques específicos de MCP com mitigação: confused deputy, token passthrough, SSRF, session hijacking, servidor local comprometido, escopo mínimo.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia a descrição e a mitigação de cada ataque; pule os diagramas de sequência na primeira passada. A seção de SSRF conversa direto com o <code>urlGuard</code> do Ally AI.</div><div class="r-src">modelcontextprotocol.io &middot; especificação</div></li>
+    <li><div class="r-title"><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices" target="_blank" rel="noopener">MCP &mdash; Security Best Practices</a></div><div class="r-note">Os ataques específicos de MCP com mitigação: confused deputy, token passthrough, SSRF, sequestro de state handle, mix-up, impersonação de redirect em localhost, servidor local comprometido, escopo mínimo.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia a descrição e a mitigação de cada ataque; pule os diagramas de sequência na primeira passada. A seção de SSRF conversa direto com o <code>urlGuard</code> do Ally AI.</div><div class="r-src">modelcontextprotocol.io &middot; especificação</div></li>
     <li><div class="r-title"><a href="https://pair.withgoogle.com/chapter/explainability-trust/" target="_blank" rel="noopener">People + AI Guidebook &mdash; Explainability + Trust</a></div><div class="r-note">O capítulo do Google PAIR sobre calibrar confiança: fontes de dado, explicação ligada à ação, e como (e quando não) mostrar a confiança do modelo.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~30 min</span>Capítulo único. A seção &ldquo;Manage influence on user decisions&rdquo; é a que mais rende em entrevista de AI UX.</div><div class="r-src">pair.withgoogle.com &middot; Google</div></li>
     <li><div class="r-title"><a href="https://www.microsoft.com/en-us/haxtoolkit/library/" target="_blank" rel="noopener">HAX Toolkit &mdash; Guidelines for Human-AI Interaction</a></div><div class="r-note">As 18 diretrizes da Microsoft Research (CHI 2019), cada uma com padrões de design e exemplos de produto real.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia os 18 títulos e abra G1, G2, G9, G11 e G15. O resto é consulta pra quando for desenhar uma tela específica.</div><div class="r-src">microsoft.com &middot; Microsoft Research</div></li>
     <li><div class="r-title"><a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">Micro Frontends (Cam Jackson, martinfowler.com)</a></div><div class="r-note">O artigo de referência: definição, benefícios, as cinco formas de integração, estilo, biblioteca compartilhada, comunicação entre apps e as desvantagens.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia &ldquo;Benefits&rdquo;, &ldquo;Integration approaches&rdquo;, &ldquo;Shared component libraries&rdquo; e &ldquo;Downsides&rdquo;. O exemplo completo de código é opcional.</div><div class="r-src">martinfowler.com</div></li>
@@ -79,14 +80,37 @@
     </div>
   </div>
 
-  <div class="gap">
-    <h4>Próximo passo do roadmap</h4>
-    <ol>
-      <li><strong>Aplicar MCP no Ally AI:</strong> um servidor MCP (stdio, SDK TypeScript oficial) com a tool <code>audit_url</code> chamando <code>runAudit</code> + <code>urlGuard</code> e devolvendo as violações com a análise da IA, testado no Claude Code como host. Vira o post R7 &ldquo;transformei meu SaaS numa ferramenta pro meu agente de código&rdquo;.</li>
-      <li><strong>Aplicar citações visíveis no Ally AI:</strong> exibir o <code>helpUrl</code> do axe como &ldquo;regra oficial&rdquo; em cada card (<code>Dashboard.tsx</code>, <code>analysis/[id]/page.tsx</code>), levando pro Ally o mesmo padrão de fonte na tela que o Gabarita já tem.</li>
-      <li><strong>Aplicar feedback granular no Ally AI</strong> (HAX G15): &ldquo;essa correção ajudou?&rdquo; por violação, gravado junto da análise &mdash; dá número pra contar e alimenta a evolução do prompt.</li>
-      <li><strong>Aplicar &ldquo;explicar a verificação&rdquo; no Gabarita:</strong> um selo &ldquo;trecho conferido no documento original&rdquo; ao lado do <code>&lt;blockquote&gt;</code> em <code>aviso-diretriz.tsx</code>. Post R7: &ldquo;como impedi a IA de inventar citação sem pôr um humano no meio&rdquo;.</li>
-    </ol>
+  <h3 class="sub">MCP Apps: a interface dentro da conversa</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <p>Resposta de texto só vai até certo ponto. Quando a pessoa precisa <em>explorar</em> dado, preencher um formulário com muitas opções ou aprovar vários itens, o <strong>MCP Apps</strong> (extensão oficial do protocolo) deixa o servidor devolver uma interface HTML interativa que o host mostra <strong>na própria conversa</strong>.</p>
+      <ol>
+        <li>A descrição da ferramenta traz <code>_meta.ui.resourceUri</code>, apontando pra um recurso <code>ui://</code> do servidor.</li>
+        <li>O host busca esse HTML (pode até pré-carregar antes da chamada) e o renderiza num <strong>iframe isolado</strong>.</li>
+        <li>O app e o host trocam mensagens JSON-RPC por <code>postMessage</code>: o app pode chamar ferramentas do servidor, e o host empurra resultados novos pro app.</li>
+        <li>A <strong>segurança</strong> vem do isolamento: o app não alcança o DOM, os cookies nem o armazenamento do host, e as origens externas que ele pode carregar são declaradas em <code>_meta.ui.csp</code>.</li>
+      </ol>
+      <p><strong>Quando vale:</strong> dado complexo pra explorar (mapa, gráfico com filtro), configuração com muitas opções interdependentes, mídia rica, monitoramento em tempo real e fluxo de várias etapas (aprovar itens um a um). <strong>Quando não:</strong> se uma resposta em texto resolve, ou se a pessoa vai precisar do app fora da conversa. <strong>Ligação com o R1:</strong> na Generative UI o front é seu e escolhe componentes seus; no MCP Apps o host é de outra empresa e o <em>servidor</em> entrega a interface, por isso o isolamento do iframe é a parte central do desenho.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Você já usou...? A resposta honesta</h3>
+  <div class="evid">
+    <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Você já construiu um servidor MCP? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não pra um produto; uso MCP no dia a dia como cliente (context7, Playwright, Stripe, plugins do Claude Code). Eu construiria assim: SDK oficial em TypeScript, uma tool com <code>inputSchema</code> em Zod e descrição que diga <em>quando</em> usar, transporte stdio pra uso local e HTTP pra remoto, e no remoto a autorização do MCP (token emitido pra mim, sem repassar), escopo mínimo e confirmação em ação que escreve. Por quê: ferramenta de agente é API pública com um chamador não confiável, então vale a mesma disciplina de validação e autorização.</p>
+        <p><strong>In English:</strong> &ldquo;Not for a product; I use MCP daily as a client. I'd build with the official TypeScript SDK, a tool with a Zod <code>inputSchema</code> and a description of when to use it, stdio locally and HTTP remotely with proper authorization, tokens issued to my server and never passed through, minimal scopes, and confirmation for write actions.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex8">exercício 8</a> (servidor MCP mínimo).</p>
+      </div>
+      <div class="evid-item">
+        <h4>Você já trabalhou com multi-cloud? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não de verdade. Uso vários fornecedores (Vercel, Neon, Cloudflare R2, Google) e deixei pontos de troca no código (<code>AIProvider</code>, <code>Queue</code>, <code>Storage</code>), mas isso é portabilidade, não multi-cloud. Eu só adotaria multi-cloud com um motivo de negócio claro (exigência regulatória, risco de um provedor só, preço), e começaria por container, infraestrutura como código e interfaces trocáveis. Por quê: o custo é operacional (duas formas de monitorar, de pagar, de proteger), então não se paga &ldquo;por precaução&rdquo;.</p>
+        <p><strong>In English:</strong> &ldquo;Not truly. I use several vendors and keep swap points in code, which is portability, not multi-cloud. I'd adopt multi-cloud only for a concrete business reason like regulation or vendor risk, starting with containers, infrastructure as code and swappable interfaces, because the cost is operational.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> a tabela de equivalência entre as nuvens, nas leituras desta página.</p>
+      </div>
+    </div>
   </div>
 
   <div class="ammo">
@@ -126,6 +150,12 @@
       <li>&ldquo;Seu sistema é multi-cloud?&rdquo; Como responder com o que você tem, sem inflar?
         <details class="ans"><summary>ver resposta</summary>
           <div class="ans-body"><p>&ldquo;Não, e de propósito. Multi-cloud de verdade, a mesma carga rodando em duas nuvens, custa IAM duplicado, egress entre provedores e ficar preso ao menor denominador comum dos serviços. Faz sentido por exigência regulatória ou de cliente, ou por resiliência num nível que um produto do meu tamanho não tem. O que eu fiz foi <strong>portabilidade</strong>: no Gabarita, o storage é uma interface que escolhe R2, Vercel Blob ou disco por variável de ambiente, falando o protocolo do S3. No Ally AI, a API é um container que rodou no Render e vai pro Cloud Run, e a escolha foi por benchmark de CPU.&rdquo; Depois disso, a tabela de equivalência (Cloud Run &harr; App Runner/Fargate &harr; Container Apps) mostra que você sabe para onde iria.</p></div>
+        </details>
+      </li>
+      <li>O que são MCP Apps e quando valem mais que uma resposta em texto ou um link pra um web app?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>É uma extensão do MCP em que a ferramenta declara uma interface (<code>_meta.ui.resourceUri</code> apontando pra um recurso <code>ui://</code>) e o host a renderiza num iframe isolado, dentro da conversa; a comunicação com o host é por <code>postMessage</code>, em JSON-RPC, e o app pode chamar ferramentas do servidor.</p>
+<p>Contra o <strong>texto</strong>, ganha em exploração, formulário e aprovação em lote. Contra o <strong>link pra um web app</strong>, ganha em contexto (a pessoa não troca de aba nem perde a conversa), em fluxo de dados nos dois sentidos sem construir API e autenticação próprias, e em segurança, porque o iframe isolado deixa o host renderizar app de terceiro sem confiar totalmente no autor. Se nada disso se aplica, o web app comum é mais simples.</p></div>
         </details>
       </li>
     </ol>

@@ -14,7 +14,7 @@ rode o build depois de qualquer mudança nas fontes.
 | `_montagem/novos/<slug>.html` | páginas dos blocos B10–B19, no mesmo markup das seções originais |
 | `_montagem/quiz-novos.mjs` | questões novas anexadas às 42 originais |
 | `_montagem/roadmap/<slug>.html` | páginas do roadmap da mentoria (R0–R8), grupo `roadmap`, registradas no topo de `PAGINAS`. Código em `<pre><code class="esc">` é escrito cru (com `<`, `>`, `&`) e escapado pelo build |
-| `_montagem/roadmap/quiz/<slug>.mjs` | questões do roadmap, um arquivo por página, lidas em ordem alfabética e postas **na frente** das 42 originais |
+| `_montagem/roadmap/quiz/<slug>.mjs` | questões do roadmap, **um arquivo por página (o nome do arquivo é o slug da página)**, lidas em ordem alfabética e postas **na frente** das 42 originais. As mesmas questões também vão embutidas no fim da própria página (ver abaixo). O build avisa se uma página R0–R8 ficar fora de 10–12 questões |
 
 ## Roadmap da mentoria (05/10/2026)
 
@@ -59,6 +59,34 @@ A capa ganhou uma caixa "Foco atual" (`#roadmap`) com o progresso de cada págin
 - **Decisão do usuário:** os “próximos passos do roadmap” listados no R0 e nas páginas R1–R6 **não** serão aplicados no
   Gabarita nem no Ally AI. Os dois projetos ficam como estão, só como fonte de exemplo.
 
+## Revisão do roadmap e questões fechadas nas páginas (07/10/2026)
+
+Executou o plano de `gabarito-teoria-revisao-roadmap-2026-10-05.md` (etapas 1 a 5) e acrescentou múltipla escolha às páginas.
+
+- **Múltipla escolha dentro de cada página R0–R8** (10 a 12 por página, 100 no total, as mesmas do Questionário rápido). O build embute
+  só as questões da página num `<script type="application/json" class="qz-pagina-dados">` e `assets/js/quiz-pagina.js` monta
+  os cartões, com alternativas embaralhadas e o **mesmo histórico** do quiz rápido (`gabarito-teoria-quiz`, pelo `id` da questão).
+  R0 (`rm-mapa`) e R8 (`rm-pratica`) ganharam tema próprio, e o quiz passou a ter 31 filtros de tema.
+- **Correções técnicas (seção 3 do .md):** SSE do EX1 descarta evento cortado (testado com 64 cortes + conexão que cai); `send` do EX2
+  devolve boolean e o form só limpa se o envio foi aceito; composição no servidor do Fowler (R3); MCP security apontando pra spec
+  `2026-07-28` com State Handle Hijacking, Mix-Up e Localhost Redirect URI Impersonation (R6); limite de 2.000 dimensões de índice do
+  pgvector, conferido no README oficial (R4); CloudFront suavizado e `revalidateTag(tag, 'max')` (R5).
+- **Inconsistências (seção 4):** selos das histórias do R0 agora iguais aos da matriz; posts 5–8 do R7 nascem de conceitos e exercícios
+  do R8 (não de mexer nos projetos), e "prova pública" pra headline de Design Engineer virou um repositório com os exercícios do R8;
+  o "mercado da D04" do R5 saiu junto com o bloco de próximos passos. A numeração dos posts ficou só no calendário do R7.
+- **"Próximo passo do roadmap" foi trocado por "Você já usou...?"** em R1–R6 (e por "Como cobrir sem mexer nos projetos" no R0), coerente
+  com a decisão de não aplicar nada no Gabarita nem no Ally AI.
+- **Etapa 3:** as 8 histórias do R0 em STAR (PT e EN); pitch de 60–90 s e 5 perguntas comportamentais no R7, com material real da
+  `docs/DECISOES.md` do Gabarita (D24, D32, D36, D42). Onde não há caso documentado, a página diz e o caso é do usuário.
+- **Etapa 4:** exercícios 6 a 12 no R8 (Playwright + axe, `ci.yml` + OIDC, servidor MCP, RAG com pgvector, stories com a11y e play,
+  refatoração pra Server Component com `'use cache'`, toast a partir de um mock). Checkboxes `w32-8` a `w32-14`: continuam a
+  sequência pra não mexer no progresso já salvo de `w32-6` e `w32-7` (system design). Todo o código TS compila com `tsc --strict`
+  contra os pacotes reais, e os YAML/JSON foram parseados.
+- **Etapa 5:** seção de movimento, foco e hover no R2 e o exercício 12; composição, documentação e responsivo no R2 (`w26-10` e `w26-11`).
+- **Lacunas menores:** `ci.yml` comentado na leitura do R5; pergunta aberta de observabilidade de "uso"; Secrets Manager × SSM e i18n no R5;
+  MCP Apps no R6 (`w30-10`); perguntas abertas novas em R1 (Generative UI), R2 (Storybook × Figma), R3 (refatoração e Web Vitals) e R4 (auth e upload).
+- **Mobile:** nenhuma página tem mais rolagem horizontal em 390 px (antes R2 e R5 tinham, por tópicos e itens da grade que não encolhiam).
+
 ## Status da montagem anterior (15/09/2026)
 
 - 27/27 páginas geradas · 168 tópicos · **123 leituras resumidas embutidas** · 91 perguntas abertas com gabarito · **102 de múltipla escolha**
@@ -91,12 +119,12 @@ Checagem estrutural sobre o gerado, com **0 problemas**:
 ## O que falta
 
 1. **Nunca foi revisado visualmente num navegador por um humano.** É a única pendência real, e depende de você.
-   Abrir `index.html`, navegar pelas trilhas, testar o quiz com os **22 filtros de tema** (cabem com `flex-wrap`, mas
+   Abrir `index.html`, navegar pelas trilhas, testar o quiz com os **31 filtros de tema** (cabem com `flex-wrap`, mas
    vale conferir em tela estreita), abrir e fechar várias leituras seguidas numa página longa (B9 e B7 são as maiores),
    testar dark mode do SO, e testar exportar/importar backup de progresso.
 2. **Tópicos técnicos que ficaram de fora**, se quiser cobrir depois: gerenciamento de estado com lib própria
-   (Zustand/Redux — hoje o assunto aparece de passagem na Semana 1 e no B15), monorepo e build tooling (Turborepo,
-   Nx, Vite/Turbopack por dentro), i18n/l10n. Nenhum tinha sido pedido explicitamente — é sugestão, não pendência.
+   (Zustand/Redux — hoje o assunto aparece de passagem na Semana 1 e no B15), build tooling por dentro (Nx,
+   Vite/Turbopack). Monorepo está no R3 e i18n no R5. Nenhum tinha sido pedido explicitamente — é sugestão, não pendência.
 
 ## Notas pra continuar em outra conta/sessão do Claude
 

@@ -107,14 +107,23 @@
     </div>
   </div>
 
-  <div class="gap">
-    <h4>Próximo passo do roadmap</h4>
-    <ol>
-      <li><strong>Aplicar streaming no Ally AI:</strong> a auditoria passa a chegar em eventos (NDJSON ou SSE) &mdash; primeiro as violações do axe, depois uma análise da IA por vez &mdash; e o front lê com <code>fetch</code> + <code>getReader()</code> e um <code>AbortController</code> pra cancelar. Vira o <strong>post 5</strong> do <a href="r07-linkedin.html">R7</a>.</li>
-      <li><strong>Aplicar tool calling + Generative UI no Ally AI:</strong> um painel &ldquo;pergunte sobre este relatório&rdquo; em <code>apps/web/src/app/dashboard/analysis/[id]/page.tsx</code>, com ferramentas no Gemini (<code>listarViolacoes(impacto)</code>, <code>detalharViolacao(id)</code>) lendo o relatório salvo, e cada resultado renderizado como componente. Vira o <strong>post 6</strong>.</li>
-      <li><strong>Aplicar retry pela interface no Ally AI:</strong> estendendo o retry que já existe no servidor, um botão &ldquo;gerar análise de novo&rdquo; por violação, com o resultado anunciado por <code>role="status"</code> no mesmo padrão do Gabarita.</li>
-      <li><strong>Aplicar streaming no Gabarita onde a validação permite:</strong> o resumo de diretriz no admin, exibido como rascunho até a citação ser verificada.</li>
-    </ol>
+  <h3 class="sub">Você já usou...? A resposta honesta</h3>
+  <div class="evid">
+    <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
+    <div class="evid-body">
+      <div class="evid-item">
+        <h4>Você já fez streaming de resposta de LLM em produção? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Em produção, não, e no Gabarita foi escolha: a validação decide sobre a resposta inteira, e a geração termina antes de a aluna responder, então streaming quase não ajudaria. Eu faria streaming numa tela em que o usuário espera olhando, como um chat: o Route Handler devolve o stream, o cliente lê com <code>getReader()</code> (ou com o <code>useChat</code> do AI SDK), a interface tem os quatro estados e um botão de parar com <code>AbortController</code>, e o re-render é limitado a uma pintura por quadro. Por quê: streaming melhora o tempo até o primeiro token, que é o que o usuário percebe, não o tempo total.</p>
+        <p><strong>In English:</strong> &ldquo;I haven't shipped LLM streaming to production, and in Gabarita that was deliberate: validation needs the full response. For a chat I would stream from a Route Handler, read it with <code>getReader()</code> or <code>useChat</code>, model the four states, and wire a stop button with <code>AbortController</code>, because streaming improves time to first token, not total time.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex1">exercício 1</a> (leitor SSE) e <a href="r08-pratica.html#ex2">exercício 2</a> (<code>useChat</code>).</p>
+      </div>
+      <div class="evid-item">
+        <h4>Você já usou tool calling com o modelo escolhendo a ferramenta, e Generative UI? <span class="st n">não usei em produção</span></h4>
+        <p><strong>Em voz alta:</strong> Não. O que usei foi o padrão &ldquo;LLM sobre resultado de ferramenta&rdquo; (o axe-core roda e o Gemini recebe os achados) e saída estruturada virando componente de domínio. Eu faria assim: poucas ferramentas, cada uma com schema em Zod; o modelo devolve nome e argumentos; meu código valida, checa a autorização do usuário pro recurso, executa e devolve o resultado; ferramenta de leitura roda direto e a de escrita pede aprovação humana; a part da ferramenta é renderizada por estado (carregando, pronto, erro). Por quê: quem executa e arca com o risco sou eu, então o argumento é entrada não confiável como qualquer formulário.</p>
+        <p><strong>In English:</strong> &ldquo;Not with the model choosing tools. I've done LLM-over-tool-output and structured output rendered as components. I'd declare a few tools with Zod schemas, validate and authorize every call as untrusted input, run read tools directly, require human approval for writes, and render each tool part by state.&rdquo;</p>
+        <p><strong>Pra treinar:</strong> <a href="r08-pratica.html#ex5">exercício 5</a> (partes de uma resposta com aprovação humana).</p>
+      </div>
+    </div>
   </div>
 
   <div class="ammo">
@@ -157,6 +166,12 @@
         <details class="ans"><summary>ver resposta</summary>
           <div class="ans-body"><p>No Gabarita: questão extraída de PDF pela IA nasce com <code>needsVerification: true</code> e vai pra fila <code>/verificacao</code>, onde um revisor confirma, rejeita ou edita; e o aluno pode reportar &ldquo;gabarito errado&rdquo;, o que prioriza a fila.</p>
 <p>O resumo de diretriz clínica trocou revisão humana por <strong>verificação determinística</strong>: só é publicado se a citação que a IA propõe existir palavra por palavra no texto da fonte (<code>src/lib/diretrizes/citacao.ts</code>). Quando existe um critério objetivo e barato, o código decide; humano fica pro que exige julgamento.</p></div>
+        </details>
+      </li>
+      <li>Qual a diferença entre Generative UI e só renderizar o JSON da IA num card fixo? E quando vale a complexidade?
+        <details class="ans"><summary>ver resposta</summary>
+          <div class="ans-body"><p>No <strong>card fixo</strong>, quem decide o componente é você: a IA só preenche dados num lugar previsto (é o que o Gabarita e o Ally AI fazem, e é a escolha certa quando a forma da resposta é sempre a mesma). Na <strong>Generative UI</strong>, o modelo escolhe, por uma ferramenta, <em>qual</em> componente aparece e com quais dados: a lista filtrada, o gráfico, o cartão de aprovação. O front mantém um mapa &ldquo;nome da ferramenta &rarr; componente&rdquo; e renderiza a part <code>tool-&lt;nome&gt;</code> pelo estado (carregando, pronto, erro).</p>
+<p>Vale quando a intenção do usuário é aberta e o formato do resultado varia, como num assistente com várias capacidades. Não vale quando a forma é fixa: card fixo é mais simples, mais testável e mais acessível. Os cuidados são o conjunto <strong>fechado</strong> de componentes (o modelo nunca gera JSX nem HTML para executar), props validadas com Zod, texto como alternativa quando a ferramenta falha, e anúncio de conteúdo que aparece sozinho (<code>aria-live</code>).</p></div>
         </details>
       </li>
     </ol>

@@ -39,7 +39,7 @@
 <h5>As cinco formas de integrar</h5>
 <div class="tbl"><table>
 <tr><th>Abordagem</th><th>Resumo</th><th>Veredito do artigo</th></tr>
-<tr><td>Composição no servidor</td><td>server-side includes montando fragmentos de HTML</td><td>simples, mas não dá deploy realmente independente</td></tr>
+<tr><td>Composição no servidor</td><td>server-side includes montando fragmentos de HTML</td><td>padrão e simples: cada fragmento tem seu pipeline e deploy, e a composição pode ficar num servidor só na frente dos outros. Exige a página montada no servidor</td></tr>
 <tr><td>Build-time (pacote npm)</td><td>cada micro frontend vira dependência do container</td><td><strong>desaconselhado</strong>: obriga release em lockstep e reintroduz o acoplamento que se queria evitar</td></tr>
 <tr><td>Runtime via iframe</td><td>isolamento forte de estilo e script</td><td>sofre com rota, deep link, responsividade e integração</td></tr>
 <tr><td>Runtime via JavaScript</td><td>cada um expõe uma função global de entrada; o container decide quando e onde renderizar</td><td>a mais flexível e a mais usada</td></tr>

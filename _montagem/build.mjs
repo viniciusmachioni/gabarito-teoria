@@ -39,7 +39,7 @@ const PAGINAS = [
   { slug: 'r05-cloud-aws', fonte: 'roadmap', num: 'R5', grupo: 'roadmap', titulo: 'Cloud & Delivery na AWS', foco: 'Cloud &amp; Delivery &mdash; Next.js na AWS, CI/CD, observabilidade, ambientes, secrets e CDN', tempo: '~8h' },
   { slug: 'r06-proximo-nivel', fonte: 'roadmap', num: 'R6', grupo: 'roadmap', titulo: 'Aprofundamento: MCP, AI UX, multi-cloud', foco: 'Próximo nível &mdash; MCP, padrões de AI UX, frontend distribuído e multi-cloud', tempo: '~6h' },
   { slug: 'r07-linkedin', fonte: 'roadmap', num: 'R7', grupo: 'roadmap', titulo: 'Ativação LinkedIn estratégica', foco: 'Ativação LinkedIn &mdash; headline, rede internacional, posts técnicos e candidaturas', tempo: 'contínuo' },
-  { slug: 'r08-pratica', fonte: 'roadmap', num: 'R8', grupo: 'roadmap', titulo: 'Prática: live coding e system design de IA', foco: 'Prática &mdash; 5 exercícios de live coding e o system design de uma interface de chat com IA, com solução comentada', tempo: '~12h' },
+  { slug: 'r08-pratica', fonte: 'roadmap', num: 'R8', grupo: 'roadmap', titulo: 'Prática: live coding e system design de IA', foco: 'Prática &mdash; 12 exercícios de live coding (streaming, Playwright, CI, MCP, pgvector, Storybook, Server Components, toast) e o system design de uma interface de chat com IA, com solução comentada', tempo: '~16h' },
   { slug: '01-javascript-react', fonte: 's1', num: '01', grupo: 'nucleo', titulo: 'JavaScript & React', foco: 'JavaScript &amp; React &mdash; os modelos mentais por trás dos seus hooks', tempo: '~8h' },
   { slug: '02-nextjs-tailwind', fonte: 's2', num: '02', grupo: 'nucleo', titulo: 'Next.js & Tailwind', foco: 'Next.js (renderização, cache, edge) &amp; a filosofia do Tailwind', tempo: '~8h' },
   { slug: '03-postgresql', fonte: 's3', num: '03', grupo: 'nucleo', titulo: 'PostgreSQL', foco: 'PostgreSQL &mdash; MVCC, índices, pooling e por que não é MySQL', tempo: '~10h' },
@@ -144,12 +144,16 @@ if (existe(arqQuizNovos)) quizNovos = (await import(pathToFileURL(arqQuizNovos).
 // Questões do roadmap: um arquivo por página em _montagem/roadmap/quiz/, e entram NA FRENTE
 // (os filtros do quiz seguem a ordem de aparição, então os temas do roadmap ficam primeiro).
 let quizRoadmap = [];
+const quizPorPagina = {}; // slug da página do roadmap -> as questões dela (o arquivo tem o nome do slug)
 const dirQuizRoadmap = path.join(MONT, 'roadmap', 'quiz');
 if (existe(dirQuizRoadmap)) {
   for (const f of fs.readdirSync(dirQuizRoadmap).filter((f) => f.endsWith('.mjs')).sort()) {
-    quizRoadmap = quizRoadmap.concat((await import(pathToFileURL(path.join(dirQuizRoadmap, f)).href)).default);
+    const qs = (await import(pathToFileURL(path.join(dirQuizRoadmap, f)).href)).default;
+    quizPorPagina[f.replace(/\.mjs$/, '')] = qs;
+    quizRoadmap = quizRoadmap.concat(qs);
   }
 }
+const MIN_QUIZ_PAGINA = 10, MAX_QUIZ_PAGINA = 12; // meta de questões fechadas por página do roadmap
 const quiz = quizRoadmap.concat(quizOriginal, quizNovos);
 // id estável por questão (tema + hash do enunciado): é a chave do histórico do quiz no localStorage.
 // Editar o enunciado zera o histórico só daquela questão.
@@ -250,17 +254,41 @@ function conteudoDe(p) {
 const escapaCodigo = (html) => html.replace(/<pre><code class="esc">([\s\S]*?)<\/code><\/pre>/g, (_, c) =>
   '<pre><code>' + c.replace(/^\r?\n/, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>');
 
+// Bloco de múltipla escolha no fim da página do roadmap. As questões vão como JSON na própria página
+// (só as dela) e quiz-pagina.js monta os cartões; o histórico é o mesmo do Questionário rápido.
+function blocoQuizPagina(html, qs) {
+  const dados = JSON.stringify(qs.map((q) => ({ id: q.id, t: q.t, q: q.q, o: q.o, c: q.c, e: q.e })))
+    .replace(/</g, '\\u003c');
+  const bloco = '\n  <div class="qz-pagina" data-qz-pagina>\n' +
+    '    <h3 class="sub">Múltipla escolha desta página</h3>\n' +
+    '    <p class="qz-pagina-intro">' + qs.length + ' questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>\n' +
+    '    <div class="qz-bar qz-pagina-barra"><span class="qz-score qz-pagina-placar" aria-live="polite"></span>' +
+    '<button type="button" class="qz-acao" data-acao="rodada">Nova rodada</button></div>\n' +
+    '    <div class="qz-pagina-lista"></div>\n' +
+    '    <script type="application/json" class="qz-pagina-dados">' + dados + '</script>\n' +
+    '  </div>\n';
+  const fim = html.lastIndexOf('</section>');
+  return html.slice(0, fim) + bloco + html.slice(fim);
+}
+
 const publicadas = [];
 for (const p of PAGINAS) {
   const bruto = conteudoDe(p);
   const c = bruto && escapaCodigo(bruto);
   if (!c) { avisa('pendente: ' + p.slug + ' (' + p.fonte + ')'); continue; }
-  const { html, n } = embuteLeituras(p.slug, c);
+  let { html, n } = embuteLeituras(p.slug, c);
+  let nQuiz = 0;
+  if (p.fonte === 'roadmap') {
+    const qs = quizPorPagina[p.slug] || [];
+    nQuiz = qs.length;
+    if (nQuiz < MIN_QUIZ_PAGINA || nQuiz > MAX_QUIZ_PAGINA) avisa(p.slug + ': ' + nQuiz + ' questões de múltipla escolha (meta: ' + MIN_QUIZ_PAGINA + ' a ' + MAX_QUIZ_PAGINA + ')');
+    if (qs.length) html = blocoQuizPagina(html, qs);
+  }
   const ids = [...html.matchAll(/<input type="checkbox" id="([^"]+)"/g)].map((m) => m[1]);
   const prefixos = [...new Set(ids.map((id) => id.replace(/\d+$/, '')))];
   if (prefixos.length > 1) avisa(p.slug + ': checkboxes com prefixos diferentes ' + prefixos.join(', '));
   ids.forEach((id, i) => { if (id !== prefixos[0] + (i + 1)) avisa(p.slug + ': id fora de sequência ' + id); });
-  publicadas.push({ ...p, html, leituras: n, prefixo: prefixos[0] || '', topicos: ids.length, perguntas: (html.match(/<details class="ans">/g) || []).length });
+  publicadas.push({ ...p, html, leituras: n, fechadas: nQuiz, prefixo: prefixos[0] || '', topicos: ids.length, perguntas: (html.match(/<details class="ans">/g) || []).length });
 }
 
 // ids únicos no site todo (o progresso é uma chave só)
@@ -274,6 +302,7 @@ const totais = {
   topicos: publicadas.reduce((s, p) => s + p.topicos, 0),
   leituras: publicadas.reduce((s, p) => s + p.leituras, 0),
   perguntas: publicadas.reduce((s, p) => s + p.perguntas, 0),
+  fechadasRoadmap: publicadas.reduce((s, p) => s + (p.fechadas || 0), 0),
   blocos: publicadas.filter((p) => p.grupo !== 'pratica').length,
   roadmap: publicadas.filter((p) => p.grupo === 'roadmap').length,
 };
@@ -298,7 +327,8 @@ publicadas.forEach((p, i) => {
     (prox ? '    <a class="next" href="' + prox.slug + '.html"><div class="dir">próxima &rarr;</div><div class="t">' + prox.titulo.replace(/&(?![a-z#0-9]+;)/g, '&amp;') + '</div></a>\n' : '') +
     '  </nav>';
   const scripts = '<script src="../assets/js/app.js"></script>\n' +
-    (p.fonte === 'quiz' ? '<script src="../assets/js/quiz-dados.js"></script>\n<script src="../assets/js/quiz.js"></script>\n' : '');
+    (p.fonte === 'quiz' ? '<script src="../assets/js/quiz-dados.js"></script>\n<script src="../assets/js/quiz.js"></script>\n' : '') +
+    (p.fechadas ? '<script src="../assets/js/quiz-pagina.js"></script>\n' : '');
   const doc = cabeca(p.titulo.replace(/&(?![a-z#0-9]+;)/g, '&amp;') + ' · O Gabarito da Teoria', '../') +
     '<div class="wrap pagina">\n' +
     '  <header class="topbar">\n' +
@@ -350,7 +380,7 @@ const focoRoadmap = !paginasRoadmap.length ? '' :
 `  <section class="week foco" id="roadmap">
     <div class="week-head"><span class="week-num">R</span><h2 style="font-size:22px;">Foco atual: o roadmap da mentoria</h2></div>
     <div class="week-meta">First Trial &middot; Design Engineer / Frontend Engineer com foco em IA &middot; tudo o que já existia continua aqui embaixo</div>
-    <p class="intro">O roadmap tem sete frentes. Cada página abaixo cobre uma delas com o mesmo formato do resto do guia &mdash; tópicos, leituras resumidas, munição de entrevista e perguntas &mdash; e acrescenta uma coisa: <strong>onde você já fez aquilo no Gabarita e no Ally AI</strong>, com o arquivo exato, e o que ainda falta construir. Comece pelo mapa: ele mostra num lugar só o que já é história pra contar e o que ainda é lacuna.</p>
+    <p class="intro">O roadmap tem sete frentes. Cada página abaixo cobre uma delas com o mesmo formato do resto do guia &mdash; tópicos, leituras resumidas, munição de entrevista e perguntas &mdash; e acrescenta três coisas: <strong>onde você já fez aquilo no Gabarita e no Ally AI</strong>, com o arquivo exato; a <strong>resposta honesta</strong> (&ldquo;não usei em produção; faria assim, por isso&rdquo;) para o que você ainda não fez; e um bloco de <strong>múltipla escolha</strong> no fim, com correção na hora. Os dois projetos ficam como estão, só de exemplo. Comece pelo mapa: ele mostra num lugar só o que já é história pra contar e o que ainda é lacuna, e a prática (R8) tem os exercícios que cobrem as lacunas.</p>
     <ol class="foco-lista">
 ` + paginasRoadmap.map((p) => {
   const attrs = p.topicos ? ' data-prefix="' + p.prefixo + '" data-total="' + p.topicos + '"' : '';
@@ -442,5 +472,5 @@ grava('index.html', capa);
 /* ------------------------------------------------------------------ */
 console.log('páginas: ' + publicadas.length + '/' + PAGINAS.length +
   ' · tópicos: ' + totais.topicos + ' · leituras: ' + totais.leituras +
-  ' · perguntas: ' + totais.perguntas + ' · quiz: ' + quiz.length + ' (certa é a mais longa em ' + pctMaisLonga + '%)');
+  ' · perguntas: ' + totais.perguntas + ' · quiz: ' + quiz.length + ' (' + totais.fechadasRoadmap + ' nas páginas do roadmap)' + ' (certa é a mais longa em ' + pctMaisLonga + '%)');
 if (avisos.length) console.log('\navisos:\n- ' + avisos.join('\n- '));

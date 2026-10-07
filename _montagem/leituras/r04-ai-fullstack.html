@@ -78,7 +78,7 @@
 CREATE TABLE items (id bigserial PRIMARY KEY, embedding vector(3));
 SELECT * FROM items ORDER BY embedding &lt;-&gt; '[3,1,2]' LIMIT 5;</code></pre>
 <ul>
-<li>Até 16.000 dimensões; cada vetor ocupa <code>4 &times; dimensões + 8</code> bytes.</li>
+<li>A coluna <code>vector</code> guarda até 16.000 dimensões, mas o índice (HNSW ou IVFFlat) só aceita <strong>até 2.000</strong>; <code>halfvec</code> indexa até 4.000. O Gemini devolve 3.072 por padrão, então sem tratar isso o índice nem é criado. Saídas: pedir menos dimensões (<code>outputDimensionality</code>), indexar a coluna como <code>halfvec</code> (cast na expressão do índice) ou deixar sem índice se a tabela for pequena. Cada vetor ocupa <code>4 &times; dimensões + 8</code> bytes.</li>
 <li>Operadores: <code>&lt;-&gt;</code> L2 (euclidiana), <code>&lt;#&gt;</code> produto interno <strong>negativo</strong> (multiplique por -1), <code>&lt;=&gt;</code> distância de cosseno, <code>&lt;+&gt;</code> L1, e <code>&lt;~&gt;</code>/<code>&lt;%&gt;</code> pra vetores binários.</li>
 <li>Pra embeddings de texto, cosseno é o mais comum; com vetor normalizado, produto interno dá o mesmo ranking e é mais rápido.</li>
 </ul>

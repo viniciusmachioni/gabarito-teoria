@@ -136,31 +136,135 @@
   </div>
 
   <h3 class="sub">As 8 histórias que você já pode contar</h3>
+  <p class="intro">O selo de cada história é o <strong>mesmo da matriz</strong> acima para aquele pedido: &ldquo;aplicado&rdquo; só quando o projeto cobre o item inteiro. As histórias com selo &ldquo;em parte&rdquo; continuam boas de contar, desde que você diga qual parte é.</p>
   <div class="evid">
     <div class="evid-head">Pedido do roadmap &rarr; exemplo pronto pra entrevista</div>
     <div class="evid-body">
-      <div class="evid-item"><h4>A IA propõe, o código verifica <span class="st y">R1 &middot; structured outputs</span></h4><p><span class="proj">Gabarita</span> &mdash; Zod valida a forma, <code>validarExplicacao</code> valida o significado (letras batem com o banco, não contradiz o gabarito) e tenta de novo até 3 vezes. <code>src/lib/ai/schemas.ts</code>, <code>src/lib/study/explain.ts</code>.</p></div>
-      <div class="evid-item"><h4>Citação verificada <span class="st y">R6 &middot; AI UX</span></h4><p><span class="proj">Gabarita</span> &mdash; o resumo de diretriz só é publicado se a citação existir literalmente no texto que o modelo leu, e a interface mostra a citação. <code>src/lib/diretrizes/citacao.ts</code>, <code>src/components/aviso-diretriz.tsx</code>.</p></div>
-      <div class="evid-item"><h4>IA fora do caminho crítico <span class="st y">R1 &middot; estados assíncronos</span></h4><p><span class="proj">Gabarita</span> &mdash; <code>after()</code> gera a explicação depois da resposta HTTP, uma trava atômica no Postgres evita chamada duplicada, e o cliente acompanha com polling. Testado com fake timers.</p></div>
+      <div class="evid-item"><h4>A IA propõe, o código verifica <span class="st p">R1 &middot; structured outputs</span></h4><p><span class="proj">Gabarita</span> &mdash; Zod valida a forma, <code>validarExplicacao</code> valida o significado (letras batem com o banco, não contradiz o gabarito) e tenta de novo até 3 vezes. <code>src/lib/ai/schemas.ts</code>, <code>src/lib/study/explain.ts</code>.</p></div>
+      <div class="evid-item"><h4>Citação verificada <span class="st p">R6 &middot; AI UX</span></h4><p><span class="proj">Gabarita</span> &mdash; o resumo de diretriz só é publicado se a citação existir literalmente no texto que o modelo leu, e a interface mostra a citação. <code>src/lib/diretrizes/citacao.ts</code>, <code>src/components/aviso-diretriz.tsx</code>.</p></div>
+      <div class="evid-item"><h4>IA fora do caminho crítico <span class="st p">R1 &middot; estados assíncronos</span></h4><p><span class="proj">Gabarita</span> &mdash; <code>after()</code> gera a explicação depois da resposta HTTP, uma trava atômica no Postgres evita chamada duplicada, e o cliente acompanha com polling. Testado com fake timers.</p></div>
       <div class="evid-item"><h4>Humano no loop <span class="st y">R1 &middot; human-in-the-loop</span></h4><p><span class="proj">Gabarita</span> &mdash; toda questão extraída por IA nasce <code>needsVerification</code>; a fila <code>/verificacao</code> é priorizada pelos reportes dos alunos.</p></div>
-      <div class="evid-item"><h4>Detecção determinística, correção generativa <span class="st y">R4 &middot; LLM sobre resultado de ferramenta</span></h4><p><span class="proj">Ally AI</span> &mdash; axe-core detecta, o Gemini escreve a correção; agrupar as violações num payload só cortou ~60% dos tokens por auditoria. <code>apps/api/src/services/auditService.ts</code>, <code>aiService.ts</code>.</p></div>
+      <div class="evid-item"><h4>Detecção determinística, correção generativa <span class="st p">R4 &middot; LLM sobre resultado de ferramenta</span></h4><p><span class="proj">Ally AI</span> &mdash; axe-core detecta, o Gemini escreve a correção; agrupar as violações num payload só cortou ~60% dos tokens por auditoria. <code>apps/api/src/services/auditService.ts</code>, <code>aiService.ts</code>.</p></div>
       <div class="evid-item"><h4>Monorepo com contrato compartilhado <span class="st y">R3 &middot; monorepo</span></h4><p><span class="proj">Ally AI</span> &mdash; Turborepo + pnpm, o mesmo <code>AuditResponse</code> no back e no front, Dockerfile que copia só os manifests pra aproveitar cache de camada.</p></div>
       <div class="evid-item"><h4>Segurança no Server Component e no edge <span class="st y">R3/R5 &middot; rendering, ambientes</span></h4><p><span class="proj">Gabarita</span> &mdash; o gabarito só vai pro cliente depois da resposta; CSP com nonce emitida no middleware; Sentry por túnel, sem abrir <code>connect-src</code>.</p></div>
-      <div class="evid-item"><h4>Tempo real orientado a evento <span class="st y">R4 &middot; processamento assíncrono</span></h4><p><span class="proj">Ally AI</span> &mdash; webhook Stripe assinado &rarr; Socket.io autenticado pelo cookie JWT com sala por usuário &rarr; hook React que atualiza os créditos na hora.</p></div>
+      <div class="evid-item"><h4>Tempo real orientado a evento <span class="st p">R4 &middot; processamento assíncrono</span></h4><p><span class="proj">Ally AI</span> &mdash; webhook Stripe assinado &rarr; Socket.io autenticado pelo cookie JWT com sala por usuário &rarr; hook React que atualiza os créditos na hora.</p></div>
+    </div>
+  </div>
+
+  <h3 class="sub">As mesmas histórias em STAR, em português e em inglês</h3>
+  <p class="intro">Uma entrevista comportamental pede a história inteira em uns 90 segundos: <strong>Situação</strong> (o contexto, em uma frase), <strong>Tarefa</strong> (o que era seu), <strong>Ação</strong> (o que <em>você</em> fez, no singular) e <strong>Resultado</strong> (o que mudou, com número quando houver). Os números abaixo são os que o código e a documentação dos projetos sustentam. <strong>Se você tiver uma métrica real</strong> (porcentagem de explicações recusadas na primeira tentativa, tempo de resposta antes e depois), troque pelo número medido, que vale mais que o de projeto.</p>
+  <div class="ex">
+    <div class="ex-body">
+      <details class="sol"><summary>1. A IA propõe, o código verifica &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> No Gabarita cada questão de residência tem uma explicação gerada por IA. Se ela contradiz o gabarito, ensina errado.</p>
+<p><strong>Tarefa:</strong> Garantir que nenhuma explicação chegue à aluna discordando da questão.</p>
+<p><strong>Ação:</strong> Pedi JSON ao Gemini e validei em duas camadas: Zod pro formato (o <code>ExplicacaoSchema</code> exige exatamente uma alternativa correta) e <code>validarExplicacao</code> pro significado (as letras são as do banco e a correta da IA é a do gabarito). Se falha, a chamada é refeita.</p>
+<p><strong>Resultado:</strong> <strong>Até 3 tentativas</strong> por explicação; passou, é salva, não passou, a aluna vê uma mensagem clara sem travar o estudo. Explicação com a correta errada nunca chega a ela.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> In Gabarita, every medical-residency question has an AI-generated explanation. If it contradicts the official answer key, it teaches the wrong thing.</p>
+<p><strong>Task:</strong> Make sure no explanation reaches a student while disagreeing with the question.</p>
+<p><strong>Action:</strong> I asked Gemini for JSON and validated it in two layers: Zod for the shape (the schema requires exactly one correct option) and a <code>validarExplicacao</code> function for the meaning (the letters match the database, and the model's correct answer is the official one). On failure, the call is retried.</p>
+<p><strong>Result:</strong> <strong>Up to 3 attempts</strong> per explanation. If it passes, it is saved; if not, the student sees a clear message and keeps studying. An explanation with the wrong correct answer never reaches them.</p>
+      </div></details>
+      <details class="sol"><summary>2. Citação verificada &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> O Gabarita mostra resumos de diretrizes clínicas gerados por IA a partir de artigos do PubMed. Resumo errado em medicina é pior que nenhum.</p>
+<p><strong>Tarefa:</strong> Impedir que a IA invente uma citação, sem pôr um humano pra ler cada resumo.</p>
+<p><strong>Ação:</strong> A IA propõe o resumo e uma citação. O código só publica se a citação existir <strong>palavra por palavra</strong> no texto que o modelo leu (<code>citacao.ts</code>), e a interface mostra a citação num <code>&lt;blockquote&gt;</code> ao lado do resumo.</p>
+<p><strong>Resultado:</strong> O critério virou <strong>objetivo e automático</strong>: zero resumo publicado sem trecho literal da fonte. Revisão humana ficou reservada ao que pede julgamento.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> Gabarita shows AI-generated summaries of clinical guidelines built from PubMed articles. In medicine a wrong summary is worse than none.</p>
+<p><strong>Task:</strong> Stop the model from inventing a citation without putting a human on every summary.</p>
+<p><strong>Action:</strong> The model proposes a summary and a quote. The code publishes it only if the quote exists <strong>word for word</strong> in the text the model read, and the UI shows the quote in a <code>&lt;blockquote&gt;</code> next to the summary.</p>
+<p><strong>Result:</strong> The check became <strong>objective and automatic</strong>: zero summaries published without a literal passage from the source. Human review stays for what needs judgment.</p>
+      </div></details>
+      <details class="sol"><summary>3. IA fora do caminho crítico &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> A aluna leva de 30 s a 2 min por questão, e gerar a explicação leva de 10 a 13 s.</p>
+<p><strong>Tarefa:</strong> Ter a explicação pronta quando ela responde, sem nenhuma tela esperando a IA.</p>
+<p><strong>Ação:</strong> O <code>after()</code> do Next gera a explicação depois da resposta HTTP, uma trava atômica no Postgres (<code>updateMany</code> condicional) evita chamada duplicada, e o cliente consulta em 3 s, 9 s e 21 s. Aos 23 s desiste com uma mensagem. Testei o polling com fake timers.</p>
+<p><strong>Resultado:</strong> Nenhum render espera a IA, <strong>uma geração por questão</strong> e, no pior caso, a tela se resolve em 23 s sem travar.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> A student spends 30 seconds to 2 minutes per question, and generating the explanation takes 10 to 13 seconds.</p>
+<p><strong>Task:</strong> Have the explanation ready when she answers, with no screen waiting on the model.</p>
+<p><strong>Action:</strong> Next's <code>after()</code> generates it after the HTTP response is sent, an atomic lock in Postgres (a conditional <code>updateMany</code>) prevents duplicate calls, and the client polls at 3 s, 9 s and 21 s. At 23 s it gives up with a message. I tested the polling with fake timers.</p>
+<p><strong>Result:</strong> No render waits on the model, <strong>one generation per question</strong>, and in the worst case the screen settles at 23 s without hanging.</p>
+      </div></details>
+      <details class="sol"><summary>4. Humano no loop &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> As questões extraídas de PDF por IA podem trazer gabarito errado, e é o erro mais caro do produto.</p>
+<p><strong>Tarefa:</strong> Garantir que nenhuma questão extraída fique sem um caminho de correção.</p>
+<p><strong>Ação:</strong> Toda questão extraída nasce com <code>needsVerification: true</code>. A fila <code>/verificacao</code> tem confirmar, rejeitar ou editar, e o botão de reportar do aluno, por categoria, <strong>prioriza</strong> a fila.</p>
+<p><strong>Resultado:</strong> <strong>Três ações</strong> de revisão e um sinal real de prioridade. E, onde havia critério objetivo (a citação), troquei o humano por código.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> Questions extracted from PDFs by the model can carry a wrong answer key, which is the most expensive error in the product.</p>
+<p><strong>Task:</strong> Make sure no extracted question is left without a way to be corrected.</p>
+<p><strong>Action:</strong> Every extracted question is born with <code>needsVerification: true</code>. The <code>/verificacao</code> queue lets a reviewer confirm, reject or edit, and the student's report button, by category, <strong>prioritizes</strong> the queue.</p>
+<p><strong>Result:</strong> <strong>Three review actions</strong> and a real priority signal. And where an objective check existed (the quote), I replaced the human with code.</p>
+      </div></details>
+      <details class="sol"><summary>5. Detecção determinística, correção generativa &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> O Ally AI audita a acessibilidade de uma página e explica como corrigir cada problema.</p>
+<p><strong>Tarefa:</strong> Usar IA sem deixá-la decidir o que é violação, e sem pagar tokens à toa.</p>
+<p><strong>Ação:</strong> O axe-core roda em Chromium (Puppeteer) e detecta. O Gemini recebe os achados e só <strong>escreve a correção</strong>, com saída estruturada validada por Zod e pela lista de <code>id</code> enviados. Agrupei as violações num único payload.</p>
+<p><strong>Resultado:</strong> Cerca de <strong>60% menos tokens por auditoria</strong>, e o que é violação continua decidido por regra, não por modelo.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> Ally AI audits a page's accessibility and explains how to fix each issue.</p>
+<p><strong>Task:</strong> Use AI without letting it decide what counts as a violation, and without wasting tokens.</p>
+<p><strong>Action:</strong> axe-core runs in Chromium (Puppeteer) and detects. Gemini receives the findings and only <strong>writes the fix</strong>, with structured output validated by Zod and against the list of <code>id</code>s I sent. I grouped the violations into a single payload.</p>
+<p><strong>Result:</strong> About <strong>60% fewer tokens per audit</strong>, and what counts as a violation is still decided by rules, not by a model.</p>
+      </div></details>
+      <details class="sol"><summary>6. Monorepo com contrato compartilhado &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> O front e a API do Ally AI precisavam concordar sobre o formato da resposta da auditoria.</p>
+<p><strong>Tarefa:</strong> Ter um contrato só, sem copiar tipos de um lado pro outro.</p>
+<p><strong>Ação:</strong> Turborepo com pnpm workspaces e o pacote <code>@ally-ai/types</code>, com o <code>AuditResponse</code> consumido pelos dois apps. O Dockerfile copia só os manifests antes do código, pra reaproveitar o cache de camada.</p>
+<p><strong>Resultado:</strong> <strong>Um tipo, dois consumidores</strong>: mudar o contrato quebra o typecheck dos dois lados no mesmo PR, em vez de quebrar em produção.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> Ally AI's web app and API had to agree on the shape of the audit response.</p>
+<p><strong>Task:</strong> Have a single contract, with no types copied from one side to the other.</p>
+<p><strong>Action:</strong> Turborepo with pnpm workspaces and a <code>@ally-ai/types</code> package holding <code>AuditResponse</code>, consumed by both apps. The Dockerfile copies only the manifests before the source, to reuse the layer cache.</p>
+<p><strong>Result:</strong> <strong>One type, two consumers</strong>: changing the contract breaks typecheck on both sides in the same PR instead of breaking in production.</p>
+      </div></details>
+      <details class="sol"><summary>7. Segurança no Server Component e no edge &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> Numa prova, o gabarito não pode chegar ao navegador antes da resposta, e a CSP precisa ser forte sem quebrar o monitoramento.</p>
+<p><strong>Tarefa:</strong> Fechar as duas portas: dado sensível no cliente e script não autorizado.</p>
+<p><strong>Ação:</strong> Server Components leem do Prisma e o gabarito só vai pro cliente <strong>depois</strong> da resposta. A CSP com nonce é emitida a cada request no middleware (por isso a renderização é dinâmica, decisão documentada). O Sentry passa por um túnel <code>/monitoramento</code>, sem abrir <code>connect-src</code>.</p>
+<p><strong>Resultado:</strong> <strong>Um nonce por request</strong>, nenhum domínio externo novo na CSP, e o gabarito nunca no HTML antes da hora.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> In an exam, the answer key must not reach the browser before the answer, and the CSP has to be strong without breaking monitoring.</p>
+<p><strong>Task:</strong> Close both doors: sensitive data on the client and unauthorized scripts.</p>
+<p><strong>Action:</strong> Server Components read from Prisma and the answer key goes to the client only <strong>after</strong> the answer. A nonce-based CSP is issued on every request in the middleware (which is why rendering is dynamic, a documented decision). Sentry goes through a <code>/monitoramento</code> tunnel, without opening <code>connect-src</code>.</p>
+<p><strong>Result:</strong> <strong>One nonce per request</strong>, no new external domain in the CSP, and the answer key never in the HTML ahead of time.</p>
+      </div></details>
+      <details class="sol"><summary>8. Tempo real orientado a evento &middot; contar em STAR (PT e EN)</summary><div class="sol-body">
+<h5>Português</h5>
+<p><strong>Situação:</strong> Quando o usuário paga no Stripe, o saldo de créditos na tela precisa mudar sem ele recarregar a página.</p>
+<p><strong>Tarefa:</strong> Levar o evento do pagamento até a interface certa, e só a ela.</p>
+<p><strong>Ação:</strong> O webhook do Stripe, com assinatura verificada, atualiza os créditos e dispara um evento no Socket.io, autenticado pelo cookie JWT e com <strong>uma sala por usuário</strong>. Um hook React escuta e atualiza o saldo.</p>
+<p><strong>Resultado:</strong> O saldo muda na hora, <strong>sem polling</strong>, e cada usuário só recebe o evento da própria sala.</p>
+<h5>English</h5>
+<p><strong>Situation:</strong> When a user pays through Stripe, the credit balance on screen has to change without a page reload.</p>
+<p><strong>Task:</strong> Carry the payment event to the right UI, and only to it.</p>
+<p><strong>Action:</strong> The Stripe webhook, with its signature verified, updates the credits and emits a Socket.io event; the socket is authenticated by the JWT cookie and has <strong>one room per user</strong>. A React hook listens and updates the balance.</p>
+<p><strong>Result:</strong> The balance changes instantly, <strong>with no polling</strong>, and each user only receives events from their own room.</p>
+      </div></details>
     </div>
   </div>
 
   <div class="gap">
-    <h4>Próximos passos do roadmap</h4>
-    <p>Os itens marcados como &ldquo;ainda não aplicado&rdquo;, na ordem em que mais rendem, cada um em cima de algo que você já tem:</p>
+    <h4>Os &ldquo;ainda não aplicado&rdquo;: como cobrir sem mexer nos projetos</h4>
+    <p>Os dois projetos ficam como estão: servem de exemplo, não de lista de tarefas. Cada item que o roadmap traz de novo se cobre em três passos &mdash; entender na página da frente, praticar num exercício do <a href="r08-pratica.html">R8</a> e ter a resposta honesta pronta no bloco &ldquo;Você já usou...?&rdquo; da mesma página.</p>
     <ol>
-      <li><strong>Streaming de resposta</strong> na análise do Ally AI (as violações chegando uma a uma). <a href="r01-ai-frontend.html">R1</a></li>
-      <li><strong>CI no GitHub Actions</strong> rodando as tasks do Turbo no Ally AI e a suíte do Gabarita. <a href="r05-cloud-aws.html">R5</a></li>
-      <li><strong>Playwright + <code>@axe-core/playwright</code></strong> no Ally AI: o motor de acessibilidade aplicado à própria interface. <a href="r02-design-systems.html">R2</a></li>
-      <li><strong>Pacote <code>packages/ui</code> + Storybook</strong> no monorepo do Ally AI. <a href="r02-design-systems.html">R2</a></li>
-      <li><strong>Tool calling</strong> e <strong>Generative UI</strong> sobre o resultado da auditoria. <a href="r01-ai-frontend.html">R1</a></li>
-      <li><strong>Deploy na AWS</strong> com OIDC do GitHub Actions. <a href="r05-cloud-aws.html">R5</a></li>
-      <li><strong>pgvector</strong> no Gabarita (questões parecidas por embedding) e um <strong>servidor MCP</strong> expondo a auditoria do Ally AI como ferramenta. <a href="r04-ai-fullstack.html">R4</a> &middot; <a href="r06-proximo-nivel.html">R6</a></li>
+      <li><strong>Streaming de resposta:</strong> <a href="r01-ai-frontend.html">R1</a> &middot; exercícios 1 e 2 do <a href="r08-pratica.html#ex1">R8</a>.</li>
+      <li><strong>CI no GitHub Actions:</strong> <a href="r05-cloud-aws.html">R5</a> &middot; exercício 7 (<code>ci.yml</code> no quadro).</li>
+      <li><strong>Playwright + <code>@axe-core/playwright</code>:</strong> <a href="r02-design-systems.html">R2</a> &middot; exercício 6.</li>
+      <li><strong>Biblioteca de componentes e Storybook:</strong> <a href="r02-design-systems.html">R2</a> &middot; exercícios 4 e 10.</li>
+      <li><strong>Tool calling e Generative UI:</strong> <a href="r01-ai-frontend.html">R1</a> &middot; exercício 5.</li>
+      <li><strong>Deploy na AWS com OIDC:</strong> <a href="r05-cloud-aws.html">R5</a> &middot; exercício 7 (job de deploy e trust policy).</li>
+      <li><strong>pgvector e servidor MCP:</strong> <a href="r04-ai-fullstack.html">R4</a> &middot; exercício 9; <a href="r06-proximo-nivel.html">R6</a> &middot; exercício 8.</li>
     </ol>
   </div>
 
@@ -171,6 +275,14 @@
       <p class="why"><strong>Por que isso importa:</strong> numa vaga de Design Engineer / Frontend com foco em IA, a pergunta não é &ldquo;você já usou LLM?&rdquo;, é &ldquo;o que você faz quando o LLM erra?&rdquo;. Validação pelo significado, citação verificada, retry que respeita a API e fila humana são quatro respostas diferentes, e todas já estão no seu código.</p>
     </div>
   </div>
+
+  <div class="qz-pagina" data-qz-pagina>
+    <h3 class="sub">Múltipla escolha desta página</h3>
+    <p class="qz-pagina-intro">11 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
+    <div class="qz-bar qz-pagina-barra"><span class="qz-score qz-pagina-placar" aria-live="polite"></span><button type="button" class="qz-acao" data-acao="rodada">Nova rodada</button></div>
+    <div class="qz-pagina-lista"></div>
+    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-mapa-1cby0ph","t":"Mapa do roadmap","q":"No mapa do R0, o que significa o selo &ldquo;aplicado em parte&rdquo; num item do roadmap?","o":["O projeto já tem o item, porém sem nenhum teste automatizado cobrindo o comportamento","O projeto faz uma parte do que o item pede","O item está planejado e aguarda entrar na próxima versão do projeto","O código existe, mas só num branch de teste que ainda não foi mesclado"],"c":1,"e":"O selo mede \u003cstrong>cobertura do pedido\u003c/strong>, e não qualidade nem estágio de entrega. &ldquo;Aplicado&rdquo; é o item inteiro; &ldquo;em parte&rdquo; é um pedaço dele (por exemplo, saída estruturada validada, mas sem tool calling); &ldquo;ainda não aplicado&rdquo; é o que o roadmap traz de novo. Na entrevista, dizer qual parte é o que torna a história defensável."},{"id":"rm-mapa-gd7dqv","t":"Mapa do roadmap","q":"Pela matriz, qual destes itens está &ldquo;aplicado&rdquo; no Ally AI e &ldquo;ainda não aplicado&rdquo; no Gabarita?","o":["Observabilidade de front e back, com Sentry nos três runtimes","Rendering, caching e data fetching no Next.js, com Server Components","Monorepo React/Next com biblioteca compartilhada","Ambientes, secrets, caching e CDN, com CSP e Cache-Control por rota"],"c":2,"e":"O monorepo é do Ally AI (Turborepo, pnpm workspaces e o pacote \u003ccode>@ally-ai/types\u003c/code>); o Gabarita é um repositório só, com web e worker. Nos outros três a relação é a inversa: rendering, observabilidade e ambientes estão aplicados no Gabarita, e no Ally AI aparecem em parte ou ainda não."},{"id":"rm-mapa-jhwky4","t":"Mapa do roadmap","q":"Qual par de itens do roadmap está &ldquo;ainda não aplicado&rdquo; nos dois projetos e sem nenhum exemplo aproximado listado?","o":["Storybook com Figma e regressão visual, com a vitrine do /admin/design como base","Deploy de Next na AWS e CI/CD, com o Dockerfile e o workflow de backup","MCP e multi-cloud, já usados no dia a dia de desenvolvimento","Microfrontends e frontend distribuído"],"c":3,"e":"Microfrontends e frontend distribuído são os únicos sem nem sequer um &ldquo;o que mais se aproxima&rdquo;. Nos demais pares há algo vizinho: o \u003ccode>/admin/design\u003c/code> como vitrine, o \u003ccode>Dockerfile.web\u003c/code> e o runbook de Cloud Run, o uso diário de MCP no desenvolvimento e vários fornecedores atrás de interfaces trocáveis. Um item sem aproximação é onde a resposta honesta precisa de mais preparo."},{"id":"rm-mapa-rqvf05","t":"Mapa do roadmap","q":"Numa resposta no formato STAR, o que entra na parte da \u003cstrong>Ação\u003c/strong>?","o":["O contexto do projeto, o prazo que existia e quem pediu a mudança","O que você, pessoalmente, decidiu e fez","O que mudou depois, com o número medido e a data da medição","O que o time inteiro entregou no período, em ordem cronológica"],"c":1,"e":"Situação e Tarefa dão o contexto; a Ação é o que \u003cem>você\u003c/em> fez, no singular (&ldquo;eu validei&rdquo;, e não &ldquo;nós temos validação&rdquo;); o Resultado é o que mudou, com número quando houver. O erro mais comum é gastar a resposta toda em Situação e deixar a Ação vaga."},{"id":"rm-mapa-v209zr","t":"Mapa do roadmap","q":"Na história &ldquo;A IA propõe, o código verifica&rdquo;, o que o Zod garante e o que fica com a função \u003ccode>validarExplicacao\u003c/code>?","o":["Zod garante o significado do conteúdo; a função valida só o formato do JSON","Zod garante a forma; a função confere letras e gabarito contra o banco","Zod garante forma e significado; a função apenas refaz a chamada se falhar","Zod só limpa o texto; a função valida a forma e o significado juntos"],"c":1,"e":"São duas camadas com papéis diferentes: o schema (com um \u003ccode>refine\u003c/code> que exige exatamente uma correta) garante o \u003cstrong>formato\u003c/strong>; a validação de domínio confere o \u003cstrong>significado\u003c/strong> contra o banco. Se falha, a chamada é refeita, até 3 vezes. É por isso que structured output sozinho não basta."},{"id":"rm-mapa-1b034y7","t":"Mapa do roadmap","q":"Por que o cliente do Gabarita consulta a explicação em 3 s, 9 s e 21 s, e não a cada segundo?","o":["O servidor só consegue responder a cada três segundos, por limite de CPU","A geração sempre termina exatamente em 3, 9 ou 21 segundos, nessa ordem","Poucas requisições, em intervalos que acompanham a geração","O navegador bloqueia mais de três consultas seguidas na mesma página"],"c":2,"e":"A geração leva de 10 a 13 s, então consultar a cada segundo gastaria dezenas de requisições à toa. Três consultas crescentes cobrem o caso comum, e o prazo de desistência (23 s) garante que a tela nunca fica em loading eterno. O custo é um pouco de latência: a explicação pode ficar pronta aos 10 s e aparecer só aos 21."},{"id":"rm-mapa-knftpa","t":"Mapa do roadmap","q":"Na história da citação verificada, em que condição o resumo da diretriz é publicado?","o":["Quando o modelo marca a própria confiança como alta, num campo do JSON","Quando a citação existe literalmente no texto que o modelo leu","Quando um revisor humano abre o resumo e aprova antes da publicação","Quando o artigo de origem tem mais de 20 citações em outros estudos"],"c":1,"e":"O critério é objetivo e automático: a citação que a IA propõe precisa aparecer palavra por palavra na fonte. Revisão humana por resumo foi trocada por esse teste determinístico, e a autoavaliação de confiança do modelo não decide nada, porque não é confiável o bastante pra isso."},{"id":"rm-mapa-vxlab","t":"Mapa do roadmap","q":"O que significa &ldquo;detecção determinística, correção generativa&rdquo; no Ally AI?","o":["O Gemini detecta as violações e o axe-core escreve as correções","O Puppeteer detecta as violações e o axe-core renderiza o relatório","O axe-core decide o que é violação; o Gemini só escreve a correção","Os dois detectam, e o resultado final é a média das duas listas"],"c":2,"e":"O que é violação é decidido por regra (axe-core), de forma reproduzível; o modelo entra só onde linguagem ajuda, que é explicar e propor o código corrigido. Isso mantém o resultado previsível e deixou o payload menor: agrupar as violações cortou cerca de 60% dos tokens por auditoria."},{"id":"rm-mapa-j214hv","t":"Mapa do roadmap","q":"No Ally AI, por que o Socket.io usa uma sala por usuário?","o":["Para cada usuário receber só os eventos da própria conta","Para o Socket.io aceitar mais de uma conexão ao mesmo tempo no servidor","Para o webhook do Stripe dispensar a verificação da assinatura","Para o saldo de créditos ser calculado no navegador, sem consultar a API"],"c":0,"e":"A sala é a fronteira de privacidade: o evento de &ldquo;créditos atualizados&rdquo; é emitido só para a sala do usuário dono do pagamento, depois de o socket ser autenticado pelo cookie JWT. Sem a sala, qualquer cliente conectado receberia o evento de todos."},{"id":"rm-mapa-eddwqu","t":"Mapa do roadmap","q":"Como o R0 manda cobrir os itens &ldquo;ainda não aplicado&rdquo; sem mexer nos projetos?","o":["Implementar cada um no Ally AI antes da entrevista, em ordem de dificuldade","Entender na página, praticar no R8 e ter a resposta honesta pronta","Dizer que já usou, desde que tenha lido a documentação oficial até o fim","Deixar esses itens de fora da conversa e do currículo, para não expor lacunas"],"c":1,"e":"Os dois projetos ficam como exemplo, não como lista de tarefas. O caminho é: estudar a página da frente, fazer o exercício correspondente no R8 e ter pronta a resposta &ldquo;não usei em produção; faria assim, por isso&rdquo;. Afirmar uso que não houve é o erro que uma pergunta de follow-up desmonta em segundos."},{"id":"rm-mapa-1rdjiab","t":"Mapa do roadmap","q":"Qual resposta a &ldquo;Você já usou Storybook?&rdquo; é a mais defensável para quem não usou em produção?","o":["Sim: a página \u003ccode>/admin/design\u003c/code> do Gabarita já funciona como um Storybook completo","Sim, conheço bem, li a documentação oficial inteira e acompanho as novidades","Não, mas aprendo rápido, e isso nunca foi um problema nos projetos anteriores","Não em produção; uso uma vitrine e faria stories em CSF com a11y em modo erro"],"c":3,"e":"A resposta honesta nomeia o que existe (a vitrine), diz o que não foi feito e mostra o desenho do que faria, com o motivo. As duas primeiras afirmam um uso que não houve, e a terceira não diz nada de técnico: nenhuma sobrevive ao primeiro follow-up."}]</script>
+  </div>
 </section>
 
   <nav class="pager" aria-label="Navegação entre páginas">
@@ -178,9 +290,10 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 234 tópicos &middot; 159 leituras resumidas &middot; 144 perguntas abertas com gabarito &middot; 142 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 05/10/2026
+    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 07/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>
+<script src="../assets/js/quiz-pagina.js"></script>
 </body>
 </html>

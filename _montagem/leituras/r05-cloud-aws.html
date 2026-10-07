@@ -129,6 +129,68 @@ steps:
     with:
       role-to-assume: arn:aws:iam::123456789012:role/deploy-web
       aws-region: eu-west-1</code></pre>
+<h5>Um <code>ci.yml</code> comentado: do pull request ao deploy</h5>
+<p>É o arquivo que a entrevista pede pra você escrever no quadro. Cada linha comentada é uma decisão que dá pra defender. As versões das actions são ilustrativas: use as atuais e, em produção, fixe por SHA.</p>
+<pre><code>name: ci
+on:
+  pull_request:              # roda em todo PR
+  push:
+    branches: [main]         # e quando algo entra na main
+
+# um push novo no mesmo PR cancela a execução anterior: não paga minuto de código velho
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read             # o mínimo pra todo job; quem precisar de mais pede no próprio job
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15      # job travado não pode consumir a cota inteira
+    services:
+      postgres:              # banco descartável pra suíte que usa banco de teste
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_test
+        ports: ['5432:5432']
+        options: &gt;-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4        # lê a versão do campo "packageManager"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm                     # guarda o store do pnpm entre execuções
+      - run: pnpm install --frozen-lockfile   # falha se o lockfile estiver fora de sincronia
+      - run: pnpm turbo lint typecheck test build   # o Turborepo pula o que não mudou
+
+  deploy:
+    needs: qualidade                      # só depois que o CI passou
+    if: github.event_name == 'push' &amp;&amp; github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write                     # deixa o job pedir o token OIDC
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/deploy-web
+          aws-region: eu-west-1
+      - run: ./scripts/deploy.sh          # build da imagem, push pro ECR, atualiza o serviço</code></pre>
+<ul>
+<li><strong>Dois jobs, uma porta:</strong> o deploy só roda na <code>main</code>, depois do CI, e só ele recebe <code>id-token: write</code>. O job que roda código de PR não tem poder de assumir role nenhuma.</li>
+<li><strong><code>concurrency</code> com <code>cancel-in-progress</code></strong> poupa minutos nos PRs. <strong>Não use no deploy de produção</strong> sem pensar: cancelar um deploy no meio pode deixar o ambiente pela metade.</li>
+<li>A trust policy da role precisa casar com o gatilho: com <code>environment: prod</code> no job, o <code>sub</code> vira <code>repo:org/repo:environment:prod</code>; sem environment, <code>repo:org/repo:ref:refs/heads/main</code>.</li>
+<li><strong>Check obrigatório:</strong> o CI só protege se a branch protection exigir o job <code>qualidade</code> pra mesclar.</li>
+</ul>
 <p><strong>Frase de entrevista:</strong> &ldquo;Meu pipeline não tem chave da AWS. Ele assume uma role por OIDC, e a trust policy só aceita o environment de produção do meu repositório.&rdquo;</p>
 </article>
 
