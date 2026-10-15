@@ -355,6 +355,43 @@
   .gap li { padding: 0; background: none; border: 0; }
   .gap p { font-size: 14px; margin: 0 0 10px; max-width: none; }
 
+  /* cartão de tradeoff: escolha, o que compra, o que custa, restrição que forçou, quando eu faria diferente */
+  .tnota { font-size: 13.5px; color: var(--ink-soft); margin: 6px 0 0; max-width: none; }
+  .tcards { margin-top: 14px; display: grid; gap: 14px; }
+  .tcard {
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--amber);
+    border-radius: var(--radius-m);
+    background: var(--paper-raised);
+    padding: 12px 16px 6px;
+  }
+  .tcard h4 { margin: 0 0 8px; font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .tcard dl { margin: 0; display: grid; grid-template-columns: 150px minmax(0, 1fr); }
+  .tcard dt {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--ink-faint);
+    padding: 9px 12px 8px 0;
+    border-top: 1px dashed var(--line);
+  }
+  .tcard dd { margin: 0; padding: 7px 0 8px; border-top: 1px dashed var(--line); font-size: 14px; color: var(--ink-soft); }
+  .tcard dt:first-of-type, .tcard dt:first-of-type + dd { border-top: 0; }
+  .tcard dt.rest { color: var(--amber); font-weight: 600; }
+  .tcard dd.seu { color: var(--ink-faint); font-style: italic; }
+  .tcard dd.seu small { display: block; margin-top: 4px; font-style: normal; font-size: 12.5px; color: var(--ink-soft); }
+  .tcard code { font-size: 12px; overflow-wrap: anywhere; }
+  .evid-fold { margin-top: 26px; }
+  .evid-fold > summary { cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); padding: 6px 0; }
+  .evid-fold > .evid { margin-top: 8px; }
+  @media (max-width: 560px) {
+    .tcard dl { grid-template-columns: minmax(0, 1fr); }
+    .tcard dt { padding-bottom: 0; }
+    .tcard dd { border-top: 0; padding-top: 2px; }
+    .tcard dt:first-of-type + dd { padding-top: 2px; }
+  }
+
   @media (max-width: 560px) {
     .trilha-grid { grid-template-columns: 1fr; }
     .foco-lista { grid-template-columns: 1fr; }

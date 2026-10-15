@@ -27,7 +27,62 @@
     <li><div class="r-title"><a href="https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison" target="_blank" rel="noopener">Compare AWS and Azure services to Google Cloud</a></div><div class="r-note">A tabela oficial de equivalência entre as três nuvens, por categoria de serviço.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~15 min</span>Não é pra ler inteira: encontre as linhas de uma app web (compute, container serverless, storage, CDN, Postgres, secrets, observabilidade, fila).</div><div class="r-src">docs.cloud.google.com &middot; oficial</div></li>
   </ul>
 
+  <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
+  <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
+
+  <div class="tcards">
+    <div class="tcard">
+      <h4>Alucinação: a IA propõe, o código verifica <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>A IA devolve o resumo da diretriz junto de uma citação, e o código só publica se a citação existir, palavra por palavra, no texto que ela leu. Se não confere, a diretriz entra só com título e link.</dd>
+        <dt>O que compra</dt>
+        <dd>Verificação determinística no lugar de um revisor humano em cada resumo, e uma frase inventada não chega à aluna.</dd>
+        <dt>O que custa</dt>
+        <dd>Só vale onde há texto fonte para conferir. Um resumo bom com a citação ligeiramente parafraseada é descartado, e o resumo hoje só roda para diretriz brasileira de 2024 em diante.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>O domínio é de risco (uma frase inventada ensina conduta errada a um futuro médico) e revisão humana em cada resumo não escala.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: em que situação a verificação por código não basta e o humano volta ao circuito?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Multi-cloud: portabilidade sem rodar em duas nuvens <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Usar vários fornecedores, com costuras por interface (<code>AIProvider</code>, <code>Queue</code>, <code>ImageStorage</code>) e container, sem operar em duas nuvens ao mesmo tempo.</dd>
+        <dt>O que compra</dt>
+        <dd>Trocar um fornecedor vira trocar uma implementação, e a escolha de onde rodar pode ser feita por medição (o Ally AI mediu quatro limites de CPU).</dd>
+        <dt>O que custa</dt>
+        <dd>Cada interface é uma abstração a manter, que tende ao menor denominador comum. E isso é portabilidade, não multi-cloud.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>O custo de multi-cloud é operacional (duas formas de monitorar, de pagar e de proteger), então só se paga com um motivo de negócio claro: exigência regulatória, risco de um fornecedor só ou preço.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: a resposta honesta mais abaixo separa portabilidade de multi-cloud. Que motivo de negócio justificaria dar o salto?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>MCP: ser cliente antes de ser servidor <span class="st p">em aberto</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Usar MCP no dia a dia como cliente (context7, Playwright, Stripe, plugins) e ainda não publicar um servidor próprio.</dd>
+        <dt>O que compra</dt>
+        <dd>Entender o modelo host, clientes e servidores na prática, sem abrir uma superfície nova para ser atacada.</dd>
+        <dt>O que custa</dt>
+        <dd>Falta a experiência do lado servidor: transporte, autorização, escopo e o que acontece quando o chamador não é confiável.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Um servidor MCP exposto é uma API pública com um chamador não confiável: exige validar entrada, emitir token para o próprio servidor (sem repassar), escopo mínimo e confirmação em ação que escreve. Nenhum produto hoje precisa disso.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: o motor do Ally AI já tem o formato de uma <em>tool</em>. Que proteção dele é a mesma que a spec de segurança do MCP pede?</small></dd>
+      </dl>
+    </div>
+  </div>
+
   <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
+  <details class="evid-fold">
+    <summary>Abrir as evidências: arquivo e linha de cada projeto</summary>
   <div class="evid">
     <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
@@ -79,6 +134,8 @@
       </div>
     </div>
   </div>
+
+  </details>
 
   <h3 class="sub">MCP Apps: a interface dentro da conversa</h3>
   <div class="ex">

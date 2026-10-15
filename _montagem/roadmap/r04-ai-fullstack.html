@@ -27,7 +27,62 @@
   <p class="intro" style="margin-top:12px">Base que este bloco assume: MVCC e transação em <a href="03-postgresql.html">03 &middot; PostgreSQL</a>, filas e tempo real em <a href="04-concorrencia.html">04 &middot; Concorrência</a>, RAG e vocabulário de LLM em <a href="b02-ia-agentes.html">B2 &middot; IA &amp; agentes</a>, OAuth em <a href="b06-oauth.html">B6</a>, Testing Library/MSW/Playwright em <a href="b10-testes.html">B10 &middot; Testes</a> e BFF/webhooks em <a href="b16-apis.html">B16 &middot; APIs</a>.</p>
 
 
+  <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
+  <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
+
+  <div class="tcards">
+    <div class="tcard">
+      <h4>Fila: pg-boss no Postgres com um worker separado <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Fila durável no próprio Postgres (pg-boss) com um worker Node à parte, em vez de processar o PDF ou a geração dentro do request.</dd>
+        <dt>O que compra</dt>
+        <dd>Nada de Redis nem de serviço extra; o job sobrevive a um reinício e a ingestão (prazo de 2 h) não prende nenhuma requisição.</dd>
+        <dt>O que custa</dt>
+        <dd>Um segundo processo para subir e monitorar, e a fila divide o banco com o produto. Em produção, na Vercel, não existe worker: o que depende dele roda no ambiente local.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Custo baixo e uma fonte só de infraestrutura. A interface <code>Queue</code> deixa a porta aberta para trocar por BullMQ + Redis quando o Postgres deixar de bastar.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: que sinais mostrariam que o Postgres não basta mais como fila?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Trava atômica: uma chamada de IA por explicação <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Um <code>updateMany</code> condicional (<code>explicacaoIniciadaEm</code>) decide quem gera, em vez de ler e depois gravar. Os motivos e a marca de &ldquo;pronta&rdquo; vão na mesma transação.</dd>
+        <dt>O que compra</dt>
+        <dd>Duas abas, ou duas pessoas, resultam em uma chamada à IA só, e nunca existe questão marcada como explicada com alternativa sem motivo.</dd>
+        <dt>O que custa</dt>
+        <dd>A janela de trava (5 min) precisa cobrir o pior caso de retry, e uma falha deixa a marca: a nova tentativa espera a janela passar.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Ler e depois escrever na aplicação deixa uma janela de corrida (<em>check-then-act</em>), e a cota diária do plano grátis do Gemini é pequena, da ordem de 250 chamadas.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: onde mais o projeto usa esse mesmo padrão? Procure a entrega de prova, que também não pode correr duas vezes.</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Autenticação: JWT no cookie e guards no banco <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Auth.js com sessão em JWT num cookie (sem tabela de sessões), mais guards que consultam o banco por chave primária nas telas e actions logadas.</dd>
+        <dt>O que compra</dt>
+        <dd>O middleware verifica a sessão sem ir ao banco. A consulta só acontece onde papel, plano ou senha trocada realmente importam.</dd>
+        <dt>O que custa</dt>
+        <dd>Papel e plano gravados no token ficam velhos até o próximo login, e revogar um token já emitido é fraco. O remendo é ler papel e plano frescos do banco e comparar um carimbo de troca de senha (<code>credenciaisAlteradasEm</code>), ao custo de uma consulta por PK.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>O middleware roda no edge e não alcança o Prisma nem o Argon2. Com sessão em banco, ele não conseguiria verificar nada ali.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: o que acontece com uma sessão aberta há 20 dias se o plano da aluna mudar hoje, só com a primeira camada?</small></dd>
+      </dl>
+    </div>
+  </div>
+
   <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
+  <details class="evid-fold">
+    <summary>Abrir as evidências: arquivo e linha de cada projeto</summary>
   <div class="evid">
     <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
@@ -103,6 +158,8 @@ expect(screen.getByText(/não foi possível gerar a explicação agora/i)).toBeI
 
     </div>
   </div>
+
+  </details>
 
   <h3 class="sub">Você já usou...? A resposta honesta</h3>
   <div class="evid">

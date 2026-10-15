@@ -26,7 +26,62 @@
     <li><div class="r-title"><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html" target="_blank" rel="noopener">CloudFront &mdash; Understand cache policies</a></div><div class="r-note">Cache key, TTLs contra <code>Cache-Control</code>, compressão. A página onde está a regra que vaza página privada se você não souber dela.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia &ldquo;Time to live (TTL) settings&rdquo; e &ldquo;Cache key settings&rdquo;. A parte longa de compressão é consulta.</div><div class="r-src">docs.aws.amazon.com &middot; oficial</div></li>
   </ul>
 
+  <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
+  <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
+
+  <div class="tcards">
+    <div class="tcard">
+      <h4>Deploy: Vercel agora, container pronto para sair <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Produção na Vercel (região <code>gru1</code>, cron diário), mantendo uma imagem <em>standalone</em> portátil (<code>Dockerfile.web</code>) para sair quando for preciso.</dd>
+        <dt>O que compra</dt>
+        <dd>Cache, imagens e ISR já vêm prontos e o deploy é por Git. A saída para ECS Fargate ou App Runner existe sem reescrever nada.</dd>
+        <dt>O que custa</dt>
+        <dd>Dependência de plataforma. E o app usa <code>after()</code> e streaming de RSC, que o Amplify Hosting não suporta: na AWS o caminho é o container, onde cache e imagens passam a ser decisão minha.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>O modo standalone atrapalha o rastreamento das funções serverless na Vercel, por isso só é ligado fora dela (<code>output: process.env.VERCEL ? undefined : &quot;standalone&quot;</code>).</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: que sinal faria você sair da Vercel, e o que você teria de assumir ao sair?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Observabilidade: Sentry nos três runtimes <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Sentry em Node, edge e navegador, com <code>tracesSampleRate: 1</code> e os eventos saindo por uma rota do próprio domínio (<code>tunnelRoute</code>).</dd>
+        <dt>O que compra</dt>
+        <dd>Uma ferramenta responde &ldquo;quebrou?&rdquo; e &ldquo;está lento?&rdquo;, e a CSP continua com <code>connect-src 'self'</code>.</dd>
+        <dt>O que custa</dt>
+        <dd>Amostragem de 100% só cabe porque o produto ainda não tem tráfego real (o comentário no código diz isso). Com tráfego, vira custo e cota, e é preciso baixar o número.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Uma CSP restrita não deixa o navegador falar com o domínio do Sentry. O túnel evita liberar um domínio externo.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: a observabilidade tem três perguntas (erro, desempenho, uso). Qual delas ficou sem resposta aqui?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Segredos: preferir não ter chave a guardar chave <span class="st p">em aberto</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>No Gabarita, o storage da Vercel autentica por OIDC em produção, sem token guardado. Para o deploy na AWS, o plano é o mesmo: o GitHub assume uma <em>role</em> por OIDC (exercício 7), ainda não feito.</dd>
+        <dt>O que compra</dt>
+        <dd>Um segredo que não existe não vaza, e a role pode ter só o poder de fazer aquele deploy.</dd>
+        <dt>O que custa</dt>
+        <dd>Configuração inicial: provedor OIDC, <em>trust policy</em> restrita pela claim <code>sub</code> e <code>permissions: id-token: write</code> no workflow.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Tudo que começa com <code>NEXT_PUBLIC_</code> é embutido no build e vai para o navegador: serve para endereço (como o DSN do Sentry), nunca para segredo.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: o que a trust policy está limitando, exatamente? Quem poderia assumir a role se ela fosse frouxa?</small></dd>
+      </dl>
+    </div>
+  </div>
+
   <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
+  <details class="evid-fold">
+    <summary>Abrir as evidências: arquivo e linha de cada projeto</summary>
   <div class="evid">
     <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
@@ -87,6 +142,8 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
 
     </div>
   </div>
+
+  </details>
 
   <h3 class="sub">Segredos e app internacional: o que faltava nas leituras</h3>
   <div class="ex">

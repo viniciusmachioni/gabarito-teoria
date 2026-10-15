@@ -261,7 +261,62 @@ while (true) {
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://ai-sdk.dev/docs/agents/tool-approvals" target="_blank" rel="noopener">ai-sdk.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
+  <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
+  <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
+
+  <div class="tcards">
+    <div class="tcard">
+      <h4>Streaming: por que o Gabarita gera a explicação antes <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Gerar a explicação em segundo plano (<code>after()</code>) assim que a questão abre, e mostrá-la pronta, em vez de transmitir token a token.</dd>
+        <dt>O que compra</dt>
+        <dd>Nenhum render espera a IA, e a validação roda sobre a resposta inteira: a aluna nunca vê um texto que ainda pode ser recusado.</dd>
+        <dt>O que custa</dt>
+        <dd>Não exercita streaming de tokens nem a interface com os quatro estados e o botão de parar. E só funciona porque a geração (10 a 13 s) termina antes de a aluna responder (30 s a 2 min).</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>A validação (exatamente uma correta, letras iguais às do banco) só decide com a resposta completa. Numa prova de medicina, um texto errado exibido por poucos segundos já ensina errado.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: pense numa tela de chat, em que a pessoa fica olhando a espera. A mesma decisão se mantém?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Saída da IA: o schema garante a forma, o código garante o sentido <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Pedir JSON ao modelo e validar a saída no código com Zod, refazendo a chamada até 3 vezes quando a validação recusa. No Ally AI o schema também vai na chamada (<code>responseJsonSchema</code>).</dd>
+        <dt>O que compra</dt>
+        <dd>Regras de domínio que o schema não alcança passam a ser conferidas por código: exatamente uma alternativa correta, e a correta da IA tem de ser a do gabarito.</dd>
+        <dt>O que custa</dt>
+        <dd>Chamadas extras de IA (e de cota) quando a saída é recusada, e no Ally AI duas definições do mesmo formato para manter em dia, o JSON Schema e o Zod.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>A saída do modelo é entrada não confiável: o schema reduz JSON quebrado, mas não impede valor errado, campo vazio ou <code>id</code> inventado.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: por que repetir a chamada serve para saída malformada, mas não para erro de rede ou de cota?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Retry: quando repetir e quanto esperar <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Repetir só o que é transitório (429, 5xx, rede), esperando o <code>retryDelay</code> que a API mandou, com teto; erro permanente (400, 404) não repete.</dd>
+        <dt>O que compra</dt>
+        <dd>Não gasta cota em tentativa que não pode dar certo, e respeita o tempo que o próprio provedor pediu.</dd>
+        <dt>O que custa</dt>
+        <dd>Mais política para manter (classificar o erro, ler o prazo, impor o teto), e no pior caso uma única questão pode levar minutos até desistir.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Backoff fixo gasta as tentativas antes do prazo pedido e falha do mesmo jeito; repetir na hora só aumenta a pressão sobre uma cota que já estourou.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: retry automático no servidor ou botão de &ldquo;tentar de novo&rdquo; na tela? O que muda para a pessoa?</small></dd>
+      </dl>
+    </div>
+  </div>
+
   <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
+  <details class="evid-fold">
+    <summary>Abrir as evidências: arquivo e linha de cada projeto</summary>
   <div class="evid">
     <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
@@ -341,6 +396,8 @@ while (true) {
       </div>
     </div>
   </div>
+
+  </details>
 
   <h3 class="sub">Você já usou...? A resposta honesta</h3>
   <div class="evid">
@@ -427,7 +484,7 @@ while (true) {
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 07/10/2026
+    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

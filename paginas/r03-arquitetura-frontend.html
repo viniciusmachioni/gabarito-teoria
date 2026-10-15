@@ -192,7 +192,78 @@
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://web.dev/articles/optimize-inp" target="_blank" rel="noopener">web.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
+  <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
+  <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
+
+  <div class="tcards">
+    <div class="tcard">
+      <h4>Rendering: por que toda rota do Gabarita é dinâmica <span class="st y">decisão tomada (D111)</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Renderizar todas as rotas no servidor a cada requisição, com CSP de <code>script-src</code> sem <code>'unsafe-inline'</code> e um nonce novo por requisição, gerado no middleware.</dd>
+        <dt>O que compra</dt>
+        <dd>Um <code>&lt;script&gt;</code> injetado por um atacante não carrega o nonce da resposta, então o navegador não o executa. O nonce só protege porque ninguém consegue adivinhá-lo.</dd>
+        <dt>O que custa</dt>
+        <dd>Saem o estático, o ISR, o cache de CDN e o PPR: toda página é montada a cada acesso. Isso conflita com a ideia de milhares de páginas públicas pré-geradas para busca.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>O nonce só existe durante a renderização de uma requisição. O HTML gerado no build leva o nonce de antes, que não bate com o do cabeçalho da requisição: o navegador bloqueia os scripts e a tela fica branca. Gerar a política por hash também não serve, porque ela é montada no middleware (edge), onde o <code>node:crypto</code> não existe.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: a &ldquo;Munição&rdquo; abaixo cita uma saída que preservaria o estático. Em que situação ela valeria a pena?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Monorepo: pacote de tipos compartilhado <span class="st p">Ally AI sim &middot; Gabarita não</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>No Ally AI, pnpm workspaces + Turborepo, com <code>packages/types</code> consumido pela web e pela api. O Gabarita ficou como monolito modular: web e worker saem do mesmo código, sem workspaces.</dd>
+        <dt>O que compra</dt>
+        <dd>O contrato <code>AIAnalysis</code>/<code>AuditResponse</code> é um só nos dois lados: mudar o tipo quebra o build dos dois juntos, em vez de divergir sem aviso. O Turborepo ainda cacheia as tasks pelo hash das entradas.</dd>
+        <dt>O que custa</dt>
+        <dd>Mais ferramenta para entender e manter: o grafo de tasks, as variáveis de ambiente no hash do <code>turbo.json</code>, o Dockerfile copiando só os manifests. E o pacote sem build só funciona porque todo consumidor sabe transpilar TypeScript.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Dois apps de runtimes diferentes (Next e Express) que precisam do mesmo contrato de dados. Com um app só, o monorepo não pagaria o próprio custo.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: a pergunta 2 do quiz desta página. O que muda quando o pacote deixa de ser só tipo?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Microfrontends: usar ou não <span class="st n">decisão de não usar</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Não usar. As fronteiras entre módulos ficam por contrato: fila e interfaces trocáveis no Gabarita (web &times; worker), tipos compartilhados no Ally AI (web &times; api).</dd>
+        <dt>O que compra</dt>
+        <dd>Um deploy, um bundle e uma interface consistente, sem governança de pacote compartilhado entre times.</dd>
+        <dt>O que custa</dt>
+        <dd>Nenhuma área publica de forma independente do resto. Se um segundo time aparecer, a decisão volta à mesa.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Microfrontend resolve um problema de organização (times autônomos com releases independentes), não de tecnologia. Os dois projetos têm um time, um domínio e um deploy: pagariam o custo (React duplicado, ambientes divergentes) sem colher o benefício.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: a pergunta 1 do quiz diz o que mudaria e por qual forma de integração começar.</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Performance: o que otimizar primeiro <span class="st p">em aberto</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Fazer primeiro o que é barato e já vem no framework (<code>next/font</code>, imagens com <code>loading="lazy"</code>, cache HTTP com hash na URL, e no Ally AI o React Compiler e o analisador de bundle), e acompanhar o resto por tracing.</dd>
+        <dt>O que compra</dt>
+        <dd>Ganho sem infraestrutura nova e sem esperar por métrica.</dd>
+        <dt>O que custa</dt>
+        <dd>Sem o p75 de LCP, INP e CLS de usuários reais, não dá para saber se o que se otimiza é o que afeta quem usa. Há risco de gastar esforço no lugar errado.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Aqui não é restrição técnica, é lacuna: a coleta em campo (<code>useReportWebVitals</code> mais um destino) e o orçamento de bundle por rota ainda não foram montados. Dizer isso com clareza vale mais do que fingir que existe.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: o bloco &ldquo;Você já medeu Core Web Vitals com dado de campo?&rdquo;, mais abaixo, descreve como seria.</small></dd>
+      </dl>
+    </div>
+  </div>
+
   <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
+  <details class="evid-fold">
+    <summary>Abrir as evidências: arquivo e linha de cada projeto</summary>
   <div class="evid">
     <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
@@ -268,6 +339,8 @@
 
     </div>
   </div>
+
+  </details>
 
   <h3 class="sub">Você já usou...? A resposta honesta</h3>
   <div class="evid">
@@ -362,7 +435,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 07/10/2026
+    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

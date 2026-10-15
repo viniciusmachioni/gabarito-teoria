@@ -238,7 +238,62 @@ parameters: {
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://playwright.dev/docs/test-snapshots" target="_blank" rel="noopener">playwright.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
 
+  <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
+  <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
+
+  <div class="tcards">
+    <div class="tcard">
+      <h4>Tokens semânticos e tema escuro <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Tokens semânticos em OKLCH no <code>@theme</code> do Tailwind v4, e o tema escuro trocando só os valores desses tokens.</dd>
+        <dt>O que compra</dt>
+        <dd>Nenhum componente sabe que existe modo escuro, e o contraste de cada par é decidido uma vez, no token, em vez de em cada tela.</dd>
+        <dt>O que custa</dt>
+        <dd>Disciplina: componente só pode usar o token semântico, nunca uma cor solta, e cada par precisa ter o contraste conferido.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>O tema é escolha explícita da usuária e tem de valer antes do primeiro desenho da página, senão a tela pisca no tema errado. Por isso um script inline o aplica, e ele carrega o nonce da CSP.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: os tópicos falam em três camadas (primitivo, semântico, de componente). O projeto tem todas? O que se perde sem a terceira?</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Variantes: classes de CSS ou <code>cva</code> <span class="st y">decisão tomada</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>Variantes como classes de componente (<code>.btn-primary</code>, <code>.chip</code>) e, onde a variação é real, um mapa tipado <code>Record&lt;Escala, string&gt;</code> escrito à mão (<code>GradeNumerada</code>), sem <code>cva</code>.</dd>
+        <dt>O que compra</dt>
+        <dd>Nenhuma dependência nova, e o TypeScript já valida as chaves do mapa.</dd>
+        <dt>O que custa</dt>
+        <dd>Sem <code>compoundVariants</code> nem <code>VariantProps</code> prontos: cada mapa novo é escrito à mão e a combinação entre variantes fica por conta de quem escreve.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>Aqui é de escala, não técnica: com um app só e poucos componentes que variam, uma biblioteca de variantes ainda não se paga.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: em que momento o <code>cva</code> passa a valer a pena? Pense em quantas apps consomem o componente.</small></dd>
+      </dl>
+    </div>
+
+    <div class="tcard">
+      <h4>Acessibilidade: o que o código trava e o que ainda não <span class="st p">em aberto</span></h4>
+      <dl>
+        <dt>Escolha</dt>
+        <dd>No Gabarita, testes de componente que consultam por papel e nome acessível (<code>getByRole</code>), sem axe nem screenshots no CI. No Ally AI, o axe é o produto.</dd>
+        <dt>O que compra</dt>
+        <dd>Trava de graça a semântica que mais quebra sem ninguém ver: nome acessível e estado em texto, não só em cor.</dd>
+        <dt>O que custa</dt>
+        <dd>Não pega regressão visual nem contraste no CI, e mesmo o axe cobre só parte dos critérios da WCAG.</dd>
+        <dt class="rest">Restrição que forçou</dt>
+        <dd>É lacuna, não restrição técnica: faltam o Playwright (<code>toHaveScreenshot</code>, axe) e um CI que rode isso em cada pull request.</dd>
+        <dt>Quando eu faria diferente</dt>
+        <dd class="seu">Sua vez.<small>Pista: o bloco &ldquo;Você já fez teste de regressão visual...?&rdquo;, mais abaixo, descreve como fechar a lacuna.</small></dd>
+      </dl>
+    </div>
+  </div>
+
   <h3 class="sub">Onde você já aplicou: Gabarita e Ally AI</h3>
+  <details class="evid-fold">
+    <summary>Abrir as evidências: arquivo e linha de cada projeto</summary>
   <div class="evid">
     <div class="evid-head">Cada pedido do roadmap &rarr; onde ele aparece nos seus projetos</div>
     <div class="evid-body">
@@ -312,6 +367,8 @@ parameters: {
       </div>
     </div>
   </div>
+
+  </details>
 
   <h3 class="sub">Composição, documentação e responsivo em componente</h3>
   <div class="ex">
@@ -464,7 +521,7 @@ comTransicao(() =&gt; setAberto(true));
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 07/10/2026
+    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>
