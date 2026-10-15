@@ -13,6 +13,17 @@ Depois do roadmap, o guia continua igual: as 5 semanas de núcleo, 9 blocos bôn
 CSS moderno, performance de navegador, front-end system design, React avançado, design de APIs, produção/observabilidade,
 comportamental e o processo seletivo aqui e fora).
 
+## Como estudar (o roadmap é a espinha dorsal)
+
+Cada página R1 a R6 tem a seção **"Decisões e tradeoffs"**, com um cartão por decisão: escolha, o que compra, o que custa,
+**restrição que forçou** e "quando eu faria diferente". Os quatro primeiros campos são um rascunho a partir do código; **o
+último é para você escrever**. O bloco "Onde você já aplicou" (arquivo e linha de cada projeto) vem recolhido: abra quando
+precisar de consulta. A pergunta que mais se cobra em entrevista é a da linha "Restrição que forçou".
+
+Ordem sugerida: R0 (mapa) → um cartão por vez, dizendo a sua versão em voz alta antes de ler a pista → as perguntas abertas
+da página. Do núcleo e dos blocos B, leia só o que sustenta os cartões (Postgres e transações, concorrência, OAuth,
+system design). O R8 é prática opcional: faça 2 ou 3 exercícios, depois dos cartões.
+
 ## Como abrir
 
 Abra `index.html` direto no navegador (duplo clique). Não precisa de servidor.
@@ -26,7 +37,7 @@ Detalhes de cada fonte estão em **[PLANO.md](PLANO.md)**.
 ## Estrutura
 
 ```
-gabarito-da-teoria/
+gabarito-teoria/
 ├─ index.html                  gerado: capa, trilhas por vaga, índice com progresso, backup
 ├─ paginas/                    gerado: uma página por semana/bloco + histórias, prática, quiz
 ├─ assets/

@@ -87,6 +87,29 @@ Executou o plano de `gabarito-teoria-revisao-roadmap-2026-10-05.md` (etapas 1 a 
   MCP Apps no R6 (`w30-10`); perguntas abertas novas em R1 (Generative UI), R2 (Storybook × Figma), R3 (refatoração e Web Vitals) e R4 (auth e upload).
 - **Mobile:** nenhuma página tem mais rolagem horizontal em 390 px (antes R2 e R5 tinham, por tópicos e itens da grade que não encolhiam).
 
+## Cartões de tradeoff e correções (15/10/2026)
+
+Motivo: a leitura do R3 mostrou que as páginas R1–R6 pareciam "código" (o bloco "Onde você já aplicou" ocupa cerca de um quarto
+de cada uma, cheio de arquivo e linha) e não tinham um lugar para **decisão e tradeoff**. Código em `<pre>` é só 1–6% nas páginas
+R1–R7 (38% no R8, que é prática por definição).
+
+- **Seção "Decisões e tradeoffs"** em R1 a R6 (R3 com 4 cartões, as demais com 3), antes de "Onde você já aplicou". Cada cartão é
+  um `<div class="tcard">` com `<dl>`: Escolha, O que compra, O que custa, **Restrição que forçou** (`dt.rest`) e "Quando eu faria
+  diferente" (`dd.seu`, **em branco de propósito**, para o aluno escrever). Os quatro primeiros campos são rascunho feito a partir
+  do código e das páginas; a pista na última linha aponta onde achar a resposta. Estilos `.tcard`, `.tnota`, `.evid-fold` em
+  `_montagem/estilo-extra.css`.
+- **"Onde você já aplicou" recolhido** num `<details class="evid-fold">`: o conteúdo não mudou, só vem fechado. O `</details>` fecha
+  logo depois do bloco `.evid`, antes da seção seguinte de cada página (nas páginas com seções extras entre o bloco e "Você já usou...?",
+  como R2, R5 e R6, o fechamento vem antes delas).
+- **Não mexeram** nos ids dos checkboxes, nas perguntas abertas nem nas questões de múltipla escolha. R0, R7 e R8 ficaram sem cartões.
+- **Banco do Gabarita:** o texto de R0, R6 e do quiz do R6 dizia Neon; hoje é Supabase. As duas menções em R5 e R7 são a história
+  da medição de latência (D42), feita quando o banco ainda era o Neon, e passaram a dizer isso.
+- **Conferência das citações:** os 61 caminhos de arquivo do Gabarita citados nas páginas do roadmap existem, nenhuma linha citada passa
+  do fim do arquivo, e uma amostra de ~20 números de linha (R1, R3, R5) bate com o código de 15/10/2026. Os números de linha continuam
+  sujeitos a envelhecer.
+- **Pendente do aluno:** escrever a última linha de cada cartão e dizer se o formato serve. Pendente de revisão: ver no navegador as
+  páginas R1, R2, R4 e R6 (R3 e R5 foram conferidas em 390 px e 1100 px, sem rolagem horizontal), e a revisão visual geral listada em "O que falta".
+
 ## Status da montagem anterior (15/09/2026)
 
 - 27/27 páginas geradas · 168 tópicos · **123 leituras resumidas embutidas** · 91 perguntas abertas com gabarito · **102 de múltipla escolha**

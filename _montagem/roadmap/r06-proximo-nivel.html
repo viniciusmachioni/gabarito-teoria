@@ -127,7 +127,7 @@
         <h4>Multi-cloud AWS / Azure / GCP <span class="st n">Gabarita: ainda não aplicado</span> <span class="st n">Ally AI: ainda não aplicado</span></h4>
         <p>Os dois aplicam <strong>portabilidade multi-fornecedor</strong>, que é a base de qualquer conversa sobre multi-cloud:</p>
         <ul>
-          <li><span class="proj">Gabarita</span>: Vercel + Neon + Cloudflare R2 + Google (Gemini/OAuth) + Stripe + Resend + Sentry. O storage é trocável em runtime: <code>src/lib/storage/image-storage.ts</code> L6&ndash;13 (<code>resolveImageStorageKind</code>) escolhe R2, Vercel Blob ou disco por variável de ambiente &mdash; e o R2 é falado pelo SDK do S3, então ir pro S3 é trocar endpoint e credencial.</li>
+          <li><span class="proj">Gabarita</span>: Vercel + Supabase + Cloudflare R2 + Google (Gemini/OAuth) + Stripe + Resend + Sentry. O storage é trocável em runtime: <code>src/lib/storage/image-storage.ts</code> L6&ndash;13 (<code>resolveImageStorageKind</code>) escolhe R2, Vercel Blob ou disco por variável de ambiente &mdash; e o R2 é falado pelo SDK do S3, então ir pro S3 é trocar endpoint e credencial.</li>
           <li><span class="proj">Ally AI</span>: o mesmo <code>Dockerfile</code> roda em qualquer provedor, e a escolha foi feita por <strong>medição</strong> em <code>docs/DECISOES.md</code> D06 (L39&ndash;55): 0,1 CPU dava timeout de navegação, 1 CPU auditava em 6,5 s, e a comparação entre Render, Koyeb, Fly.io, Railway, Oracle e Google Cloud Run ficou documentada.</li>
         </ul>
         <p>A história: <em>&ldquo;escolhi a nuvem por medição e deixei as costuras pra trocar de fornecedor por interface&rdquo;</em>. Ver <a href="r05-cloud-aws.html">R5</a> pro lado AWS.</p>
@@ -163,7 +163,7 @@
       </div>
       <div class="evid-item">
         <h4>Você já trabalhou com multi-cloud? <span class="st n">não usei em produção</span></h4>
-        <p><strong>Em voz alta:</strong> Não de verdade. Uso vários fornecedores (Vercel, Neon, Cloudflare R2, Google) e deixei pontos de troca no código (<code>AIProvider</code>, <code>Queue</code>, <code>Storage</code>), mas isso é portabilidade, não multi-cloud. Eu só adotaria multi-cloud com um motivo de negócio claro (exigência regulatória, risco de um provedor só, preço), e começaria por container, infraestrutura como código e interfaces trocáveis. Por quê: o custo é operacional (duas formas de monitorar, de pagar, de proteger), então não se paga &ldquo;por precaução&rdquo;.</p>
+        <p><strong>Em voz alta:</strong> Não de verdade. Uso vários fornecedores (Vercel, Supabase, Cloudflare R2, Google) e deixei pontos de troca no código (<code>AIProvider</code>, <code>Queue</code>, <code>Storage</code>), mas isso é portabilidade, não multi-cloud. Eu só adotaria multi-cloud com um motivo de negócio claro (exigência regulatória, risco de um provedor só, preço), e começaria por container, infraestrutura como código e interfaces trocáveis. Por quê: o custo é operacional (duas formas de monitorar, de pagar, de proteger), então não se paga &ldquo;por precaução&rdquo;.</p>
         <p><strong>In English:</strong> &ldquo;Not truly. I use several vendors and keep swap points in code, which is portability, not multi-cloud. I'd adopt multi-cloud only for a concrete business reason like regulation or vendor risk, starting with containers, infrastructure as code and swappable interfaces, because the cost is operational.&rdquo;</p>
         <p><strong>Pra treinar:</strong> a tabela de equivalência entre as nuvens, nas leituras desta página.</p>
       </div>
