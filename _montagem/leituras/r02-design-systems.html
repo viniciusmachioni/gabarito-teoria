@@ -1,199 +1,175 @@
 <article data-href="https://www.designtokens.org/tr/2025.10/format/">
-<p class="tldr">Um design token é, no mínimo, <strong>um nome legível ligado a um valor</strong> (<code>color-text-primary: #000000</code>). A especificação do Design Tokens Community Group padroniza o <strong>arquivo</strong> que guarda esses pares, pra Figma, ferramentas de tradução e o seu código trocarem decisões de design sem conversor feito à mão. A versão 2025.10 é um relatório final, marcado como estável e &ldquo;intended for implementation&rdquo; &mdash; não é um padrão W3C oficial, é um relatório de Community Group.</p>
+<p class="tldr"><strong>Em uma frase:</strong> um design token é um nome ligado a um valor (<code>color-text-primary: #000000</code>). Esta especificação padroniza o arquivo que guarda esses pares, para o Figma, as ferramentas de conversão e o seu código trocarem decisões de design sem conversor feito à mão.</p>
+<p class="real"><b>No mundo real</b>O termo &ldquo;design token&rdquo; nasceu no Salesforce Lightning Design System, por volta de 2014, para manter iguais as cores e os espaços de vários produtos. O Material Design 3, do Google, usa exatamente as três camadas desta página: tokens de referência (a paleta crua, <code>md.ref.palette.primary40</code>), de sistema (o uso, <code>md.sys.color.primary</code>) e de componente (<code>md.comp.filled-button.container.color</code>). É isso que deixa o Android gerar um tema inteiro a partir da cor do papel de parede.</p>
 
 <h5>O arquivo</h5>
 <ul>
-<li>É <strong>JSON</strong>, com extensão recomendada <code>.tokens</code> ou <code>.tokens.json</code> e MIME <code>application/design-tokens+json</code>.</li>
-<li>Todo token tem <strong><code>$value</code></strong> (obrigatório, o dado) e <strong><code>$type</code></strong> (obrigatório ou herdado). Opcionais: <code>$description</code>, <code>$deprecated</code> e <code>$extensions</code> (metadado de fornecedor, em notação de domínio reverso).</li>
-<li>O prefixo <code>$</code> é reservado: é o que separa propriedade do formato de nome de token ou grupo.</li>
+<li>É um JSON. Cada token tem <code>$value</code> (o valor) e <code>$type</code> (o tipo: cor, dimensão, fonte, duração&hellip;). Pode ter também <code>$description</code>.</li>
+<li>O <code>$</code> no começo separa o que é do formato do que é nome de token.</li>
+<li>A versão 2025.10 é um relatório final e estável de um grupo da comunidade W3C. Não é um padrão oficial do W3C, mas foi feito para ser implementado.</li>
 </ul>
 
-<h5>Grupos e herança de tipo</h5>
+<h5>Grupos</h5>
 <ul>
-<li><strong>Grupo é qualquer objeto sem <code>$value</code></strong>. Serve pra organizar (<code>color.accent.light</code>), não implica tipo nem propósito.</li>
-<li>Um token sem <code>$type</code> herda o tipo do <strong>grupo-pai mais próximo</strong> que declara <code>$type</code> &mdash; declare <code>"$type": "color"</code> uma vez no grupo <code>color</code> e todos os filhos são cor.</li>
-<li><code>$root</code> dá ao grupo um valor-base (o &ldquo;accent&rdquo; sem sufixo), e <code>$extends</code> permite um grupo herdar de outro, com as propriedades locais sobrescrevendo.</li>
+<li>Um grupo é um objeto sem <code>$value</code>, que só organiza (<code>color.accent.light</code>).</li>
+<li>Um token sem <code>$type</code> herda o tipo do grupo. Declare <code>"$type": "color"</code> uma vez no grupo <code>color</code>, e todos os filhos são cor.</li>
 </ul>
 
-<h5>Aliases: a parte que importa pra tema</h5>
+<h5>Aliases: a parte que importa para tema</h5>
 <ul>
-<li><strong>Chaves</strong>: <code>"$value": "{colors.blue}"</code> resolve pro valor inteiro de outro token. É assim que um token <strong>semântico</strong> (<code>semantic.primary</code>) aponta pra um <strong>primitivo</strong> (<code>colors.blue</code>).</li>
-<li><strong>JSON Pointer</strong> (<code>{"$ref": "#/colors/blue/$value/components/0"}</code>) acessa uma propriedade específica, como só o matiz de uma cor.</li>
-<li>Referência circular é proibida e deve gerar erro.</li>
+<li>Um token pode apontar para outro: <code>"$value": "{colors.orange.560}"</code>. Esse apontamento se chama <em>alias</em>.</li>
+<li>É assim que o token semântico (<code>color.brand</code>) aponta para o primitivo (<code>colors.orange.560</code>). Para o tema escuro, você muda só o alvo do alias.</li>
+<li>Um token não pode apontar para si mesmo, direta ou indiretamente. Isso deve dar erro.</li>
 </ul>
 
 <h5>Tipos</h5>
-<div class="tbl"><table>
-<tr><th>Categoria</th><th>Tipos</th></tr>
-<tr><td>Básicos</td><td>color (com <code>colorSpace</code> e <code>components</code>), dimension (<code>{ value, unit: "px" | "rem" }</code>), fontFamily, fontWeight, duration, cubicBezier, number</td></tr>
-<tr><td>Compostos</td><td>strokeStyle, border, transition, shadow (um ou vários), gradient, typography (família + tamanho + peso + entrelinha)</td></tr>
-</table></div>
-<p>Repare que cor não é mais uma string hex solta: é um objeto com espaço de cor &mdash; o que casa com quem já escreve token em OKLCH.</p>
-
-<p><strong>Frase de entrevista:</strong> &ldquo;Token é decisão de design com nome. Eu separo primitivo de semântico por alias, e o componente só conhece o semântico &mdash; é isso que deixa trocar tema ou marca sem tocar em componente. O formato do DTCG é o que faz essa camada viajar entre Figma e código.&rdquo;</p>
+<ul>
+<li><strong>Simples:</strong> cor, dimensão (<code>{ value: 16, unit: "px" }</code>), família e peso de fonte, duração, curva de animação e número.</li>
+<li><strong>Compostos:</strong> borda, sombra, transição, gradiente e tipografia (família, tamanho, peso e entrelinha juntos).</li>
+<li>A cor deixou de ser um hex solto: virou um objeto com espaço de cor, o que combina com quem já usa OKLCH.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Token é decisão de design com nome. Eu separo primitivo de semântico por alias, e o componente só conhece o semântico. É isso que deixa trocar tema ou marca sem tocar em componente.&rdquo;</p>
 </article>
 
 <article data-href="https://cva.style/docs/getting-started/variants">
-<p class="tldr">O <code>cva</code> (class-variance-authority) transforma &ldquo;qual combinação de classes este botão usa?&rdquo; numa <strong>tabela declarativa e tipada</strong>. Você descreve base, variantes, combinações e defaults; ele devolve uma função que recebe props e devolve a string de classes certa. É a peça por trás dos componentes do shadcn/ui.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o <code>cva</code> transforma &ldquo;quais classes este botão usa em cada combinação?&rdquo; numa tabela com tipos. Você descreve as variantes uma vez, e ele devolve uma função que recebe as props e devolve as classes certas.</p>
+<p class="real"><b>No mundo real</b>O <code>&lt;Button&gt;</code> do shadcn/ui, uma das coleções de componentes React mais copiadas hoje, é escrito com <code>cva</code>: <code>variant</code> (default, destructive, outline, ghost, link) e <code>size</code> (default, sm, lg, icon). Quando você roda <code>npx shadcn add button</code>, é esse arquivo que entra no seu projeto.</p>
 
 <h5>As quatro partes</h5>
 <pre><code>const button = cva(["font-semibold", "border", "rounded"], {
   variants: {
     intent: { primary: ["bg-blue-500", "text-white"], secondary: ["bg-white", "text-gray-800"] },
     size:   { small: ["text-sm", "py-1", "px-2"], medium: ["text-base", "py-2", "px-4"] },
-    disabled: { false: null, true: ["opacity-50", "cursor-not-allowed"] },
   },
-  compoundVariants: [{ intent: "primary", disabled: false, class: "hover:bg-blue-600" }],
-  defaultVariants: { intent: "primary", size: "medium", disabled: false },
+  compoundVariants: [{ intent: "primary", size: "medium", class: "uppercase" }],
+  defaultVariants: { intent: "primary", size: "medium" },
 });</code></pre>
 <ul>
-<li><strong>Base</strong> (primeiro argumento): classes aplicadas em toda instância.</li>
-<li><strong><code>variants</code></strong>: cada chave é uma dimensão (intent, size) e cada valor é uma opção. <code>null</code> numa opção significa &ldquo;não aplica nada&rdquo; &mdash; é o truque do <code>disabled: false</code>.</li>
-<li><strong><code>compoundVariants</code></strong>: classes que só entram quando <strong>várias condições batem juntas</strong> (hover só no primário habilitado; <code>uppercase</code> só no primário médio). É o que substitui o CSS de &ldquo;<code>.btn-primary.btn-small:not(:disabled)</code>&rdquo;.</li>
+<li><strong>Base</strong> (o primeiro argumento): as classes que toda instância recebe.</li>
+<li><strong><code>variants</code></strong>: cada chave é uma dimensão (intent, size), e cada valor é uma opção.</li>
+<li><strong><code>compoundVariants</code></strong>: classes que só entram quando várias condições valem juntas, como &ldquo;maiúsculas só no primário médio&rdquo;. Substitui um CSS do tipo <code>.btn-primary.btn-medium</code>.</li>
 <li><strong><code>defaultVariants</code></strong>: o que vale quando a prop não é passada.</li>
-<li><code>class</code> e <code>className</code> funcionam igual; use o do seu framework.</li>
 </ul>
 
 <h5>Por que existe</h5>
 <ul>
-<li>A documentação cita a dor original: com CSS tradicional você <strong>casa classe e prop na mão e escreve os tipos na mão</strong>. Bibliotecas CSS-in-TS (Stitches) tinham variantes tipadas, mas não servem pra todo projeto.</li>
-<li>Com o helper <code>VariantProps&lt;typeof button&gt;</code>, as props do componente <strong>derivam</strong> da tabela de variantes: adicionar <code>size: "large"</code> já aparece no autocomplete e um valor inválido reprova no TypeScript.</li>
-<li>É pequeno (~600 bytes comprimido) e agnóstico: funciona com Tailwind ou com qualquer classe.</li>
+<li>Sem ele, você liga classe e prop à mão e escreve os tipos à mão, e os dois se desencontram.</li>
+<li>Com <code>VariantProps&lt;typeof button&gt;</code>, o tipo das props sai da própria tabela. Acrescente <code>size: "large"</code> e ele aparece no autocomplete. Passe um valor inválido e o TypeScript reclama.</li>
+<li>É pequeno (cerca de 600 bytes) e funciona com Tailwind ou com qualquer classe.</li>
 </ul>
-
-<p><strong>Frase de entrevista:</strong> &ldquo;Variante de componente é uma tabela, não um if espalhado. Com cva a tabela vira o tipo das props, então uma combinação que o design não prevê nem compila.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Variante de componente é uma tabela, não um if espalhado. Com cva, a tabela vira o tipo das props, então uma combinação que o design não prevê nem compila.&rdquo;</p>
 </article>
 
 <article data-href="https://storybook.js.org/docs/writing-stories">
-<p class="tldr">Uma story <strong>captura o estado renderizado de um componente sob condições específicas</strong>: um objeto com anotações que descrevem comportamento e aparência dados certos argumentos. O formato padrão é o CSF (Component Story Format), que é só um módulo ES &mdash; e a mesma story serve de documentação e de caso de teste.</p>
+<p class="tldr"><strong>Em uma frase:</strong> uma <em>story</em> é um estado de um componente, desenhado sozinho fora do app: o botão primário, o botão desabilitado, o botão carregando. A mesma story serve de documentação e de caso de teste.</p>
+<p class="real"><b>No mundo real</b>O site de componentes React do Carbon, o design system da IBM, é um Storybook: cada componente tem as suas stories, com controles para mudar as props ao vivo. O Primer, do GitHub, publica um Storybook do mesmo jeito. É ali que designers e devs de outros times conferem como um componente se comporta antes de usar.</p>
 
-<h5>A anatomia do CSF</h5>
-<pre><code>import type { Meta, StoryObj } from '@storybook/your-framework';
+<h5>Como se escreve</h5>
+<pre><code>import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from './Button';
 
 const meta = { component: Button } satisfies Meta&lt;typeof Button&gt;;
 export default meta;
 type Story = StoryObj&lt;typeof meta&gt;;
 
-export const Primary: Story = { args: { label: 'Button', primary: true } };</code></pre>
+export const Primario: Story = { args: { label: 'Salvar', intent: 'primary' } };
+export const Desabilitado: Story = { args: { label: 'Salvar', disabled: true } };</code></pre>
 <ul>
-<li><strong>Export default (meta)</strong>: metadados que dizem como o Storybook lista as stories e o que os addons recebem. Precisa de <code>title</code> ou de <code>component</code> (que gera o título).</li>
-<li><strong>Exports nomeados</strong>: cada um é uma story, em UpperCamelCase. Cada story é um objeto dizendo com que argumentos renderizar.</li>
+<li>O <code>export default</code> diz qual componente o arquivo documenta.</li>
+<li>Cada <code>export</code> com nome é uma story, com as props que ela usa.</li>
 </ul>
 
 <h5>Os quatro conceitos</h5>
-<div class="tbl"><table>
-<tr><th>Conceito</th><th>O que é</th><th>Uso típico</th></tr>
-<tr><td><code>args</code></td><td>as props do componente, editáveis ao vivo no painel Controls</td><td>uma story por variante: <code>Primary</code>, <code>Danger</code>, <code>Disabled</code></td></tr>
-<tr><td><code>decorators</code></td><td>wrappers em volta da story, em nível global, de componente ou de story</td><td>tema claro/escuro, layout, provider de contexto</td></tr>
-<tr><td><code>parameters</code></td><td>metadado estático que configura addons</td><td>fundos disponíveis, regras do addon de acessibilidade</td></tr>
-<tr><td><code>play</code></td><td>código que roda depois da renderização, simulando interação e afirmando resultado</td><td>&ldquo;clicar no botão abre o menu&rdquo; como teste</td></tr>
-</table></div>
-
-<h5>Por que isso é mais que um catálogo</h5>
 <ul>
-<li>A story <strong>centraliza a definição</strong> dos estados de um componente: o mesmo objeto alimenta a página de documentação, o teste de interação (<code>play</code>), o teste de acessibilidade e o snapshot visual. Menos lugares pra manter.</li>
-<li>Estados difíceis de alcançar no app real (erro, vazio, carregando, texto muito longo) viram uma story cada &mdash; é onde o design system prova que cobriu os &ldquo;estados obrigatórios&rdquo;.</li>
+<li><strong><code>args</code></strong>: as props da story, que dá para editar ao vivo no painel. Uma story por variante.</li>
+<li><strong><code>decorators</code></strong>: o que envolve a story, como o tema escuro ou um provider de contexto.</li>
+<li><strong><code>parameters</code></strong>: configurações dos addons, como as regras do teste de acessibilidade.</li>
+<li><strong><code>play</code></strong>: código que roda depois de desenhar a story e simula o usuário: clicar, digitar e conferir o resultado. A story vira um teste de interação.</li>
 </ul>
 
-<p><strong>Frase de entrevista:</strong> &ldquo;Pra mim cada estado que o design exige vira uma story. A partir daí ela é ao mesmo tempo documentação viva e o caso que o teste visual e o de acessibilidade usam.&rdquo;</p>
+<h5>Por que é mais que um catálogo</h5>
+<ul>
+<li>A mesma story alimenta a documentação, o teste de interação, o teste de acessibilidade e o print do teste visual. Um lugar só para manter.</li>
+<li>Estados difíceis de alcançar no app (erro, lista vazia, texto enorme) viram uma story cada. É onde o design system prova que cobriu todos os casos.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Cada estado que o design exige vira uma story. A partir daí ela é documentação viva e o caso que o teste visual e o de acessibilidade usam.&rdquo;</p>
 </article>
 
 <article data-href="https://storybook.js.org/docs/writing-tests/accessibility-testing">
-<p class="tldr">O <code>@storybook/addon-a11y</code> roda o <strong>axe-core da Deque</strong> em cada story, avaliando o DOM renderizado contra as regras WCAG 2.0/2.1 A/AA e boas práticas. Segundo a própria documentação, isso pega <strong>até ~57% dos problemas de WCAG</strong> &mdash; e a configuração decide se a violação é aviso ou build vermelho.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o addon de acessibilidade do Storybook roda o <em>axe-core</em> em cada story e aponta problemas como contraste baixo ou botão sem nome. Segundo a documentação, isso pega até cerca de 57% dos problemas de WCAG. Uma configuração decide se o problema é só um aviso ou se reprova o build.</p>
+<p class="real"><b>No mundo real</b>O axe-core, da empresa Deque, é o motor de acessibilidade mais usado da web. As auditorias de acessibilidade do Lighthouse, no Chrome, rodam axe-core por baixo, e o Accessibility Insights, da Microsoft, também. O Ally AI usa o mesmo motor para auditar sites.</p>
 
-<h5>Instalação e o que aparece</h5>
+<h5>O que aparece</h5>
 <ul>
-<li><code>npx storybook add @storybook/addon-a11y</code>.</li>
-<li>Um painel com três abas: <strong>violations</strong>, <strong>passes</strong> e <strong>incomplete</strong>. A última lista o que o axe <em>não conseguiu decidir</em> e você precisa conferir na mão.</li>
-<li>Botões na toolbar pra simular deficiências de visão sobre a story.</li>
+<li>Um painel com três abas: <strong>violações</strong>, <strong>aprovados</strong> e <strong>incompletos</strong>. A última lista o que o axe não conseguiu decidir sozinho, e você precisa conferir à mão.</li>
+<li>Botões que simulam deficiências de visão, como daltonismo, sobre a story.</li>
 </ul>
 
-<h5><code>parameters.a11y</code>: a chave que importa</h5>
+<h5>A configuração que importa</h5>
 <pre><code>// .storybook/preview.ts
 parameters: {
-  a11y: {
-    context: 'body',
-    config: { rules: [{ id: 'region', enabled: false }] },
-    test: 'error', // 'error' | 'todo' | 'off'
-  },
+  a11y: { test: 'error' }, // 'error' | 'todo' | 'off'
 }</code></pre>
-<div class="tbl"><table>
-<tr><th><code>test</code></th><th>Efeito</th></tr>
-<tr><td><code>'error'</code></td><td>violação reprova o teste na UI do Storybook e no CI</td></tr>
-<tr><td><code>'todo'</code></td><td>violação aparece como aviso &mdash; pra dívida conhecida que você está pagando</td></tr>
-<tr><td><code>'off'</code></td><td>desliga a checagem automática (o painel manual continua)</td></tr>
-</table></div>
 <ul>
-<li>Pode ser global (em <code>preview.ts</code>) e sobrescrito por story: uma story com problema conhecido vai pra <code>'todo'</code> sem afrouxar o resto.</li>
-<li>Com <code>@storybook/addon-vitest</code>, as checagens rodam como teste de componente e aparecem como status ao lado de cada story; no CI, as stories com <code>'error'</code> reprovam o build.</li>
+<li><code>'error'</code>: a violação reprova o teste, no Storybook e no CI.</li>
+<li><code>'todo'</code>: a violação aparece como aviso. Serve para um problema conhecido que você ainda vai corrigir.</li>
+<li><code>'off'</code>: desliga a checagem automática.</li>
+<li>Dá para deixar <code>'error'</code> no projeto todo e baixar para <code>'todo'</code> só numa story com problema conhecido, sem afrouxar o resto.</li>
 </ul>
 
-<h5>O limite, dito pela própria doc</h5>
-<p>Teste automatizado pega o óbvio; <strong>não substitui</strong> auditoria manual nem teste com usuário de tecnologia assistiva. A aba <em>incomplete</em> existe exatamente pra lembrar disso.</p>
-
-<p><strong>Frase de entrevista:</strong> &ldquo;Eu ponho o axe no nível do componente, em modo <code>error</code>, pra regressão de acessibilidade quebrar o build cedo &mdash; e trato o que sobra (ordem de foco, leitor de tela) como teste manual, sem chamar isso de conformidade.&rdquo;</p>
+<h5>O limite</h5>
+<p>O teste automático pega o que dá para medir no código. Ele não sabe se a ordem do Tab faz sentido nem se o texto alternativo descreve bem a imagem. Não substitui teste manual nem teste com quem usa leitor de tela.</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Eu ponho o axe no componente, em modo <code>error</code>, para a regressão de acessibilidade quebrar o build cedo. O que sobra, como ordem de foco e leitor de tela, eu testo à mão, sem chamar isso de conformidade.&rdquo;</p>
 </article>
 
 <article data-href="https://developers.figma.com/docs/code-connect/react">
-<p class="tldr">Code Connect liga um componente do Figma ao seu componente React, pra o <strong>Dev Mode mostrar o snippet do seu código</strong>, com as props certas, em vez de CSS gerado. Funciona sozinho ou integrado a arquivos do Storybook. Detalhe que muda tudo: <strong>os arquivos não são executados</strong> &mdash; o CLI trata o exemplo como string.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o Code Connect liga um componente do Figma ao seu componente React. Quando alguém inspeciona o botão no Dev Mode, aparece o seu <code>&lt;Button intent="danger"&gt;</code>, com as props certas, e não um CSS gerado.</p>
+<p class="real"><b>No mundo real</b>Sem isso, o Dev Mode mostra o que o Figma consegue deduzir do desenho: <code>position</code>, <code>padding: 12px</code>, uma cor em hex. Num time com design system, ninguém deveria copiar esse CSS, porque o certo é usar o componente que já existe. O Code Connect fecha essa distância: o designer escolhe a variante &ldquo;Danger&rdquo; no Figma, e o dev vê o código exato que precisa escrever.</p>
 
-<h5>As duas formas de <code>figma.connect()</code></h5>
+<h5>Como se liga</h5>
+<pre><code>figma.connect(Button, 'https://figma.com/design/...', {
+  props: {
+    label: figma.string('Label'),
+    disabled: figma.boolean('Disabled'),
+    intent: figma.enum('Variant', { Primary: 'primary', Danger: 'danger' }),
+  },
+  example: ({ label, disabled, intent }) =&gt; (
+    &lt;Button intent={intent} disabled={disabled}&gt;{label}&lt;/Button&gt;
+  ),
+});</code></pre>
 <ul>
-<li><code>figma.connect(Button, "https://figma.com/...")</code> &mdash; liga um componente do seu código ao nó do Figma.</li>
-<li><code>figma.connect("https://figma.com/...")</code> &mdash; liga direto a um elemento HTML, sem importar componente.</li>
-<li>O <code>example</code> devolve o JSX que aparece no Dev Mode, recebendo as props já mapeadas.</li>
+<li><code>figma.string</code> lê um texto do Figma (o rótulo), <code>figma.boolean</code> lê um sim ou não, e <code>figma.enum</code> traduz cada variante do Figma para o valor da prop.</li>
+<li><code>figma.instance</code> lê um componente dentro de outro, como o ícone dentro do botão.</li>
+<li>Se um componente do Figma corresponde a vários no código (um &ldquo;Button&rdquo; que no código é <code>PrimaryButton</code> e <code>SecondaryButton</code>), você cria uma ligação para cada variante.</li>
 </ul>
 
-<h5>Mapeamento de propriedades</h5>
-<div class="tbl"><table>
-<tr><th>Helper</th><th>Mapeia</th></tr>
-<tr><td><code>figma.string('Label')</code></td><td>propriedade de texto (rótulo, título)</td></tr>
-<tr><td><code>figma.boolean('Disabled')</code></td><td>estado binário; normaliza Yes/No, True/False, On/Off</td></tr>
-<tr><td><code>figma.enum('Variant', {...})</code></td><td>variante com várias opções &rarr; valor da prop (não normaliza sozinho)</td></tr>
-<tr><td><code>figma.instance('Icon')</code></td><td>instância aninhada (ícone dentro do botão)</td></tr>
-<tr><td><code>figma.children('Layer')</code></td><td>filhos, com curinga <code>*</code></td></tr>
-<tr><td><code>figma.slot</code>, <code>figma.nestedProps</code>, <code>figma.textContent</code>, <code>figma.className</code></td><td>slots compostos, props de instância aninhada, texto de camada, concatenação de classes</td></tr>
-</table></div>
-
-<h5>Variant restrictions</h5>
-<p>Quando um componente do Figma representa vários do código (um &ldquo;Button&rdquo; com Type = Primary/Secondary que no código são <code>PrimaryButton</code> e <code>SecondaryButton</code>), você cria uma ligação por variante: <code>figma.connect(PrimaryButton, url, { variant: { Type: 'Primary' }, example: () =&gt; &lt;PrimaryButton /&gt; })</code>. Aceita combinação de variantes.</p>
-
-<h5>A consequência de &ldquo;não é executado&rdquo;</h5>
+<h5>Um detalhe importante</h5>
 <ul>
-<li>Condicional e construção dinâmica dentro do exemplo não funcionam como em React de verdade: escreva o exemplo como o desenvolvedor deveria escrever o uso.</li>
-<li>O ganho é de <strong>contrato</strong>: o nome da prop no Figma e no código passam a ter um mapa explícito, e divergência vira algo que se vê.</li>
+<li>O arquivo não é executado: o exemplo é tratado como texto. Condicionais e lógica dentro do <code>example</code> não funcionam como em React de verdade. Escreva o exemplo como o dev deveria escrever o uso.</li>
+<li>O ganho é de contrato: o nome da prop no Figma e no código passam a ter um mapa explícito, e uma diferença entre os dois fica visível.</li>
 </ul>
-
-<p><strong>Frase de entrevista:</strong> &ldquo;Handoff bom é quando o designer e eu falamos o mesmo nome de prop. Code Connect torna esse mapa explícito: o Dev Mode mostra o meu componente com a variante certa, não um CSS que ninguém vai usar.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Handoff bom é quando o designer e eu usamos o mesmo nome de prop. O Code Connect torna esse mapa explícito: o Dev Mode mostra o meu componente com a variante certa, e não um CSS que ninguém vai usar.&rdquo;</p>
 </article>
 
 <article data-href="https://playwright.dev/docs/test-snapshots">
-<p class="tldr"><code>await expect(page).toHaveScreenshot()</code> é regressão visual em uma linha: <strong>no primeiro run gera a imagem de referência</strong>, nos seguintes compara pixel a pixel. O problema não é escrever o teste &mdash; é manter a baseline confiável, porque a renderização muda de máquina pra máquina.</p>
+<p class="tldr"><strong>Em uma frase:</strong> <code>await expect(page).toHaveScreenshot()</code> é teste visual numa linha. Na primeira vez, ele salva um print de referência. Nas seguintes, compara pixel a pixel. O difícil não é escrever o teste, é manter o print de referência confiável.</p>
+<p class="real"><b>No mundo real</b>O Chromatic, serviço criado pelos mantenedores do Storybook, existe para resolver exatamente o problema desta página: ele tira o print de cada story sempre no mesmo ambiente, na nuvem, e quando algo muda pede que uma pessoa aprove ou recuse a diferença no pull request. O Percy, da BrowserStack, faz o mesmo. O Playwright, que tem essa função de graça, é mantido pela Microsoft.</p>
 
-<h5>Como a baseline nasce e se chama</h5>
+<h5>O print de referência</h5>
 <ul>
-<li>Fica numa pasta com o nome do arquivo de teste (<code>example.spec.ts-snapshots/</code>) e <strong>deve ir pro controle de versão</strong>.</li>
-<li>O nome leva o identificador de navegador e plataforma: <code>example-test-1-chromium-darwin.png</code>. Dá pra nomear: <code>toHaveScreenshot('landing.png')</code>.</li>
-<li>Mudou de propósito? <code>npx playwright test --update-snapshots</code> regrava as referências &mdash; e a revisão do PR passa a incluir as imagens.</li>
+<li>O print de referência (a <em>baseline</em>) fica numa pasta ao lado do teste e vai para o Git, como código.</li>
+<li>O nome do arquivo leva o navegador e o sistema: <code>landing-chromium-linux.png</code>.</li>
+<li>Mudou o visual de propósito? <code>npx playwright test --update-snapshots</code> grava os prints novos, e a revisão do pull request passa a incluir as imagens.</li>
 </ul>
 
-<h5>O aviso que separa suíte útil de suíte flaky</h5>
-<p>A documentação é direta: a renderização do navegador varia com <strong>SO, versão, configurações, hardware, fonte de energia (bateria ou tomada), modo headless</strong> e outros fatores. Baseline gerada no seu Windows e comparada num runner Linux vai falhar em tudo. Regra: gere e compare <strong>no mesmo ambiente</strong> &mdash; na prática, o container do CI.</p>
+<h5>O aviso que separa teste útil de teste instável</h5>
+<p>A renderização muda com o sistema operacional, a versão do navegador, as fontes instaladas e até o hardware. Um print gerado no seu Windows e comparado no Linux do CI falha em todas as telas. A regra é gerar e comparar <strong>no mesmo ambiente</strong>, na prática o container do CI.</p>
 
 <h5>Controlando o ruído</h5>
-<div class="tbl"><table>
-<tr><th>Opção</th><th>Pra quê</th></tr>
-<tr><td><code>maxDiffPixels: 100</code></td><td>tolera uma quantidade pequena de pixels diferentes (comparação via pixelmatch)</td></tr>
-<tr><td><code>stylePath</code></td><td>aplica um CSS só no screenshot pra esconder o que muda sozinho (data, avatar, animação)</td></tr>
-<tr><td><code>toMatchSnapshot()</code></td><td>o mesmo princípio pra texto ou binário: <code>expect(await page.textContent('.hero__title')).toMatchSnapshot('hero.txt')</code></td></tr>
-</table></div>
-
-<h5>Onde aplicar</h5>
 <ul>
-<li>Componente isolado (uma página de stories ou de referência, como o <code>/admin/design</code> do Gabarita) dá screenshot estável e barato.</li>
-<li>Página inteira com dado real dá screenshot instável: esconda o dinâmico ou não faça.</li>
+<li><code>maxDiffPixels: 100</code> tolera uma diferença pequena de pixels, como o serrilhado de uma fonte.</li>
+<li><code>stylePath</code> aplica um CSS só no print para esconder o que muda sozinho: data, avatar, animação.</li>
+<li>Componente isolado (uma story, ou uma página de referência como o <code>/admin/design</code> do Gabarita) dá print estável. Página inteira com dados reais dá print instável.</li>
 </ul>
-
-<p><strong>Frase de entrevista:</strong> &ldquo;Regressão visual só vale se a baseline for determinística: mesmo container no CI, conteúdo dinâmico escondido, e tolerância pequena só pra ruído de antialiasing.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Teste visual só vale com print de referência estável: mesmo container no CI, conteúdo dinâmico escondido e tolerância pequena só para ruído de fonte.&rdquo;</p>
 </article>

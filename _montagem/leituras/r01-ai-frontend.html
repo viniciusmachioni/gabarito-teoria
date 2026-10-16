@@ -1,224 +1,183 @@
 <article data-href="https://ai-sdk.dev/docs/ai-sdk-ui/chatbot">
-<p class="tldr">O <code>useChat</code> é a referência de mercado pra UI de LLM em React: ele junta mensagens, <strong>streaming</strong>, um <strong>status</strong> com quatro valores e as ações de parar e regenerar. Mesmo que você nunca use o SDK, é esse o vocabulário que um entrevistador vai usar.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o <code>useChat</code> é o hook React mais usado para telas de chat com IA. Ele guarda as mensagens, recebe a resposta em pedaços, informa em que fase a conversa está e oferece os botões de parar e de gerar de novo. Mesmo sem usar o SDK, é esse o vocabulário que o entrevistador vai usar.</p>
+<p class="real"><b>No mundo real</b>No ChatGPT, no Claude e no Gemini, o botão de enviar vira um quadrado de &ldquo;parar&rdquo; enquanto a resposta chega, e volta a ser &ldquo;enviar&rdquo; quando ela termina. São exatamente os estados desta página. O template oficial de chatbot da Vercel é construído sobre o <code>useChat</code>.</p>
 
-<h5>A arquitetura em duas pontas</h5>
+<h5>As duas pontas</h5>
 <ul>
-<li><strong>No servidor</strong>, um Route Handler recebe as mensagens, chama <code>streamText()</code> com o modelo e devolve o stream já no formato de mensagens de UI (<code>toUIMessageStream()</code> embrulhado em <code>createUIMessageStreamResponse()</code>, nas versões atuais). A chave da API nunca sai do servidor.</li>
-<li><strong>No cliente</strong>, o hook mantém a lista de mensagens e vai atualizando a última à medida que os pedaços chegam. Você só renderiza.</li>
-<li>Cada mensagem tem <strong><code>parts</code></strong> em vez de um texto único: texto, chamada de ferramenta, resultado de ferramenta, raciocínio, arquivo. É isso que permite renderizar cada tipo de um jeito (a base da Generative UI).</li>
+<li><strong>No servidor</strong>, um Route Handler recebe as mensagens, chama o modelo com <code>streamText()</code> e devolve a resposta em pedaços. A chave da API do modelo nunca sai do servidor.</li>
+<li><strong>No cliente</strong>, o hook guarda a lista de mensagens e atualiza a última conforme os pedaços chegam. Você só desenha a tela.</li>
+<li>Cada mensagem é uma lista de <strong>partes</strong> (<code>parts</code>), e não um texto único: texto, chamada de ferramenta, resultado de ferramenta, arquivo. É isso que permite desenhar cada tipo de um jeito, a base da Generative UI.</li>
 </ul>
 
-<h5>Os quatro estados</h5>
-<div class="tbl"><table>
-<tr><th><code>status</code></th><th>Significa</th><th>O que a UI costuma mostrar</th></tr>
-<tr><td><code>submitted</code></td><td>mensagem enviada, stream ainda não começou</td><td>indicador de &ldquo;pensando&rdquo;, botão de enviar desabilitado</td></tr>
-<tr><td><code>streaming</code></td><td>pedaços chegando</td><td>texto crescendo + botão <strong>parar</strong></td></tr>
-<tr><td><code>ready</code></td><td>resposta completa</td><td>libera novo envio</td></tr>
-<tr><td><code>error</code></td><td>a requisição falhou</td><td>mensagem genérica + botão de tentar de novo</td></tr>
-</table></div>
-
-<h5>Ações e eventos</h5>
+<h5>As quatro fases</h5>
 <ul>
-<li><strong><code>sendMessage()</code></strong> envia; <strong><code>stop()</code></strong> aborta o stream em andamento; <strong><code>regenerate()</code></strong> refaz a última resposta do assistente.</li>
-<li>Callbacks <code>onFinish</code>, <code>onError</code> e <code>onData</code> servem pra log, analytics e efeitos de UI.</li>
-<li>O guia insiste num ponto de segurança: no estado de erro, mostre <strong>mensagem genérica</strong> ao usuário e não vaze detalhe do servidor.</li>
+<li><code>submitted</code>: a mensagem foi enviada e nada chegou ainda. Mostre &ldquo;pensando&hellip;&rdquo; e desabilite o envio.</li>
+<li><code>streaming</code>: os pedaços estão chegando. Mostre o texto crescendo e o botão <strong>parar</strong>.</li>
+<li><code>ready</code>: a resposta terminou. Libere um novo envio.</li>
+<li><code>error</code>: o pedido falhou. Mostre uma mensagem genérica e &ldquo;tentar de novo&rdquo;. Não mostre detalhes internos do servidor, que podem vazar informação.</li>
 </ul>
 
-<h5>Performance: throttle</h5>
+<h5>As ações</h5>
 <ul>
-<li>Cada pedaço do stream é uma atualização de estado, ou seja, um re-render. A opção <strong><code>throttle</code></strong> (em ms) agrupa essas atualizações. O stream continua sendo processado na hora; só a pintura é espaçada.</li>
-<li>É o mesmo raciocínio de debounce/throttle do <a href="b14-frontend-system-design.html">B14</a>: o gargalo é o React renderizar 50 vezes por segundo, não a rede.</li>
+<li><code>sendMessage()</code> envia, <code>stop()</code> cancela a resposta em andamento e <code>regenerate()</code> pede outra versão da última resposta.</li>
+<li>Os eventos <code>onFinish</code> e <code>onError</code> servem para registrar uso, custo e erros.</li>
 </ul>
 
-<h5>Transporte e metadados</h5>
+<h5>Desempenho: não redesenhar a cada pedaço</h5>
 <ul>
-<li>O transporte padrão é HTTP e aceita headers, body extra e credenciais. Dá pra trocar por um transporte próprio.</li>
-<li>O servidor pode anexar <strong>metadados</strong> à mensagem (modelo usado, tokens, timestamps), lidos no cliente em <code>message.metadata</code>. É útil pra mostrar custo ou origem.</li>
+<li>Cada pedaço que chega atualiza o estado e faz o React redesenhar a tela. Com 50 pedaços por segundo, o gargalo vira o React, e não a rede.</li>
+<li>A opção <code>throttle</code> (em milissegundos) junta as atualizações: os pedaços continuam chegando na hora, mas a tela é redesenhada com menos frequência.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Uma UI de LLM tem pelo menos quatro estados (enviado, transmitindo, pronto, erro) e uma ação que o usuário sempre precisa ter: parar. Eu desenho os quatro antes de escrever o caminho feliz.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Uma tela de IA tem pelo menos quatro fases (enviado, chegando, pronto, erro) e uma ação que o usuário sempre precisa ter: parar. Eu desenho as quatro antes de escrever o caminho feliz.&rdquo;</p>
 </article>
 
 <article data-href="https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams">
-<p class="tldr">Todo SDK de streaming de IA, no fim, faz isto: <code>response.body</code> é um <strong><code>ReadableStream</code></strong>, e você lê pedaço por pedaço num laço até <code>done</code>. Saber fazer à mão é o que permite depurar quando o SDK não ajuda.</p>
+<p class="tldr"><strong>Em uma frase:</strong> todo SDK de streaming faz, por baixo, a mesma coisa. A resposta do <code>fetch</code> é um fluxo de bytes (<code>response.body</code>), e você lê um pedaço de cada vez num laço até acabar. Saber fazer isso à mão é o que te salva quando o SDK não ajuda.</p>
+<p class="real"><b>No mundo real</b>As APIs da OpenAI e da Anthropic, com <code>stream: true</code>, mandam a resposta como uma sequência de eventos (Server-Sent Events) pela mesma conexão HTTP. Quem consome sem SDK escreve exatamente o laço desta página. O exercício 1 do <a href="r08-pratica.html#ex1">R8</a> treina isso.</p>
 
-<h5>Consumir um <code>fetch</code> como stream</h5>
-<ul>
-<li><code>response.body</code> já é um <code>ReadableStream</code>. <code>getReader()</code> cria um leitor e <strong>trava</strong> o stream: só um leitor por vez, até <code>releaseLock()</code>.</li>
-<li><code>reader.read()</code> devolve uma promessa de <code>{ done, value }</code>. O padrão é: ler; se <code>done</code>, parar; processar o pedaço; ler de novo.</li>
-</ul>
+<h5>Ler a resposta aos pedaços</h5>
 <pre><code>const reader = response.body.getReader();
+const decoder = new TextDecoder();
 while (true) {
   const { done, value } = await reader.read();
   if (done) break;
-  // value é um Uint8Array: decodifique com TextDecoder
+  const texto = decoder.decode(value, { stream: true }); // bytes viram texto
+  // acrescente o texto na tela
 }</code></pre>
 <ul>
-<li>O <code>value</code> vem em bytes. Pra texto de LLM, você decodifica com <code>TextDecoder</code> (ou passa o stream por um <code>TextDecoderStream</code> com <code>pipeThrough</code>).</li>
+<li><code>getReader()</code> cria um leitor. Só existe um leitor por vez para cada fluxo.</li>
+<li><code>reader.read()</code> devolve <code>{ done, value }</code>. O <code>value</code> vem em bytes, e o <code>TextDecoder</code> transforma em texto.</li>
+<li>O <code>{ stream: true }</code> importa: um caractere como &ldquo;ç&rdquo; ocupa dois bytes e pode chegar partido entre dois pedaços. Com essa opção, o decodificador espera o resto antes de entregar.</li>
+<li>A forma mais curta é <code>for await (const pedaco of response.body)</code>.</li>
 </ul>
 
-<h5>Iteração assíncrona e cancelamento</h5>
+<h5>Cancelar de verdade</h5>
 <ul>
-<li>A forma mais curta é <code>for await (const chunk of response.body)</code>.</li>
-<li>Cancelar é com <strong><code>AbortController</code></strong>: passe o <code>signal</code> pro <code>fetch</code> e chame <code>abort()</code> no clique do botão &ldquo;parar&rdquo;. Isso fecha a conexão de verdade, e o servidor pode parar de gerar (e de cobrar token).</li>
-<li><code>reader.cancel()</code> descarta o stream e o que estava na fila.</li>
+<li>Crie um <code>AbortController</code>, passe o <code>signal</code> para o <code>fetch</code> e chame <code>abort()</code> no botão &ldquo;parar&rdquo;.</li>
+<li>Isso fecha a conexão. O servidor percebe e pode parar de gerar, e de cobrar tokens. Esconder o texto sem cancelar continua gastando.</li>
 </ul>
 
-<h5>Criar, dividir e encadear</h5>
+<h5>Criar um fluxo no servidor</h5>
 <ul>
-<li>O construtor <code>new ReadableStream({ start, pull, cancel })</code> cria um stream próprio, alimentado com <code>controller.enqueue()</code> e encerrado com <code>controller.close()</code>. É o que um Route Handler faz pra transmitir a resposta do modelo.</li>
-<li><code>tee()</code> divide um stream em dois idênticos (ex.: mostrar ao usuário e gravar em cache ao mesmo tempo).</li>
-<li><code>pipeThrough()</code> passa por um transform stream; <code>pipeTo()</code> despeja num writable.</li>
+<li><code>new ReadableStream({ start(controller) { ... } })</code> cria um fluxo próprio: você empurra pedaços com <code>controller.enqueue()</code> e fecha com <code>controller.close()</code>. É o que um Route Handler faz para repassar a resposta do modelo ao navegador.</li>
+<li><code>tee()</code> divide um fluxo em dois iguais, por exemplo para mostrar ao usuário e gravar no banco ao mesmo tempo.</li>
 </ul>
 <p><strong>Frase de entrevista:</strong> &ldquo;Por baixo do SDK é um <code>ReadableStream</code>: leitor, laço de <code>read()</code>, <code>TextDecoder</code> e um <code>AbortController</code> no botão de parar, porque parar também precisa parar o custo.&rdquo;</p>
 </article>
 
 <article data-href="https://ai.google.dev/gemini-api/docs/structured-output">
-<p class="tldr">Structured output é pedir que o modelo responda em <strong>JSON que obedece a um schema</strong>. O Gemini aceita um subconjunto de JSON Schema. Mesmo assim, a própria documentação manda <strong>validar a saída na aplicação</strong>: o schema garante a forma, não a verdade.</p>
+<p class="tldr"><strong>Em uma frase:</strong> structured output é pedir que o modelo responda em JSON seguindo um formato que você descreveu (um <em>schema</em>). Mesmo assim, a própria documentação manda validar a resposta no seu código: o schema garante a forma, não a verdade.</p>
+<p class="real"><b>No mundo real</b>A OpenAI lançou o modo <em>Structured Outputs</em> em 2024 justamente porque empresas usavam o modelo para extrair dados de notas fiscais, contratos e e-mails, e o JSON vinha quebrado de vez em quando. Com o schema obrigatório, a forma fica garantida. O valor ainda pode estar errado: o total da nota pode vir trocado. No Gabarita, uma explicação com o JSON perfeito e a alternativa errada é recusada e refeita.</p>
 
 <h5>Como pedir</h5>
 <ul>
-<li>Você informa o tipo de mídia JSON e um schema. Os nomes dos campos variam entre a API REST, os SDKs e as versões. No SDK <code>@google/genai</code> que o Ally AI usa, isso fica em <code>config.responseMimeType</code> + <code>config.responseJsonSchema</code> (<code>aiService.ts</code> L102-105).</li>
-<li>Nos SDKs, o schema pode sair de uma biblioteca de tipos: <strong>Pydantic</strong> em Python e <strong>Zod</strong> em JavaScript, convertidos pra JSON Schema. Assim existe uma fonte de verdade só, que é exatamente o que o Ally AI faz à mão com dois schemas espelhados.</li>
+<li>Você diz que quer JSON e envia o schema junto com o pedido. No SDK <code>@google/genai</code>, que o Ally AI usa, isso fica em <code>config.responseMimeType</code> e <code>config.responseJsonSchema</code>.</li>
+<li>Em JavaScript, o schema pode sair do <strong>Zod</strong>, convertido para JSON Schema. Assim existe uma definição só do formato, em vez de duas que precisam ser mantidas iguais à mão.</li>
 </ul>
 
-<h5>O que o schema aceita</h5>
-<div class="tbl"><table>
-<tr><th>Para</th><th>Propriedades suportadas</th></tr>
-<tr><td>todos</td><td><code>type</code> (string, number, integer, boolean, object, array, null), <code>title</code>, <code>description</code></td></tr>
-<tr><td>objeto</td><td><code>properties</code>, <code>required</code>, <code>additionalProperties</code></td></tr>
-<tr><td>string</td><td><code>enum</code>, <code>format</code> (date-time, date, time)</td></tr>
-<tr><td>número</td><td><code>enum</code>, <code>minimum</code>, <code>maximum</code></td></tr>
-<tr><td>array</td><td><code>items</code>, <code>prefixItems</code>, <code>minItems</code>, <code>maxItems</code></td></tr>
-</table></div>
+<h5>O que o schema consegue dizer</h5>
 <ul>
-<li>Nem todo recurso de JSON Schema é aceito, e schema muito grande ou aninhado pode ser rejeitado. Regras como &ldquo;exatamente uma alternativa correta&rdquo; ficam no seu código (o <code>refine</code> do Zod no Gabarita).</li>
+<li>Os tipos de cada campo (texto, número, inteiro, booleano, objeto, lista) e quais são obrigatórios.</li>
+<li>Uma lista fechada de valores (<code>enum</code>), mínimo e máximo de número, e tamanho mínimo e máximo de lista.</li>
+<li>Uma descrição por campo, que orienta o modelo.</li>
+<li>O que ele <strong>não</strong> consegue dizer fica no seu código: &ldquo;exatamente uma alternativa correta&rdquo;, &ldquo;a correta tem de ser a do gabarito&rdquo;, &ldquo;este id existe no banco&rdquo;.</li>
 </ul>
 
-<h5>Streaming de saída estruturada</h5>
+<h5>Boas práticas</h5>
 <ul>
-<li>Em streaming, cada pedaço é um <strong>JSON parcial</strong>: a concatenação forma o objeto final. Dá pra mostrar progresso, mas o objeto só é válido no fim.</li>
+<li>Prefira tipos específicos a texto livre. O Ally AI usa <code>priority: enum ["baixa","media","alta"]</code> em vez de deixar o modelo escrever a prioridade como quiser.</li>
+<li>Use descrições nos campos e um prompt claro.</li>
+<li>Valide os valores na aplicação e trate a resposta que tem a forma certa e o conteúdo errado.</li>
+<li>Em streaming, cada pedaço é um JSON pela metade. Dá para mostrar progresso, mas o objeto só é válido no fim.</li>
 </ul>
 
-<h5>Boas práticas que a página lista</h5>
+<h5>Structured output ou function calling?</h5>
 <ul>
-<li>Use <code>description</code> nos campos pra orientar o modelo.</li>
-<li>Prefira tipos específicos (<code>enum</code>, <code>integer</code>) a strings genéricas. O Ally AI faz isso com <code>priority: enum ["baixa","media","alta"]</code>.</li>
-<li>Combine prompt claro com schema.</li>
-<li><strong>Valide os valores na aplicação</strong> e trate saída semanticamente errada.</li>
+<li><strong>Structured output</strong> define o formato da <em>resposta final</em>.</li>
+<li><strong>Function calling</strong> é o modelo <em>pedindo uma ação</em> antes de responder.</li>
 </ul>
-
-<h5>Structured output vs. function calling</h5>
-<ul>
-<li><strong>Structured output</strong> formata a <em>resposta final</em>.</li>
-<li><strong>Function calling</strong> é quando o modelo precisa <em>pedir uma ação</em> antes de responder.</li>
-<li>Nos modelos Gemini 3, os dois podem ser combinados na mesma chamada.</li>
-</ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;O schema é contrato de forma; o significado eu valido no código. No Gabarita, uma explicação com o JSON perfeito e a alternativa errada é recusada e refeita.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;O schema é contrato de forma. O significado eu confiro no código, porque um JSON perfeito ainda pode trazer a resposta errada.&rdquo;</p>
 </article>
 
 <article data-href="https://ai.google.dev/gemini-api/docs/function-calling">
-<p class="tldr">Function calling deixa o modelo <strong>pedir</strong> uma ação: ele devolve o nome da função e os argumentos, <strong>o seu código executa</strong> e devolve o resultado, e só então o modelo responde ao usuário. O modelo nunca executa nada sozinho.</p>
+<p class="tldr"><strong>Em uma frase:</strong> com function calling, o modelo <strong>pede</strong> uma ação. Ele devolve o nome de uma função e os argumentos, o <strong>seu código executa</strong> e devolve o resultado, e só então o modelo responde. O modelo nunca executa nada sozinho.</p>
+<p class="real"><b>No mundo real</b>Quando você pergunta ao ChatGPT o placar de um jogo de ontem, ele decide sozinho usar a ferramenta de busca na web antes de responder. Um assistente de companhia aérea faz o mesmo para consultar o status de um voo: o modelo pede <code>consultarVoo({ numero: "LA3040" })</code>, e o sistema da empresa é quem consulta.</p>
 
 <h5>O ciclo em quatro passos</h5>
 <ol>
-<li><strong>Declarar</strong> as funções: nome, descrição e parâmetros em JSON Schema (<code>type: "object"</code>, <code>properties</code>, <code>required</code>).</li>
-<li><strong>Chamar o modelo</strong> com a mensagem do usuário e as declarações.</li>
-<li>Se o modelo decidir usar uma ferramenta, ele devolve uma <strong>chamada de função</strong> com nome e argumentos. Sua aplicação extrai isso e <strong>executa localmente</strong>.</li>
-<li><strong>Devolver o resultado</strong> ao modelo, que gera a resposta final pro usuário.</li>
+<li><strong>Declarar</strong> as funções: nome, descrição e argumentos, descritos em JSON Schema.</li>
+<li><strong>Chamar o modelo</strong> com a mensagem do usuário e a lista de funções.</li>
+<li>Se o modelo decidir usar uma, ele devolve o nome e os argumentos. O <strong>seu código executa</strong>.</li>
+<li><strong>Devolver o resultado</strong> ao modelo, que escreve a resposta final.</li>
 </ol>
 
-<h5>Padrões avançados</h5>
+<h5>Variações</h5>
 <ul>
-<li><strong>Paralelo:</strong> várias funções independentes pedidas no mesmo turno (ex.: clima de três cidades).</li>
-<li><strong>Composicional:</strong> o resultado de uma chamada alimenta a próxima (descobrir a localização, depois buscar o clima dela). É o embrião do loop agentic do <a href="b02-ia-agentes.html">B2</a>.</li>
+<li><strong>Em paralelo:</strong> várias funções independentes no mesmo turno, como o clima de três cidades.</li>
+<li><strong>Em sequência:</strong> o resultado de uma alimenta a próxima, como descobrir onde o usuário está e depois buscar o clima de lá. É o começo de um agente (veja o <a href="b02-ia-agentes.html">B2</a>).</li>
+<li><strong>Modos:</strong> <code>auto</code> (o modelo decide se chama), <code>any</code> (sempre chama alguma) e <code>none</code> (nunca chama).</li>
 </ul>
 
-<h5>Modos</h5>
-<div class="tbl"><table>
-<tr><th>Modo</th><th>Comportamento</th></tr>
-<tr><td><code>auto</code> (padrão)</td><td>o modelo decide entre chamar função ou responder direto</td></tr>
-<tr><td><code>any</code></td><td>sempre prevê uma chamada de função</td></tr>
-<tr><td><code>none</code></td><td>nunca chama função</td></tr>
-<tr><td><code>validated</code></td><td>garante aderência estrita ao schema</td></tr>
-</table></div>
-
-<h5>Boas práticas (incluindo segurança)</h5>
+<h5>Segurança</h5>
 <ul>
-<li><strong>Descrições claras</strong> de cada função e parâmetro: é com elas que o modelo decide quando chamar.</li>
-<li><strong>Nomes descritivos e consistentes.</strong></li>
-<li><strong>Validar os argumentos antes de executar</strong>: o modelo pode errar tipo, inventar valor ou ser induzido por prompt injection.</li>
-<li><strong>Autenticação e autorização</strong> em quem a função acessa; validar argumento contra injeção.</li>
-<li><strong>Tratar falha de execução</strong> e devolver um resultado informativo ao modelo, em vez de quebrar a conversa.</li>
+<li>As descrições são o que o modelo lê para decidir. Escreva com clareza quando usar cada função.</li>
+<li><strong>Valide os argumentos antes de executar.</strong> O modelo pode errar o tipo, inventar um valor ou ser induzido por um texto malicioso escondido no conteúdo que ele leu (<em>prompt injection</em>).</li>
+<li>Confira a autorização: o usuário pode ver aquele pedido? A função só deve ter o acesso de que precisa.</li>
+<li>Se a função falhar, devolva ao modelo uma mensagem útil, em vez de quebrar a conversa.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Tool calling é o modelo preenchendo um formulário que o meu código executa. Então eu trato os argumentos como qualquer input de usuário: schema, autorização e menor privilégio.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Tool calling é o modelo preenchendo um formulário que o meu código executa. Então eu trato os argumentos como qualquer entrada de usuário: schema, autorização e o menor acesso possível.&rdquo;</p>
 </article>
 
 <article data-href="https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces">
-<p class="tldr">Generative UI é deixar o LLM ir <strong>além do texto</strong>. O modelo chama uma ferramenta, a ferramenta devolve <strong>dado tipado</strong>, e a interface renderiza um <strong>componente React</strong> pra aquele resultado, em vez de um parágrafo descrevendo-o.</p>
+<p class="tldr"><strong>Em uma frase:</strong> Generative UI é a IA respondendo com um componente, e não só com texto. O modelo chama uma ferramenta, a ferramenta devolve dados com formato fixo, e a tela desenha um componente React com esses dados.</p>
+<p class="real"><b>No mundo real</b>Quando a busca do ChatGPT responde sobre o tempo, uma ação na bolsa ou um jogo, ela mostra um cartão com o dado, e não um parágrafo descrevendo o número. Na busca de compras, aparecem cartões de produto com foto e preço. Cada cartão é um componente escolhido a partir do resultado de uma ferramenta.</p>
 
 <h5>O fluxo</h5>
 <ol>
-<li>O modelo recebe o prompt e uma lista de <strong>ferramentas</strong>, cada uma com descrição, schema de entrada em Zod e uma função <code>execute</code>.</li>
-<li>Pelo contexto, ele decide se chama alguma (&ldquo;como está o tempo em SF?&rdquo; &rarr; <code>displayWeather</code>).</li>
-<li>A ferramenta roda no servidor e devolve dado (<code>{ weather, temperature, location }</code>).</li>
-<li>Esse dado chega ao cliente como uma <strong>part</strong> da mensagem, e um componente <code>&lt;Weather /&gt;</code> o renderiza.</li>
+<li>O modelo recebe o pedido e uma lista de ferramentas, cada uma com descrição, formato de entrada (em Zod) e uma função que executa.</li>
+<li>Pelo contexto, ele decide chamar uma. &ldquo;Como está o tempo em São Paulo?&rdquo; vira <code>displayWeather</code>.</li>
+<li>A ferramenta roda no servidor e devolve dados: <code>{ temperatura, condicao, cidade }</code>.</li>
+<li>Os dados chegam ao navegador como uma parte da mensagem, e um componente <code>&lt;Clima /&gt;</code> desenha o cartão.</li>
 </ol>
 
-<h5>Renderizar por tipo e por estado</h5>
+<h5>Desenhar por tipo e por fase</h5>
 <ul>
-<li>As parts de ferramenta são tipadas pelo nome: <code>tool-displayWeather</code>. Você percorre <code>message.parts</code> e faz um <code>switch</code> no tipo.</li>
-<li>Cada part de ferramenta tem um <strong>estado</strong>, e cada estado pede uma UI:</li>
-</ul>
-<div class="tbl"><table>
-<tr><th>Estado</th><th>Significa</th><th>Renderize</th></tr>
-<tr><td><code>input-available</code></td><td>a ferramenta foi chamada e está rodando</td><td>skeleton do componente</td></tr>
-<tr><td><code>output-available</code></td><td>terminou com sucesso</td><td>o componente com o dado</td></tr>
-<tr><td><code>output-error</code></td><td>a ferramenta falhou</td><td>erro localizado naquele bloco, sem derrubar a conversa</td></tr>
-</table></div>
-
-<h5>No servidor</h5>
-<ul>
-<li>O Route Handler chama <code>streamText</code> com o modelo, as instruções, as mensagens convertidas (<code>convertToModelMessages()</code>) e o objeto <code>tools</code>, e devolve o stream de mensagens de UI.</li>
+<li>Cada parte de ferramenta tem o nome dela (<code>tool-displayWeather</code>). Você percorre as partes da mensagem e escolhe o componente pelo nome.</li>
+<li>Cada parte também tem uma fase: <strong>rodando</strong> (mostre um esqueleto do cartão), <strong>pronta</strong> (mostre o cartão com os dados) e <strong>com erro</strong> (mostre o erro só naquele bloco, sem derrubar a conversa).</li>
 </ul>
 
-<h5>O que isso muda no desenho</h5>
+<h5>O que muda no desenho</h5>
 <ul>
-<li>A ferramenta vira um <strong>contrato entre o modelo e o design system</strong>: o schema de saída é a prop do componente. Mudar um exige mudar o outro.</li>
+<li>A ferramenta vira um <strong>contrato entre o modelo e o design system</strong>: o formato de saída da ferramenta é a lista de props do componente. Mudar um obriga a mudar o outro.</li>
 <li>Cada componente gerado precisa dos mesmos cuidados de qualquer componente: acessível, responsivo, com estado de carregando e de erro. É aqui que Design Engineering (<a href="r02-design-systems.html">R2</a>) encontra IA.</li>
+<li>O modelo escolhe de uma lista fechada de componentes. Ele nunca gera HTML para a página executar.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Generative UI é o modelo escolhendo qual componente do meu design system mostrar, e com quais dados. O schema da ferramenta é a interface de props.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Generative UI é o modelo escolhendo qual componente do meu design system mostrar, e com quais dados. O formato da ferramenta é a interface de props.&rdquo;</p>
 </article>
 
 <article data-href="https://ai-sdk.dev/docs/agents/tool-approvals">
-<p class="tldr">Tool approval é <strong>human-in-the-loop</strong> no nível da ferramenta: antes de executar algo sensível (rodar comando, processar pagamento), o agente para e a UI pede aprovação. Se o usuário nega, a ferramenta não roda, e o modelo segue sabendo disso.</p>
+<p class="tldr"><strong>Em uma frase:</strong> antes de executar uma ação sensível, como rodar um comando ou fazer um pagamento, o agente para e a tela pede aprovação. Se a pessoa nega, a ação não acontece, e o modelo continua sabendo disso. É o <em>human-in-the-loop</em> no nível de cada ferramenta.</p>
+<p class="real"><b>No mundo real</b>O Claude Code pede permissão antes de rodar um comando no terminal ou editar um arquivo, e a pessoa pode liberar sempre, só desta vez ou negar. O agente de código do GitHub Copilot trabalha sozinho, mas entrega o resultado como um pull request que espera revisão humana antes do merge.</p>
 
-<h5>Os quatro desfechos de uma chamada</h5>
-<div class="tbl"><table>
-<tr><th>Status</th><th>O que acontece</th></tr>
-<tr><td><code>not-applicable</code></td><td>executa normalmente, sem metadado de aprovação (padrão)</td></tr>
-<tr><td><code>approved</code></td><td>aprovação automática registrada, executa</td></tr>
-<tr><td><code>denied</code></td><td>negação automática registrada, devolve resultado &ldquo;negado&rdquo;</td></tr>
-<tr><td><code>user-approval</code></td><td>emite um pedido de aprovação e espera a resposta</td></tr>
-</table></div>
-
-<h5>Estática ou dinâmica</h5>
+<h5>Os desfechos de uma chamada</h5>
 <ul>
-<li><strong>Estática:</strong> um mapa por ferramenta, como <code>{ runCommand: 'user-approval' }</code>.</li>
-<li><strong>Dinâmica:</strong> uma função que olha o <strong>argumento</strong>, por exemplo pagamento acima de 1000 pede aprovação e abaixo passa direto. É o desenho certo na maioria dos casos: pedir aprovação pra tudo treina o usuário a clicar &ldquo;sim&rdquo; sem ler.</li>
-<li>Também dá pra ter uma política única que avalia qualquer chamada pelo nome da ferramenta e pela entrada.</li>
+<li><strong>Sem aprovação:</strong> executa direto. É o padrão, bom para ações de leitura.</li>
+<li><strong>Aprovada ou negada automaticamente:</strong> uma regra decide e fica registrado.</li>
+<li><strong>Pede ao usuário:</strong> o agente para e espera a resposta.</li>
 </ul>
 
-<h5>No cliente</h5>
+<h5>Regra fixa ou regra pelo valor</h5>
 <ul>
-<li>O pedido chega como uma part de ferramenta com <code>state: 'approval-requested'</code>. A UI mostra o que vai ser feito, com os argumentos legíveis, e dois botões.</li>
-<li>A resposta volta por <code>addToolApprovalResponse({ id, approved })</code>, do <code>useChat</code>.</li>
-<li>Na negação, a ferramenta não executa e o modelo recebe a negação. A documentação recomenda instruir o modelo a <strong>não tentar de novo</strong> o que foi negado.</li>
+<li><strong>Fixa:</strong> uma regra por ferramenta, como &ldquo;<code>runCommand</code> sempre pede aprovação&rdquo;.</li>
+<li><strong>Pelo valor:</strong> uma função olha o argumento. Pagamento acima de R$ 1.000 pede aprovação, abaixo passa direto.</li>
+<li>A regra pelo valor costuma ser a melhor. Pedir aprovação para tudo ensina a pessoa a clicar &ldquo;sim&rdquo; sem ler.</li>
 </ul>
 
-<h5>Limites</h5>
+<h5>Na tela</h5>
 <ul>
-<li>Só vale pra ferramentas que o próprio SDK executa. Ferramentas executadas pelo provedor passam por fora.</li>
-<li>A API mudou de nome entre versões (a forma anterior era a flag <code>needsApproval</code> na ferramenta). Confira a versão instalada antes de citar a assinatura numa entrevista.</li>
+<li>O pedido chega como uma parte de ferramenta na fase &ldquo;aguardando aprovação&rdquo;. A tela mostra o que vai ser feito, com os argumentos legíveis, e dois botões.</li>
+<li>A resposta volta pelo <code>useChat</code>. Na negação, a ferramenta não roda e o modelo recebe a negação. Instrua o modelo a não tentar de novo o que foi negado.</li>
+<li>A API mudou de nome entre versões do SDK. Confira a versão antes de citar a assinatura numa entrevista.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Aprovação humana entra onde a ação é irreversível ou cara, e de preferência por regra dinâmica. Se você pede confirmação pra tudo, ninguém lê a confirmação.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Aprovação humana entra onde a ação é irreversível ou cara, de preferência por regra que olha o valor. Se você pede confirmação para tudo, ninguém lê a confirmação.&rdquo;</p>
 </article>
