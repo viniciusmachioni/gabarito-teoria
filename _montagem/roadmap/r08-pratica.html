@@ -1,9 +1,78 @@
 <section class="week" id="rm8">
   <div class="week-head"><span class="week-num">R8</span><h2>Prática: live coding e system design de IA</h2></div>
   <div class="week-meta">~16h, em sessões de 45 min &middot; o que a entrevista pede pra você <em>fazer</em>, não pra explicar</div>
-  <p class="intro">As páginas R1&ndash;R6 ensinam a explicar. Esta treina o outro formato da entrevista: alguém te dá um enunciado e 45 minutos. São <strong>doze exercícios de live coding</strong> tirados das frentes do roadmap (streaming, estado de chat, retry, componente de design system, Generative UI com aprovação humana, Playwright com axe, <code>ci.yml</code> com deploy por OIDC, servidor MCP, RAG com pgvector, stories com teste de acessibilidade, refatoração pra Server Component e um toast construído a partir de um mock) e <strong>um caso completo de front-end system design</strong>: a interface de um assistente de IA, a pergunta mais comum em vaga de Frontend com foco em IA. Cada exercício tem enunciado do jeito que o entrevistador fala, o que ele observa, dicas que você abre só se travar, solução comentada e as perguntas que vêm depois. Base teórica: <a href="r01-ai-frontend.html">R1</a> pros exercícios 1, 2, 3 e 5; <a href="r02-design-systems.html">R2</a> pros 4, 10 e 12; <a href="r03-arquitetura-frontend.html">R3</a> pro 11; <a href="r04-ai-fullstack.html">R4</a> pros 6 e 9; <a href="r05-cloud-aws.html">R5</a> pro 7; <a href="r06-proximo-nivel.html">R6</a> pro 8; e o framework RADIO do <a href="b14-frontend-system-design.html">B14</a> pro caso de system design. Os exercícios 6 a 12 cobrem os pedidos do roadmap que os dois projetos ainda não fazem, e é aqui que a resposta &ldquo;não usei em produção, mas fiz o exercício&rdquo; ganha corpo.</p>
+  <p class="intro">As páginas R1 a R7 ensinam a explicar. Esta treina o outro formato da entrevista: alguém te dá um enunciado e 45 minutos. São doze exercícios de live coding tirados das frentes do roadmap e um caso de system design, a interface de um assistente de IA, todos com solução comentada. Comece pelo <strong>Ver</strong>, que mostra o método e qual exercício treina cada conceito. Depois vêm os exercícios com cronômetro (<strong>Fazer</strong>) e o system design em voz alta (<strong>Provar</strong>).</p>
 
-  <h3 class="sub">Tópicos</h3>
+  <ol class="etapas">
+    <li><a href="#ver"><b>1 &middot; Ver</b>o método e o mapa dos exercícios</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>12 exercícios de live coding</a></li>
+    <li><a href="#provar"><b>3 &middot; Provar</b>system design e múltipla escolha</a></li>
+  </ol>
+
+  <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O método, antes de codar</h3>
+  <p class="etapa-nota">Como usar 45 minutos, o que o entrevistador observa e qual exercício treina cada conceito.</p>
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. O método: cinco passos em 45 minutos</h4>
+      <p><b class="r">Entender (5 min)</b>Repita o enunciado com as suas palavras e faça 2 ou 3 perguntas: qual é a entrada, o que pode dar errado, o que é mais importante.</p>
+      <p><b class="r">Planejar (5 min)</b>Diga em voz alta como vai resolver, antes de escrever. Um esboço de funções ou estados basta.</p>
+      <p><b class="r">Caminho feliz (15 min)</b>Faça funcionar no caso simples primeiro.</p>
+      <p><b class="r">Bordas (15 min)</b>Liste as bordas (erro, cancelamento, dado partido, lista vazia) e trate na ordem de importância.</p>
+      <p><b class="r">Revisar (5 min)</b>Rode um exemplo na cabeça, diga o que ficou de fora e o que faria com mais tempo.</p>
+      <p class="frase"><b class="r">Na entrevista</b>Código pela metade com um plano claro vale mais que código quase pronto sem explicação.</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 92" role="img" aria-labelledby="r8d1">
+        <title id="r8d1">Os cinco passos do live coding e o tempo de cada um</title>
+        <rect x="6" y="14" width="44" height="40" rx="5" class="bx-b"/><text x="28" y="39" text-anchor="middle" class="s">5</text>
+        <rect x="52" y="14" width="44" height="40" rx="5" class="bx-b"/><text x="74" y="39" text-anchor="middle" class="s">5</text>
+        <rect x="98" y="14" width="136" height="40" rx="5" class="bx-t"/><text x="166" y="39" text-anchor="middle" class="s">15 min</text>
+        <rect x="236" y="14" width="136" height="40" rx="5" class="bx-a"/><text x="304" y="39" text-anchor="middle" class="s">15 min</text>
+        <rect x="374" y="14" width="40" height="40" rx="5" class="bx-b"/><text x="394" y="39" text-anchor="middle" class="s">5</text>
+        <text x="28" y="74" text-anchor="middle" class="s">entender</text>
+        <text x="74" y="88" text-anchor="middle" class="s">planejar</text>
+        <text x="166" y="74" text-anchor="middle" class="s">caminho feliz</text>
+        <text x="304" y="74" text-anchor="middle" class="s">bordas</text>
+        <text x="394" y="88" text-anchor="middle" class="s">revisar</text>
+      </svg>
+      <figcaption>Dez minutos antes de escrever a primeira linha não são tempo perdido: é o que o entrevistador mais observa.</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>2. O que o entrevistador avalia</h4>
+      <p><b class="r">Comunicação</b>Você explica o que está fazendo e por quê. Silêncio de 10 minutos é o erro mais comum.</p>
+      <p><b class="r">Raciocínio</b>Você pergunta antes de supor, escolhe uma abordagem e diz o que ela custa.</p>
+      <p><b class="r">Código</b>Nomes claros, funções pequenas, tipos que impedem erro.</p>
+      <p><b class="r">Bordas</b>Você lembra do erro, do cancelamento e do caso vazio sem ninguém perguntar.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Antes de codar, deixa eu confirmar o que entendi e quais casos de erro importam.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>3. Qual exercício treina qual conceito</h4>
+      <p>Faça primeiro os exercícios das frentes em que você está mais fraco. Cada um aponta para a página onde o conceito é explicado.</p>
+      <table class="roteiro">
+        <thead><tr><th>Exercício</th><th>Conceito &middot; onde existe</th><th>Base</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#ex1">EX 1</a></td><td>ler streaming (SSE) pedaço por pedaço <span class="termo">&middot; como o ChatGPT recebe a resposta</span></td><td>R1</td></tr>
+          <tr><td><a href="#ex2">EX 2</a></td><td>estados de um chat e o botão Parar <span class="termo">&middot; o botão de parar do ChatGPT e do Claude</span></td><td>R1</td></tr>
+          <tr><td><a href="#ex3">EX 3</a></td><td>retry com espera crescente <span class="termo">&middot; o que os SDKs da AWS e da OpenAI fazem</span></td><td>R1</td></tr>
+          <tr><td><a href="#ex4">EX 4</a></td><td>botão com variantes tipadas <span class="termo">&middot; como o Button do shadcn/ui</span></td><td>R2</td></tr>
+          <tr><td><a href="#ex5">EX 5</a></td><td>Generative UI com aprovação humana <span class="termo">&middot; como as permissões do Claude Code</span></td><td>R1</td></tr>
+          <tr><td><a href="#ex6">EX 6</a></td><td>teste de ponta a ponta sem chamar a IA <span class="termo">&middot; o Playwright é usado nos testes do VS Code</span></td><td>R4</td></tr>
+          <tr><td><a href="#ex7">EX 7</a></td><td>CI e deploy na AWS com OIDC <span class="termo">&middot; deploy sem chave, como recomenda o GitHub</span></td><td>R5</td></tr>
+          <tr><td><a href="#ex8">EX 8</a></td><td>servidor MCP com uma ferramenta <span class="termo">&middot; como o servidor MCP oficial do GitHub</span></td><td>R6</td></tr>
+          <tr><td><a href="#ex9">EX 9</a></td><td>busca por sentido com pgvector <span class="termo">&middot; como a busca com IA da documentação da Supabase</span></td><td>R4</td></tr>
+          <tr><td><a href="#ex10">EX 10</a></td><td>stories com teste de acessibilidade <span class="termo">&middot; como o Storybook do Carbon, da IBM</span></td><td>R2</td></tr>
+          <tr><td><a href="#ex11">EX 11</a></td><td>Server Component, cascata e cache <span class="termo">&middot; como o template Next.js Commerce, da Vercel</span></td><td>R3</td></tr>
+          <tr><td><a href="#ex12">EX 12</a></td><td>componente a partir de um mock do Figma <span class="termo">&middot; como a biblioteca Sonner</span></td><td>R2</td></tr>
+          <tr><td><a href="#sd">CASO</a></td><td>system design da interface de um chat com IA <span class="termo">&middot; ChatGPT, Claude ou Gemini dentro de um produto</span></td><td>R1&ndash;R6</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3 class="sub">Checklist: os exercícios</h3>
   <ul class="checklist">
     <li class="item"><input type="checkbox" id="w32-1"><label for="w32-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 1 &mdash; leitor de stream SSE feito do zero em até 40 min, sem consultar, tratando evento e caractere partidos entre pedaços</span></label></li>
     <li class="item"><input type="checkbox" id="w32-2"><label for="w32-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 2 &mdash; hook <code>useChat</code> com os quatro estados, parar, tentar de novo e sem condição de corrida entre requisições</span></label></li>
@@ -34,6 +103,9 @@
       <p><strong>O que o entrevistador anota num live coding de front-end:</strong> perguntou antes de sair codando; nomeou estados e bordas; código legível com nomes de domínio; tratou erro e cancelamento; pensou em acessibilidade sem ser lembrado; testou (nem que seja descrevendo como testaria); e soube explicar o trade-off quando provocado.</p>
     </div>
   </div>
+
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Live coding, com cronômetro</h3>
+  <p class="etapa-nota">Um exercício por sessão. Tente sem as dicas por 15 minutos, depois abra uma de cada vez. A solução é para comparar, não para copiar.</p>
 
   <h3 class="sub">Live coding</h3>
 
@@ -1532,6 +1604,9 @@ function ToastItem({ toast, fechar, remover }: {
       </div>
     </div>
   </div>
+
+  <h3 class="sub etapa" id="provar"><span class="etapa-n">3 &middot; Provar</span>System design, em voz alta e gravado</h3>
+  <p class="etapa-nota">É o formato mais próximo da entrevista: 45 minutos, sem código, explicando cada decisão. A múltipla escolha fecha a página.</p>
 
   <h3 class="sub">System design: a interface de um assistente de IA</h3>
 

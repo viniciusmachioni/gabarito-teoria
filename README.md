@@ -3,11 +3,11 @@
 Guia de estudo para vagas de **Senior Front-end Engineer** e **Software Engineer**, no Brasil e no exterior.
 Site 100% estático (HTML + CSS + JS): **sem back-end e sem banco**. O progresso fica só no `localStorage` do navegador, e há backup em texto/arquivo.
 
-36 páginas · 246 tópicos · 159 leituras resumidas embutidas · 177 perguntas abertas com gabarito · 202 de múltipla escolha (100 delas dentro das páginas do roadmap).
+36 páginas · 246 tópicos · 159 leituras resumidas embutidas · 177 perguntas abertas com gabarito · 226 de múltipla escolha (124 delas dentro das páginas do roadmap, 24 de aquecimento).
 
 **Foco atual: o roadmap da mentoria (R0–R8)**, que vem primeiro na capa, no índice e no quiz. O R0 é um mapa que cruza
 os 24 itens do roadmap com o que já existe no **Gabarita** e no **Ally AI** (arquivo e linha), e cada página R1–R6 tem
-um bloco "Onde você já aplicou" com o exemplo de cada pedido do roadmap nos dois projetos e um bloco "Você já usou...?" com a resposta honesta ("não usei em produção; faria assim, por isso") para o que ainda não foi feito. O R7 cobre a ativação do LinkedIn, o pitch e as perguntas comportamentais, e o R8 é a prática: 12 exercícios de live coding e o system design de uma interface de chat com IA, com solução comentada. **Cada página R0–R8 termina com 10 a 12 questões de múltipla escolha**, com correção na hora.
+um bloco "Onde você já aplicou" com o exemplo de cada pedido do roadmap nos dois projetos e um bloco "Você já usou...?" com a resposta honesta ("não usei em produção; faria assim, por isso") para o que ainda não foi feito. O R7 cobre a ativação do LinkedIn, o pitch e as perguntas comportamentais, e o R8 é a prática: 12 exercícios de live coding e o system design de uma interface de chat com IA, com solução comentada. **Cada página R0–R8 termina com 10 a 15 questões de múltipla escolha**, com correção na hora (R1–R8 começam com 3 de aquecimento, só de conceito).
 
 Depois do roadmap, o guia continua igual: as 5 semanas de núcleo, 9 blocos bônus originais e 10 blocos novos de lacunas de sênior (testes, acessibilidade,
 CSS moderno, performance de navegador, front-end system design, React avançado, design de APIs, produção/observabilidade,
@@ -15,14 +15,21 @@ comportamental e o processo seletivo aqui e fora).
 
 ## Como estudar (o roadmap é a espinha dorsal)
 
-Cada página R1 a R6 tem a seção **"Decisões e tradeoffs"**, com um cartão por decisão: escolha, o que compra, o que custa,
-**restrição que forçou** e "quando eu faria diferente". Os quatro primeiros campos são um rascunho a partir do código; **o
-último é para você escrever**. O bloco "Onde você já aplicou" (arquivo e linha de cada projeto) vem recolhido: abra quando
-precisar de consulta. A pergunta que mais se cobra em entrevista é a da linha "Restrição que forçou".
+Cada página R1 a R8 segue o mesmo caminho, com uma barra de atalhos no topo:
 
-Ordem sugerida: R0 (mapa) → um cartão por vez, dizendo a sua versão em voz alta antes de ler a pista → as perguntas abertas
-da página. Do núcleo e dos blocos B, leia só o que sustenta os cartões (Postgres e transações, concorrência, OAuth,
-system design). O R8 é prática opcional: faça 2 ou 3 exercícios, depois dos cartões.
+1. **Ver**: o básico em linguagem simples. Um cartão por ideia (o problema, como funciona, a frase de entrevista), diagramas
+   onde ajudam e um glossário das siglas. Depois vêm o checklist de tópicos e as leituras com resumo.
+2. **Fazer**: dois exercícios curtos (15 a 20 min) com dica e solução comentada. A versão de entrevista, maior, fica no R8.
+3. **Contar**: os cartões "Decisões e tradeoffs" (escolha, o que compra, o que custa, **restrição que forçou** e "quando eu
+   faria diferente", **este último para você escrever**), o bloco recolhido "Onde você já aplicou" e a resposta honesta
+   "Você já usou...?".
+4. **Provar**: perguntas abertas em voz alta e a múltipla escolha, que começa com 3 questões de aquecimento.
+
+No R7 o Contar são as perguntas comportamentais em STAR. O R8 não tem Contar: o Ver é o método de live coding e o mapa
+"qual exercício treina qual conceito", e o Provar é o system design.
+
+Ordem sugerida: R0 (mapa) → R1 a R6, uma página por vez, nessa ordem de etapas → R7 em paralelo → R8 por último. Do
+núcleo e dos blocos B, leia só o que sustenta os cartões (Postgres e transações, concorrência, OAuth, system design).
 
 ## Como abrir
 

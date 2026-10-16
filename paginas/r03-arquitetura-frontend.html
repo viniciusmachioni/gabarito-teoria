@@ -22,9 +22,105 @@
   <section class="week" id="rm3">
   <div class="week-head"><span class="week-num">R3</span><h2>Frontend Architecture</h2></div>
   <div class="week-meta">~8h &middot; onde o código mora, onde ele roda e quanto ele custa pro usuário</div>
-  <p class="intro">Numa vaga de Design Engineer ou Frontend Engineer com foco em IA, &ldquo;arquitetura&rdquo; não é diagrama de caixinha: é decidir <strong>o que vira pacote compartilhado</strong>, <strong>onde corta um módulo</strong>, <strong>que rota é estática e qual é dinâmica</strong> e <strong>quanto JavaScript chega no celular</strong>. Interface de IA piora as quatro: resposta lenta, payload grande, componente pesado de renderizar. Esta página não repete o básico de renderização (<a href="02-nextjs-tailwind.html">Semana 2</a>), de performance de navegador (<a href="b13-navegador-performance.html">B13</a>) nem de monolito vs. microsserviço (<a href="b03-arquitetura-patterns.html">B3</a>) &mdash; ela pega as quatro frases do roadmap e liga cada uma a uma decisão que você já tomou (ou ainda não tomou) no Gabarita e no Ally AI.</p>
+  <p class="intro">&ldquo;Arquitetura de front&rdquo; aqui não é diagrama de caixinha. São quatro decisões: o que vira pacote compartilhado, onde um módulo termina, qual página é estática e qual é dinâmica, e quanto JavaScript chega ao celular. Uma tela de IA piora as quatro, porque a resposta é lenta, o payload é grande e o componente é pesado. O <strong>Ver</strong> explica cada decisão em linguagem simples. A base de renderização está na <a href="02-nextjs-tailwind.html">Semana 2</a>, e a de performance de navegador no <a href="b13-navegador-performance.html">B13</a>.</p>
 
-  <h3 class="sub">Tópicos</h3>
+  <ol class="etapas">
+    <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
+    <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
+  </ol>
+
+  <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
+  <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. Monorepo: vários apps num repositório só</h4>
+      <p><b class="r">O problema</b>O site, o painel e a biblioteca de componentes vivem em três repositórios. Mudar um botão exige publicar uma versão da biblioteca e atualizar os outros dois. As versões se desencontram.</p>
+      <p><b class="r">Como funciona</b>Tudo fica num repositório: os apps em <code>apps/</code> e o código compartilhado em <code>packages/</code>. O <em>pnpm workspaces</em> liga os pacotes entre si sem publicar nada. O <em>Turborepo</em> roda as tarefas na ordem certa (primeiro o build da biblioteca, depois o do app) e guarda o resultado: se nada mudou, ele reaproveita em vez de rodar de novo.</p>
+      <p><b class="r">Pegadinha</b>Se uma variável de ambiente muda o resultado do build, ela precisa estar declarada no <code>turbo.json</code>. Senão o Turborepo reaproveita um build velho.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Monorepo me dá uma mudança atômica: o botão e todas as telas que usam ele mudam no mesmo pull request.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>2. O que vai para <code>packages/</code>, e o que não vai</h4>
+      <p><b class="r">Vai</b>Componentes de UI sem regra de negócio, tipos compartilhados, configuração de lint e de TypeScript.</p>
+      <p><b class="r">Não vai</b>Regra de negócio de um app. Se o pacote de UI sabe o que é &ldquo;assinatura vencida&rdquo;, ele deixou de ser compartilhável.</p>
+      <p><b class="r">Como impor</b>O campo <code>exports</code> do <code>package.json</code> define o que o pacote mostra para fora. O que não está ali não pode ser importado, então a fronteira não depende de disciplina.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Pacote compartilhado é UI burra e tipos. A fronteira eu imponho com <code>exports</code>, não com combinado.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>3. Microfrontends: só quando houver necessidade real</h4>
+      <p><b class="r">O que é</b>O front é dividido em partes que times diferentes desenvolvem e publicam de forma independente. Por exemplo, o time de checkout publica o checkout sem esperar o time do catálogo.</p>
+      <p><b class="r">Quando vale</b>Muitos times autônomos que se atrapalham no mesmo deploy, ou um sistema antigo sendo migrado aos pedaços.</p>
+      <p><b class="r">O que custa</b>Bibliotecas baixadas em dobro, telas com visual diferente, mais infraestrutura e mais combinados entre times.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Microfrontend resolve um problema de organização, não de código. Com um time só, eu começo por um monorepo bem dividido.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>4. Página estática ou dinâmica</h4>
+      <p><b class="r">Estática</b>O HTML é gerado uma vez, no build, e servido pela CDN para todo mundo. É rápida e barata. Serve para o que é igual para todos: página de preços, post de blog.</p>
+      <p><b class="r">Dinâmica</b>O HTML é gerado a cada pedido. É necessária quando a página depende de quem pede. No Next, ler <code>cookies()</code> ou <code>headers()</code> já torna a rota dinâmica.</p>
+      <p><b class="r">Meio-termo</b>O <em>ISR</em> gera a página estática e a refaz de tempos em tempos ou quando o dado muda. O <em>streaming</em> com <code>loading.tsx</code> manda a casca da página na hora e o resto quando ficar pronto.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Eu decido rota por rota: se é igual para todos, é estática. Se depende de quem pede, é dinâmica, com streaming para não travar a tela.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>5. Cache no Next, sem mistério</h4>
+      <p><b class="r">Dentro de um pedido</b>O <code>cache()</code> do React evita buscar a mesma coisa duas vezes enquanto uma página é montada.</p>
+      <p><b class="r">Entre pedidos</b>O <code>'use cache'</code> (Next 16) guarda o resultado de uma função para os próximos visitantes.</p>
+      <p><b class="r">Depois de mudar o dado</b>O <code>revalidateTag()</code> ou o <code>revalidatePath()</code> avisa que aquele cache ficou velho.</p>
+      <p><b class="r">A regra de ouro</b>Cache compartilhado só para dado que é igual para todos. Dado de um usuário num cache compartilhado vaza para os outros.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Eu ponho em cache o que é público e invalido por tag quando o dado muda. Nada que dependa do usuário vai para cache compartilhado.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>6. Buscar dados sem cascata</h4>
+      <p><b class="r">O problema</b>Três <code>await</code> seguidos, de buscas independentes, somam os tempos: 300 + 200 + 250 ms = 750 ms. Isso é uma <em>cascata</em> (waterfall).</p>
+      <p><b class="r">Como resolve</b>Comece as buscas independentes juntas com <code>Promise.all</code>. O tempo cai para o da mais lenta. Só espere em sequência quando uma busca precisa do resultado da outra.</p>
+      <p><b class="r">Onde buscar</b>Num Server Component, a busca roda no servidor, perto do banco, e o HTML já chega pronto. Com <code>useEffect</code> no cliente, a página carrega, depois busca, e só depois mostra: uma ida e volta a mais.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Busca independente começa junto. Só fica em sequência o que depende de outro resultado.&rdquo;</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 168" role="img" aria-labelledby="r3d1">
+        <title id="r3d1">Três buscas em cascata contra três buscas em paralelo</title>
+        <text x="6" y="22" class="h">Em cascata: 750 ms</text>
+        <rect x="6" y="32" width="156" height="22" rx="4" class="bx-a"/><text x="84" y="47" text-anchor="middle" class="s">usuário 300</text>
+        <rect x="162" y="32" width="104" height="22" rx="4" class="bx-a"/><text x="214" y="47" text-anchor="middle" class="s">stats 200</text>
+        <rect x="266" y="32" width="130" height="22" rx="4" class="bx-a"/><text x="331" y="47" text-anchor="middle" class="s">feed 250</text>
+        <text x="6" y="86" class="h">Com Promise.all: 300 ms</text>
+        <rect x="6" y="96" width="156" height="22" rx="4" class="bx-t"/><text x="84" y="111" text-anchor="middle" class="s">usuário 300</text>
+        <rect x="6" y="120" width="104" height="22" rx="4" class="bx-t"/><text x="58" y="135" text-anchor="middle" class="s">stats 200</text>
+        <rect x="6" y="144" width="130" height="22" rx="4" class="bx-t"/><text x="71" y="159" text-anchor="middle" class="s">feed 250</text>
+        <line x1="162" y1="92" x2="162" y2="166" class="ln-t" stroke-dasharray="3 3"/>
+        <text x="170" y="135" class="s tt">a página espera só a mais lenta</text>
+      </svg>
+      <figcaption>As mesmas três buscas. Em cascata, os tempos somam. Em paralelo, vale o tempo da mais lenta.</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>7. Web Vitals: as três notas do Google</h4>
+      <p><b class="r">LCP</b>Quanto demora para o maior elemento visível aparecer (a imagem principal ou o título). Bom: até 2,5 s.</p>
+      <p><b class="r">INP</b>Quanto a tela demora para reagir a um clique ou a uma tecla. Bom: até 200 ms.</p>
+      <p><b class="r">CLS</b>Quanto o layout pula enquanto carrega, como um botão que desce quando uma imagem aparece. Bom: até 0,1.</p>
+      <p><b class="r">Como medir</b>Com usuários reais (dados de campo), olhando o percentil 75: a nota que 75% das visitas alcançam ou superam. Para melhorar, mande menos JavaScript ao cliente, reserve espaço para imagens e carregue a imagem principal primeiro.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Eu meço LCP, INP e CLS com usuários reais, no p75, e ataco primeiro o JavaScript que não precisava ir para o cliente.&rdquo;</p>
+    </div>
+  </div>
+
+  <dl class="glossario">
+    <dt>Workspace</dt><dd>recurso do pnpm (e do npm/yarn) que liga pacotes do mesmo repositório sem publicar.</dd>
+    <dt>ISR</dt><dd>Incremental Static Regeneration: página estática que é refeita de tempos em tempos ou sob demanda.</dd>
+    <dt>Server Component</dt><dd>componente React que roda só no servidor e não manda JavaScript ao navegador.</dd>
+    <dt>p75</dt><dd>percentil 75: o valor que 75% das medições alcançam ou superam.</dd>
+    <dt>Bundle</dt><dd>o JavaScript empacotado que o navegador baixa.</dd>
+  </dl>
+
+
+  <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
+  <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
     <li class="item"><input type="checkbox" id="w27-1"><label for="w27-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Monorepo com pnpm workspaces + Turborepo: grafo de tasks (<code>dependsOn: ["^build"]</code>), cache por hash de entradas, <code>outputs</code>, e por que variável de ambiente que muda o build precisa estar em <code>env</code> no <code>turbo.json</code></span></label></li>
     <li class="item"><input type="checkbox" id="w27-2"><label for="w27-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Internal packages: Just-in-Time vs. Compiled vs. Publishable &mdash; quem transpila, o que o Turborepo consegue cachear, e o que muda quando o pacote compartilhado deixa de ser só tipo e vira biblioteca de UI</span></label></li>
@@ -37,160 +133,216 @@
     <li class="item"><input type="checkbox" id="w27-9"><label for="w27-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Performance de produção: Web Vitals medidos em campo (p75 de LCP, INP e CLS), análise de bundle (<code>next experimental-analyze</code> no Turbopack, <code>@next/bundle-analyzer</code> no webpack) e tirar biblioteca pesada do cliente movendo o trabalho pra Server Component</span></label></li>
   </ul>
 
-  <h3 class="sub">Onde estudar (grátis)</h3>
+  <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
   <p class="leituras-bar" data-leituras-pagina></p>
     <ul class="resources">
     <li><div class="r-title"><a href="https://turborepo.dev/docs/core-concepts/internal-packages" target="_blank" rel="noopener">Turborepo &mdash; Internal Packages</a></div><div class="r-note">As três estratégias de pacote interno e o que cada uma custa. É exatamente a decisão que o <code>@ally-ai/types</code> tomou sem dizer o nome.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta. Preste atenção na lista de limitações do Just-in-Time &mdash; é a pergunta de entrevista.</div><div class="r-src">turborepo.dev &middot; oficial</div><details class="leitura" data-id="r03-arquitetura-frontend--turborepo-dev-docs-core-concepts-internal-packages"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Internal package é uma biblioteca cujo código mora no próprio monorepo e é referenciada pelo protocolo de workspace do gerenciador (<code>"@repo/ui": "workspace:*"</code> no pnpm). A decisão que importa é <strong>quem compila o pacote</strong> &mdash; e há três respostas, cada uma com um custo diferente.</p>
+<p class="tldr"><strong>Em uma frase:</strong> um pacote interno é código compartilhado entre os apps do mesmo repositório, como uma biblioteca de botões ou um arquivo de tipos. A decisão que importa é <strong>quem transforma o TypeScript dele em JavaScript</strong>, e há três respostas.</p>
+<p class="real"><b>No mundo real</b>O Google guarda quase todo o seu código num único repositório, com bilhões de linhas, para que uma mudança numa biblioteca e em todos os sistemas que a usam saia junto. Numa escala bem menor, o próprio repositório do Next.js é um monorepo com pnpm e Turborepo. No Ally AI, o pacote <code>@ally-ai/types</code> é um pacote interno do tipo &ldquo;Just-in-Time&rdquo;, explicado abaixo.</p>
 
 <h5>As três estratégias</h5>
-<div class="tbl"><table>
-<tr><th>Estratégia</th><th>Quem compila</th><th>Ganha</th><th>Perde</th></tr>
-<tr><td><strong>Just-in-Time</strong></td><td>o bundler da app que consome</td><td>quase zero configuração: o <code>package.json</code> exporta os <code>.ts</code> direto, sem build</td><td>só funciona se todo consumidor transpila; o Turborepo não tem build pra cachear; não aceita <code>compilerOptions.paths</code>; erro de tipo do pacote aparece em quem consome</td></tr>
-<tr><td><strong>Compiled</strong></td><td>o próprio pacote (normalmente <code>tsc</code>), gerando <code>dist/</code></td><td>saída cacheada pelo Turborepo; serve pra consumidor que não transpila TypeScript</td><td>mais configuração: opções do compilador, <code>sideEffects</code>, <code>exports</code> com <code>types</code> e <code>default</code></td></tr>
-<tr><td><strong>Publishable</strong></td><td>o pacote, com a configuração mais rígida</td><td>pode ir pro registro npm e ser usado fora do monorepo</td><td>exige ferramenta de versionamento e publicação &mdash; a doc recomenda <code>changesets</code></td></tr>
-</table></div>
-
-<h5>Como reconhecer qual você tem</h5>
 <ul>
-<li>Se o <code>package.json</code> aponta <code>main</code>/<code>types</code>/<code>exports</code> pra <code>./src/index.ts</code> e não existe script de <code>build</code>, é <strong>Just-in-Time</strong>. É o caso do <code>@ally-ai/types</code>.</li>
-<li>Se aponta pra <code>./dist/index.js</code> e há um <code>build</code> que gera esse arquivo, é <strong>Compiled</strong>.</li>
-<li>O <code>dependsOn: ["^build"]</code> no <code>turbo.json</code> é o que garante que o <code>dist/</code> do pacote existe antes da app que o consome buildar.</li>
+<li><strong>Just-in-Time:</strong> o pacote não tem build. O <code>package.json</code> aponta direto para os arquivos <code>.ts</code>, e o app que importa compila junto. Quase não tem configuração. Em troca, só funciona se todo app que usa o pacote souber compilar TypeScript, o Turborepo não tem build para guardar em cache, e um erro de tipo do pacote aparece no app que o importa.</li>
+<li><strong>Compiled:</strong> o próprio pacote compila (normalmente com <code>tsc</code>) para uma pasta <code>dist/</code>. O Turborepo guarda esse resultado em cache, e qualquer app consegue usar. Em troca, exige mais configuração.</li>
+<li><strong>Publishable:</strong> como o Compiled, mas preparado para ir ao npm e ser usado fora do repositório. Exige controle de versão e publicação. A documentação recomenda o <em>changesets</em>.</li>
 </ul>
 
-<h5>Boas práticas que a página pede</h5>
+<h5>Como saber qual você tem</h5>
 <ul>
-<li>Declarar <code>exports</code> explícitos no <code>package.json</code> &mdash; é isso que define a <strong>fronteira pública</strong> do pacote. O que não está em <code>exports</code> não pode ser importado de fora, e é assim que se impõe boundary sem depender de disciplina.</li>
-<li>Em Compiled, separar <code>types</code> e <code>default</code> em cada entrada de <code>exports</code>.</li>
-<li>Ter os mesmos scripts de <code>lint</code> e <code>typecheck</code> em todo pacote, pra o Turborepo rodar a mesma task no repo inteiro.</li>
+<li>O <code>package.json</code> aponta para <code>./src/index.ts</code> e não existe script de build? É Just-in-Time.</li>
+<li>Aponta para <code>./dist/index.js</code> e existe um build que gera esse arquivo? É Compiled.</li>
+<li>No <code>turbo.json</code>, o <code>dependsOn: ["^build"]</code> garante que o pacote seja compilado antes do app que depende dele.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Comecei com o pacote de tipos Just-in-Time porque é só contrato e os dois consumidores transpilam. Se virasse biblioteca de UI usada por várias apps, eu passaria pra Compiled, pelo cache do build e pra o erro de tipo não vazar pra quem consome.&rdquo;</p>
+
+<h5>Boas práticas</h5>
+<ul>
+<li>Declare o campo <code>exports</code> no <code>package.json</code>. Ele define o que o pacote mostra para fora. O que não está ali não pode ser importado, e é assim que a fronteira do pacote fica garantida sem depender de disciplina.</li>
+<li>Use os mesmos scripts (lint, typecheck) em todos os pacotes, para o Turborepo rodar a mesma tarefa no repositório inteiro.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Comecei o pacote de tipos como Just-in-Time porque é só contrato e os dois apps compilam TypeScript. Se virasse uma biblioteca de UI usada por vários apps, eu passaria para Compiled, pelo cache do build e para o erro de tipo não vazar para quem usa.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://turborepo.dev/docs/core-concepts/internal-packages" target="_blank" rel="noopener">turborepo.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">Micro Frontends (Cam Jackson, no site do Martin Fowler)</a></div><div class="r-note">O texto de referência: definição, benefícios, as cinco formas de integrar e, principalmente, os custos. É de onde vem o &ldquo;quando houver necessidade real&rdquo; do roadmap.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~35 min</span>Leia Benefits, Integration approaches e Downsides. O exemplo completo com código pode ser pulado.</div><div class="r-src">martinfowler.com</div><details class="leitura" data-id="r03-arquitetura-frontend--martinfowler-com-articles-micro-frontends-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Micro frontends são &ldquo;um estilo de arquitetura em que aplicações de front-end entregáveis de forma independente são compostas num todo maior&rdquo;. O artigo de Cam Jackson é favorável ao estilo, mas é honesto sobre o preço &mdash; e o preço é o que se cobra numa entrevista.</p>
+<p class="tldr"><strong>Em uma frase:</strong> microfrontends dividem o front de um produto em partes que times diferentes desenvolvem e publicam de forma independente, e que juntas formam uma aplicação só. O artigo, de Cam Jackson no site do Martin Fowler, é a favor do estilo, mas honesto sobre o preço, e o preço é o que se cobra na entrevista.</p>
+<p class="real"><b>No mundo real</b>A Zalando, maior varejista de moda online da Europa, criou o Project Mosaic para montar cada página no servidor a partir de fragmentos de vários times, cada um com o seu deploy. O app desktop do Spotify foi, por anos, montado com iframes, um por área do app, cada uma de um time. Mais tarde, a empresa unificou o cliente. É o padrão: microfrontend aparece onde há dezenas de times, e é revisto quando o custo de manter tudo consistente pesa.</p>
 
 <h5>Os quatro benefícios</h5>
 <ul>
-<li><strong>Atualização incremental:</strong> trocar um legado aos pedaços em vez de reescrever tudo, e experimentar tecnologia nova num pedaço só.</li>
-<li><strong>Bases de código menores e desacopladas:</strong> menos acoplamento acidental; fluxo de dados e eventos entre partes fica explícito.</li>
-<li><strong>Deploy independente:</strong> cada micro frontend tem seu pipeline; o time decide quando sobe.</li>
-<li><strong>Times autônomos:</strong> organizados por funcionalidade vista pelo usuário, não por camada técnica.</li>
+<li><strong>Troca aos pedaços:</strong> substituir um sistema antigo parte por parte, em vez de reescrever tudo, e testar uma tecnologia nova num pedaço só.</li>
+<li><strong>Bases de código menores:</strong> menos dependência acidental entre partes.</li>
+<li><strong>Deploy independente:</strong> cada parte tem o seu pipeline, e o time decide quando publicar.</li>
+<li><strong>Times autônomos:</strong> organizados por funcionalidade que o usuário vê (checkout, catálogo), e não por camada técnica.</li>
 </ul>
 
-<h5>As cinco formas de integrar</h5>
-<div class="tbl"><table>
-<tr><th>Abordagem</th><th>Resumo</th><th>Veredito do artigo</th></tr>
-<tr><td>Composição no servidor</td><td>server-side includes montando fragmentos de HTML</td><td>padrão e simples: cada fragmento tem seu pipeline e deploy, e a composição pode ficar num servidor só na frente dos outros. Exige a página montada no servidor</td></tr>
-<tr><td>Build-time (pacote npm)</td><td>cada micro frontend vira dependência do container</td><td><strong>desaconselhado</strong>: obriga release em lockstep e reintroduz o acoplamento que se queria evitar</td></tr>
-<tr><td>Runtime via iframe</td><td>isolamento forte de estilo e script</td><td>sofre com rota, deep link, responsividade e integração</td></tr>
-<tr><td>Runtime via JavaScript</td><td>cada um expõe uma função global de entrada; o container decide quando e onde renderizar</td><td>a mais flexível e a mais usada</td></tr>
-<tr><td>Runtime via Web Components</td><td>custom elements como ponto de entrada</td><td>alternativa baseada em padrão, com a mesma flexibilidade</td></tr>
-</table></div>
-
-<h5>Os problemas transversais</h5>
+<h5>As cinco formas de juntar as partes</h5>
 <ul>
-<li><strong>CSS é global:</strong> convenção (BEM), CSS Modules, CSS-in-JS ou shadow DOM &mdash; o requisito é um time não quebrar o estilo do outro.</li>
-<li><strong>Biblioteca compartilhada:</strong> deixe o padrão surgir do uso antes de centralizar; comece por primitivas visuais &ldquo;burras&rdquo; (botão, ícone, label); <strong>nunca regra de negócio</strong>; precisa de um responsável cuidando da qualidade.</li>
-<li><strong>Comunicação entre apps:</strong> o mínimo possível &mdash; custom events, props/callbacks do container, ou a URL. Contratos dirigidos pelo consumidor no lugar de E2E frágil.</li>
-<li><strong>Back-end:</strong> BFF por micro frontend; autenticação centralizada no container.</li>
+<li><strong>No servidor:</strong> o servidor monta a página com fragmentos de HTML de cada time. É simples e é o que a Zalando faz.</li>
+<li><strong>No build, como pacote npm:</strong> o artigo <strong>desaconselha</strong>. Cada parte vira dependência do app principal, e publicar uma exige republicar o app inteiro, o que traz de volta o acoplamento que se queria evitar.</li>
+<li><strong>Com iframe:</strong> isola estilo e script, mas sofre com rotas, links diretos, layout responsivo e comunicação entre as partes.</li>
+<li><strong>Com JavaScript no navegador:</strong> cada parte expõe uma função de entrada, e o app principal decide quando e onde desenhar. É a mais flexível e a mais usada.</li>
+<li><strong>Com Web Components:</strong> a mesma ideia, usando elementos HTML próprios como ponto de entrada.</li>
+</ul>
+
+<h5>Os problemas que aparecem em todas</h5>
+<ul>
+<li><strong>CSS é global:</strong> é preciso uma convenção (CSS Modules, prefixos) para um time não quebrar o estilo do outro.</li>
+<li><strong>Biblioteca compartilhada:</strong> comece só por peças visuais simples (botão, ícone), nunca com regra de negócio, e com alguém responsável por ela.</li>
+<li><strong>Comunicação entre partes:</strong> o mínimo possível, por eventos, props ou pela URL.</li>
 </ul>
 
 <h5>Os custos</h5>
 <ul>
-<li><strong>Payload:</strong> builds independentes duplicam dependências (o React, por exemplo). Externalizar a dependência comum devolve o acoplamento de build.</li>
-<li><strong>Ambientes diferentes:</strong> desenvolver isolado esconde problema que só aparece integrado.</li>
-<li><strong>Complexidade operacional:</strong> mais repositórios, pipelines e governança &mdash; exige maturidade de automação.</li>
+<li><strong>Peso:</strong> cada parte empacota as próprias dependências, e o usuário pode baixar o React duas vezes.</li>
+<li><strong>Ambientes diferentes:</strong> desenvolver cada parte isolada esconde problemas que só aparecem com tudo junto.</li>
+<li><strong>Operação:</strong> mais repositórios, pipelines e combinados entre times. Exige automação madura.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Micro frontend resolve problema de organização, não de código. Com um time só, eu pagaria payload duplicado e governança sem ganhar deploy independente de ninguém.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Microfrontend resolve um problema de organização, não de código. Com um time só, eu pagaria peso duplicado e coordenação sem ganhar deploy independente de ninguém.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">martinfowler.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/multi-zones" target="_blank" rel="noopener">Next.js &mdash; Multi-Zones</a></div><div class="r-note">O microfrontend que o próprio Next oferece: várias apps Next no mesmo domínio, cada uma dona de um conjunto de rotas.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Guia curto com toda a configuração. O detalhe que mais cai: <code>&lt;a&gt;</code> em vez de <code>&lt;Link&gt;</code> entre zonas.</div><div class="r-src">nextjs.org &middot; oficial</div><details class="leitura" data-id="r03-arquitetura-frontend--nextjs-org-docs-app-guides-multi-zones"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Multi-zones são a abordagem de micro frontend do próprio Next: várias aplicações Next no <strong>mesmo domínio</strong>, cada uma dona de um conjunto de rotas. Pro usuário parece uma app só; pro time, são builds e deploys separados.</p>
+<p class="tldr"><strong>Em uma frase:</strong> multi-zones é o jeito do Next de fazer microfrontend por rota. Várias aplicações Next ficam no mesmo domínio, cada uma dona de um conjunto de caminhos. Para o usuário parece um site só. Para os times, são builds e deploys separados.</p>
+<p class="real"><b>No mundo real</b>O próprio site da Vercel é dividido assim: o site de marketing, a documentação e o painel são aplicações separadas, servidas no mesmo domínio <code>vercel.com</code> por caminho. Cada time publica a sua parte sem esperar os outros.</p>
 
 <h5>A ideia</h5>
 <ul>
-<li>Exemplo da doc: <code>/blog/*</code>, <code>/dashboard/*</code> e <code>/*</code> (o resto) viram três apps. Cada uma fica menor, builda mais rápido e não carrega código que só a outra usa &mdash; e pode até usar outro framework.</li>
-<li>Navegar <strong>dentro</strong> de uma zona é soft navigation (sem recarregar). Navegar <strong>entre</strong> zonas é hard navigation: descarrega a página e carrega a outra. Regra prática: páginas visitadas juntas ficam na mesma zona.</li>
+<li>O exemplo da documentação: <code>/blog/*</code>, <code>/dashboard/*</code> e o resto (<code>/*</code>) viram três apps. Cada um fica menor, faz build mais rápido e não carrega código que só o outro usa.</li>
+<li>Navegar <strong>dentro</strong> de uma zona é rápido, sem recarregar a página. Navegar <strong>entre</strong> zonas recarrega a página inteira. Regra prática: páginas que a pessoa visita em sequência ficam na mesma zona.</li>
 </ul>
 
-<h5>Configuração, em três peças</h5>
+<h5>Como se monta</h5>
 <ul>
-<li><strong>Definir a zona:</strong> uma app Next normal com <code>assetPrefix</code> (ex.: <code>'/blog-static'</code>), pra o JS e o CSS dela saírem em <code>/blog-static/_next/...</code> sem colidir com os da outra. A zona padrão (o <code>/*</code>) não precisa de prefixo. A partir do Next 15, não é mais preciso o rewrite extra dos assets.</li>
-<li><strong>Rotear:</strong> qualquer proxy HTTP serve, mas a própria app principal pode fazer isso com <code>rewrites</code> apontando <code>/blog</code>, <code>/blog/:path+</code> e <code>/blog-static/:path+</code> pro domínio da outra zona. Cada caminho pertence a uma zona só. Rewrite é o recomendado pela latência; <code>proxy</code> (o antigo middleware) é pra decisão dinâmica, como uma feature flag durante migração.</li>
-<li><strong>Linkar:</strong> entre zonas use <code>&lt;a&gt;</code>, não <code>&lt;Link&gt;</code>. O <code>Link</code> tenta prefetch e soft navigation em caminho relativo, e isso não funciona atravessando zonas.</li>
+<li><strong>Cada zona</strong> é um app Next normal com um <code>assetPrefix</code> próprio (<code>'/blog-static'</code>), para o JavaScript e o CSS dela não colidirem com os da outra.</li>
+<li><strong>O roteamento</strong> pode ser feito pelo app principal, com <code>rewrites</code> que mandam <code>/blog</code> e <code>/blog/...</code> para o endereço da outra zona. Cada caminho pertence a uma zona só.</li>
+<li><strong>Os links</strong> entre zonas usam <code>&lt;a&gt;</code>, e não <code>&lt;Link&gt;</code>. O <code>Link</code> tenta pré-carregar e navegar sem recarregar, e isso não funciona entre apps diferentes.</li>
+<li>As zonas podem morar em repositórios diferentes, mas um monorepo facilita compartilhar código. Para ligar uma funcionalidade em todas ao mesmo tempo, use uma feature flag.</li>
 </ul>
-
-<h5>O resto</h5>
-<ul>
-<li><strong>Código compartilhado:</strong> as zonas podem estar em qualquer repositório, mas monorepo facilita; entre repositórios, pacote npm público ou privado. Como cada zona sobe numa hora diferente, feature flag ajuda a ligar uma funcionalidade em todas ao mesmo tempo.</li>
-<li><strong>Server Actions:</strong> é preciso liberar o domínio que o usuário vê em <code>experimental.serverActions.allowedOrigins</code>, porque o mesmo domínio serve várias apps.</li>
-</ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Se eu precisasse separar uma área com time próprio, começaria por multi-zone por rota &mdash; é o microfrontend mais barato: sem runtime compartilhado, o custo é só a hard navigation na fronteira.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Se eu precisasse separar uma área com time próprio, começaria por multi-zones por rota. É o microfrontend mais barato: nada é compartilhado no navegador, e o custo é só a recarga na fronteira.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/docs/app/guides/multi-zones" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/content-security-policy" target="_blank" rel="noopener">Next.js &mdash; Content Security Policy</a></div><div class="r-note">Lido aqui pelo lado de arquitetura, não de segurança: a seção &ldquo;Static vs Dynamic Rendering with CSP&rdquo; explica por que o Gabarita inteiro é dinâmico.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia &ldquo;How nonces work&rdquo;, &ldquo;Static vs Dynamic Rendering with CSP&rdquo; e &ldquo;Subresource Integrity&rdquo;. A configuração em si você já tem (<a href="05-seguranca-historia.html">Semana 5</a>).</div><div class="r-src">nextjs.org &middot; oficial</div><details class="leitura" data-id="r03-arquitetura-frontend--nextjs-org-docs-app-guides-content-security-policy"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Nonce é uma string aleatória, única por request, que autoriza só os scripts que a carregam. O efeito colateral arquitetural é grande: <strong>com nonce, toda página precisa ser renderizada dinamicamente</strong>, porque o nonce só existe quando existe request.</p>
+<p class="tldr"><strong>Em uma frase:</strong> a Content Security Policy (CSP) diz ao navegador quais scripts ele pode executar, o que bloqueia scripts injetados por um atacante. O jeito mais seguro usa um <em>nonce</em>, um código aleatório novo a cada pedido. O efeito colateral é grande: <strong>com nonce, toda página vira dinâmica</strong>, porque o código só existe quando existe um pedido.</p>
+<p class="real"><b>No mundo real</b>O GitHub adotou uma CSP rígida há anos e escreveu publicamente sobre o caminho: ela é uma das camadas que impedem um script malicioso, colado num comentário ou num README, de rodar na página de quem está logado. No Gabarita, a CSP com nonce foi uma escolha consciente, aceitando o custo de perder o cache de páginas estáticas.</p>
 
 <h5>Como o Next aplica o nonce</h5>
 <ol>
-<li>O <code>proxy</code> (antigo middleware) gera o nonce, monta o header <code>Content-Security-Policy</code> e coloca o nonce também num header próprio (<code>x-nonce</code>) &mdash; tanto na requisição quanto na resposta.</li>
-<li>Durante a renderização no servidor, o Next lê o header da CSP e extrai o valor de <code>'nonce-…'</code>.</li>
-<li>Ele mesmo aplica o nonce nos scripts do framework, nos bundles da página, nos inline gerados e em <code>&lt;Script nonce&gt;</code>. Pra script de terceiro, leia o nonce com <code>headers()</code> num Server Component.</li>
+<li>O <code>proxy</code> (o antigo middleware) gera o nonce a cada pedido e o coloca no cabeçalho <code>Content-Security-Policy</code>.</li>
+<li>Ao montar a página no servidor, o Next lê esse cabeçalho e marca com o nonce os scripts do próprio framework e os da página.</li>
+<li>Para um script de terceiro, você lê o nonce com <code>headers()</code> num Server Component e passa para ele.</li>
 </ol>
-<p>Página estática é gerada no build, quando não há request nem header &mdash; por isso não há como injetar nonce nela. A doc sugere <code>await connection()</code> pra forçar dinâmico quando necessário.</p>
+<p>Uma página estática é gerada no build, quando não existe pedido nem cabeçalho. Por isso não há como pôr o nonce nela.</p>
 
-<h5>O que se perde, segundo a própria doc</h5>
+<h5>O que se perde</h5>
 <ul>
-<li>Otimização estática e <strong>ISR desligados</strong>; cada request gera página nova.</li>
-<li>Página não pode ser cacheada pela <strong>CDN</strong> sem configuração extra.</li>
-<li><strong>Partial Prerendering (PPR) é incompatível</strong>: o shell estático não tem acesso ao nonce.</li>
-<li>Consequências: carga inicial mais lenta, mais carga no servidor, custo de hospedagem maior.</li>
-<li>Quando vale: requisito de segurança que proíbe <code>'unsafe-inline'</code>, dado sensível, compliance.</li>
+<li>Páginas estáticas e ISR ficam desligados: cada pedido gera a página de novo.</li>
+<li>A CDN não consegue guardar a página sem configuração extra.</li>
+<li>O Partial Prerendering não funciona, porque a casca estática não tem o nonce.</li>
+<li>Resultado: primeira carga mais lenta, mais trabalho no servidor e hospedagem mais cara.</li>
+<li>Vale a pena quando há dado sensível, uma exigência de segurança que proíbe scripts inline ou compliance.</li>
 </ul>
 
 <h5>As alternativas</h5>
 <ul>
-<li><strong>Sem nonce:</strong> CSP fixa em <code>headers()</code> do <code>next.config</code>, mas aí o <code>script-src</code> precisa de <code>'unsafe-inline'</code>.</li>
-<li><strong>Subresource Integrity (experimental, só App Router):</strong> <code>experimental.sri.algorithm</code> gera hash dos scripts no build e põe <code>integrity</code> nas tags. Mantém geração estática e cache de CDN; limitação: não cobre script gerado dinamicamente, e pode mudar ou sair.</li>
+<li><strong>CSP fixa, sem nonce:</strong> configurada no <code>next.config</code>. Mantém o estático, mas precisa liberar scripts inline (<code>'unsafe-inline'</code>), o que enfraquece a proteção.</li>
+<li><strong>Subresource Integrity (experimental):</strong> o build calcula um código de cada arquivo de script, e o navegador confere antes de executar. Mantém o estático e o cache, mas não cobre scripts gerados na hora.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Nonce é uma decisão de arquitetura, não só de segurança: ele troca cache de borda por uma CSP sem <code>'unsafe-inline'</code>. Eu aceitei esse custo numa app com dado de usuário, e sei que SRI é a saída se precisar de estático.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Nonce é uma decisão de arquitetura, não só de segurança: ele troca o cache da CDN por uma CSP sem scripts inline. Eu aceitei esse custo num app com dado de usuário, e sei que a integridade por hash é a saída se precisar de páginas estáticas.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/docs/app/guides/content-security-policy" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/package-bundling" target="_blank" rel="noopener">Next.js &mdash; Optimizing package bundling</a></div><div class="r-note">As duas ferramentas de análise de bundle e os três remédios mais comuns &mdash; a base do script <code>analyze</code> que o Ally AI já tem.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Guia direto. Note qual analisador serve pra Turbopack e qual só pra webpack.</div><div class="r-src">nextjs.org &middot; oficial</div><details class="leitura" data-id="r03-arquitetura-frontend--nextjs-org-docs-app-guides-package-bundling"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Bundle menor carrega mais rápido, executa menos JS, melhora Core Web Vitals e reduz cold start no servidor. O Next já faz code splitting e tree-shaking; este guia é pros casos em que é preciso <strong>medir e intervir</strong>.</p>
+<p class="tldr"><strong>Em uma frase:</strong> quanto menos JavaScript o navegador baixa, mais rápido a página carrega e responde. O Next já divide o código por página e descarta o que não é usado. Este guia é para quando você precisa <strong>medir e agir</strong>.</p>
+<p class="real"><b>No mundo real</b>O Moment.js, biblioteca de datas muito usada, passa de 200 KB quando vem com todos os idiomas, e milhares de sites o carregavam para formatar uma data. A própria equipe do Moment hoje recomenda alternativas menores. É o tipo de achado que um analisador de pacote mostra em minutos: uma dependência grande trazida por um único import.</p>
 
-<h5>As duas ferramentas de análise</h5>
-<div class="tbl"><table>
-<tr><th>Ferramenta</th><th>Pra qual bundler</th><th>Como usar</th></tr>
-<tr><td>Next.js Bundle Analyzer (experimental, v16.1+)</td><td>Turbopack</td><td><code>next experimental-analyze</code> abre uma visão interativa do grafo de módulos, filtrável por rota, ambiente (cliente/servidor) e tipo; clicar num módulo mostra o tamanho e a cadeia de imports inteira. Com <code>--output</code> grava em <code>.next/diagnostics/analyze</code> pra comparar antes/depois</td></tr>
-<tr><td><code>@next/bundle-analyzer</code></td><td>webpack</td><td>plugin no <code>next.config</code> ligado por <code>ANALYZE=true</code>; o build abre três relatórios no navegador</td></tr>
-</table></div>
+<h5>As ferramentas de análise</h5>
+<ul>
+<li><strong>Com Turbopack</strong> (Next 16.1 ou mais novo): <code>next experimental-analyze</code> abre um mapa interativo do código, filtrável por rota e por lado (cliente ou servidor). Clicar num módulo mostra o tamanho e quem o importou.</li>
+<li><strong>Com webpack:</strong> o plugin <code>@next/bundle-analyzer</code>, ligado com <code>ANALYZE=true</code>, abre os relatórios no navegador.</li>
+</ul>
 
 <h5>Os três remédios mais comuns</h5>
 <ul>
-<li><strong>Pacote com centenas de exports</strong> (ícones, utilitários): <code>experimental.optimizePackageImports</code> faz carregar só o módulo usado. Atenção: vários pacotes já são otimizados <strong>por padrão</strong> &mdash; <code>lucide-react</code>, <code>date-fns</code>, <code>lodash-es</code>, <code>recharts</code>, os ícones do <code>@heroicons/react</code>, <code>react-icons/*</code>, entre outros &mdash; e não precisam estar na lista.</li>
-<li><strong>Trabalho pesado no cliente:</strong> biblioteca que só transforma dado em UI (realce de sintaxe, gráfico, parser de markdown) dentro de Client Component vai inteira pro bundle. Se não precisa de API do navegador nem de interação, rode num Server Component e mande só o HTML. O exemplo da doc troca Prism no cliente por Shiki no servidor.</li>
-<li><strong>Pacote que não deve ser empacotado no servidor:</strong> <code>serverExternalPackages</code> tira pacotes específicos do bundling de Server Components e Route Handlers.</li>
+<li><strong>Pacote com centenas de exports</strong> (ícones, utilitários): <code>optimizePackageImports</code> faz carregar só o que foi usado. Vários pacotes já vêm otimizados por padrão, como <code>lucide-react</code>, <code>date-fns</code> e <code>lodash-es</code>.</li>
+<li><strong>Trabalho pesado no navegador:</strong> uma biblioteca que só transforma dado em tela (realce de código, gráfico, markdown) dentro de um Client Component vai inteira para o navegador. Se ela não precisa de clique nem de API do navegador, rode num Server Component e mande só o HTML. O exemplo da documentação troca o Prism no cliente pelo Shiki no servidor.</li>
+<li><strong>Pacote que não deve ser empacotado no servidor:</strong> <code>serverExternalPackages</code> deixa de fora pacotes específicos.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Antes de otimizar eu meço: rodo o analisador, acho o módulo grande e a cadeia de import que o trouxe, e só então escolho entre <code>optimizePackageImports</code>, mover pra Server Component ou lazy loading.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de otimizar, eu meço: rodo o analisador, acho o módulo grande e quem o trouxe, e só então escolho entre carregar só o necessário, mover para um Server Component ou carregar depois.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/docs/app/guides/package-bundling" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://web.dev/articles/optimize-inp" target="_blank" rel="noopener">web.dev &mdash; Optimize Interaction to Next Paint</a></div><div class="r-note">A métrica de Core Web Vitals que mais pega interface rica: o tempo do clique até a tela mudar. As três fases e o remédio de cada uma.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia a definição das três fases e as seções de otimização. A parte de ferramentas de diagnóstico é consulta.</div><div class="r-src">web.dev &middot; Google</div><details class="leitura" data-id="r03-arquitetura-frontend--web-dev-articles-optimize-inp"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">INP (Interaction to Next Paint) é a Core Web Vital de <strong>responsividade</strong>: observa todas as interações da visita e reporta a mais lenta. A meta é <strong>200 ms ou menos</strong> no p75, separado por tipo de aparelho; acima de 500 ms é ruim.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o INP (Interaction to Next Paint) mede quanto a tela demora para reagir a um clique, toque ou tecla. Ele observa todas as interações da visita e reporta a mais lenta. A meta é <strong>até 200 ms</strong> para 75% das visitas. Acima de 500 ms é ruim.</p>
+<p class="real"><b>No mundo real</b>O INP substituiu o FID como métrica oficial de resposta do Google em março de 2024, porque o FID só media a primeira interação. Num estudo de caso publicado no web.dev, a redBus, plataforma de passagens de ônibus da Índia, melhorou o INP do site e registrou cerca de 7% a mais de vendas.</p>
 
 <h5>As três fases de uma interação</h5>
-<div class="tbl"><table>
-<tr><th>Fase</th><th>Vai de&hellip;</th><th>Causa típica</th><th>Remédio</th></tr>
-<tr><td><strong>Input delay</strong></td><td>o clique até o handler começar</td><td>thread principal ocupada &mdash; script sendo carregado, parseado, compilado, hidratação</td><td>reduzir trabalho de inicialização; entender a relação entre avaliação de script e long tasks</td></tr>
-<tr><td><strong>Processing duration</strong></td><td>o handler rodando</td><td>callback fazendo trabalho demais</td><td>ceder a thread com frequência (<code>setTimeout</code>), rodar primeiro só o que afeta a tela e adiar o resto (<code>requestAnimationFrame</code> + <code>setTimeout</code>); evitar layout thrashing (ler estilo logo depois de escrever força layout síncrono)</td></tr>
-<tr><td><strong>Presentation delay</strong></td><td>o fim do handler até o próximo frame</td><td>renderização grande</td><td>DOM menor, <code>content-visibility</code> pro que está fora da tela, menos HTML renderizado por JS no cliente</td></tr>
-</table></div>
-<p>A soma das três é a latência da interação. O ponto sobre renderização no cliente é direto: HTML que chega por streaming do servidor cede a thread naturalmente; HTML montado por JavaScript bloqueia até terminar.</p>
+<ul>
+<li><strong>Espera para começar</strong> (<em>input delay</em>): do clique até o código do clique começar. Acontece quando o navegador está ocupado com outra coisa, como carregar scripts. Remédio: menos trabalho na inicialização.</li>
+<li><strong>Processamento</strong>: o código do clique rodando. Remédio: fazer primeiro só o que muda a tela e adiar o resto, por exemplo com <code>setTimeout</code>, para devolver o controle ao navegador.</li>
+<li><strong>Desenho</strong> (<em>presentation delay</em>): do fim do código até a tela ser redesenhada. Acontece quando a mudança é grande. Remédio: menos elementos na página, <code>content-visibility</code> para o que está fora da tela e menos HTML montado por JavaScript no navegador.</li>
+</ul>
+<p>A soma das três é o tempo da interação. HTML que chega pronto do servidor, aos pedaços, deixa o navegador livre entre um pedaço e outro. HTML montado por JavaScript prende o navegador até terminar.</p>
 
 <h5>Como achar a interação lenta</h5>
 <ul>
-<li><strong>Comece pelo campo:</strong> um provedor de RUM ou os dados do CrUX (via PageSpeed Insights) dizem qual interação e qual página.</li>
-<li><strong>Depois o laboratório:</strong> reproduza o fluxo e teste as interações <strong>durante o carregamento</strong>, quando a thread principal está mais ocupada.</li>
+<li><strong>Comece pelos usuários reais:</strong> uma ferramenta de monitoramento (RUM) ou os dados do Chrome no PageSpeed Insights dizem qual interação e qual página.</li>
+<li><strong>Depois reproduza:</strong> repita o fluxo e teste as interações durante o carregamento, quando o navegador está mais ocupado.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Quando INP piora, eu não chuto <code>useMemo</code>: separo a interação em input delay, processamento e apresentação, e ataco a fase que a medição apontou.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Quando o INP piora, eu não saio colocando <code>useMemo</code>. Separo a interação nas três fases e ataco a que a medição apontou.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://web.dev/articles/optimize-inp" target="_blank" rel="noopener">web.dev</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
+
+  
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <div class="ex" id="fz1">
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Estática, dinâmica ou ISR?</h3><span class="ex-meta">15 min &middot; decisão, sem código</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Para cada rota de um app de estudos, diga como ela deve ser renderizada e por quê, em uma frase.</p>
+      <ol>
+        <li><code>/precos</code>: muda duas vezes por ano.</li>
+        <li><code>/painel</code>: mostra o nome e o desempenho de quem está logado.</li>
+        <li><code>/questoes/[id]</code>: pública, igual para todos, mas o admin corrige um erro de vez em quando.</li>
+        <li><code>/busca?q=...</code>: resultado depende do texto digitado.</li>
+        <li><code>/blog/[slug]</code>: posts novos toda semana, os antigos quase nunca mudam.</li>
+      </ol>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Faça duas perguntas para cada rota: o conteúdo depende de <strong>quem</strong> pede ou do que vem <strong>no pedido</strong>? E quando o dado muda, eu sei o momento exato?</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+        <ol>
+          <li><strong>Estática.</strong> É igual para todos e quase não muda. Um deploy novo resolve quando mudar.</li>
+          <li><strong>Dinâmica.</strong> Depende do cookie de sessão. Use streaming (<code>loading.tsx</code> ou <code>Suspense</code>) para mostrar a casca enquanto os números carregam.</li>
+          <li><strong>Estática com revalidação sob demanda.</strong> Igual para todos. Quando o admin salva a correção, a ação chama <code>revalidateTag('questao-' + id)</code> e só aquela página é refeita.</li>
+          <li><strong>Dinâmica.</strong> Depende do <code>searchParams</code>. Dá para pôr em cache o resultado de buscas comuns, mas a página em si é gerada no pedido.</li>
+          <li><strong>Estática com ISR.</strong> Gere os posts no build e use <code>generateStaticParams</code> com revalidação por tempo ou por tag para os novos.</li>
+        </ol>
+        <p><strong>O que mostrar ao entrevistador:</strong> a decisão é por rota, e o critério é &ldquo;depende de quem pede?&rdquo;. Quando você sabe o momento em que o dado muda, revalidar sob demanda é melhor que revalidar por tempo.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="fz2">
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Tire a cascata desta página</h3><span class="ex-meta">15 min &middot; Next.js + TS</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Esta página demora 750 ms para começar a responder. <code>getUsuario</code> leva 300 ms, <code>getEstatisticas</code> leva 200 ms e <code>getRecomendadas</code> leva 250 ms. As recomendações dependem do nível do usuário. Reescreva para que a página fique o mais rápida possível.</p>
+<pre><code>export default async function Painel({ params }: { params: Promise&lt;{ id: string }&gt; }) {
+  const { id } = await params;
+  const usuario = await getUsuario(id);
+  const stats = await getEstatisticas(id);
+  const recomendadas = await getRecomendadas(usuario.nivel);
+  return &lt;Tela usuario={usuario} stats={stats} recomendadas={recomendadas} /&gt;;
+}
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Desenhe as dependências: <code>stats</code> não depende de ninguém, e <code>recomendadas</code> depende de <code>usuario</code>. Qual é o caminho mais longo?</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code>export default async function Painel({ params }: { params: Promise&lt;{ id: string }&gt; }) {
+  const { id } = await params;
+  const [usuario, stats] = await Promise.all([
+    getUsuario(id),        // 300 ms
+    getEstatisticas(id),   // 200 ms, ao mesmo tempo
+  ]);
+  const recomendadas = await getRecomendadas(usuario.nivel); // + 250 ms: precisa do nível
+  return &lt;Tela usuario={usuario} stats={stats} recomendadas={recomendadas} /&gt;;
+}
+</code></pre>
+        <p>O tempo cai de 750 ms para 550 ms. O caminho mais longo é <code>usuario</code> e depois <code>recomendadas</code> (300 + 250). <code>stats</code> roda em paralelo e não entra na conta.</p>
+        <p><strong>Próximo passo:</strong> se as recomendações são a parte lenta e menos importante, mova-as para um componente próprio dentro de <code>&lt;Suspense&gt;</code>. A página aparece em 300 ms e as recomendações chegam depois, por streaming.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <h3 class="sub etapa" id="contar"><span class="etapa-n">3 &middot; Contar</span>As suas decisões e onde você já aplicou</h3>
+  <p class="etapa-nota">É o que você fala na entrevista: por que escolheu cada coisa nos seus projetos e a resposta honesta para o que ainda não fez.</p>
 
   <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
   <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
@@ -198,6 +350,7 @@
   <div class="tcards">
     <div class="tcard">
       <h4>Rendering: por que toda rota do Gabarita é dinâmica <span class="st y">decisão tomada (D111)</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Toda página é montada a cada acesso porque a proteção contra script injetado usa um código novo por acesso, e uma página gerada no build não tem esse código.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Renderizar todas as rotas no servidor a cada requisição, com CSP de <code>script-src</code> sem <code>'unsafe-inline'</code> e um nonce novo por requisição, gerado no middleware.</dd>
@@ -210,10 +363,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: a &ldquo;Munição&rdquo; abaixo cita uma saída que preservaria o estático. Em que situação ela valeria a pena?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O GitHub, que guarda o código e os segredos de milhões de desenvolvedores, usa uma CSP rígida nas páginas logadas. Um portal de notícias com milhões de visitas anônimas faz a escolha oposta: precisa do cache da CDN para aguentar picos de tráfego, e por isso protege as páginas públicas de outro jeito. A decisão segue o que a página guarda e quanta gente a visita.</p>
     </div>
 
     <div class="tcard">
       <h4>Monorepo: pacote de tipos compartilhado <span class="st p">Ally AI sim &middot; Gabarita não</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> O Ally AI usa monorepo para a web e a API compartilharem o mesmo tipo de dado. O Gabarita, com um app só, não precisou.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>No Ally AI, pnpm workspaces + Turborepo, com <code>packages/types</code> consumido pela web e pela api. O Gabarita ficou como monolito modular: web e worker saem do mesmo código, sem workspaces.</dd>
@@ -226,10 +381,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: a pergunta 2 do quiz desta página. O que muda quando o pacote deixa de ser só tipo?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O Google mantém quase todo o código num repositório só, para que a mudança de uma biblioteca e de todos os sistemas que a usam saia junto. A Amazon é conhecida pelo caminho oposto: milhares de repositórios, um por serviço, com times independentes. As duas funcionam. A escolha segue o jeito como os times se organizam.</p>
     </div>
 
     <div class="tcard">
       <h4>Microfrontends: usar ou não <span class="st n">decisão de não usar</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Com um time só, microfrontends trariam o custo sem o benefício.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Não usar. As fronteiras entre módulos ficam por contrato: fila e interfaces trocáveis no Gabarita (web &times; worker), tipos compartilhados no Ally AI (web &times; api).</dd>
@@ -242,10 +399,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: a pergunta 1 do quiz diz o que mudaria e por qual forma de integração começar.</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>A Zalando adotou microfrontends porque tinha dezenas de times mexendo nas mesmas páginas e se atrapalhando no mesmo deploy. Um time pequeno que copia essa arquitetura paga o React baixado duas vezes e a coordenação entre as partes, sem ter ninguém que ganhe independência com isso.</p>
     </div>
 
     <div class="tcard">
       <h4>Performance: o que otimizar primeiro <span class="st p">em aberto</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Primeiro o que é barato e já vem no Next. O resto só depois de medir com usuários reais, e essa medição ainda falta.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Fazer primeiro o que é barato e já vem no framework (<code>next/font</code>, imagens com <code>loading="lazy"</code>, cache HTTP com hash na URL, e no Ally AI o React Compiler e o analisador de bundle), e acompanhar o resto por tracing.</dd>
@@ -258,6 +417,7 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: o bloco &ldquo;Você já medeu Core Web Vitals com dado de campo?&rdquo;, mais abaixo, descreve como seria.</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O Pinterest refez as páginas com foco em desempenho, reduziu em 40% o tempo de espera percebido e publicou um aumento de cerca de 15% no tráfego vindo de busca e nos cadastros. Sem medir com usuários reais antes e depois, não daria para saber o que mexer nem provar o resultado.</p>
     </div>
   </div>
 
@@ -375,6 +535,9 @@
     </div>
   </div>
 
+  <h3 class="sub etapa" id="provar"><span class="etapa-n">4 &middot; Provar</span>Perguntas abertas e múltipla escolha</h3>
+  <p class="etapa-nota">Responda em voz alta antes de abrir a resposta. A múltipla escolha, no fim, começa com três questões de aquecimento, só de conceito.</p>
+
   <div class="quiz">
     <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
     <ol>
@@ -422,10 +585,10 @@
 
   <div class="qz-pagina" data-qz-pagina>
     <h3 class="sub">Múltipla escolha desta página</h3>
-    <p class="qz-pagina-intro">11 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
+    <p class="qz-pagina-intro">14 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
     <div class="qz-bar qz-pagina-barra"><span class="qz-score qz-pagina-placar" aria-live="polite"></span><button type="button" class="qz-acao" data-acao="rodada">Nova rodada</button></div>
     <div class="qz-pagina-lista"></div>
-    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-arquitetura-xtu5l2","t":"Arquitetura Frontend","q":"Um pacote interno do monorepo exporta os arquivos \u003ccode>.ts\u003c/code> direto no \u003ccode>package.json\u003c/code>, sem script de build. Qual é a principal limitação dessa estratégia (Just-in-Time)?","o":["Só pode ser consumido por apps do mesmo framework que o pacote","Não há build pra cachear, e todo consumidor precisa transpilar TS","Precisa ser publicado no npm pra que o pnpm consiga resolvê-lo","Desliga o tree-shaking, então a app recebe o pacote inteiro"],"c":1,"e":"No Just-in-Time quem compila é o bundler da app consumidora. Configuração quase zero, mas não há saída de build pra cachear, não dá pra usar \u003ccode>compilerOptions.paths\u003c/code> e erro de tipo do pacote aparece em quem consome. O workspace resolve o pacote por \u003ccode>workspace:*\u003c/code>, sem npm, e o bundler continua fazendo tree-shaking do \u003ccode>.ts\u003c/code>. O \u003ccode>@ally-ai/types\u003c/code> é assim — ótimo pra tipos, menos pra uma biblioteca de UI grande."},{"id":"rm-arquitetura-15zby9f","t":"Arquitetura Frontend","q":"Segundo o artigo de micro frontends no site do Martin Fowler, por que integrar micro frontends como pacotes npm no build do container é desaconselhado?","o":["O npm não lida bem com versões de pacotes privados no CI","Gera o maior bundle entre todas as formas de integração","Obriga release em lockstep e volta a acoplar os deploys","Impede que cada micro frontend use um framework diferente"],"c":2,"e":"Se cada micro frontend é dependência do container, qualquer mudança exige rebuildar e redeployar o container — o deploy deixa de ser independente, que era o benefício principal. O artigo prefere integração em runtime (via JavaScript ou Web Components). Bundle duplicado é justamente um problema das integrações em runtime; no build-time o bundler consegue deduplicar."},{"id":"rm-arquitetura-7i0n0s","t":"Arquitetura Frontend","q":"Em multi-zones do Next.js, por que links entre zonas diferentes devem usar \u003ccode>&lt;a&gt;\u003c/code> em vez de \u003ccode>&lt;Link&gt;\u003c/code>?","o":["\u003ccode>Link\u003c/code> faz soft navigation, que não atravessa apps diferentes","\u003ccode>Link\u003c/code> não envia os cookies de sessão para outra zona","\u003ccode>&lt;a&gt;\u003c/code> preserva o estado do React ao trocar de zona","\u003ccode>Link\u003c/code> faz prefetch de todas as zonas e estoura o cache do CDN"],"c":0,"e":"Cada zona é outra aplicação: a navegação entre elas é obrigatoriamente uma hard navigation (descarrega a página e carrega a outra), então nenhum estado do React sobrevive. O \u003ccode>Link\u003c/code> assume que a rota é da mesma app. Cookies vão normalmente, porque é o mesmo domínio. Daí a regra prática: páginas visitadas juntas ficam na mesma zona."},{"id":"rm-arquitetura-1dccpku","t":"Arquitetura Frontend","q":"O Gabarita usa CSP com nonce gerado a cada request. Qual consequência de renderização isso tem, segundo a documentação do Next.js?","o":["Nenhuma: o Next gera o nonce no build e o grava no HTML estático","Só as páginas com \u003ccode>&lt;Script&gt;\u003c/code> de terceiros viram dinâmicas","Toda página vira dinâmica: sem estático, ISR, cache de CDN nem PPR","As páginas continuam estáticas, e o middleware reescreve o nonce na borda"],"c":2,"e":"O Next só consegue aplicar o nonce durante a renderização no servidor, lendo o header da CSP do request. Página gerada no build não tem request — e um nonce fixo gravado no build deixaria de ser nonce. É por isso que o Gabarita não usa \u003ccode>unstable_cache\u003c/code> nem ISR; a alternativa que preservaria estático é o SRI experimental."},{"id":"rm-arquitetura-hbszum","t":"Arquitetura Frontend","q":"O monorepo do Ally AI declara no \u003ccode>turbo.json\u003c/code> a task \u003ccode>build\u003c/code> com \u003ccode>\"env\": [\"GEMINI_API_KEY\", \"GEMINI_MODEL\", \"AUDIT_CONCURRENCY\"]\u003c/code>. Pra que serve essa lista?","o":["Expor essas variáveis ao JavaScript que roda no navegador","Incluir os valores no hash, pra não reaproveitar build antigo","Fazer o build falhar se alguma delas não estiver definida","Criptografar os valores antes de enviar ao cache remoto"],"c":1,"e":"O Turborepo decide se pode reaproveitar um build pelo hash das entradas. Variável de ambiente que muda o resultado precisa entrar em \u003ccode>env\u003c/code>; senão, trocar o modelo do Gemini poderia servir um artefato montado com o valor anterior. (No modo estrito, só as variáveis listadas chegam à task.) A lista não valida presença nem expõe nada ao navegador — isso é o prefixo \u003ccode>NEXT_PUBLIC_\u003c/code>."},{"id":"rm-arquitetura-1nk6uuo","t":"Arquitetura Frontend","q":"Uma interação lenta foi medida: o handler do clique termina rápido, mas a tela demora a mudar porque a re-renderização é enorme. Em qual fase do INP está o problema?","o":["Input delay","Processing duration","Total Blocking Time","Presentation delay"],"c":3,"e":"Presentation delay é do fim do handler até o próximo frame. O remédio é diminuir o trabalho de renderização: DOM menor, \u003ccode>content-visibility\u003c/code> pro que está fora da tela, menos HTML montado por JavaScript. Input delay seria thread ocupada antes do handler; processing seria o handler lento; e Total Blocking Time é outra métrica (de laboratório), não uma fase do INP."},{"id":"rm-arquitetura-tz21pt","t":"Arquitetura Frontend","q":"Num Server Component, \u003ccode>await a(); await b();\u003c/code> com duas consultas independentes causa o quê?","o":["Um erro de build, porque o Next 16 não aceita dois await seguidos","Um waterfall: a segunda espera a primeira sem precisar","Cache duplicado das duas respostas, ocupando memória do servidor","Nada: o React paraleliza os await de um Server Component sozinho"],"c":1,"e":"Cada \u003ccode>await\u003c/code> pausa a função até resolver, então a segunda consulta só começa quando a primeira termina. Sendo independentes, o tempo total deveria ser o da mais lenta: \u003ccode>await Promise.all([a(), b()])\u003c/code>."},{"id":"rm-arquitetura-1bcsm89","t":"Arquitetura Frontend","q":"No Next 16 com \u003ccode>cacheComponents\u003c/code>, qual dado \u003cstrong>não\u003c/strong> deve ir para uma função com \u003ccode>'use cache'\u003c/code>?","o":["A lista de especialidades, que é igual para todos os usuários","Um conteúdo editorial que muda uma vez por dia","O que depende da sessão do usuário","O resultado de uma consulta pública a uma API externa de terceiros"],"c":2,"e":"Cache de função é compartilhado: dado que varia por pessoa (estatísticas, carrinho) serviria o de uma a outra. Esse dado fica dinâmico, atrás de um \u003ccode>Suspense\u003c/code>. O que é igual para todos e muda pouco é o candidato ideal, com \u003ccode>cacheLife\u003c/code> e \u003ccode>cacheTag\u003c/code>."},{"id":"rm-arquitetura-bbmz3w","t":"Arquitetura Frontend","q":"Qual medida reduz o CLS de uma lista com imagens?","o":["Reservar o espaço com \u003ccode>width\u003c/code>/\u003ccode>height\u003c/code> ou \u003ccode>aspect-ratio\u003c/code>","Usar \u003ccode>loading=\"lazy\"\u003c/code> em todas as imagens da lista, sem exceção","Trocar o formato das imagens para WebP, que são menores","Aumentar o tempo de cache das imagens na CDN, para chegarem mais rápido"],"c":0,"e":"CLS mede o quanto o layout pula. Quando o navegador não sabe o tamanho da imagem, ela empurra o conteúdo quando chega. Reservar a caixa (dimensões ou \u003ccode>aspect-ratio\u003c/code>, skeleton com a mesma altura) elimina o salto. Formato e cache ajudam outras métricas."},{"id":"rm-arquitetura-uqhrry","t":"Arquitetura Frontend","q":"Qual destes costuma piorar o LCP de uma página com uma imagem principal?","o":["\u003ccode>next/image\u003c/code> com \u003ccode>priority\u003c/code> na imagem principal","Renderizar o HTML no servidor","\u003ccode>loading=\"lazy\"\u003c/code> na imagem principal","Carregar a fonte com \u003ccode>next/font\u003c/code>"],"c":2,"e":"O LCP geralmente é a imagem principal; com \u003ccode>lazy\u003c/code> o navegador adia o download até avaliar a posição dela, o que atrasa justamente o elemento que a métrica mede. A imagem do topo deve carregar com prioridade; \u003ccode>lazy\u003c/code> é para o que está abaixo da dobra."},{"id":"rm-arquitetura-c1cdks","t":"Arquitetura Frontend","q":"Um time de 4 pessoas quer migrar para microfrontends &ldquo;para escalar&rdquo;. Qual a pergunta mais útil?","o":["Qual implementação de Module Federation tem mais estrelas no GitHub?","Quantos MB a mais o bundle final vai ganhar com essa mudança?","Dá para migrar tudo em uma sprint, sem congelar as entregas?","Que problema de organização isso resolve que um monorepo não resolveria?"],"c":3,"e":"Microfrontend é solução \u003cstrong>organizacional\u003c/strong>: times que precisam publicar sem coordenar. Para 4 pessoas, um monorepo com fronteiras de módulo e uma biblioteca de componentes quase sempre resolve, sem o custo de bundles duplicados, UX inconsistente e mais infraestrutura."}]</script>
+    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-arquitetura-aou61a","t":"Arquitetura Frontend","q":"O que é um monorepo?","o":["Vários apps e pacotes num só repositório","Um app só, sem nenhum pacote separado","Um repositório por pacote, cada um com versão","Um servidor único que roda todos os apps"],"c":0,"e":"Monorepo é organização de código: apps e pacotes compartilhados no mesmo repositório, ligados por workspaces. Não quer dizer que exista um app só nem um servidor só. Cada app continua com o próprio deploy.","b":1},{"id":"rm-arquitetura-2k3ufs","t":"Arquitetura Frontend","q":"Uma página lê \u003ccode>cookies()\u003c/code> para mostrar o nome de quem está logado. O que acontece com ela no Next?","o":["Passa a ser gerada a cada pedido (dinâmica)","Continua estática e o cookie é lido no build","Fica no cache da CDN por um dia inteiro","Só funciona como Client Component no navegador"],"c":0,"e":"O cookie só existe no pedido, então a página não pode ser gerada no build: ela vira dinâmica. No build não há cookie nenhum para ler, e guardar essa página num cache compartilhado mostraria o nome de uma pessoa para outra.","b":1},{"id":"rm-arquitetura-os3h5i","t":"Arquitetura Frontend","q":"Qual métrica do Web Vitals mede quanto a tela demora para reagir a um clique?","o":["INP","LCP","CLS","FCP"],"c":0,"e":"INP (Interaction to Next Paint) mede o tempo entre a interação e a próxima pintura da tela. LCP mede quando o maior elemento aparece, CLS mede quanto o layout pula, e FCP mede quando aparece o primeiro conteúdo.","b":1},{"id":"rm-arquitetura-xtu5l2","t":"Arquitetura Frontend","q":"Um pacote interno do monorepo exporta os arquivos \u003ccode>.ts\u003c/code> direto no \u003ccode>package.json\u003c/code>, sem script de build. Qual é a principal limitação dessa estratégia (Just-in-Time)?","o":["Só pode ser consumido por apps do mesmo framework que o pacote","Não há build pra cachear, e todo consumidor precisa transpilar TS","Precisa ser publicado no npm pra que o pnpm consiga resolvê-lo","Desliga o tree-shaking, então a app recebe o pacote inteiro"],"c":1,"e":"No Just-in-Time quem compila é o bundler da app consumidora. Configuração quase zero, mas não há saída de build pra cachear, não dá pra usar \u003ccode>compilerOptions.paths\u003c/code> e erro de tipo do pacote aparece em quem consome. O workspace resolve o pacote por \u003ccode>workspace:*\u003c/code>, sem npm, e o bundler continua fazendo tree-shaking do \u003ccode>.ts\u003c/code>. O \u003ccode>@ally-ai/types\u003c/code> é assim — ótimo pra tipos, menos pra uma biblioteca de UI grande."},{"id":"rm-arquitetura-15zby9f","t":"Arquitetura Frontend","q":"Segundo o artigo de micro frontends no site do Martin Fowler, por que integrar micro frontends como pacotes npm no build do container é desaconselhado?","o":["O npm não lida bem com versões de pacotes privados no CI","Gera o maior bundle entre todas as formas de integração","Obriga release em lockstep e volta a acoplar os deploys","Impede que cada micro frontend use um framework diferente"],"c":2,"e":"Se cada micro frontend é dependência do container, qualquer mudança exige rebuildar e redeployar o container — o deploy deixa de ser independente, que era o benefício principal. O artigo prefere integração em runtime (via JavaScript ou Web Components). Bundle duplicado é justamente um problema das integrações em runtime; no build-time o bundler consegue deduplicar."},{"id":"rm-arquitetura-7i0n0s","t":"Arquitetura Frontend","q":"Em multi-zones do Next.js, por que links entre zonas diferentes devem usar \u003ccode>&lt;a&gt;\u003c/code> em vez de \u003ccode>&lt;Link&gt;\u003c/code>?","o":["\u003ccode>Link\u003c/code> faz soft navigation, que não atravessa apps diferentes","\u003ccode>Link\u003c/code> não envia os cookies de sessão para outra zona","\u003ccode>&lt;a&gt;\u003c/code> preserva o estado do React ao trocar de zona","\u003ccode>Link\u003c/code> faz prefetch de todas as zonas e estoura o cache do CDN"],"c":0,"e":"Cada zona é outra aplicação: a navegação entre elas é obrigatoriamente uma hard navigation (descarrega a página e carrega a outra), então nenhum estado do React sobrevive. O \u003ccode>Link\u003c/code> assume que a rota é da mesma app. Cookies vão normalmente, porque é o mesmo domínio. Daí a regra prática: páginas visitadas juntas ficam na mesma zona."},{"id":"rm-arquitetura-1dccpku","t":"Arquitetura Frontend","q":"O Gabarita usa CSP com nonce gerado a cada request. Qual consequência de renderização isso tem, segundo a documentação do Next.js?","o":["Nenhuma: o Next gera o nonce no build e o grava no HTML estático","Só as páginas com \u003ccode>&lt;Script&gt;\u003c/code> de terceiros viram dinâmicas","Toda página vira dinâmica: sem estático, ISR, cache de CDN nem PPR","As páginas continuam estáticas, e o middleware reescreve o nonce na borda"],"c":2,"e":"O Next só consegue aplicar o nonce durante a renderização no servidor, lendo o header da CSP do request. Página gerada no build não tem request — e um nonce fixo gravado no build deixaria de ser nonce. É por isso que o Gabarita não usa \u003ccode>unstable_cache\u003c/code> nem ISR; a alternativa que preservaria estático é o SRI experimental."},{"id":"rm-arquitetura-hbszum","t":"Arquitetura Frontend","q":"O monorepo do Ally AI declara no \u003ccode>turbo.json\u003c/code> a task \u003ccode>build\u003c/code> com \u003ccode>\"env\": [\"GEMINI_API_KEY\", \"GEMINI_MODEL\", \"AUDIT_CONCURRENCY\"]\u003c/code>. Pra que serve essa lista?","o":["Expor essas variáveis ao JavaScript que roda no navegador","Incluir os valores no hash, pra não reaproveitar build antigo","Fazer o build falhar se alguma delas não estiver definida","Criptografar os valores antes de enviar ao cache remoto"],"c":1,"e":"O Turborepo decide se pode reaproveitar um build pelo hash das entradas. Variável de ambiente que muda o resultado precisa entrar em \u003ccode>env\u003c/code>; senão, trocar o modelo do Gemini poderia servir um artefato montado com o valor anterior. (No modo estrito, só as variáveis listadas chegam à task.) A lista não valida presença nem expõe nada ao navegador — isso é o prefixo \u003ccode>NEXT_PUBLIC_\u003c/code>."},{"id":"rm-arquitetura-1nk6uuo","t":"Arquitetura Frontend","q":"Uma interação lenta foi medida: o handler do clique termina rápido, mas a tela demora a mudar porque a re-renderização é enorme. Em qual fase do INP está o problema?","o":["Input delay","Processing duration","Total Blocking Time","Presentation delay"],"c":3,"e":"Presentation delay é do fim do handler até o próximo frame. O remédio é diminuir o trabalho de renderização: DOM menor, \u003ccode>content-visibility\u003c/code> pro que está fora da tela, menos HTML montado por JavaScript. Input delay seria thread ocupada antes do handler; processing seria o handler lento; e Total Blocking Time é outra métrica (de laboratório), não uma fase do INP."},{"id":"rm-arquitetura-tz21pt","t":"Arquitetura Frontend","q":"Num Server Component, \u003ccode>await a(); await b();\u003c/code> com duas consultas independentes causa o quê?","o":["Um erro de build, porque o Next 16 não aceita dois await seguidos","Um waterfall: a segunda espera a primeira sem precisar","Cache duplicado das duas respostas, ocupando memória do servidor","Nada: o React paraleliza os await de um Server Component sozinho"],"c":1,"e":"Cada \u003ccode>await\u003c/code> pausa a função até resolver, então a segunda consulta só começa quando a primeira termina. Sendo independentes, o tempo total deveria ser o da mais lenta: \u003ccode>await Promise.all([a(), b()])\u003c/code>."},{"id":"rm-arquitetura-1bcsm89","t":"Arquitetura Frontend","q":"No Next 16 com \u003ccode>cacheComponents\u003c/code>, qual dado \u003cstrong>não\u003c/strong> deve ir para uma função com \u003ccode>'use cache'\u003c/code>?","o":["A lista de especialidades, que é igual para todos os usuários","Um conteúdo editorial que muda uma vez por dia","O que depende da sessão do usuário","O resultado de uma consulta pública a uma API externa de terceiros"],"c":2,"e":"Cache de função é compartilhado: dado que varia por pessoa (estatísticas, carrinho) serviria o de uma a outra. Esse dado fica dinâmico, atrás de um \u003ccode>Suspense\u003c/code>. O que é igual para todos e muda pouco é o candidato ideal, com \u003ccode>cacheLife\u003c/code> e \u003ccode>cacheTag\u003c/code>."},{"id":"rm-arquitetura-bbmz3w","t":"Arquitetura Frontend","q":"Qual medida reduz o CLS de uma lista com imagens?","o":["Reservar o espaço com \u003ccode>width\u003c/code>/\u003ccode>height\u003c/code> ou \u003ccode>aspect-ratio\u003c/code>","Usar \u003ccode>loading=\"lazy\"\u003c/code> em todas as imagens da lista, sem exceção","Trocar o formato das imagens para WebP, que são menores","Aumentar o tempo de cache das imagens na CDN, para chegarem mais rápido"],"c":0,"e":"CLS mede o quanto o layout pula. Quando o navegador não sabe o tamanho da imagem, ela empurra o conteúdo quando chega. Reservar a caixa (dimensões ou \u003ccode>aspect-ratio\u003c/code>, skeleton com a mesma altura) elimina o salto. Formato e cache ajudam outras métricas."},{"id":"rm-arquitetura-uqhrry","t":"Arquitetura Frontend","q":"Qual destes costuma piorar o LCP de uma página com uma imagem principal?","o":["\u003ccode>next/image\u003c/code> com \u003ccode>priority\u003c/code> na imagem principal","Renderizar o HTML no servidor","\u003ccode>loading=\"lazy\"\u003c/code> na imagem principal","Carregar a fonte com \u003ccode>next/font\u003c/code>"],"c":2,"e":"O LCP geralmente é a imagem principal; com \u003ccode>lazy\u003c/code> o navegador adia o download até avaliar a posição dela, o que atrasa justamente o elemento que a métrica mede. A imagem do topo deve carregar com prioridade; \u003ccode>lazy\u003c/code> é para o que está abaixo da dobra."},{"id":"rm-arquitetura-c1cdks","t":"Arquitetura Frontend","q":"Um time de 4 pessoas quer migrar para microfrontends &ldquo;para escalar&rdquo;. Qual a pergunta mais útil?","o":["Qual implementação de Module Federation tem mais estrelas no GitHub?","Quantos MB a mais o bundle final vai ganhar com essa mudança?","Dá para migrar tudo em uma sprint, sem congelar as entregas?","Que problema de organização isso resolve que um monorepo não resolveria?"],"c":3,"e":"Microfrontend é solução \u003cstrong>organizacional\u003c/strong>: times que precisam publicar sem coordenar. Para 4 pessoas, um monorepo com fronteiras de módulo e uma biblioteca de componentes quase sempre resolve, sem o custo de bundles duplicados, UX inconsistente e mais infraestrutura."}]</script>
   </div>
 </section>
 
@@ -435,7 +598,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/10/2026
+    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 226 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 16/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

@@ -1,9 +1,110 @@
 <section class="week" id="rm4">
   <div class="week-head"><span class="week-num">R4</span><h2>AI + Full Stack Integration</h2></div>
   <div class="week-meta">~8h &middot; a chamada ao modelo é a parte fácil; o difícil é tudo em volta dela</div>
-  <p class="intro">Uma vaga de Frontend/Design Engineer com foco em IA não te pede pra treinar modelo &mdash; pede pra entregar o produto em volta dele: quem pode chamar (auth), como a resposta chega na tela (streaming), onde mora o arquivo que o usuário mandou (upload e storage), o que acontece quando o trabalho demora mais que um request (fila), onde a saída fica guardada (Postgres) e como provar que tudo isso funciona sem gastar cota de API em cada teste. A boa notícia: o Gabarita e o Ally AI já fazem boa parte disso. Esta página dá nome ao que você fez e aponta o arquivo de cada exemplo &mdash; e indica o próximo passo do roadmap em cada projeto: streaming, embeddings/pgvector e Playwright.</p>
+  <p class="intro">Chamar o modelo é a parte fácil. O difícil é tudo em volta: quem pode chamar (auth), como a resposta chega na tela (streaming), onde fica o arquivo que o usuário mandou (upload), o que fazer quando o trabalho demora mais que um pedido (fila), onde guardar o resultado (Postgres) e como testar tudo sem gastar cota da API. O <strong>Ver</strong> explica cada peça em linguagem simples, e o <strong>Contar</strong> mostra onde o Gabarita e o Ally AI já fazem isso.</p>
 
-  <h3 class="sub">Tópicos</h3>
+  <ol class="etapas">
+    <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
+    <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
+  </ol>
+
+  <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
+  <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. Duas formas de ligar o Next a um back-end</h4>
+      <p><b class="r">Next full stack</b>O próprio Next tem o back-end: Server Actions, Route Handlers e, se preciso, um worker separado (é o caso do Gabarita). Tudo fica no mesmo domínio, o cookie de sessão funciona sem ajuste e os tipos são compartilhados.</p>
+      <p><b class="r">Next + API separada</b>O Next é só o front e chama uma API Express em outro endereço (é o caso do Ally AI). Cada lado escala e é publicado sozinho, mas você passa a cuidar de CORS, de cookie entre domínios e de manter os tipos iguais dos dois lados.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Com um time só, começo full stack no Next. Separo a API quando ela precisa escalar ou ser publicada de forma independente.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>2. Streaming de ponta a ponta</h4>
+      <p><b class="r">O caminho</b>O provedor do modelo manda a resposta em pedaços para o seu servidor. O seu Route Handler repassa esses pedaços ao navegador (<code>return new Response(stream)</code>). O navegador lê com <code>getReader()</code>, como no <a href="r01-ai-frontend.html">R1</a>.</p>
+      <p><b class="r">Por que passar pelo seu servidor</b>A chave da API do modelo nunca pode ir para o navegador. Além disso, é no servidor que você confere quem está pedindo e quanto essa pessoa já gastou.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;O navegador fala com o meu servidor, e o meu servidor fala com o modelo. A chave e a regra de quem pode usar ficam do meu lado.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>3. Trabalho que não cabe num pedido</h4>
+      <p><b class="r">O problema</b>Gerar 20 questões com IA leva minutos. Um pedido HTTP não pode ficar aberto esse tempo todo, e a função serverless tem limite de duração.</p>
+      <p><b class="r">Opção simples</b>O <code>after()</code> do Next roda o trabalho logo depois de responder. É bom para tarefa curta. Se o processo cair, o trabalho se perde.</p>
+      <p><b class="r">Opção robusta</b>Uma <em>fila</em>: o servidor grava o pedido de trabalho (o <em>job</em>) e responde na hora com o id. Um <em>worker</em>, que é outro processo, pega o job, faz o trabalho e grava o resultado. Se o worker cair, o job continua na fila e é tentado de novo. Exemplos: pg-boss (no Postgres), SQS (AWS) e BullMQ (Redis).</p>
+      <p><b class="r">Como a tela fica sabendo</b>Perguntando de tempos em tempos (<em>polling</em>) ou recebendo um aviso do servidor (SSE ou WebSocket).</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Se o trabalho pode demorar mais que o pedido, ele vai para uma fila, e a tela acompanha pelo id do job.&rdquo;</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 262" role="img" aria-labelledby="r4d1">
+        <title id="r4d1">Um job assíncrono: o pedido responde na hora e o worker faz o trabalho depois</title>
+        <defs><marker id="r4s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="seta"/></marker></defs>
+        <rect x="10" y="10" width="120" height="34" rx="6" class="bx-b"/><text x="70" y="32" text-anchor="middle" class="h">Navegador</text>
+        <rect x="150" y="10" width="120" height="34" rx="6" class="bx"/><text x="210" y="32" text-anchor="middle" class="h">API</text>
+        <rect x="290" y="10" width="120" height="34" rx="6" class="bx-a"/><text x="350" y="32" text-anchor="middle" class="h">Worker</text>
+        <rect x="150" y="214" width="120" height="38" rx="6" class="bx-t"/><text x="210" y="231" text-anchor="middle" class="h">Postgres</text><text x="210" y="246" text-anchor="middle" class="s">fila + resultado</text>
+        <line x1="70" y1="44" x2="70" y2="204" class="ln" stroke-dasharray="3 4"/>
+        <line x1="210" y1="44" x2="210" y2="212" class="ln" stroke-dasharray="3 4"/>
+        <line x1="350" y1="44" x2="350" y2="204" class="ln" stroke-dasharray="3 4"/>
+        <text x="140" y="66" text-anchor="middle" class="s">1 · POST /jobs</text>
+        <line x1="72" y1="74" x2="207" y2="74" class="ln" marker-end="url(#r4s)"/>
+        <text x="140" y="96" text-anchor="middle" class="s">2 · 202 { id }</text>
+        <line x1="207" y1="104" x2="73" y2="104" class="ln-t" marker-end="url(#r4s)"/>
+        <text x="280" y="126" text-anchor="middle" class="s">3 · pega o job</text>
+        <line x1="212" y1="134" x2="347" y2="134" class="ln-a" marker-end="url(#r4s)"/>
+        <text x="280" y="156" text-anchor="middle" class="s">4 · chama a IA, grava</text>
+        <line x1="347" y1="164" x2="213" y2="164" class="ln-a" marker-end="url(#r4s)"/>
+        <text x="140" y="186" text-anchor="middle" class="s">5 · GET /jobs/id</text>
+        <line x1="72" y1="194" x2="207" y2="194" class="ln" marker-end="url(#r4s)" stroke-dasharray="5 3"/>
+      </svg>
+      <figcaption>O pedido responde em milissegundos (passo 2). O trabalho longo acontece no worker, e a tela pergunta pelo resultado (passo 5).</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>4. Upload de arquivo</h4>
+      <p><b class="r">Pelo seu servidor</b>O navegador manda o arquivo para a sua API, que o repassa ao storage. É simples, mas a função tem limite de tamanho de corpo e o arquivo inteiro passa pela memória dela.</p>
+      <p><b class="r">URL pré-assinada</b>O servidor gera uma permissão de curta duração para gravar um arquivo específico. O navegador envia o arquivo <strong>direto</strong> ao storage (S3, R2), sem passar pela sua API.</p>
+      <p><b class="r">Cuidado</b>Com a URL pré-assinada, o seu servidor não vê o arquivo chegar. Então ele precisa limitar tipo e tamanho na própria assinatura e conferir o arquivo depois do envio. O que o navegador diz sobre o arquivo pode ser mentira.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Arquivo grande vai direto para o storage com URL pré-assinada, e eu valido no servidor depois, porque o cliente pode mentir.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>5. Auth e custo</h4>
+      <p><b class="r">Sessão no servidor</b>Toda rota que chama a IA confere a sessão no próprio servidor, a cada pedido. Esconder o botão na tela não protege nada.</p>
+      <p><b class="r">Limite por usuário</b>Cada chamada ao modelo custa dinheiro em tokens. O <em>rate limit</em> por usuário protege a conta, não só contra abuso.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Num app de IA, rate limit é proteção de custo. Cada pedido é dinheiro.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>6. Embeddings, pgvector e RAG</h4>
+      <p><b class="r">Embedding</b>Uma lista de números (um vetor) que representa o sentido de um texto. Textos com sentido parecido ficam com vetores próximos, mesmo usando palavras diferentes.</p>
+      <p><b class="r">pgvector</b>Uma extensão que guarda esses vetores no Postgres que você já tem e busca os mais próximos de um vetor dado (<code>ORDER BY embedding &lt;=&gt; $1</code>). Um índice HNSW deixa a busca rápida, com resultado aproximado.</p>
+      <p><b class="r">RAG</b>Antes de perguntar ao modelo, você busca os trechos mais relevantes e os coloca no pedido. O modelo responde com base neles, e não só no que &ldquo;lembra&rdquo;.</p>
+      <p><b class="r">Nem sempre precisa</b>Se você já sabe quais fatos o modelo precisa (as questões do mesmo tema, os achados do axe), entregue esses fatos direto e confira a resposta contra eles. Isso se chama <em>grounding</em>, e dispensa vetor.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Uso RAG quando preciso achar o trecho certo pelo sentido. Quando já sei quais fatos dar ao modelo, entrego direto.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>7. Testar IA sem chamar a IA</h4>
+      <p><b class="r">O problema</b>Chamar o modelo de verdade em cada teste é lento, custa dinheiro e dá uma resposta diferente a cada vez.</p>
+      <p><b class="r">Como resolve</b>O código fala com a IA através de uma interface (<code>gerar(prompt)</code>). No teste, você passa um <em>fake</em> que devolve respostas prontas: uma válida, uma quebrada, um erro 429. No teste de ponta a ponta com Playwright, o <code>page.route</code> intercepta a chamada e devolve uma resposta gravada.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;O modelo fica atrás de uma interface. No teste, entra um fake determinístico, de graça e rápido.&rdquo;</p>
+    </div>
+  </div>
+
+  <dl class="glossario">
+    <dt>Route Handler</dt><dd>arquivo <code>route.ts</code> do Next que vira um endpoint HTTP.</dd>
+    <dt>Job / worker</dt><dd>job é um trabalho na fila; worker é o processo que pega e executa os jobs.</dd>
+    <dt>202</dt><dd>status HTTP &ldquo;aceito&rdquo;: o pedido foi recebido e será processado depois.</dd>
+    <dt>URL pré-assinada</dt><dd>link temporário que dá permissão para gravar ou ler um arquivo específico no storage.</dd>
+    <dt>HNSW</dt><dd>tipo de índice para busca aproximada de vetores próximos, rápido e com boa precisão.</dd>
+    <dt>Fake</dt><dd>implementação de mentira, usada só em teste, que devolve respostas previsíveis.</dd>
+  </dl>
+
+
+  <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
+  <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
     <li class="item"><input type="checkbox" id="w28-1"><label for="w28-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As duas formas de ligar Next.js a um back-end Node: <strong>Next full stack</strong> (Server Actions + Route Handlers + worker separado, como o Gabarita) vs. <strong>Next como cliente de uma API Express</strong> (como o Ally AI) &mdash; o que cada uma ganha em deploy, CORS, cookie e tipos compartilhados</span></label></li>
     <li class="item"><input type="checkbox" id="w28-2"><label for="w28-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM ponta a ponta: o provider entrega em pedaços, o Route Handler devolve um <code>ReadableStream</code> (ou SSE), o cliente lê com <code>getReader()</code> &mdash; e por que streaming muda a percepção de latência sem mudar a latência total</span></label></li>
@@ -15,7 +116,7 @@
     <li class="item"><input type="checkbox" id="w28-8"><label for="w28-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Testar fluxo de IA de forma determinística: <strong>fake provider</strong> atrás de uma interface, mock do SDK, stream simulado, fake timers pra polling &mdash; e Playwright com <code>page.route</code> pra rodar o E2E sem chamar o modelo</span></label></li>
   </ul>
 
-  <h3 class="sub">Onde estudar (grátis)</h3>
+  <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
   <ul class="resources">
     <li><div class="r-title"><a href="https://nextjs.org/docs/app/api-reference/file-conventions/route" target="_blank" rel="noopener">Next.js &mdash; route.js (Route Handlers)</a></div><div class="r-note">A referência do arquivo que vira endpoint no App Router: métodos, <code>params</code> como promessa, cookies, webhooks e a seção de <strong>Streaming</strong> com <code>ReadableStream</code> puro.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia Parameters, Streaming, Request Body FormData, Webhooks e Segment Config. Pule Cookies/Headers se já usa.</div><div class="r-src">nextjs.org &middot; oficial</div></li>
     <li><div class="r-title"><a href="https://ai.google.dev/gemini-api/docs/embeddings" target="_blank" rel="noopener">Gemini API &mdash; Embeddings</a></div><div class="r-note">Os dois projetos já usam <code>@google/genai</code>; este é o mesmo SDK gerando vetores com <code>embedContent</code> &mdash; o primeiro passo de qualquer RAG ou busca semântica.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia o exemplo em JavaScript, task types, controle de dimensão e casos de uso. Pule a parte de multimodal se o seu caso é só texto.</div><div class="r-src">ai.google.dev &middot; oficial</div></li>
@@ -27,12 +128,121 @@
   <p class="intro" style="margin-top:12px">Base que este bloco assume: MVCC e transação em <a href="03-postgresql.html">03 &middot; PostgreSQL</a>, filas e tempo real em <a href="04-concorrencia.html">04 &middot; Concorrência</a>, RAG e vocabulário de LLM em <a href="b02-ia-agentes.html">B2 &middot; IA &amp; agentes</a>, OAuth em <a href="b06-oauth.html">B6</a>, Testing Library/MSW/Playwright em <a href="b10-testes.html">B10 &middot; Testes</a> e BFF/webhooks em <a href="b16-apis.html">B16 &middot; APIs</a>.</p>
 
 
+  
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <div class="ex" id="fz1">
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Esperar um job, com prazo</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">O <code>GET /api/jobs/:id</code> devolve <code>{ status: 'na_fila' | 'rodando' | 'pronto' | 'falhou', resultado?, erro? }</code>. Escreva <code>esperarJob(id, signal)</code>, que pergunta pelo status até o job terminar.</p>
+      <h4>Regras</h4>
+      <ul>
+        <li>Espera 1 s, depois 2 s, 4 s e 8 s entre as perguntas, e não passa de 8 s.</li>
+        <li><code>pronto</code> devolve o resultado. <code>falhou</code> lança um erro com a mensagem do job.</li>
+        <li>Desiste depois de 60 s no total. O <code>signal</code> cancela tudo, inclusive a espera.</li>
+      </ul>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Faça uma função <code>dormir(ms, signal)</code> que devolve uma Promise e rejeita se o signal abortar. Assim o cancelamento interrompe a espera, e não só o <code>fetch</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type Job<T> =
+  | { status: 'na_fila' | 'rodando' }
+  | { status: 'pronto'; resultado: T }
+  | { status: 'falhou'; erro: string };
+
+function dormir(ms: number, signal?: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) return reject(signal.reason);
+    const t = setTimeout(() => { signal?.removeEventListener('abort', parar); resolve(); }, ms);
+    function parar() { clearTimeout(t); reject(signal!.reason); }
+    signal?.addEventListener('abort', parar, { once: true });
+  });
+}
+
+export async function esperarJob<T>(id: string, signal?: AbortSignal): Promise<T> {
+  const limite = Date.now() + 60_000;
+  let espera = 1000;
+  while (true) {
+    const res = await fetch(`/api/jobs/${id}`, { signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const job: Job<T> = await res.json();
+    if (job.status === 'pronto') return job.resultado;
+    if (job.status === 'falhou') throw new Error(job.erro);
+    if (Date.now() + espera > limite) throw new Error('O job demorou demais. Tente de novo mais tarde.');
+    await dormir(espera, signal);
+    espera = Math.min(espera * 2, 8000);
+  }
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o tipo do job deixa o TypeScript saber que <code>resultado</code> só existe em <code>pronto</code>; o cancelamento interrompe a espera, e não só o <code>fetch</code>; e o prazo é conferido antes de dormir, para não passar de 60 s. Num componente, quem chama cria um <code>AbortController</code> e aborta no cleanup do <code>useEffect</code>.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="fz2">
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Testar sem chamar o modelo</h3><span class="ex-meta">20 min &middot; Vitest</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">A função abaixo pede um resumo ao modelo, valida o JSON e tenta mais uma vez se a resposta vier quebrada. Escreva três testes com um provedor <em>fake</em>: resposta válida de primeira; resposta quebrada e depois válida (duas chamadas); e resposta sempre quebrada (lança erro).</p>
+<pre><code class="esc">
+export interface ProvedorIA { gerar(prompt: string): Promise<string>; }
+
+export async function resumir(texto: string, ia: ProvedorIA): Promise<string> {
+  for (let tentativa = 1; tentativa <= 2; tentativa++) {
+    const bruto = await ia.gerar(`Resuma em JSON {"resumo": string}: ${texto}`);
+    try {
+      const { resumo } = JSON.parse(bruto);
+      if (typeof resumo === 'string' && resumo.trim()) return resumo;
+    } catch { /* tenta de novo */ }
+  }
+  throw new Error('resposta inválida do modelo');
+}
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O fake pode ser um objeto com <code>gerar: vi.fn()</code>. Use <code>mockResolvedValueOnce</code> em sequência para devolver uma resposta diferente a cada chamada, e confira <code>toHaveBeenCalledTimes</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { describe, it, expect, vi } from 'vitest';
+import { resumir, type ProvedorIA } from './resumir';
+
+function fake(...respostas: string[]) {
+  const gerar = vi.fn<ProvedorIA['gerar']>();
+  for (const r of respostas) gerar.mockResolvedValueOnce(r);
+  return { gerar };
+}
+
+describe('resumir', () => {
+  it('devolve o resumo quando a primeira resposta é válida', async () => {
+    const ia = fake('{"resumo":"Texto curto"}');
+    await expect(resumir('...', ia)).resolves.toBe('Texto curto');
+    expect(ia.gerar).toHaveBeenCalledTimes(1);
+  });
+
+  it('tenta de novo quando a resposta vem quebrada', async () => {
+    const ia = fake('isto não é JSON', '{"resumo":"Agora sim"}');
+    await expect(resumir('...', ia)).resolves.toBe('Agora sim');
+    expect(ia.gerar).toHaveBeenCalledTimes(2);
+  });
+
+  it('desiste depois de duas respostas inválidas', async () => {
+    const ia = fake('{"resumo":""}', '{"outro":1}');
+    await expect(resumir('...', ia)).rejects.toThrow('resposta inválida do modelo');
+    expect(ia.gerar).toHaveBeenCalledTimes(2);
+  });
+});
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> os testes rodam em milissegundos, não gastam cota e dão sempre o mesmo resultado. O terceiro caso usa um resumo vazio e um campo errado: dois jeitos diferentes de a resposta ser inválida mesmo sendo JSON.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <h3 class="sub etapa" id="contar"><span class="etapa-n">3 &middot; Contar</span>As suas decisões e onde você já aplicou</h3>
+  <p class="etapa-nota">É o que você fala na entrevista: por que escolheu cada coisa nos seus projetos e a resposta honesta para o que ainda não fez.</p>
+
   <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
   <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
 
   <div class="tcards">
     <div class="tcard">
       <h4>Fila: pg-boss no Postgres com um worker separado <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Trabalho demorado vai para uma fila no próprio Postgres, e um processo separado o executa, sem prender o pedido do usuário.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Fila durável no próprio Postgres (pg-boss) com um worker Node à parte, em vez de processar o PDF ou a geração dentro do request.</dd>
@@ -45,10 +255,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: que sinais mostrariam que o Postgres não basta mais como fila?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Em 2009, o GitHub criou a biblioteca de filas Resque para tirar do pedido web tudo o que demorava, como gerar arquivos e enviar e-mails. Anos depois, o Slack escreveu sobre reconstruir a própria fila de jobs quando o volume cresceu demais. Começar com a fila no banco que já existe e trocar quando o volume pedir é o caminho comum.</p>
     </div>
 
     <div class="tcard">
       <h4>Trava atômica: uma chamada de IA por explicação <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Uma única atualização condicional no banco decide quem gera a explicação, para duas abas abertas não gastarem duas chamadas de IA.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Um <code>updateMany</code> condicional (<code>explicacaoIniciadaEm</code>) decide quem gera, em vez de ler e depois gravar. Os motivos e a marca de &ldquo;pronta&rdquo; vão na mesma transação.</dd>
@@ -61,10 +273,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: onde mais o projeto usa esse mesmo padrão? Procure a entrega de prova, que também não pode correr duas vezes.</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Sites de venda de ingresso e de passagem enfrentam o mesmo problema em escala: duas pessoas clicando no mesmo assento no mesmo segundo. A solução também é deixar o banco decidir numa operação só (&ldquo;reserve se ainda estiver livre&rdquo;), em vez de conferir primeiro e gravar depois.</p>
     </div>
 
     <div class="tcard">
       <h4>Autenticação: JWT no cookie e guards no banco <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> A sessão fica num token dentro do cookie, conferido sem ir ao banco. Só as telas que dependem de papel ou de plano consultam o banco.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Auth.js com sessão em JWT num cookie (sem tabela de sessões), mais guards que consultam o banco por chave primária nas telas e actions logadas.</dd>
@@ -77,6 +291,7 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: o que acontece com uma sessão aberta há 20 dias se o plano da aluna mudar hoje, só com a primeira camada?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O dilema é antigo: um token assinado é rápido de conferir, mas difícil de cancelar. Por isso serviços como o Google combinam tokens de vida curta com checagens no servidor, e conseguem encerrar as outras sessões quando você troca a senha. O carimbo de troca de senha do Gabarita é a mesma ideia.</p>
     </div>
   </div>
 
@@ -187,6 +402,9 @@ expect(screen.getByText(/não foi possível gerar a explicação agora/i)).toBeI
       <p class="why"><strong>Por que isso importa:</strong> é uma história de full stack de IA inteira &mdash; latência percebida, custo de cota, concorrência no banco, estado da UI e teste determinístico &mdash; num fluxo só.</p>
     </div>
   </div>
+
+  <h3 class="sub etapa" id="provar"><span class="etapa-n">4 &middot; Provar</span>Perguntas abertas e múltipla escolha</h3>
+  <p class="etapa-nota">Responda em voz alta antes de abrir a resposta. A múltipla escolha, no fim, começa com três questões de aquecimento, só de conceito.</p>
 
   <div class="quiz">
     <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>

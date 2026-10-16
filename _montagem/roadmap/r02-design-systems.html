@@ -1,9 +1,111 @@
 <section class="week" id="rm2">
   <div class="week-head"><span class="week-num">R2</span><h2>Design Systems &amp; Design Engineering</h2></div>
   <div class="week-meta">~8h &middot; a frente que justifica o título &ldquo;Design Engineer&rdquo; na headline</div>
-  <p class="intro">Uma vaga de Design Engineer não pergunta se você sabe Tailwind &mdash; pergunta como você transforma uma decisão de design em algo que <strong>não precisa ser decidido de novo</strong>: um token, uma variante, um componente documentado, um teste que reprova o build quando alguém quebra o contraste. O roadmap pede quatro coisas: evoluir o design system que você já tem pra tokens/variantes/composição/documentação, ter uma biblioteca no Storybook ligada ao Figma, regressão visual e acessibilidade testadas automaticamente, e componentes responsivos e acessíveis pela WCAG 2.1. A boa notícia: o Gabarita já tem metade da fundação, e o Ally AI <em>é</em> um motor de teste automatizado de acessibilidade. Base teórica de apoio em <a href="b11-acessibilidade.html">B11 &middot; Acessibilidade</a>, <a href="b12-css.html">B12 &middot; CSS moderno</a> e <a href="b10-testes.html">B10 &middot; Testes</a>.</p>
+  <p class="intro">Esta é a frente que justifica o título &ldquo;Design Engineer&rdquo;. A pergunta de entrevista não é se você sabe Tailwind. É como você transforma uma decisão de design em algo que ninguém precisa decidir de novo: um token, uma variante, um componente documentado, um teste que barra o deploy quando alguém quebra o contraste. O <strong>Ver</strong> explica as sete ideias em linguagem simples. O Gabarita já tem parte dessa base, e o Ally AI é um motor de teste de acessibilidade. Teoria de apoio: <a href="b11-acessibilidade.html">B11</a> (acessibilidade), <a href="b12-css.html">B12</a> (CSS) e <a href="b10-testes.html">B10</a> (testes).</p>
 
-  <h3 class="sub">Tópicos</h3>
+  <ol class="etapas">
+    <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
+    <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
+  </ol>
+
+  <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
+  <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. O que um design system resolve</h4>
+      <p><b class="r">O problema</b>Sem um sistema, cada tela escolhe o próprio azul, o próprio espaçamento e o próprio botão. O produto fica inconsistente, e cada ajuste precisa ser feito em vinte lugares.</p>
+      <p><b class="r">Como funciona</b>As decisões viram peças reutilizáveis. Os <em>tokens</em> guardam cores, espaços e fontes. Os <em>componentes</em> usam esses tokens. A <em>documentação</em> mostra como usar. Os <em>testes</em> avisam quando algo quebra.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Um design system transforma uma decisão de design em algo que não precisa ser decidido de novo.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>2. Tokens em três camadas</h4>
+      <p><b class="r">O problema</b>Se o botão usa direto <code>#E8590C</code>, trocar a cor da marca ou criar um tema escuro obriga a mexer em cada componente.</p>
+      <p><b class="r">Como funciona</b>Os tokens ficam em três níveis. O <strong>primitivo</strong> é o valor cru (<code>orange-560 = #E8590C</code>). O <strong>semântico</strong> diz para que serve (<code>color-brand</code> aponta para <code>orange-560</code>). O <strong>de componente</strong> é opcional e bem específico (<code>button-bg</code> aponta para <code>color-brand</code>).</p>
+      <p><b class="r">A regra</b>O componente só enxerga o semântico. Para criar o tema escuro, você muda apenas para qual primitivo o semântico aponta. Nenhum componente muda.</p>
+<pre><code class="esc">
+:root { --color-brand: var(--orange-560); }
+[data-theme="dark"] { --color-brand: var(--orange-400); }
+.button { background: var(--color-brand); } /* nunca var(--orange-560) */
+</code></pre>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Componente só usa token semântico. Tema é trocar o mapeamento, não reescrever componente.&rdquo;</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 232" role="img" aria-labelledby="r2d1">
+        <title id="r2d1">Tokens em três camadas, no tema claro e no escuro</title>
+        <defs><marker id="r2s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="seta"/></marker></defs>
+        <text x="110" y="18" text-anchor="middle" class="h">Tema claro</text>
+        <text x="310" y="18" text-anchor="middle" class="h">Tema escuro</text>
+        <rect x="20" y="32" width="180" height="40" rx="6" class="bx-b"/><text x="110" y="50" text-anchor="middle" class="m">button-bg</text><text x="110" y="65" text-anchor="middle" class="s">componente</text>
+        <rect x="220" y="32" width="180" height="40" rx="6" class="bx-b"/><text x="310" y="50" text-anchor="middle" class="m">button-bg</text><text x="310" y="65" text-anchor="middle" class="s">componente (igual)</text>
+        <line x1="110" y1="72" x2="110" y2="100" class="ln" marker-end="url(#r2s)"/>
+        <line x1="310" y1="72" x2="310" y2="100" class="ln" marker-end="url(#r2s)"/>
+        <rect x="20" y="102" width="180" height="40" rx="6" class="bx-t"/><text x="110" y="120" text-anchor="middle" class="m">color-brand</text><text x="110" y="135" text-anchor="middle" class="s">semântico</text>
+        <rect x="220" y="102" width="180" height="40" rx="6" class="bx-t"/><text x="310" y="120" text-anchor="middle" class="m">color-brand</text><text x="310" y="135" text-anchor="middle" class="s">semântico (igual)</text>
+        <line x1="110" y1="142" x2="110" y2="170" class="ln" marker-end="url(#r2s)"/>
+        <line x1="310" y1="142" x2="310" y2="170" class="ln-a" marker-end="url(#r2s)"/>
+        <rect x="20" y="172" width="180" height="40" rx="6" class="bx"/><text x="110" y="190" text-anchor="middle" class="m">orange-560</text><text x="110" y="205" text-anchor="middle" class="s">primitivo</text>
+        <rect x="220" y="172" width="180" height="40" rx="6" class="bx-a"/><text x="310" y="190" text-anchor="middle" class="m">orange-400</text><text x="310" y="205" text-anchor="middle" class="s">primitivo (outro)</text>
+        <text x="210" y="228" text-anchor="middle" class="s ta">só esta seta muda entre os temas</text>
+      </svg>
+      <figcaption>O componente aponta sempre para o mesmo semântico. Trocar o tema muda só a última seta.</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>3. Variantes tipadas</h4>
+      <p><b class="r">O problema</b>Classes como <code>.btn-primary</code>, <code>.btn-danger-small</code> e <code>.btn-ghost-large</code> se multiplicam. Nada impede alguém de inventar uma combinação que o design nunca previu.</p>
+      <p><b class="r">Como funciona</b>Com a biblioteca <code>cva</code>, você declara as variantes uma vez (<code>intent</code>: primary, danger, ghost; <code>size</code>: sm, md). O TypeScript passa a validar o uso: <code>&lt;Button intent="danger" size="sm"&gt;</code> compila, e <code>intent="roxo"</code> dá erro no editor.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;A variante é um contrato tipado entre design e código. O que o design não previu, o compilador não deixa passar.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>4. Composição em vez de mil props</h4>
+      <p><b class="r">O problema</b>Um <code>&lt;Card&gt;</code> que cresce com <code>showHeader</code>, <code>headerIcon</code>, <code>showFooter</code>, <code>footerAlign</code>&hellip; vira um componente com quinze props booleanas, difícil de usar e de manter.</p>
+      <p><b class="r">Como funciona</b>O componente vira peças que se encaixam: <code>&lt;Card&gt;&lt;Card.Header&gt;&hellip;&lt;/Card.Header&gt;&lt;Card.Body&gt;&hellip;&lt;/Card.Body&gt;&lt;/Card&gt;</code>. Quem usa monta só o que precisa e coloca o que quiser dentro de cada parte.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Quando um componente começa a ganhar prop booleana para cada caso, eu quebro em partes compostas.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>5. Storybook e Figma</h4>
+      <p><b class="r">Storybook</b>É uma vitrine dos componentes, fora do app. Cada <em>story</em> é um estado do componente: Primário, Desabilitado, Carregando, Tema escuro. Ela serve de documentação viva e também de caso de teste. Uma <em>play function</em> clica e digita na story, como um teste.</p>
+      <p><b class="r">Figma</b>O <em>Code Connect</em> liga o componente do Figma ao componente do seu código. Quando o designer ou o dev inspeciona o botão no Dev Mode, aparece o seu <code>&lt;Button intent="danger"&gt;</code>, e não um CSS gerado.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;A story é ao mesmo tempo documentação e teste. Com Code Connect, o Figma mostra o código real.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>6. Testes automáticos: visual e acessibilidade</h4>
+      <p><b class="r">Regressão visual</b>O teste tira um print do componente e compara com um print aprovado antes (a <em>baseline</em>). Se mudou um pixel a mais do que a tolerância, falha. Gere a baseline no mesmo sistema e navegador do CI, senão a fonte renderiza diferente e tudo falha.</p>
+      <p><b class="r">Acessibilidade</b>O <em>axe-core</em> varre a página e acha problemas como contraste baixo, botão sem nome ou imagem sem texto alternativo. Ele roda por componente (addon do Storybook) e por página (Playwright).</p>
+      <p><b class="r">O limite</b>O teste automático pega só uma parte dos problemas. Navegar com o teclado e ouvir com um leitor de tela continuam sendo testes manuais.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;O axe barra o básico no CI. Teclado e leitor de tela eu ainda testo à mão.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>7. WCAG 2.1 em cinco regras práticas</h4>
+      <p><b class="r">Contraste</b>Texto normal precisa de 4,5:1 contra o fundo. Texto grande e partes de componente (borda de campo, ícone) precisam de 3:1.</p>
+      <p><b class="r">Não só cor</b>Certo e errado não podem depender só de verde e vermelho. Some um ícone, um texto ou um padrão.</p>
+      <p><b class="r">Teclado</b>Tudo que funciona com o mouse precisa funcionar com Tab, Enter e Espaço.</p>
+      <p><b class="r">Foco visível</b>Quem navega pelo teclado precisa ver onde está. Nunca use <code>outline: none</code> sem colocar outro estilo no lugar.</p>
+      <p><b class="r">Reflow</b>Com 320 px de largura (ou zoom de 400%), nada pode exigir rolagem horizontal.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Contraste, não só cor, teclado, foco visível e reflow: é o mínimo que eu confiro em todo componente.&rdquo;</p>
+    </div>
+  </div>
+
+  <dl class="glossario">
+    <dt>Token</dt><dd>uma decisão de design com nome (cor, espaço, fonte, raio), guardada num lugar só.</dd>
+    <dt>cva</dt><dd>class-variance-authority: biblioteca que gera as classes de cada variante e o tipo TypeScript delas.</dd>
+    <dt>Story</dt><dd>um estado de um componente, renderizado sozinho no Storybook.</dd>
+    <dt>Baseline</dt><dd>o print aprovado que serve de referência no teste visual.</dd>
+    <dt>axe-core</dt><dd>motor de teste automático de acessibilidade, usado pelo Storybook, pelo Playwright e pelo Ally AI.</dd>
+    <dt>WCAG</dt><dd>Web Content Accessibility Guidelines: as regras de acessibilidade da web. O nível AA é o que as empresas costumam exigir.</dd>
+  </dl>
+
+
+  <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
+  <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
     <li class="item"><input type="checkbox" id="w26-1"><label for="w26-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tokens em camadas: primitivo (<code>orange-560</code>) &rarr; semântico (<code>color-brand</code>, <code>color-ink-soft</code>) &rarr; de componente (<code>button-bg</code>) &mdash; e por que o componente só deve enxergar o semântico (é o que deixa trocar tema sem tocar em componente)</span></label></li>
     <li class="item"><input type="checkbox" id="w26-2"><label for="w26-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O formato padrão de tokens do W3C Design Tokens Community Group (<code>$value</code>, <code>$type</code>, aliases <code>{color.brand}</code>) e o caminho JSON &rarr; CSS custom properties / <code>@theme</code> do Tailwind v4</span></label></li>
@@ -18,7 +120,7 @@
     <li class="item"><input type="checkbox" id="w26-11"><label for="w26-11"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acabamento de movimento e interação: durações e easing, animar só <code>transform</code> e <code>opacity</code>, spring vs. easing, <code>prefers-reduced-motion</code>, <code>document.startViewTransition</code> e estados de foco e hover</span></label></li>
   </ul>
 
-  <h3 class="sub">Onde estudar (grátis)</h3>
+  <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
   <ul class="resources">
     <li><div class="r-title"><a href="https://www.designtokens.org/tr/2025.10/format/" target="_blank" rel="noopener">Design Tokens Format Module 2025.10</a></div><div class="r-note">O formato de arquivo de tokens do W3C Design Tokens Community Group, publicado como relatório final estável em outubro de 2025. É a língua comum entre Figma, Style Dictionary, Tokens Studio e o seu código.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia a introdução, a definição de token, grupos, aliases e a lista de tipos (color, dimension, typography, shadow). Pule as seções de conformidade e as regras de parsing.</div><div class="r-src">designtokens.org &middot; W3C Community Group</div></li>
     <li><div class="r-title"><a href="https://cva.style/docs/getting-started/variants" target="_blank" rel="noopener">cva &mdash; Variants</a></div><div class="r-note">A API de variantes que o shadcn/ui popularizou: base, variants, compoundVariants e defaultVariants, com tipo derivado das variantes.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta, um exemplo de botão que cobre tudo. Leia junto a página de TypeScript (<code>VariantProps</code>).</div><div class="r-src">cva.style &middot; oficial</div></li>
@@ -28,12 +130,169 @@
     <li><div class="r-title"><a href="https://playwright.dev/docs/test-snapshots" target="_blank" rel="noopener">Playwright &mdash; Visual comparisons</a></div><div class="r-note"><code>toHaveScreenshot()</code>: baseline no primeiro run, comparação nos seguintes, <code>--update-snapshots</code> e o aviso sobre SO/hardware.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~10 min</span>Página curta. O parágrafo sobre variação de renderização entre ambientes é o que mais cai em entrevista.</div><div class="r-src">playwright.dev &middot; oficial</div></li>
   </ul>
 
+  <h3 class="sub">Composição, documentação e responsivo em componente</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <h4>Composição em vez de prop pra tudo</h4>
+      <p>Um <code>&lt;Card title icon actions footer ...&gt;</code> ganha uma prop nova a cada pedido de design. A alternativa é expor <strong>partes que se encaixam</strong>: <code>&lt;Card&gt;&lt;Card.Header/&gt;&lt;Card.Body/&gt;&lt;/Card&gt;</code>, com o estado compartilhado por contexto (é como Tabs, Accordion e Select funcionam). Quem usa decide a ordem e o conteúdo; o componente continua dono do que não pode errar: ids, <code>aria-*</code>, gerenciamento de foco e teclado. O padrão <code>asChild</code> (o <code>Slot</code> do Radix) deixa trocar o elemento renderizado, um <code>&lt;a&gt;</code> no lugar de um <code>&lt;button&gt;</code>, sem perder o comportamento. Quando <strong>não</strong> usar: componente pequeno e fechado, onde as partes só adicionam cerimônia. Variantes visuais continuam em <code>cva</code>; composição resolve <em>estrutura</em>, variante resolve <em>aparência</em>.</p>
+      <h4>Documentação que não desatualiza</h4>
+      <p>O que documentar: quando usar e quando não usar, anatomia, variantes e estados, comportamento de teclado e ARIA, e exemplos que se copiam. Gerada do próprio código (as stories e os tipos das props) pra mudar junto com ele, e com as decisões que não aparecem no código escritas à parte, num registro curto de decisões.</p>
+      <h4>Responsivo dentro do componente</h4>
+      <ul>
+        <li><strong>Container queries</strong> (<code>@container</code>) fazem o componente se adaptar ao espaço onde está, e não à largura da janela. Num design system é o que importa: o mesmo card aparece numa coluna estreita e numa grade larga.</li>
+        <li><strong>Unidades relativas e <code>clamp()</code></strong> pra tipografia e espaçamento fluidos; <code>rem</code> respeita a fonte que a pessoa escolheu no navegador.</li>
+        <li><strong>Alvo de toque de 44 &times; 44 px</strong> é a recomendação das plataformas e o critério AAA 2.5.5 da WCAG 2.1; o mínimo de AA (WCAG 2.2) é 24 px.</li>
+        <li><strong>Reflow (1.4.10):</strong> sem rolagem horizontal a 320 px de largura, o equivalente a 400% de zoom numa tela de 1280 px. E nunca bloquear o zoom (<code>user-scalable=no</code> reprova).</li>
+        <li><strong>Testar:</strong> o Playwright troca o viewport por teste, e a story de cada componente em larguras estreita e larga pega o que a leitura do código não pega.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="sub">Acabamento visual: movimento, foco e hover</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <p>A diferença entre um componente que &ldquo;funciona&rdquo; e um que parece pronto está nos detalhes de estado e de movimento, e é o que o título <em>Design Engineer</em> promete. Movimento não é enfeite: ele mostra causa e efeito, de onde algo veio e o que mudou.</p>
+      <h4>Duração e easing</h4>
+      <ul>
+        <li><strong>Feedback imediato</strong> (hover, pressionar): 100 a 150 ms. <strong>Entrada e saída</strong> de elementos (menu, toast, diálogo): 150 a 300 ms. Acima de 500 ms só em transição grande, e a saída é sempre mais rápida que a entrada.</li>
+        <li><strong>Easing:</strong> <code>ease-out</code> pra entrada (começa rápido e assenta, parece responder ao usuário), <code>ease-in</code> pra saída, <code>ease-in-out</code> pra mover algo dentro da tela. <code>linear</code> parece mecânico, exceto em barra de progresso e rotação contínua.</li>
+        <li><strong>Anime só <code>transform</code> e <code>opacity</code>:</strong> rodam no compositor, sem recalcular layout. Animar <code>width</code>, <code>height</code>, <code>top</code> ou <code>left</code> força layout a cada quadro. E evite <code>transition: all</code>, que anima o que você não pensou e custa caro.</li>
+      </ul>
+      <h4>Spring versus easing</h4>
+      <p>O easing tem duração fixa e curva fixa. O <strong>spring</strong> é descrito por rigidez e amortecimento e <strong>preserva a velocidade</strong> quando é interrompido: se o usuário solta e pega de novo um elemento no meio do movimento, ele continua de onde está, sem pulo. Por isso o spring vale pra arrastar, gestos e qualquer coisa que se interrompe; o easing basta pra estado que vai de A a B e pronto. Em CSS puro, a função <code>linear()</code> aproxima um spring com várias paradas; spring de verdade vem de bibliotecas como a Motion.</p>
+      <h4><code>prefers-reduced-motion</code></h4>
+      <p>Não significa &ldquo;sem animação&rdquo;, significa <strong>sem movimento que enjoa</strong>: tire deslocamento, zoom, parallax e vídeo em loop, e mantenha a mudança de cor e de opacidade, que ainda comunica o estado. Há também a WCAG 2.2.2 (nível A): conteúdo que se move sozinho por mais de 5 s precisa de um jeito de pausar.</p>
+<pre><code class="esc">
+.btn {
+  transition: background-color 150ms ease-out, transform 100ms ease-out;
+}
+/* hover só onde existe ponteiro de verdade: no toque ele "gruda" depois do toque */
+@media (hover: hover) {
+  .btn:hover { background-color: var(--btn-hover); }
+}
+.btn:active { transform: scale(0.98); }
+/* outline, e não box-shadow: sobrevive ao modo de alto contraste (forced-colors) */
+.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: background-color 150ms ease-out; } /* mantém a cor, tira o movimento */
+  .btn:active { transform: none; }
+}
+</code></pre>
+      <h4>View Transitions</h4>
+      <p><code>document.startViewTransition(callback)</code> tira uma foto do estado atual, executa a atualização do DOM e anima da foto antiga pra nova com pseudo-elementos (<code>::view-transition-old</code> e <code>::view-transition-new</code>). <code>view-transition-name</code> num elemento faz ele &ldquo;viajar&rdquo; entre os dois estados (a miniatura que vira a imagem grande). Duas regras: sempre tenha o <strong>fallback</strong> (nem todo navegador suporta) e respeite o <code>reduce</code>. No React, a atualização precisa estar concluída quando o callback devolve, por isso o <code>flushSync</code>.</p>
+<pre><code class="esc">
+import { flushSync } from 'react-dom';
+
+function comTransicao(atualiza: () => void) {
+  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || semMovimento) return atualiza();
+  document.startViewTransition(() => flushSync(atualiza));
+}
+
+comTransicao(() => setAberto(true));
+</code></pre>
+      <h4>Estados que um componente acabado tem</h4>
+      <p>Padrão, hover, <code>:focus-visible</code>, pressionado, desabilitado e carregando &mdash; e o anel de foco com contraste de pelo menos 3:1 contra o fundo ao lado (WCAG 1.4.11). Mostrar a lista dos estados no Storybook é a forma mais rápida de ver o que falta. O <a href="r08-pratica.html#ex12">exercício 12</a> do R8 treina isso num toast feito a partir de um mock.</p>
+    </div>
+  </div>
+
+
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <div class="ex" id="fz1">
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Tokens em camadas com tema escuro</h3><span class="ex-meta">15 min &middot; CSS</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Você recebeu estes primitivos. Crie a camada semântica (fundo, texto, texto secundário, marca e borda), o tema escuro com <code>[data-theme="dark"]</code> e um <code>.button</code> que use só tokens semânticos.</p>
+<pre><code class="esc">
+:root {
+  --gray-50: #F7F7F5;  --gray-600: #55534E;  --gray-900: #1C1B19;
+  --gray-950: #121110; --gray-300: #C9C6BF;  --gray-700: #3A3834;
+  --orange-400: #FF8A3D; --orange-560: #E8590C;
+}
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Dê nome pelo <strong>uso</strong>, não pela cor: <code>--color-bg</code>, <code>--color-text</code>, <code>--color-text-soft</code>, <code>--color-brand</code>, <code>--color-border</code>. No tema escuro, só esses cinco mudam de valor.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+:root {
+  --color-bg: var(--gray-50);
+  --color-text: var(--gray-900);
+  --color-text-soft: var(--gray-600);
+  --color-brand: var(--orange-560);
+  --color-border: var(--gray-300);
+}
+[data-theme="dark"] {
+  --color-bg: var(--gray-950);
+  --color-text: var(--gray-50);
+  --color-text-soft: var(--gray-300);
+  --color-brand: var(--orange-400); /* mais claro: o laranja escuro perde contraste no fundo escuro */
+  --color-border: var(--gray-700);
+}
+body { background: var(--color-bg); color: var(--color-text); }
+.button {
+  background: var(--color-brand);
+  color: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o <code>.button</code> não sabe que existe tema escuro. E a troca de laranja no escuro não é estética: é contraste. Confira os pares (marca sobre fundo, texto secundário sobre fundo) com uma ferramenta de contraste antes de fechar a paleta.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="fz2">
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Ache e conserte os problemas de acessibilidade</h3><span class="ex-meta">20 min &middot; React</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Esta é uma alternativa de uma questão de prova. Depois de responder, ela fica verde se acertou e vermelha se errou. Encontre pelo menos quatro problemas de acessibilidade e reescreva o componente.</p>
+<pre><code class="esc">
+function Opcao({ letra, texto, estado, onEscolher }) {
+  // estado: 'neutra' | 'certa' | 'errada'
+  const cor = estado === 'certa' ? 'green' : estado === 'errada' ? 'red' : '#9a9a9a';
+  return (
+    <div className="opcao" style={{ color: cor }} onClick={onEscolher}>
+      {letra}) {texto}
+    </div>
+  );
+}
+/* no CSS: .opcao:focus { outline: none; } */
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Pense em quem usa só o teclado, em quem usa leitor de tela, em quem não distingue verde de vermelho e em quem enxerga pouco. Cada um encontra um problema diferente.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+        <p><strong>Os problemas:</strong> (1) <code>div</code> com <code>onClick</code> não recebe foco nem responde a Enter ou Espaço; (2) o leitor de tela não sabe que é um botão; (3) certo e errado são só cor; (4) <code>outline: none</code> esconde o foco; (5) o cinza <code>#9a9a9a</code> no branco tem contraste de cerca de 2,8:1, abaixo de 4,5:1.</p>
+<pre><code class="esc">
+const ROTULO = { certa: 'Correta', errada: 'Incorreta' } as const;
+
+function Opcao({ letra, texto, estado, onEscolher }: {
+  letra: string; texto: string; estado: 'neutra' | 'certa' | 'errada'; onEscolher: () => void;
+}) {
+  const respondida = estado !== 'neutra';
+  return (
+    <button type="button" className={`opcao opcao--${estado}`} onClick={onEscolher} disabled={respondida}>
+      <span aria-hidden="true">{estado === 'certa' ? '✓' : estado === 'errada' ? '✗' : ''}</span>
+      <span>{letra}) {texto}</span>
+      {estado !== 'neutra' && <span className="opcao-rotulo">{ROTULO[estado]}</span>}
+    </button>
+  );
+}
+/* CSS: .opcao:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+        cores de texto vindas de tokens com contraste conferido */
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> <code>&lt;button&gt;</code> resolve foco, teclado e papel de uma vez só. O resultado aparece como texto (&ldquo;Correta&rdquo;) e como ícone, além da cor. E o foco ganhou um estilo próprio em vez de sumir.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <h3 class="sub etapa" id="contar"><span class="etapa-n">3 &middot; Contar</span>As suas decisões e onde você já aplicou</h3>
+  <p class="etapa-nota">É o que você fala na entrevista: por que escolheu cada coisa nos seus projetos e a resposta honesta para o que ainda não fez.</p>
+
   <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
   <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
 
   <div class="tcards">
     <div class="tcard">
       <h4>Tokens semânticos e tema escuro <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> As cores têm nome pelo uso, e o tema escuro só troca o valor desses nomes. Nenhum componente sabe que ele existe.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Tokens semânticos em OKLCH no <code>@theme</code> do Tailwind v4, e o tema escuro trocando só os valores desses tokens.</dd>
@@ -46,10 +305,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: os tópicos falam em três camadas (primitivo, semântico, de componente). O projeto tem todas? O que se perde sem a terceira?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O GitHub lançou vários temas, incluindo escuro, alto contraste e versões para daltonismo, trocando os valores dos tokens do Primer, o design system dele, sem reescrever cada tela. O Material Design 3, do Google, vai além: gera a paleta inteira de um tema a partir de uma única cor.</p>
     </div>
 
     <div class="tcard">
       <h4>Variantes: classes de CSS ou <code>cva</code> <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Com um app só e poucos componentes que variam, classes de CSS e um mapa tipado escrito à mão bastam. Uma biblioteca de variantes ainda não se paga.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Variantes como classes de componente (<code>.btn-primary</code>, <code>.chip</code>) e, onde a variação é real, um mapa tipado <code>Record&lt;Escala, string&gt;</code> escrito à mão (<code>GradeNumerada</code>), sem <code>cva</code>.</dd>
@@ -62,10 +323,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: em que momento o <code>cva</code> passa a valer a pena? Pense em quantas apps consomem o componente.</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O shadcn/ui usa <code>cva</code> porque cada componente é copiado para milhares de projetos e precisa de variantes previsíveis. Design systems que atendem vários produtos, como o Primer do GitHub, também tipam as variantes nas props (<code>variant="danger"</code>, <code>size="small"</code>). O ponto de virada é o número de apps que usam o componente.</p>
     </div>
 
     <div class="tcard">
       <h4>Acessibilidade: o que o código trava e o que ainda não <span class="st p">em aberto</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Os testes conferem o papel e o nome acessível de cada elemento, mas ainda não há teste automático de contraste nem de visual no CI.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>No Gabarita, testes de componente que consultam por papel e nome acessível (<code>getByRole</code>), sem axe nem screenshots no CI. No Ally AI, o axe é o produto.</dd>
@@ -78,6 +341,7 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: o bloco &ldquo;Você já fez teste de regressão visual...?&rdquo;, mais abaixo, descreve como fechar a lacuna.</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O GOV.UK, portal do governo britânico, testa os componentes com leitor de tela e teclado, além das ferramentas automáticas, porque a lei exige que serviços públicos sejam acessíveis. Nos Estados Unidos, os processos contra sites inacessíveis passam de milhares por ano. Teste de acessibilidade no CI protege o produto e também a empresa.</p>
     </div>
   </div>
 
@@ -160,74 +424,6 @@
 
   </details>
 
-  <h3 class="sub">Composição, documentação e responsivo em componente</h3>
-  <div class="ex">
-    <div class="ex-body">
-      <h4>Composição em vez de prop pra tudo</h4>
-      <p>Um <code>&lt;Card title icon actions footer ...&gt;</code> ganha uma prop nova a cada pedido de design. A alternativa é expor <strong>partes que se encaixam</strong>: <code>&lt;Card&gt;&lt;Card.Header/&gt;&lt;Card.Body/&gt;&lt;/Card&gt;</code>, com o estado compartilhado por contexto (é como Tabs, Accordion e Select funcionam). Quem usa decide a ordem e o conteúdo; o componente continua dono do que não pode errar: ids, <code>aria-*</code>, gerenciamento de foco e teclado. O padrão <code>asChild</code> (o <code>Slot</code> do Radix) deixa trocar o elemento renderizado, um <code>&lt;a&gt;</code> no lugar de um <code>&lt;button&gt;</code>, sem perder o comportamento. Quando <strong>não</strong> usar: componente pequeno e fechado, onde as partes só adicionam cerimônia. Variantes visuais continuam em <code>cva</code>; composição resolve <em>estrutura</em>, variante resolve <em>aparência</em>.</p>
-      <h4>Documentação que não desatualiza</h4>
-      <p>O que documentar: quando usar e quando não usar, anatomia, variantes e estados, comportamento de teclado e ARIA, e exemplos que se copiam. Gerada do próprio código (as stories e os tipos das props) pra mudar junto com ele, e com as decisões que não aparecem no código escritas à parte, num registro curto de decisões.</p>
-      <h4>Responsivo dentro do componente</h4>
-      <ul>
-        <li><strong>Container queries</strong> (<code>@container</code>) fazem o componente se adaptar ao espaço onde está, e não à largura da janela. Num design system é o que importa: o mesmo card aparece numa coluna estreita e numa grade larga.</li>
-        <li><strong>Unidades relativas e <code>clamp()</code></strong> pra tipografia e espaçamento fluidos; <code>rem</code> respeita a fonte que a pessoa escolheu no navegador.</li>
-        <li><strong>Alvo de toque de 44 &times; 44 px</strong> é a recomendação das plataformas e o critério AAA 2.5.5 da WCAG 2.1; o mínimo de AA (WCAG 2.2) é 24 px.</li>
-        <li><strong>Reflow (1.4.10):</strong> sem rolagem horizontal a 320 px de largura, o equivalente a 400% de zoom numa tela de 1280 px. E nunca bloquear o zoom (<code>user-scalable=no</code> reprova).</li>
-        <li><strong>Testar:</strong> o Playwright troca o viewport por teste, e a story de cada componente em larguras estreita e larga pega o que a leitura do código não pega.</li>
-      </ul>
-    </div>
-  </div>
-
-  <h3 class="sub">Acabamento visual: movimento, foco e hover</h3>
-  <div class="ex">
-    <div class="ex-body">
-      <p>A diferença entre um componente que &ldquo;funciona&rdquo; e um que parece pronto está nos detalhes de estado e de movimento, e é o que o título <em>Design Engineer</em> promete. Movimento não é enfeite: ele mostra causa e efeito, de onde algo veio e o que mudou.</p>
-      <h4>Duração e easing</h4>
-      <ul>
-        <li><strong>Feedback imediato</strong> (hover, pressionar): 100 a 150 ms. <strong>Entrada e saída</strong> de elementos (menu, toast, diálogo): 150 a 300 ms. Acima de 500 ms só em transição grande, e a saída é sempre mais rápida que a entrada.</li>
-        <li><strong>Easing:</strong> <code>ease-out</code> pra entrada (começa rápido e assenta, parece responder ao usuário), <code>ease-in</code> pra saída, <code>ease-in-out</code> pra mover algo dentro da tela. <code>linear</code> parece mecânico, exceto em barra de progresso e rotação contínua.</li>
-        <li><strong>Anime só <code>transform</code> e <code>opacity</code>:</strong> rodam no compositor, sem recalcular layout. Animar <code>width</code>, <code>height</code>, <code>top</code> ou <code>left</code> força layout a cada quadro. E evite <code>transition: all</code>, que anima o que você não pensou e custa caro.</li>
-      </ul>
-      <h4>Spring versus easing</h4>
-      <p>O easing tem duração fixa e curva fixa. O <strong>spring</strong> é descrito por rigidez e amortecimento e <strong>preserva a velocidade</strong> quando é interrompido: se o usuário solta e pega de novo um elemento no meio do movimento, ele continua de onde está, sem pulo. Por isso o spring vale pra arrastar, gestos e qualquer coisa que se interrompe; o easing basta pra estado que vai de A a B e pronto. Em CSS puro, a função <code>linear()</code> aproxima um spring com várias paradas; spring de verdade vem de bibliotecas como a Motion.</p>
-      <h4><code>prefers-reduced-motion</code></h4>
-      <p>Não significa &ldquo;sem animação&rdquo;, significa <strong>sem movimento que enjoa</strong>: tire deslocamento, zoom, parallax e vídeo em loop, e mantenha a mudança de cor e de opacidade, que ainda comunica o estado. Há também a WCAG 2.2.2 (nível A): conteúdo que se move sozinho por mais de 5 s precisa de um jeito de pausar.</p>
-<pre><code class="esc">
-.btn {
-  transition: background-color 150ms ease-out, transform 100ms ease-out;
-}
-/* hover só onde existe ponteiro de verdade: no toque ele "gruda" depois do toque */
-@media (hover: hover) {
-  .btn:hover { background-color: var(--btn-hover); }
-}
-.btn:active { transform: scale(0.98); }
-/* outline, e não box-shadow: sobrevive ao modo de alto contraste (forced-colors) */
-.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
-
-@media (prefers-reduced-motion: reduce) {
-  .btn { transition: background-color 150ms ease-out; } /* mantém a cor, tira o movimento */
-  .btn:active { transform: none; }
-}
-</code></pre>
-      <h4>View Transitions</h4>
-      <p><code>document.startViewTransition(callback)</code> tira uma foto do estado atual, executa a atualização do DOM e anima da foto antiga pra nova com pseudo-elementos (<code>::view-transition-old</code> e <code>::view-transition-new</code>). <code>view-transition-name</code> num elemento faz ele &ldquo;viajar&rdquo; entre os dois estados (a miniatura que vira a imagem grande). Duas regras: sempre tenha o <strong>fallback</strong> (nem todo navegador suporta) e respeite o <code>reduce</code>. No React, a atualização precisa estar concluída quando o callback devolve, por isso o <code>flushSync</code>.</p>
-<pre><code class="esc">
-import { flushSync } from 'react-dom';
-
-function comTransicao(atualiza: () => void) {
-  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!document.startViewTransition || semMovimento) return atualiza();
-  document.startViewTransition(() => flushSync(atualiza));
-}
-
-comTransicao(() => setAberto(true));
-</code></pre>
-      <h4>Estados que um componente acabado tem</h4>
-      <p>Padrão, hover, <code>:focus-visible</code>, pressionado, desabilitado e carregando &mdash; e o anel de foco com contraste de pelo menos 3:1 contra o fundo ao lado (WCAG 1.4.11). Mostrar a lista dos estados no Storybook é a forma mais rápida de ver o que falta. O <a href="r08-pratica.html#ex12">exercício 12</a> do R8 treina isso num toast feito a partir de um mock.</p>
-    </div>
-  </div>
-
   <h3 class="sub">Você já usou...? A resposta honesta</h3>
   <div class="evid">
     <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
@@ -260,6 +456,9 @@ comTransicao(() => setAberto(true));
       <p class="why"><strong>Por que isso importa:</strong> é a história completa de Design Engineering em um componente &mdash; decisão de design documentada (<code>DESIGN.md</code>), implementação com variantes tipadas, critério WCAG nomeado e um teste que impede regressão. Quando perguntarem &ldquo;o que é um design system pra você?&rdquo;, responda com ela.</p>
     </div>
   </div>
+
+  <h3 class="sub etapa" id="provar"><span class="etapa-n">4 &middot; Provar</span>Perguntas abertas e múltipla escolha</h3>
+  <p class="etapa-nota">Responda em voz alta antes de abrir a resposta. A múltipla escolha, no fim, começa com três questões de aquecimento, só de conceito.</p>
 
   <div class="quiz">
     <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>

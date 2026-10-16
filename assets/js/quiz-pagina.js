@@ -83,6 +83,7 @@
     card.className = 'qz-card';
     card.innerHTML =
       '<div class="qz-tag"><span class="n">' + String(n).padStart(2, '0') + '</span><span>' + item.t + '</span>' +
+      (item.b ? '<span class="qz-basico">aquecimento</span>' : '') +
       rotuloHist(hist[item.id]) + '</div>' +
       '<p class="qz-q">' + item.q + '</p><div class="qz-opts"></div><div class="qz-why" aria-live="polite" hidden></div>';
     var opts = card.querySelector('.qz-opts');

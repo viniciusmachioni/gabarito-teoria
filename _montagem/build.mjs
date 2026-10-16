@@ -153,7 +153,7 @@ if (existe(dirQuizRoadmap)) {
     quizRoadmap = quizRoadmap.concat(qs);
   }
 }
-const MIN_QUIZ_PAGINA = 10, MAX_QUIZ_PAGINA = 12; // meta de questões fechadas por página do roadmap
+const MIN_QUIZ_PAGINA = 10, MAX_QUIZ_PAGINA = 15; // meta de questões fechadas por página do roadmap (até 3 delas de aquecimento, com b: 1)
 const quiz = quizRoadmap.concat(quizOriginal, quizNovos);
 // id estável por questão (tema + hash do enunciado): é a chave do histórico do quiz no localStorage.
 // Editar o enunciado zera o histórico só daquela questão.
@@ -257,7 +257,7 @@ const escapaCodigo = (html) => html.replace(/<pre><code class="esc">([\s\S]*?)<\
 // Bloco de múltipla escolha no fim da página do roadmap. As questões vão como JSON na própria página
 // (só as dela) e quiz-pagina.js monta os cartões; o histórico é o mesmo do Questionário rápido.
 function blocoQuizPagina(html, qs) {
-  const dados = JSON.stringify(qs.map((q) => ({ id: q.id, t: q.t, q: q.q, o: q.o, c: q.c, e: q.e })))
+  const dados = JSON.stringify(qs.map((q) => ({ id: q.id, t: q.t, q: q.q, o: q.o, c: q.c, e: q.e, ...(q.b ? { b: 1 } : {}) })))
     .replace(/</g, '\\u003c');
   const bloco = '\n  <div class="qz-pagina" data-qz-pagina>\n' +
     '    <h3 class="sub">Múltipla escolha desta página</h3>\n' +

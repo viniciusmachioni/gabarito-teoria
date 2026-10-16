@@ -22,9 +22,110 @@
   <section class="week" id="rm6">
   <div class="week-head"><span class="week-num">R6</span><h2>Aprofundamento: MCP, AI UX, frontend distribuído &amp; multi-cloud</h2></div>
   <div class="week-meta">~6h &middot; a frente amarela: o vocabulário que separa &ldquo;usa IA&rdquo; de &ldquo;desenha produto com IA&rdquo;</div>
-  <p class="intro">As frentes R1&ndash;R5 são o que você precisa <em>fazer</em>. Esta é o que você precisa <em>saber discutir</em> numa vaga de Design Engineer ou Frontend Engineer com foco em IA: como uma interface de IA se conecta a ferramentas externas (MCP), como ela ganha ou perde a confiança de quem usa (AI UX), quando faz sentido quebrar o front em pedaços independentes (microfrontends) e o que &ldquo;multi-cloud&rdquo; significa de verdade. Nenhum dos quatro é obrigatório no dia 1 de uma vaga, mas todos aparecem na conversa de arquitetura, e o seu Gabarita já tem um dos melhores exemplos de AI UX que dá pra levar pra uma entrevista: <strong>citação verificada pelo código, não pela IA</strong>.</p>
+  <p class="intro">As páginas R1 a R5 são o que você precisa saber <strong>fazer</strong>. Esta é o que você precisa saber <strong>discutir</strong>: como uma interface de IA se conecta a ferramentas externas (MCP), como ela ganha ou perde a confiança de quem usa (AI UX), quando faz sentido quebrar o front em pedaços (microfrontends) e o que &ldquo;multi-cloud&rdquo; quer dizer de verdade. Nada disso é cobrado no primeiro dia de uma vaga, mas tudo aparece numa conversa de arquitetura. O <strong>Ver</strong> explica os quatro temas em linguagem simples.</p>
 
-  <h3 class="sub">Tópicos</h3>
+  <ol class="etapas">
+    <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
+    <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
+  </ol>
+
+  <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
+  <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. MCP em uma frase</h4>
+      <p><b class="r">O que é</b>O Model Context Protocol é um padrão para um app de IA (o <em>host</em>, como o Claude Code ou o VS Code) plugar ferramentas de qualquer fornecedor. Pense numa tomada universal: quem faz a ferramenta escreve um servidor MCP uma vez, e ela funciona em qualquer app que fale MCP.</p>
+      <p><b class="r">Por que existe</b>Sem um padrão, cada app precisa de uma integração própria para cada ferramenta: 3 apps &times; 3 ferramentas = 9 integrações. Com MCP, cada app implementa o protocolo uma vez e cada ferramenta também: 3 + 3 = 6.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;MCP transforma N vezes M integrações em N mais M.&rdquo;</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 196" role="img" aria-labelledby="r6d1">
+        <title id="r6d1">Sem padrão, nove integrações; com MCP, seis</title>
+        <text x="100" y="18" text-anchor="middle" class="h">Sem padrão: 3 &times; 3 = 9</text>
+        <text x="320" y="18" text-anchor="middle" class="h">Com MCP: 3 + 3 = 6</text>
+        <rect x="10" y="36" width="54" height="26" rx="5" class="bx-b"/><text x="37" y="54" text-anchor="middle" class="s">app A</text>
+        <rect x="10" y="94" width="54" height="26" rx="5" class="bx-b"/><text x="37" y="112" text-anchor="middle" class="s">app B</text>
+        <rect x="10" y="152" width="54" height="26" rx="5" class="bx-b"/><text x="37" y="170" text-anchor="middle" class="s">app C</text>
+        <rect x="136" y="36" width="54" height="26" rx="5" class="bx-a"/><text x="163" y="54" text-anchor="middle" class="s">tool 1</text>
+        <rect x="136" y="94" width="54" height="26" rx="5" class="bx-a"/><text x="163" y="112" text-anchor="middle" class="s">tool 2</text>
+        <rect x="136" y="152" width="54" height="26" rx="5" class="bx-a"/><text x="163" y="170" text-anchor="middle" class="s">tool 3</text>
+        <line x1="64" y1="49" x2="136" y2="49" class="ln"/><line x1="64" y1="49" x2="136" y2="107" class="ln"/><line x1="64" y1="49" x2="136" y2="165" class="ln"/>
+        <line x1="64" y1="107" x2="136" y2="49" class="ln"/><line x1="64" y1="107" x2="136" y2="107" class="ln"/><line x1="64" y1="107" x2="136" y2="165" class="ln"/>
+        <line x1="64" y1="165" x2="136" y2="49" class="ln"/><line x1="64" y1="165" x2="136" y2="107" class="ln"/><line x1="64" y1="165" x2="136" y2="165" class="ln"/>
+        <rect x="230" y="36" width="54" height="26" rx="5" class="bx-b"/><text x="257" y="54" text-anchor="middle" class="s">app A</text>
+        <rect x="230" y="94" width="54" height="26" rx="5" class="bx-b"/><text x="257" y="112" text-anchor="middle" class="s">app B</text>
+        <rect x="230" y="152" width="54" height="26" rx="5" class="bx-b"/><text x="257" y="170" text-anchor="middle" class="s">app C</text>
+        <rect x="302" y="78" width="36" height="58" rx="5" class="bx-t"/><text x="320" y="111" text-anchor="middle" class="s tt">MCP</text>
+        <rect x="356" y="36" width="54" height="26" rx="5" class="bx-a"/><text x="383" y="54" text-anchor="middle" class="s">tool 1</text>
+        <rect x="356" y="94" width="54" height="26" rx="5" class="bx-a"/><text x="383" y="112" text-anchor="middle" class="s">tool 2</text>
+        <rect x="356" y="152" width="54" height="26" rx="5" class="bx-a"/><text x="383" y="170" text-anchor="middle" class="s">tool 3</text>
+        <line x1="284" y1="49" x2="302" y2="92" class="ln-t"/><line x1="284" y1="107" x2="302" y2="107" class="ln-t"/><line x1="284" y1="165" x2="302" y2="122" class="ln-t"/>
+        <line x1="338" y1="92" x2="356" y2="49" class="ln-t"/><line x1="338" y1="107" x2="356" y2="107" class="ln-t"/><line x1="338" y1="122" x2="356" y2="165" class="ln-t"/>
+      </svg>
+      <figcaption>Cada linha é uma integração para escrever e manter. O protocolo comum corta a conta de multiplicação para soma.</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>2. As peças do MCP</h4>
+      <p><b class="r">Host, client, server</b>O <em>host</em> é o app de IA. Dentro dele há um <em>client</em> para cada servidor conectado. O <em>server</em> é quem oferece as ferramentas.</p>
+      <p><b class="r">O que o servidor oferece</b><em>Tools</em> são ações que o modelo pode pedir (buscar questões, abrir um ticket). <em>Resources</em> são dados para dar contexto (um arquivo, um registro). <em>Prompts</em> são modelos de pedido prontos.</p>
+      <p><b class="r">O ciclo</b>O client pergunta &ldquo;quais ferramentas você tem?&rdquo; (<code>tools/list</code>). O modelo escolhe uma, e o client a chama (<code>tools/call</code>) com os argumentos.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;O servidor publica tools, resources e prompts. O host lista as tools e chama a que o modelo escolher.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>3. Segurança no MCP</h4>
+      <p><b class="r">O risco</b>Um servidor MCP roda com permissões de verdade: lê arquivos, chama APIs, grava no banco. Um servidor local é um programa rodando na sua máquina.</p>
+      <p><b class="r">As regras</b>Servidor remoto usa OAuth. Nunca repasse o token que recebeu do usuário direto para outra API (<em>token passthrough</em>): peça um token emitido para você. Confira toda URL que o modelo mandar antes de acessá-la, para ninguém usar o seu servidor para alcançar a rede interna (<em>SSRF</em>). Peça só as permissões necessárias.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Ferramenta MCP é código com permissão real. Valido argumento, não repasso token e peço o mínimo de escopo.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>4. Tool calling ou MCP?</h4>
+      <p><b class="r">Tool calling</b>É como o <strong>modelo</strong> pede uma ação: a API devolve &ldquo;quero chamar <code>x</code> com estes argumentos&rdquo; (veja o <a href="r01-ai-frontend.html">R1</a>).</p>
+      <p><b class="r">MCP</b>É como as <strong>ferramentas</strong> são distribuídas entre apps. Por baixo, o host continua usando tool calling para o modelo escolher qual ferramenta MCP chamar.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Tool calling é o mecanismo do modelo. MCP é o protocolo que leva as ferramentas para qualquer app.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>5. AI UX: confiança na medida certa</h4>
+      <p><b class="r">O objetivo</b>Não é fazer a pessoa confiar sempre na IA. É fazer ela confiar quando deve e desconfiar quando deve.</p>
+      <p><b class="r">Como</b>Mostre a fonte de cada afirmação (citação). Diga o que o sistema faz e o quanto ele acerta. Torne fácil corrigir ou descartar a resposta. Peça feedback específico (&ldquo;este trecho está errado&rdquo;), não só um polegar. Em vez de &ldquo;87% de confiança&rdquo;, prefira categorias ligadas a uma ação: &ldquo;confiança baixa, confira a fonte&rdquo;.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Boa AI UX calibra a confiança: mostra a fonte, deixa corrigir e diz quando a resposta é fraca.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>6. AI UX de agente</h4>
+      <p><b class="r">Progresso por etapa</b>&ldquo;Lendo o contrato&hellip; Comparando com o modelo&hellip; Escrevendo o resumo&rdquo; diz mais que um spinner.</p>
+      <p><b class="r">Aprovação antes de agir</b>Ação com efeito real (enviar, apagar, pagar) espera confirmação, de preferência mostrando o que vai mudar.</p>
+      <p><b class="r">Marcar o que é IA</b>A pessoa precisa saber o que foi gerado por IA.</p>
+      <p><b class="r">Falhar com aviso</b>Quando a IA falha, a tela diz isso e oferece um caminho. Nunca some com a resposta em silêncio.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Num agente, eu mostro cada etapa, peço aprovação antes de agir e aviso quando algo dá errado.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>7. Microfrontends e multi-cloud em um minuto</h4>
+      <p><b class="r">Microfrontends</b>Como no <a href="r03-arquitetura-frontend.html">R3</a>: valem quando há vários times autônomos ou uma migração aos pedaços. Com um time só, um monorepo bem dividido costuma ser melhor.</p>
+      <p><b class="r">Multi-cloud</b>Rodar a mesma aplicação em duas nuvens ao mesmo tempo. É caro e raro.</p>
+      <p><b class="r">Portabilidade</b>Usar interfaces que deixam trocar uma peça de fornecedor. Exemplo: o Gabarita grava arquivos pela API do S3, então trocar o S3 pelo Cloudflare R2 é mudar configuração, não código. É o que quase todo mundo deveria querer.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Raramente preciso de multi-cloud. Quero portabilidade: poder trocar uma peça sem reescrever o app.&rdquo;</p>
+    </div>
+  </div>
+
+  <dl class="glossario">
+    <dt>Host</dt><dd>o app de IA que a pessoa usa (Claude Code, VS Code, um chat próprio).</dd>
+    <dt>JSON-RPC</dt><dd>formato simples de mensagem para pedir que outro programa execute um método e devolva o resultado. É o que o MCP usa.</dd>
+    <dt>stdio</dt><dd>entrada e saída padrão de um processo: o jeito de falar com um servidor MCP local.</dd>
+    <dt>SSRF</dt><dd>Server-Side Request Forgery: enganar um servidor para que ele acesse um endereço que não deveria.</dd>
+    <dt>HAX</dt><dd>as 18 diretrizes de interação humano-IA publicadas pela Microsoft.</dd>
+  </dl>
+
+
+  <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
+  <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
     <li class="item"><input type="checkbox" id="w30-1"><label for="w30-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP em uma frase: um protocolo padrão (JSON-RPC 2.0) pra um <strong>host</strong> de IA (Claude Code, VS Code) plugar ferramentas e contexto de qualquer <strong>servidor</strong>, com um <strong>client</strong> dedicado por servidor &mdash; e por que isso transforma N&times;M integrações em N+M</span></label></li>
     <li class="item"><input type="checkbox" id="w30-2"><label for="w30-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As primitivas do servidor: <strong>tools</strong> (ação que o modelo invoca, descrita por <code>inputSchema</code> em JSON Schema), <strong>resources</strong> (dado de contexto) e <strong>prompts</strong> (templates) &mdash; o ciclo <code>tools/list</code> &rarr; <code>tools/call</code>, e a primitiva do cliente, <strong>elicitation</strong> (o servidor pede input ou confirmação ao usuário)</span></label></li>
@@ -38,189 +139,251 @@
     <li class="item"><input type="checkbox" id="w30-10"><label for="w30-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP Apps (extensão oficial): a ferramenta aponta pra um recurso <code>ui://</code>, o host o renderiza num iframe isolado dentro da conversa, e a interface conversa com o host por <code>postMessage</code> &mdash; quando vale mais que texto ou um link</span></label></li>
   </ul>
 
-  <h3 class="sub">Onde estudar (grátis)</h3>
+  <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
   <p class="leituras-bar" data-leituras-pagina></p>
     <ul class="resources">
     <li><div class="r-title"><a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">MCP &mdash; Architecture overview</a></div><div class="r-note">A página oficial que define host/client/server, as duas camadas (dados e transporte), as primitivas e um exemplo passo a passo em JSON-RPC.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia &ldquo;Participants&rdquo;, &ldquo;Layers&rdquo; e &ldquo;Primitives&rdquo; inteiros; no exemplo, foque em <code>tools/list</code> e <code>tools/call</code>. Os blocos de JSON de notificação são consulta.</div><div class="r-src">modelcontextprotocol.io &middot; oficial</div><details class="leitura" data-id="r06-proximo-nivel--modelcontextprotocol-io-docs-learn-architecture"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">MCP é um protocolo de <strong>troca de contexto</strong>: ele não diz como a aplicação usa o LLM, só como ela descobre e chama ferramentas e dados de fora. A arquitetura é <strong>host &rarr; um client por servidor &rarr; servidor</strong>, sobre JSON-RPC 2.0, com duas camadas separadas: dados e transporte.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o MCP é um protocolo para um app de IA descobrir e usar ferramentas e dados de fora. Ele não diz como o app usa o modelo, só como encontra e chama as ferramentas. A estrutura é: o app (<em>host</em>) cria um <em>client</em> para cada <em>servidor</em> conectado, e eles conversam por mensagens JSON-RPC.</p>
+<p class="real"><b>No mundo real</b>A Anthropic lançou o MCP em novembro de 2024. Em poucos meses, a OpenAI, o Google e a Microsoft anunciaram suporte, e ele chegou ao ChatGPT, ao Gemini, ao VS Code e ao Copilot. O GitHub mantém um servidor MCP oficial: com ele, um assistente consegue ler issues e abrir pull requests em qualquer app compatível, sem uma integração própria para cada app.</p>
 
-<h5>Participantes</h5>
+<h5>Quem é quem</h5>
 <ul>
-<li><strong>Host</strong> &mdash; a aplicação de IA que coordena tudo (Claude Code, Claude Desktop, VS Code).</li>
-<li><strong>Client</strong> &mdash; um componente dentro do host que mantém a conexão com <em>um</em> servidor. O host cria um client por servidor: conectar ao Sentry e ao sistema de arquivos são dois clients.</li>
-<li><strong>Server</strong> &mdash; o programa que fornece contexto. &ldquo;Local&rdquo; quando roda na máquina via stdio (normalmente serve um client só); &ldquo;remoto&rdquo; quando roda numa plataforma via Streamable HTTP (serve muitos).</li>
+<li><strong>Host:</strong> o app de IA que a pessoa usa (Claude Code, VS Code, ChatGPT).</li>
+<li><strong>Client:</strong> uma conexão dentro do host com <em>um</em> servidor. Conectar ao GitHub e ao sistema de arquivos são dois clients.</li>
+<li><strong>Servidor:</strong> o programa que oferece ferramentas e dados. É <em>local</em> quando roda na sua máquina, conversando pela entrada e saída do processo (<em>stdio</em>). É <em>remoto</em> quando roda na internet, por HTTP, e atende muita gente.</li>
 </ul>
 
 <h5>As duas camadas</h5>
-<div class="tbl"><table>
-<tr><th>Camada</th><th>O que define</th></tr>
-<tr><td>Dados (interna)</td><td>O protocolo JSON-RPC: descoberta de versão e capacidades, primitivas (tools, resources, prompts), notificações, progresso</td></tr>
-<tr><td>Transporte (externa)</td><td>Canal, enquadramento de mensagem e autorização. <strong>stdio</strong>: processos locais, sem rede. <strong>Streamable HTTP</strong>: POST do cliente pro servidor + Server-Sent Events opcional; autenticação HTTP padrão, com OAuth recomendado</td></tr>
-</table></div>
-<p>O mesmo formato de mensagem vale nos dois transportes: trocar stdio por HTTP não muda a lógica do servidor.</p>
-
-<h5>Primitivas</h5>
 <ul>
-<li><strong>Do servidor:</strong> <em>tools</em> (funções executáveis: consultar banco, chamar API), <em>resources</em> (dado de contexto: conteúdo de arquivo, schema do banco) e <em>prompts</em> (templates reutilizáveis, few-shot). Cada uma tem <code>*/list</code> pra descobrir, e as tools têm <code>tools/call</code> pra executar.</li>
-<li><strong>Do cliente:</strong> <em>elicitation</em>, que permite ao servidor pedir mais informação ou confirmação ao usuário. Na versão <code>2026-07-28</code> do protocolo, <em>sampling</em> (o servidor pedir completion ao LLM do host) e <em>logging</em> foram marcados como obsoletos.</li>
+<li><strong>Dados:</strong> as mensagens em si, como listar ferramentas, chamar uma ferramenta e receber avisos.</li>
+<li><strong>Transporte:</strong> por onde elas passam. <em>stdio</em> para processos locais, sem rede. <em>Streamable HTTP</em> para servidores remotos, com login por OAuth recomendado.</li>
+<li>As mensagens são as mesmas nos dois transportes. Trocar um pelo outro não muda a lógica do servidor.</li>
+</ul>
+
+<h5>O que um servidor oferece</h5>
+<ul>
+<li><strong>Tools:</strong> ações que o modelo pode pedir, como consultar um banco ou chamar uma API.</li>
+<li><strong>Resources:</strong> dados para dar contexto, como o conteúdo de um arquivo.</li>
+<li><strong>Prompts:</strong> modelos de pedido prontos.</li>
+<li>Do lado do cliente existe a <strong>elicitation</strong>: o servidor pode pedir ao usuário mais uma informação ou uma confirmação.</li>
 </ul>
 
 <h5>O ciclo de uma ferramenta</h5>
 <ol>
-<li><strong>Descoberta</strong>: na versão atual o protocolo é <em>stateless</em>. Cada request leva versão e capacidades no <code>_meta</code>, e o cliente pode chamar <code>server/discover</code> pra saber o que o servidor suporta.</li>
-<li><strong><code>tools/list</code></strong>: o servidor devolve cada tool com <code>name</code> (identificador único, ex. <code>weather_current</code>), <code>title</code>, <code>description</code> e <code>inputSchema</code> em JSON Schema. O host junta as tools de todos os servidores num registro único que entrega ao modelo.</li>
-<li><strong><code>tools/call</code></strong>: quando o modelo decide usar uma tool, o host intercepta, roteia pro servidor certo, executa e devolve o resultado (um array <code>content</code> com texto, imagem etc.) pra conversa.</li>
-<li><strong>Notificações</strong>: opt-in. O cliente abre um stream (<code>subscriptions/listen</code>) e recebe, por exemplo, <code>notifications/tools/list_changed</code> quando as tools mudam. São <em>best effort</em>: o cliente também deve fazer polling.</li>
+<li><strong><code>tools/list</code>:</strong> o servidor devolve cada ferramenta com nome, descrição e formato dos argumentos (em JSON Schema). O host junta as ferramentas de todos os servidores e entrega a lista ao modelo.</li>
+<li><strong><code>tools/call</code>:</strong> quando o modelo decide usar uma, o host manda o pedido ao servidor certo e devolve o resultado para a conversa.</li>
+<li>Na versão atual do protocolo (2026-07-28), não há sessão: cada pedido leva a versão e as capacidades. Se as ferramentas mudam, o servidor pode avisar, mas o cliente também deve conferir de tempos em tempos.</li>
 </ol>
-<p><strong>Frase de entrevista:</strong> &ldquo;MCP não substitui tool calling, ele distribui as ferramentas. O modelo continua chamando função por JSON Schema; o MCP padroniza como o host descobre essas funções em qualquer servidor.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;MCP não substitui tool calling, ele distribui as ferramentas. O modelo continua pedindo funções descritas em JSON Schema; o MCP padroniza como o app encontra essas funções em qualquer servidor.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">modelcontextprotocol.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices" target="_blank" rel="noopener">MCP &mdash; Security Best Practices</a></div><div class="r-note">Os ataques específicos de MCP com mitigação: confused deputy, token passthrough, SSRF, sequestro de state handle, mix-up, impersonação de redirect em localhost, servidor local comprometido, escopo mínimo.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~30 min</span>Leia a descrição e a mitigação de cada ataque; pule os diagramas de sequência na primeira passada. A seção de SSRF conversa direto com o <code>urlGuard</code> do Ally AI.</div><div class="r-src">modelcontextprotocol.io &middot; especificação</div><details class="leitura" data-id="r06-proximo-nivel--modelcontextprotocol-io-specification-2026-07-28-basic-security-best-p"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Ligar um LLM a ferramentas reais cria superfícies de ataque novas. A spec nomeia cada uma com mitigação obrigatória. As que mais caem em conversa: <strong>token passthrough é proibido</strong>, servidor local exige <strong>consentimento explícito</strong> antes de rodar comando, e todo escopo começa <strong>mínimo</strong>.</p>
+<p class="tldr"><strong>Em uma frase:</strong> ligar um modelo a ferramentas reais abre caminhos novos de ataque, e a especificação do MCP nomeia cada um com a defesa obrigatória. As três que mais caem em conversa: <strong>não repassar token</strong>, <strong>pedir consentimento explícito</strong> antes de rodar um servidor local e começar com <strong>o mínimo de permissão</strong>.</p>
+<p class="real"><b>No mundo real</b>Em 2025, pesquisadores da Invariant Labs mostraram um ataque com o servidor MCP do GitHub: uma issue pública com instruções escondidas fazia o agente de quem a lia vazar dados de repositórios privados dessa pessoa. O servidor não tinha bug. O problema era um agente com acesso amplo demais, obedecendo a um texto de terceiro. É por isso que permissão mínima e aprovação humana aparecem em toda conversa sobre agentes.</p>
 
-<h5>Os ataques e as defesas</h5>
-<div class="tbl"><table>
-<tr><th>Ataque</th><th>Como acontece</th><th>Mitigação</th></tr>
-<tr><td>Confused deputy</td><td>Servidor MCP que faz proxy pra API de terceiro com um <em>client ID estático</em>: um cookie de consentimento antigo deixa um client malicioso registrado dinamicamente pular a tela de consentimento e receber o código de autorização</td><td>Consentimento <strong>por client</strong> no próprio servidor MCP, antes de redirecionar; <code>redirect_uri</code> com comparação exata; <code>state</code> aleatório, de uso único, gravado só depois do consentimento</td></tr>
-<tr><td>Token passthrough</td><td>Servidor aceita token que não foi emitido pra ele e repassa pra API de baixo: fura rate limit e auditoria, e vira proxy de exfiltração</td><td>O servidor <strong>MUST NOT</strong> aceitar token que não tenha sido explicitamente emitido pra ele</td></tr>
-<tr><td>SSRF</td><td>Servidor malicioso põe URLs internas (<code>169.254.169.254</code>, <code>localhost</code>, IP privado) nos metadados de OAuth que o cliente segue</td><td>HTTPS obrigatório, bloquear faixas privadas e link-local, validar cada redirect, proxy de saída; cuidado com DNS rebinding (TOCTOU)</td></tr>
-<tr><td>State handle hijacking</td><td>O MCP novo é sem estado e não tem sessão no protocolo; o servidor que precisa lembrar algo (carrinho, workflow) entrega um <em>handle</em> que volta como argumento. Atacante que obtém ou adivinha o handle opera no estado de outro usuário</td><td>Posse do handle <strong>nunca</strong> é autenticação; handle aleatório e com expiração; chave <code>&lt;user_id&gt;:&lt;handle&gt;</code> com o usuário vindo do token verificado</td></tr>
-<tr><td>Mix-up attack</td><td>O cliente fala com vários servidores de autorização; um deles, controlado pelo atacante, faz o cliente mandar a ele um código emitido por outro, honesto</td><td>Validar a resposta de autorização contra o servidor registrado antes do redirect (<code>iss</code>). PKCE sozinho não resolve: o <code>code_verifier</code> também iria pro atacante</td></tr>
-<tr><td>Localhost redirect URI impersonation</td><td>Cliente nativo usa <code>redirect_uri</code> em <code>localhost</code>; o atacante apresenta o <code>client_id</code> legítimo, escuta numa porta qualquer e recebe o código quando o usuário aprova</td><td>O servidor de autorização mostra aviso extra pra redirect só em localhost e exibe o host do redirect na tela de consentimento</td></tr>
-<tr><td>Servidor local comprometido</td><td>Configuração &ldquo;um clique&rdquo; com comando de inicialização malicioso, que roda com os privilégios do cliente</td><td>Mostrar o comando exato, sem truncar, e exigir aprovação; sandbox; preferir stdio ou exigir token em HTTP local</td></tr>
-<tr><td>URL de autorização maliciosa</td><td><code>javascript:</code> aberto com <code>window.open</code> (XSS) ou URL passada pra shell (RCE)</td><td>Aceitar só <code>https://</code> (ou <code>http://</code> em loopback), nunca abrir URL via shell, CSP no cliente web</td></tr>
-<tr><td>Escopo amplo demais</td><td>Token roubado com <code>files:*</code>/<code>admin:*</code> abre tudo de uma vez</td><td>Escopo inicial mínimo e elevação progressiva por desafio <code>WWW-Authenticate</code></td></tr>
-</table></div>
-
-<h5>A ligação com o que você já fez</h5>
+<h5>Os ataques, em linguagem simples</h5>
 <ul>
-<li>A seção de SSRF descreve o mesmo problema que o <code>urlGuard</code> do Ally AI resolve: bloquear faixas IANA, validar redirect, e a ressalva de DNS rebinding, que o seu código já documenta como limite conhecido.</li>
-<li>A recomendação de CSP com nonce pra clientes web é a mesma do Gabarita.</li>
+<li><strong>Token repassado</strong> (<em>token passthrough</em>): o servidor recebe um token emitido para outra API e o repassa direto. Isso fura os limites e a auditoria da API de baixo. Regra: o servidor <strong>não pode</strong> aceitar token que não foi emitido para ele.</li>
+<li><strong>Representante confuso</strong> (<em>confused deputy</em>): um servidor que faz a ponte com uma API de terceiro usa uma identidade única para todos. Um app malicioso aproveita um consentimento antigo e recebe acesso sem a pessoa ver a tela de permissão. Defesa: pedir consentimento para cada app, no próprio servidor.</li>
+<li><strong>SSRF:</strong> um servidor malicioso põe endereços internos (<code>localhost</code>, IPs privados, o endereço de metadados da nuvem) num lugar que o cliente vai acessar. Defesa: exigir HTTPS, bloquear endereços privados e conferir cada redirecionamento. O <code>urlGuard</code> do Ally AI resolve exatamente isso.</li>
+<li><strong>Roubo de identificador de estado</strong> (<em>state handle hijacking</em>): sem sessão no protocolo, um servidor que precisa lembrar algo (um carrinho) devolve um identificador. Quem consegue o identificador de outra pessoa opera no carrinho dela. Defesa: ter o identificador nunca prova quem você é. Guarde o estado ligado ao usuário do token verificado.</li>
+<li><strong>Troca de servidor de login</strong> (<em>mix-up</em>): o cliente fala com vários servidores de autorização, e um deles, do atacante, recebe um código emitido por outro. Defesa: conferir de qual servidor veio a resposta (o campo <code>iss</code>). O PKCE sozinho não resolve, porque o segredo dele também iria para o atacante.</li>
+<li><strong>Servidor local malicioso:</strong> uma instalação &ldquo;em um clique&rdquo; esconde um comando perigoso, que roda com as suas permissões. Defesa: mostrar o comando completo e exigir aprovação.</li>
+<li><strong>Permissão ampla demais:</strong> um token roubado com acesso a tudo abre tudo de uma vez. Defesa: começar com o mínimo e pedir mais só quando precisar.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Num servidor MCP eu trato a ferramenta como API pública: autorização em toda request, token emitido pra mim e não repassado, escopo mínimo, e qualquer URL que vem de fora passa pelo mesmo filtro de SSRF.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Num servidor MCP eu trato a ferramenta como API pública: autorização em todo pedido, token emitido para mim e não repassado, permissão mínima, e qualquer URL que vem de fora passa pelo filtro de SSRF.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices" target="_blank" rel="noopener">modelcontextprotocol.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://pair.withgoogle.com/chapter/explainability-trust/" target="_blank" rel="noopener">People + AI Guidebook &mdash; Explainability + Trust</a></div><div class="r-note">O capítulo do Google PAIR sobre calibrar confiança: fontes de dado, explicação ligada à ação, e como (e quando não) mostrar a confiança do modelo.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~30 min</span>Capítulo único. A seção &ldquo;Manage influence on user decisions&rdquo; é a que mais rende em entrevista de AI UX.</div><div class="r-src">pair.withgoogle.com &middot; Google</div><details class="leitura" data-id="r06-proximo-nivel--pair-withgoogle-com-chapter-explainability-trust"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">O objetivo não é fazer o usuário confiar na IA, é fazer ele confiar <strong>na medida certa</strong>: nem aceitar tudo às cegas, nem descartar tudo. O capítulo dá quatro alavancas: explicar a fonte, explicar no momento certo, explicar só o que ajuda a decidir, e escolher com cuidado <em>se</em> e <em>como</em> mostrar a confiança do modelo.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o objetivo não é fazer a pessoa confiar na IA, é fazer ela confiar <strong>na medida certa</strong>: nem aceitar tudo às cegas, nem descartar tudo. O guia do Google dá quatro caminhos: mostrar a fonte, explicar na hora certa, explicar só o que ajuda a decidir e pensar bem antes de mostrar uma porcentagem de confiança.</p>
+<p class="real"><b>No mundo real</b>Em 2024, as respostas de IA da busca do Google sugeriram passar cola na pizza para o queijo grudar, a partir de uma piada antiga de fórum, e muita gente só percebeu o erro porque a resposta virou notícia. O Perplexity mostra a fonte numerada ao lado de cada frase, e a pessoa confere com um clique. E, em 2024, um tribunal do Canadá obrigou a Air Canada a honrar uma regra de reembolso que o chatbot dela tinha inventado. A empresa responde pelo que a IA diz.</p>
 
 <h5>1. Ajudar a calibrar a confiança</h5>
 <ul>
-<li><strong>Articule as fontes de dado</strong>: o que está sendo usado, se é pessoal ou agregado, como remover. Isso evita surpresa de privacidade e mostra ao usuário quando ele deve passar por cima do sistema.</li>
-<li><strong>Ligue a explicação à ação do usuário</strong>: &ldquo;só aparecem restaurantes italianos porque o raio é de uma quadra&rdquo;. A relação de causa e efeito ensina rápido.</li>
-<li><strong>Considere o que está em jogo</strong>: o trajeto de todo dia não precisa de explicação; o trajeto pro aeroporto precisa avisar que o trânsito só atualiza de hora em hora.</li>
+<li><strong>Diga de onde vêm os dados:</strong> o que está sendo usado e se é pessoal. Isso evita surpresa e mostra quando a pessoa deve passar por cima do sistema.</li>
+<li><strong>Ligue a explicação à ação da pessoa:</strong> &ldquo;só aparecem restaurantes italianos porque o raio é de uma quadra&rdquo;. Causa e efeito ensinam rápido.</li>
+<li><strong>Pense no que está em jogo:</strong> o trajeto de todo dia não precisa de explicação. O trajeto para o aeroporto precisa avisar que o trânsito só atualiza de hora em hora.</li>
 </ul>
 
-<h5>2. Confiança ao longo do produto</h5>
-<p>Estabelecer (deixar claros capacidades e limites desde o onboarding), crescer (privacidade explícita, poder testar sem risco), manter (aumentar a automação aos poucos) e recuperar (plano pra quando errar, e ensinar o usuário a corrigir).</p>
-
-<h5>3. Otimizar pra entendimento</h5>
+<h5>2. Confiança ao longo do tempo</h5>
 <ul>
-<li>Explicação <strong>parcial</strong> que serve à decisão, não o algoritmo inteiro.</li>
-<li>Tipos: explicação geral do sistema, explicação de uma saída específica, <strong>contrafactual</strong> (&ldquo;não é um bordo porque não tem 5 pontas&rdquo;), exemplos parecidos, e explicação por interação (&ldquo;e se eu mudar isso?&rdquo;).</li>
+<li>Estabelecer (deixar claros o que o sistema faz e os limites dele), crescer (deixar testar sem risco), manter (aumentar a automação aos poucos) e recuperar (ter um plano para quando errar).</li>
 </ul>
 
-<h5>4. Mostrar (ou não) a confiança do modelo</h5>
-<div class="tbl"><table>
-<tr><th>Formato</th><th>Quando serve</th></tr>
-<tr><td>Categórico (alta/média/baixa)</td><td>Cada faixa tem uma ação clara pro usuário</td></tr>
-<tr><td>N-best (&ldquo;pode ser A, B ou C&rdquo;)</td><td>Confiança baixa: convida o usuário a julgar</td></tr>
-<tr><td>Numérico (%)</td><td>Arriscado: o usuário não sabe o que 80% quer dizer e espera 100% no óbvio</td></tr>
-<tr><td>Visualização (barra de erro)</td><td>Público especialista</td></tr>
-</table></div>
-<p>A primeira pergunta é se mostrar a confiança muda a decisão. Se não muda, ou pode enganar quem não é técnico, não mostre. E teste com usuários reais antes de implementar.</p>
-<p><strong>Frase de entrevista:</strong> &ldquo;Eu não mostro porcentagem de confiança. Mostro a fonte. No Gabarita, o resumo da IA vem com o trecho literal do documento, e o que não dá pra verificar não é exibido.&rdquo;</p>
+<h5>3. Explicar o suficiente</h5>
+<ul>
+<li>Uma explicação parcial que ajuda a decidir vale mais que o algoritmo inteiro.</li>
+<li>Formas que funcionam: exemplos parecidos, &ldquo;não é X porque falta Y&rdquo; e &ldquo;e se eu mudar isto?&rdquo;.</li>
+</ul>
+
+<h5>4. Mostrar ou não a confiança do modelo</h5>
+<ul>
+<li><strong>Categorias</strong> (alta, média, baixa): funcionam quando cada faixa tem uma ação clara.</li>
+<li><strong>Várias opções</strong> (&ldquo;pode ser A, B ou C&rdquo;): boas quando a confiança é baixa, porque convidam a pessoa a julgar.</li>
+<li><strong>Porcentagem:</strong> arriscada. A pessoa não sabe o que 80% quer dizer e espera 100% no óbvio.</li>
+<li>A primeira pergunta é se mostrar a confiança muda a decisão. Se não muda, não mostre.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Eu não mostro porcentagem de confiança. Mostro a fonte. No Gabarita, o resumo da IA vem com o trecho literal do documento, e o que não dá para conferir não é exibido.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://pair.withgoogle.com/chapter/explainability-trust/" target="_blank" rel="noopener">pair.withgoogle.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://www.microsoft.com/en-us/haxtoolkit/library/" target="_blank" rel="noopener">HAX Toolkit &mdash; Guidelines for Human-AI Interaction</a></div><div class="r-note">As 18 diretrizes da Microsoft Research (CHI 2019), cada uma com padrões de design e exemplos de produto real.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia os 18 títulos e abra G1, G2, G9, G11 e G15. O resto é consulta pra quando for desenhar uma tela específica.</div><div class="r-src">microsoft.com &middot; Microsoft Research</div><details class="leitura" data-id="r06-proximo-nivel--microsoft-com-en-us-haxtoolkit-library"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Dezoito diretrizes de design pra produtos com IA, da Microsoft Research (CHI 2019, validadas com 49 designers em 20 produtos). Elas se organizam por <strong>quando</strong> a interação acontece: no início, durante, quando a IA erra, e ao longo do tempo. Servem de checklist de revisão de tela.</p>
+<p class="tldr"><strong>Em uma frase:</strong> são 18 diretrizes de design para produtos com IA, publicadas pela Microsoft Research em 2019 e testadas com 49 designers em 20 produtos. Elas se organizam pelo momento da interação: no começo, durante, quando a IA erra e ao longo do tempo. Servem de checklist para revisar uma tela.</p>
+<p class="real"><b>No mundo real</b>O autocompletar do Gmail e o do GitHub Copilot mostram a sugestão em cinza: aceitar é apertar Tab, e recusar é só continuar digitando. São as diretrizes 8 e 9 (descartar e corrigir com o menor esforço possível) aplicadas a milhões de pessoas por dia. Uma sugestão que exigisse fechar uma janela para recusar seria abandonada.</p>
 
-<h5>As 18, por fase</h5>
-<div class="tbl"><table>
-<tr><th>Fase</th><th>Diretrizes</th></tr>
-<tr><td>No início</td><td>G1 Deixar claro o que o sistema faz &middot; G2 Deixar claro <em>quão bem</em> ele faz</td></tr>
-<tr><td>Durante a interação</td><td>G3 Agir no momento certo pelo contexto &middot; G4 Mostrar informação relevante ao contexto &middot; G5 Respeitar normas sociais &middot; G6 Mitigar vieses sociais</td></tr>
-<tr><td>Quando a IA erra</td><td>G7 Invocação eficiente &middot; G8 Descarte eficiente &middot; G9 Correção eficiente &middot; G10 Limitar o escopo na dúvida &middot; G11 Explicar por que fez o que fez</td></tr>
-<tr><td>Ao longo do tempo</td><td>G12 Lembrar interações recentes &middot; G13 Aprender com o comportamento &middot; G14 Atualizar e adaptar com cautela &middot; G15 Incentivar feedback granular &middot; G16 Mostrar a consequência das ações do usuário &middot; G17 Controles globais &middot; G18 Avisar sobre mudanças</td></tr>
-</table></div>
-
-<h5>As que mais rendem numa revisão de produto</h5>
+<h5>As 18, por momento</h5>
 <ul>
-<li><strong>G2</strong>: a maioria das telas de IA diz o que faz e esquece o quão bem. O Ally AI deveria dizer que o teste automático cobre só parte do WCAG, como o próprio <code>CLAUDE.md</code> exige.</li>
-<li><strong>G9 + G8</strong>: quando a IA erra, corrigir ou dispensar tem de custar um clique. No Gabarita, editar a frase-chave do caderno e reportar a questão fazem esse papel.</li>
-<li><strong>G10</strong>: na dúvida, faça menos. É o que o Gabarita faz quando a citação não confere: publica a diretriz sem resumo.</li>
-<li><strong>G11</strong>: explicar o porquê. A citação literal é uma forma de G11.</li>
-<li><strong>G15</strong>: feedback granular (por item, não &ldquo;avalie o app&rdquo;). O report por categoria do Gabarita é G15; o Ally AI ainda não tem.</li>
+<li><strong>No começo:</strong> G1 deixar claro o que o sistema faz; G2 deixar claro <em>quão bem</em> ele faz.</li>
+<li><strong>Durante:</strong> G3 agir na hora certa; G4 mostrar o que é relevante ao contexto; G5 respeitar normas sociais; G6 evitar vieses.</li>
+<li><strong>Quando erra:</strong> G7 fácil de chamar; G8 fácil de descartar; G9 fácil de corrigir; G10 na dúvida, fazer menos; G11 explicar por que fez o que fez.</li>
+<li><strong>Ao longo do tempo:</strong> G12 lembrar o que aconteceu há pouco; G13 aprender com o uso; G14 mudar com cuidado; G15 pedir feedback específico; G16 mostrar a consequência das ações; G17 controles gerais; G18 avisar sobre mudanças.</li>
 </ul>
-<p>Cada diretriz na biblioteca tem <em>padrões</em> de design associados, com exemplos. Use como consulta quando for desenhar uma tela específica.</p>
-<p><strong>Frase de entrevista:</strong> &ldquo;Antes de lançar uma tela de IA eu passo pelas 18 do HAX como checklist. As que mais pegam são G2 (dizer quão bem funciona) e G15 (feedback por item).&rdquo;</p>
+
+<h5>As que mais rendem numa revisão</h5>
+<ul>
+<li><strong>G2:</strong> a maioria das telas diz o que a IA faz e esquece de dizer quão bem. O Ally AI deveria avisar que o teste automático cobre só parte da WCAG.</li>
+<li><strong>G8 e G9:</strong> descartar ou corrigir tem de custar um clique. No Gabarita, editar a frase-chave e reportar a questão fazem esse papel.</li>
+<li><strong>G10:</strong> na dúvida, faça menos. O Gabarita publica a diretriz sem resumo quando a citação não confere.</li>
+<li><strong>G15:</strong> feedback por item, e não &ldquo;avalie o app&rdquo;. O report por categoria do Gabarita é G15.</li>
+</ul>
+<p><strong>Frase de entrevista:</strong> &ldquo;Antes de lançar uma tela de IA, eu passo pelas 18 diretrizes do HAX como checklist. As que mais pegam são G2, dizer quão bem funciona, e G15, feedback por item.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://www.microsoft.com/en-us/haxtoolkit/library/" target="_blank" rel="noopener">microsoft.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">Micro Frontends (Cam Jackson, martinfowler.com)</a></div><div class="r-note">O artigo de referência: definição, benefícios, as cinco formas de integração, estilo, biblioteca compartilhada, comunicação entre apps e as desvantagens.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~40 min</span>Leia &ldquo;Benefits&rdquo;, &ldquo;Integration approaches&rdquo;, &ldquo;Shared component libraries&rdquo; e &ldquo;Downsides&rdquo;. O exemplo completo de código é opcional.</div><div class="r-src">martinfowler.com</div><details class="leitura" data-id="r06-proximo-nivel--martinfowler-com-articles-micro-frontends-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Microfrontend é &ldquo;aplicações de front entregáveis de forma independente, compostas num todo maior&rdquo;. O ganho é <strong>organizacional</strong>: times autônomos, deploy independente, migração aos poucos. O preço é <strong>payload, ambiente e governança</strong>. Não é ferramenta de performance nem de time pequeno.</p>
+<p class="tldr"><strong>Em uma frase:</strong> microfrontends são partes do front que times diferentes publicam de forma independente e que juntas formam um produto. O ganho é de <strong>organização</strong>: times autônomos, deploy independente, migração aos poucos. O preço é peso, ambientes diferentes e coordenação. Não é ferramenta de performance nem de time pequeno.</p>
+<p class="real"><b>No mundo real</b>A DAZN, plataforma de streaming de esportes presente em dezenas de países, dividiu o front por área do produto, cada uma com o seu time e o seu deploy, e o arquiteto do projeto escreveu um livro sobre isso. Os exemplos da Zalando e do Spotify estão no <a href="r03-arquitetura-frontend.html">R3</a>. Em comum: centenas de engenheiros. Num time de cinco pessoas, o custo vem sem o benefício.</p>
 
 <h5>Benefícios</h5>
 <ul>
-<li><strong>Upgrade incremental</strong>: trocar o legado pedaço a pedaço (strangler), decidindo a tecnologia caso a caso.</li>
-<li><strong>Bases simples e desacopladas</strong>: fronteira por domínio de negócio dificulta acoplamento acidental.</li>
-<li><strong>Deploy independente</strong>: cada parte com seu pipeline, sem coordenar release.</li>
-<li><strong>Times autônomos</strong>: organizados por funcionalidade vertical, não por camada técnica.</li>
+<li><strong>Troca aos pedaços:</strong> substituir o sistema antigo parte por parte.</li>
+<li><strong>Bases menores:</strong> fronteiras por área de negócio dificultam o acoplamento acidental.</li>
+<li><strong>Deploy independente:</strong> cada parte com o seu pipeline, sem combinar a data de lançamento.</li>
+<li><strong>Times autônomos:</strong> organizados por funcionalidade, e não por camada técnica.</li>
 </ul>
 
-<h5>As cinco formas de integrar</h5>
-<div class="tbl"><table>
-<tr><th>Abordagem</th><th>Como</th><th>Trade-off</th></tr>
-<tr><td>Template no servidor</td><td>Fragmentos HTML compostos no servidor (SSI)</td><td>Simples; cada pipeline cuida do seu fragmento</td></tr>
-<tr><td>Build-time</td><td>Cada micro é um pacote npm do container</td><td><strong>Release em lockstep</strong>: perde o deploy independente, que é o ponto todo</td></tr>
-<tr><td>Iframe em runtime</td><td>Cada app num iframe</td><td>Isolamento grátis; roteamento, deep link e responsividade ficam difíceis</td></tr>
-<tr><td>JavaScript em runtime</td><td>Cada bundle expõe uma função global que o container chama</td><td>A mais flexível e a mais usada</td></tr>
-<tr><td>Web Components em runtime</td><td>Cada micro define um custom element</td><td>Mesma flexibilidade, dentro do padrão da plataforma</td></tr>
-</table></div>
-
-<h5>Estilo, biblioteca compartilhada e comunicação</h5>
+<h5>As cinco formas de juntar</h5>
 <ul>
-<li>CSS é global: precisa de convenção (BEM), CSS Modules, CSS-in-JS ou shadow DOM.</li>
-<li><strong>Biblioteca de componentes compartilhada</strong>: só UI, sem lógica de domínio, e só depois que o padrão emergiu (criar cedo demais gera churn). Funciona melhor com um time guardião que aceita contribuição.</li>
-<li>Comunicação mínima entre micros: custom events, callbacks do container pra baixo, ou a própria URL. Cada micro tem seu estado, sem store global.</li>
-<li>Backend: um <strong>BFF</strong> por micro; autenticação no container, com token injetado nos micros.</li>
+<li><strong>No servidor:</strong> fragmentos de HTML montados no servidor. Simples.</li>
+<li><strong>No build, como pacote npm:</strong> obriga a publicar tudo junto. Perde o deploy independente, que é o objetivo.</li>
+<li><strong>Com iframe:</strong> isolamento de graça, mas rotas, links diretos e layout responsivo ficam difíceis.</li>
+<li><strong>Com JavaScript no navegador:</strong> cada parte expõe uma função que o app principal chama. A mais flexível e a mais usada.</li>
+<li><strong>Com Web Components:</strong> a mesma flexibilidade, usando elementos HTML próprios.</li>
 </ul>
 
 <h5>Desvantagens</h5>
 <ul>
-<li><strong>Payload</strong>: dependências duplicadas. Extrair as comuns reintroduz acoplamento de build.</li>
-<li><strong>Diferença de ambiente</strong>: desenvolver isolado e quebrar quando integrado.</li>
-<li><strong>Complexidade operacional e de governança</strong>: mais repositórios, pipelines e decisões descentralizadas. Exige maturidade de automação antes de adotar.</li>
+<li><strong>Peso:</strong> dependências baixadas em dobro. Juntar as comuns traz de volta o acoplamento.</li>
+<li><strong>Ambientes diferentes:</strong> funciona isolado e quebra quando junta.</li>
+<li><strong>Coordenação:</strong> mais repositórios, pipelines e decisões espalhadas. Exige automação madura antes de adotar.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Microfrontend resolve um problema de times, não de tráfego. Antes dele eu iria de monorepo com fronteiras de módulo e uma biblioteca de componentes.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Microfrontend resolve um problema de times, não de tráfego. Antes dele, eu iria de monorepo com fronteiras de módulo e uma biblioteca de componentes.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://martinfowler.com/articles/micro-frontends.html" target="_blank" rel="noopener">martinfowler.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison" target="_blank" rel="noopener">Compare AWS and Azure services to Google Cloud</a></div><div class="r-note">A tabela oficial de equivalência entre as três nuvens, por categoria de serviço.</div><div class="r-scope"><span class="r-tag t-ref">Consulta &middot; ~15 min</span>Não é pra ler inteira: encontre as linhas de uma app web (compute, container serverless, storage, CDN, Postgres, secrets, observabilidade, fila).</div><div class="r-src">docs.cloud.google.com &middot; oficial</div><details class="leitura" data-id="r06-proximo-nivel--docs-cloud-google-com-docs-get-started-aws-azure-gcp-service-compariso"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">A tabela oficial do Google que mapeia cada serviço do GCP pro equivalente &ldquo;semelhante ou comparável&rdquo; da AWS e do Azure. Pra uma app web, umas quinze linhas cobrem quase tudo. Decore essas e você consegue traduzir qualquer desenho de arquitetura entre as três.</p>
+<p class="tldr"><strong>Em uma frase:</strong> esta é a tabela oficial do Google que mostra o serviço equivalente em cada nuvem. Para um app web, umas quinze linhas cobrem quase tudo. Sabendo essas, você traduz qualquer desenho de arquitetura entre AWS, Azure e Google Cloud.</p>
+<p class="real"><b>No mundo real</b>Portabilidade vale dinheiro. O Dropbox tirou da AWS a maior parte dos arquivos dos usuários e passou a guardá-los em infraestrutura própria em 2016. O Cloudflare R2 aceita a mesma API do S3 e não cobra pela saída de dados. Por isso o Gabarita consegue usar o R2 trocando só o endereço e a credencial. Rodar a mesma aplicação em duas nuvens ao mesmo tempo, por outro lado, é raro e caro.</p>
 
-<h5>As linhas de uma app web</h5>
+<h5>As linhas de um app web</h5>
 <div class="tbl"><table>
-<tr><th>Categoria</th><th>AWS</th><th>Azure</th><th>Google Cloud</th></tr>
-<tr><td>VM</td><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
-<tr><td>Kubernetes</td><td>EKS</td><td>AKS</td><td>GKE</td></tr>
-<tr><td>Container serverless</td><td>Fargate, App Runner</td><td>Container Instances, Container Apps</td><td>Cloud Run</td></tr>
+<tr><th>Para</th><th>AWS</th><th>Azure</th><th>Google Cloud</th></tr>
+<tr><td>Máquina virtual</td><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
+<tr><td>Container sem gerenciar máquina</td><td>Fargate, App Runner</td><td>Container Apps</td><td>Cloud Run</td></tr>
 <tr><td>Funções</td><td>Lambda</td><td>Functions</td><td>Cloud Run functions</td></tr>
-<tr><td>Object storage</td><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
+<tr><td>Kubernetes</td><td>EKS</td><td>AKS</td><td>GKE</td></tr>
+<tr><td>Arquivos</td><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
 <tr><td>CDN</td><td>CloudFront</td><td>Front Door</td><td>Cloud CDN</td></tr>
-<tr><td>PostgreSQL gerenciado</td><td>Aurora (e RDS)</td><td>Azure Database for PostgreSQL</td><td>Cloud SQL, AlloyDB</td></tr>
-<tr><td>DNS</td><td>Route 53</td><td>DNS</td><td>Cloud DNS</td></tr>
-<tr><td>Load balancer</td><td>Elastic Load Balancing</td><td>Load Balancer</td><td>Cloud Load Balancing</td></tr>
+<tr><td>Postgres gerenciado</td><td>RDS, Aurora</td><td>Database for PostgreSQL</td><td>Cloud SQL, AlloyDB</td></tr>
 <tr><td>Segredos</td><td>Secrets Manager</td><td>Key Vault</td><td>Secret Manager</td></tr>
-<tr><td>Monitoramento/logs</td><td>CloudWatch</td><td>Monitor</td><td>Cloud Monitoring, Cloud Logging</td></tr>
-<tr><td>Identidade</td><td>IAM</td><td>Entra ID</td><td>Cloud IAM, Cloud Identity</td></tr>
-<tr><td>Fila / pub-sub</td><td>SQS, SNS, Kinesis</td><td>Service Bus</td><td>Pub/Sub</td></tr>
-<tr><td>API gateway</td><td>API Gateway</td><td>API Management</td><td>API Gateway, Apigee</td></tr>
-<tr><td>Site estático / front</td><td>Amplify</td><td>Static Web Apps</td><td>Firebase Hosting</td></tr>
-<tr><td>Plataforma de IA</td><td>SageMaker</td><td>Azure AI</td><td>Vertex AI</td></tr>
+<tr><td>Monitoramento e logs</td><td>CloudWatch</td><td>Monitor</td><td>Cloud Monitoring e Logging</td></tr>
+<tr><td>Identidade e permissões</td><td>IAM</td><td>Entra ID</td><td>Cloud IAM</td></tr>
+<tr><td>Fila</td><td>SQS, SNS</td><td>Service Bus</td><td>Pub/Sub</td></tr>
+<tr><td>DNS</td><td>Route 53</td><td>DNS</td><td>Cloud DNS</td></tr>
+<tr><td>Site gerenciado</td><td>Amplify</td><td>Static Web Apps</td><td>Firebase Hosting</td></tr>
+<tr><td>Plataforma de IA</td><td>SageMaker, Bedrock</td><td>Azure AI</td><td>Vertex AI</td></tr>
 </table></div>
 
 <h5>Como usar sem cair em armadilha</h5>
 <ul>
-<li>&ldquo;Comparável&rdquo; não é &ldquo;idêntico&rdquo;: limites, preço e modelo de cobrança diferem. A tabela serve pra traduzir o desenho, não pra estimar custo.</li>
-<li>Os seus projetos, traduzidos: a API do Ally AI no <strong>Cloud Run</strong> seria <strong>App Runner/Fargate</strong> na AWS ou <strong>Container Apps</strong> no Azure. O R2 do Gabarita, falando a API do S3, vira <strong>S3</strong> trocando endpoint e credencial.</li>
-<li>Multi-cloud de verdade (a mesma carga em duas nuvens) cobra IAM duplicado, egress entre provedores e limita você ao menor denominador comum. Na maioria dos produtos, a meta certa é <strong>portabilidade</strong>: container, interfaces trocáveis, protocolo padrão (S3, Postgres, OpenTelemetry).</li>
+<li>&ldquo;Equivalente&rdquo; não é &ldquo;idêntico&rdquo;: limites, preço e forma de cobrança mudam. A tabela traduz o desenho, não estima custo.</li>
+<li>Os seus projetos, traduzidos: a API do Ally AI no Cloud Run seria App Runner ou Fargate na AWS, ou Container Apps no Azure.</li>
+<li><strong>Multi-cloud</strong> (a mesma aplicação em duas nuvens) cobra permissões duplicadas, tráfego caro entre provedores e prende você ao que as duas têm em comum. Na maioria dos produtos, a meta certa é <strong>portabilidade</strong>: container, Postgres padrão, arquivos pela API do S3.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Eu desenho numa nuvem e deixo as costuras pra sair dela: container, Postgres padrão e storage pela API do S3. Multi-cloud ativo só com uma exigência concreta que pague o custo.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Eu desenho numa nuvem e deixo as costuras para sair dela: container, Postgres padrão e arquivos pela API do S3. Multi-cloud ativo só com uma exigência concreta que pague o custo.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison" target="_blank" rel="noopener">docs.cloud.google.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
+
+  <h3 class="sub">MCP Apps: a interface dentro da conversa</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <p>Resposta de texto só vai até certo ponto. Quando a pessoa precisa <em>explorar</em> dado, preencher um formulário com muitas opções ou aprovar vários itens, o <strong>MCP Apps</strong> (extensão oficial do protocolo) deixa o servidor devolver uma interface HTML interativa que o host mostra <strong>na própria conversa</strong>.</p>
+      <ol>
+        <li>A descrição da ferramenta traz <code>_meta.ui.resourceUri</code>, apontando pra um recurso <code>ui://</code> do servidor.</li>
+        <li>O host busca esse HTML (pode até pré-carregar antes da chamada) e o renderiza num <strong>iframe isolado</strong>.</li>
+        <li>O app e o host trocam mensagens JSON-RPC por <code>postMessage</code>: o app pode chamar ferramentas do servidor, e o host empurra resultados novos pro app.</li>
+        <li>A <strong>segurança</strong> vem do isolamento: o app não alcança o DOM, os cookies nem o armazenamento do host, e as origens externas que ele pode carregar são declaradas em <code>_meta.ui.csp</code>.</li>
+      </ol>
+      <p><strong>Quando vale:</strong> dado complexo pra explorar (mapa, gráfico com filtro), configuração com muitas opções interdependentes, mídia rica, monitoramento em tempo real e fluxo de várias etapas (aprovar itens um a um). <strong>Quando não:</strong> se uma resposta em texto resolve, ou se a pessoa vai precisar do app fora da conversa. <strong>Ligação com o R1:</strong> na Generative UI o front é seu e escolhe componentes seus; no MCP Apps o host é de outra empresa e o <em>servidor</em> entrega a interface, por isso o isolamento do iframe é a parte central do desenho.</p>
+    </div>
+  </div>
+
+
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <div class="ex" id="fz1">
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Uma ferramenta MCP, no papel</h3><span class="ex-meta">15 min &middot; JSON</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Você vai expor a busca de questões do Gabarita como ferramenta MCP. Escreva em JSON: (1) como a ferramenta aparece na resposta de <code>tools/list</code>; (2) o pedido <code>tools/call</code> que o host manda quando o modelo pede 3 questões de cardiologia; (3) uma resposta de sucesso.</p>
+      <h4>Regras</h4>
+      <ul>
+        <li><code>tema</code> é texto e obrigatório. <code>limite</code> é inteiro de 1 a 20, com padrão 5.</li>
+        <li>A descrição precisa dizer ao modelo <strong>quando</strong> usar a ferramenta.</li>
+      </ul>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Os argumentos são descritos por um JSON Schema no campo <code>inputSchema</code>. As mensagens seguem o JSON-RPC 2.0: <code>jsonrpc</code>, <code>id</code>, <code>method</code> e <code>params</code> no pedido; <code>result</code> na resposta.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code>// (1) um item de result.tools na resposta de tools/list
+{
+  "name": "buscar_questoes",
+  "description": "Busca questões de residência médica por tema. Use quando a pessoa pedir questões para treinar um assunto.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "tema": { "type": "string", "description": "Assunto, por exemplo cardiologia ou pediatria" },
+      "limite": { "type": "integer", "minimum": 1, "maximum": 20, "default": 5 }
+    },
+    "required": ["tema"]
+  }
+}
+
+// (2) o host chama a ferramenta
+{ "jsonrpc": "2.0", "id": 7, "method": "tools/call",
+  "params": { "name": "buscar_questoes", "arguments": { "tema": "cardiologia", "limite": 3 } } }
+
+// (3) a resposta do servidor
+{ "jsonrpc": "2.0", "id": 7,
+  "result": {
+    "content": [{ "type": "text", "text": "3 questões de cardiologia: Q1012, Q1048, Q1101." }],
+    "isError": false
+  } }
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o modelo decide usar a ferramenta lendo o <code>name</code>, a <code>description</code> e o <code>inputSchema</code>, então a descrição é parte do produto. O servidor valida os argumentos de novo antes de consultar o banco (o schema descreve, mas não protege). E erro da ferramenta volta como <code>isError: true</code> com um texto útil, para o modelo poder explicar o que houve.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="fz2">
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Revise esta tela de IA</h3><span class="ex-meta">15 min &middot; crítica de produto</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Um assistente resume contratos. A tela mostra o resumo com o selo &ldquo;Confiança: 87%&rdquo;, sem dizer de onde saiu cada frase. O botão &ldquo;Aplicar sugestões&rdquo; altera o contrato na hora. Quando a IA falha, o resumo simplesmente some. Proponha pelo menos quatro melhorias e diga qual problema cada uma resolve.</p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Releia os cartões 5 e 6: fonte, confiança, aprovação antes de agir, marcação do que é IA, falha com aviso e feedback específico.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+        <ol>
+          <li><strong>Citação por frase.</strong> Cada frase do resumo leva a um link para a cláusula de origem. A pessoa confere em vez de confiar às cegas.</li>
+          <li><strong>Confiança como categoria com ação.</strong> Troque &ldquo;87%&rdquo; por &ldquo;confiança baixa nesta cláusula: confira o original&rdquo;. Um número cru não diz o que fazer, e 87% parece mais certo do que é.</li>
+          <li><strong>Prévia e aprovação antes de aplicar.</strong> Mostre o antes e o depois de cada mudança, deixe aceitar uma por uma e ofereça desfazer. Alterar um contrato é uma ação com efeito real.</li>
+          <li><strong>Falha visível.</strong> &ldquo;Não consegui resumir agora. Tente de novo ou leia o contrato completo.&rdquo; Sumir em silêncio faz a pessoa achar que não havia nada a resumir.</li>
+          <li><strong>Marca de IA e feedback por trecho.</strong> Um selo &ldquo;gerado por IA&rdquo; e um &ldquo;este trecho está errado&rdquo; em cada frase. O feedback aponta exatamente o erro, e não só &ldquo;não gostei&rdquo;.</li>
+        </ol>
+        <p><strong>O que mostrar ao entrevistador:</strong> cada melhoria resolve um problema de confiança. A pessoa precisa saber de onde veio a resposta, quando desconfiar, o que vai mudar antes de mudar e o que fazer quando falha.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <h3 class="sub etapa" id="contar"><span class="etapa-n">3 &middot; Contar</span>As suas decisões e onde você já aplicou</h3>
+  <p class="etapa-nota">É o que você fala na entrevista: por que escolheu cada coisa nos seus projetos e a resposta honesta para o que ainda não fez.</p>
 
   <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
   <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
@@ -228,6 +391,7 @@
   <div class="tcards">
     <div class="tcard">
       <h4>Alucinação: a IA propõe, o código verifica <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> O resumo da IA só é publicado se a citação que ela trouxe existir, palavra por palavra, no documento. Se não existir, a diretriz sai sem resumo.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>A IA devolve o resumo da diretriz junto de uma citação, e o código só publica se a citação existir, palavra por palavra, no texto que ela leu. Se não confere, a diretriz entra só com título e link.</dd>
@@ -240,10 +404,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: em que situação a verificação por código não basta e o humano volta ao circuito?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Em 2023, advogados de Nova York apresentaram a um tribunal processos inventados pelo ChatGPT e foram multados: ninguém conferiu se os casos citados existiam. O Perplexity mostra a fonte ao lado de cada frase para a pessoa conferir. Checar a citação por código é a versão automática dessa conferência.</p>
     </div>
 
     <div class="tcard">
       <h4>Multi-cloud: portabilidade sem rodar em duas nuvens <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> O projeto usa vários fornecedores, com interfaces que deixam trocar cada peça, sem rodar em duas nuvens ao mesmo tempo.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Usar vários fornecedores, com costuras por interface (<code>AIProvider</code>, <code>Queue</code>, <code>ImageStorage</code>) e container, sem operar em duas nuvens ao mesmo tempo.</dd>
@@ -256,10 +422,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: a resposta honesta mais abaixo separa portabilidade de multi-cloud. Que motivo de negócio justificaria dar o salto?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Na União Europeia, a regulação DORA exige que bancos tenham um plano para sair de um fornecedor de tecnologia crítico, e aí operar em mais de uma nuvem pode se pagar. Para a maioria das empresas, basta o que o Dropbox fez ao tirar os arquivos da AWS em 2016: ter o sistema preparado para trocar a peça quando a conta mudar.</p>
     </div>
 
     <div class="tcard">
       <h4>MCP: ser cliente antes de ser servidor <span class="st p">em aberto</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Usar MCP no dia a dia como cliente, antes de publicar um servidor próprio, que seria uma API pública.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Usar MCP no dia a dia como cliente (context7, Playwright, Stripe, plugins) e ainda não publicar um servidor próprio.</dd>
@@ -272,6 +440,7 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: o motor do Ally AI já tem o formato de uma <em>tool</em>. Que proteção dele é a mesma que a spec de segurança do MCP pede?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>GitHub, Stripe e Sentry publicaram servidores MCP oficiais depois de já terem APIs públicas maduras, com autenticação, permissões e limites resolvidos. O servidor MCP herdou essa base. Publicar um servidor sem ela é abrir uma API nova sem as proteções.</p>
     </div>
   </div>
 
@@ -332,20 +501,6 @@
 
   </details>
 
-  <h3 class="sub">MCP Apps: a interface dentro da conversa</h3>
-  <div class="ex">
-    <div class="ex-body">
-      <p>Resposta de texto só vai até certo ponto. Quando a pessoa precisa <em>explorar</em> dado, preencher um formulário com muitas opções ou aprovar vários itens, o <strong>MCP Apps</strong> (extensão oficial do protocolo) deixa o servidor devolver uma interface HTML interativa que o host mostra <strong>na própria conversa</strong>.</p>
-      <ol>
-        <li>A descrição da ferramenta traz <code>_meta.ui.resourceUri</code>, apontando pra um recurso <code>ui://</code> do servidor.</li>
-        <li>O host busca esse HTML (pode até pré-carregar antes da chamada) e o renderiza num <strong>iframe isolado</strong>.</li>
-        <li>O app e o host trocam mensagens JSON-RPC por <code>postMessage</code>: o app pode chamar ferramentas do servidor, e o host empurra resultados novos pro app.</li>
-        <li>A <strong>segurança</strong> vem do isolamento: o app não alcança o DOM, os cookies nem o armazenamento do host, e as origens externas que ele pode carregar são declaradas em <code>_meta.ui.csp</code>.</li>
-      </ol>
-      <p><strong>Quando vale:</strong> dado complexo pra explorar (mapa, gráfico com filtro), configuração com muitas opções interdependentes, mídia rica, monitoramento em tempo real e fluxo de várias etapas (aprovar itens um a um). <strong>Quando não:</strong> se uma resposta em texto resolve, ou se a pessoa vai precisar do app fora da conversa. <strong>Ligação com o R1:</strong> na Generative UI o front é seu e escolhe componentes seus; no MCP Apps o host é de outra empresa e o <em>servidor</em> entrega a interface, por isso o isolamento do iframe é a parte central do desenho.</p>
-    </div>
-  </div>
-
   <h3 class="sub">Você já usou...? A resposta honesta</h3>
   <div class="evid">
     <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
@@ -372,6 +527,9 @@
       <p class="why"><strong>Por que isso importa:</strong> é o padrão &ldquo;a IA propõe, o código verifica&rdquo; aplicado a AI UX. Responde de uma vez três perguntas que toda vaga de IA faz: como você lida com alucinação, como mostra fonte, e quando dispensa humano no circuito (quando dá pra ter uma verificação determinística no lugar dele).</p>
     </div>
   </div>
+
+  <h3 class="sub etapa" id="provar"><span class="etapa-n">4 &middot; Provar</span>Perguntas abertas e múltipla escolha</h3>
+  <p class="etapa-nota">Responda em voz alta antes de abrir a resposta. A múltipla escolha, no fim, começa com três questões de aquecimento, só de conceito.</p>
 
   <div class="quiz">
     <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
@@ -415,10 +573,10 @@
 
   <div class="qz-pagina" data-qz-pagina>
     <h3 class="sub">Múltipla escolha desta página</h3>
-    <p class="qz-pagina-intro">11 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
+    <p class="qz-pagina-intro">14 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
     <div class="qz-bar qz-pagina-barra"><span class="qz-score qz-pagina-placar" aria-live="polite"></span><button type="button" class="qz-acao" data-acao="rodada">Nova rodada</button></div>
     <div class="qz-pagina-lista"></div>
-    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-proximo-10tabxj","t":"MCP &amp; AI UX","q":"Na arquitetura do MCP, o Claude Code conectado a três servidores (filesystem, Sentry e um banco) tem quantos \u003cem>clients\u003c/em> MCP?","o":["Um só, que multiplexa as três conexões","Três: um client dedicado por servidor","Nenhum: o próprio Claude Code é o client","Depende do transporte: com stdio são três, com HTTP um só"],"c":1,"e":"O host (a aplicação de IA) coordena; para cada servidor ele instancia um client que mantém uma conexão dedicada, independente do transporte. Três servidores, três clients, todos dentro do mesmo host — o Claude Code é o host, não o client."},{"id":"rm-proximo-16ra4ak","t":"MCP &amp; AI UX","q":"Qual a relação entre tool calling da API do modelo e MCP?","o":["MCP substitui o tool calling: o modelo deixa de precisar de schema","MCP é o tool calling da Anthropic; OpenAI e Gemini têm o seu","Tool calling é o mecanismo; MCP padroniza de onde vêm as tools","MCP só cobre resources e prompts; as tools ficam fora do protocolo"],"c":2,"e":"O modelo continua chamando função por JSON Schema. O MCP resolve a distribuição: um serviço publica suas tools uma vez, e qualquer host as descobre (\u003ccode>tools/list\u003c/code>) e executa (\u003ccode>tools/call\u003c/code>), seja qual for o modelo. N&times;M integrações viram N+M. Tools são uma das três primitivas do servidor, ao lado de resources e prompts."},{"id":"rm-proximo-1wkef4n","t":"MCP &amp; AI UX","q":"Um servidor MCP remoto recebe do cliente um token emitido para a API do GitHub e o repassa direto pra ela. Segundo as boas práticas de segurança do MCP, isso é:","o":["Token passthrough, proibido: só vale token emitido pra ele","Aceitável se o transporte for HTTPS e o token tiver escopo pequeno","O padrão recomendado de delegação OAuth para servidores proxy","Permitido se o servidor validar a assinatura do token antes"],"c":0,"e":"Repassar um token que não foi emitido para o servidor fura os controles de rate limit, validação e auditoria, apaga a identidade de quem chamou e transforma o servidor num proxy de exfiltração. A regra é MUST NOT: o servidor só aceita token cuja audiência é ele próprio, e pra falar com o GitHub obtém o seu. HTTPS, escopo pequeno ou assinatura válida não mudam isso."},{"id":"rm-proximo-1estzhu","t":"MCP &amp; AI UX","q":"Segundo o People + AI Guidebook (Google PAIR), qual é o jeito mais arriscado de mostrar a confiança do modelo para um público geral?","o":["Categorias (alta/média/baixa) com uma ação para cada","N-best: &ldquo;pode ser A, B ou C&rdquo;","Mostrar a fonte que sustenta a resposta","Uma porcentagem numérica sem contexto"],"c":3,"e":"O usuário não sabe o que &ldquo;80%&rdquo; significa e espera 100% no óbvio. Categorias com ação clara e N-best funcionam melhor, e a primeira pergunta é se mostrar a confiança muda alguma decisão. No Gabarita, a confiança vem da citação literal verificada."},{"id":"rm-proximo-1x5t8rn","t":"MCP &amp; AI UX","q":"Na integração de microfrontends por \u003cem>build-time\u003c/em> (cada micro como pacote npm do container), qual é o principal problema?","o":["O payload fica maior, porque cada micro traz o seu React","Release em lockstep: toda mudança exige rebuildar o container","Cada micro precisa ser servido de um domínio próprio","Os micros não podem compartilhar uma biblioteca de componentes"],"c":1,"e":"O ponto de microfrontend é deploy independente. Se o container precisa ser rebuildado para cada mudança de um micro, você paga a complexidade sem o benefício. Por isso as integrações em runtime (JavaScript, Web Components) são as mais usadas. React duplicado no payload é o custo típico dessas integrações em runtime; no build-time o bundler deduplica."},{"id":"rm-proximo-1amhh6d","t":"MCP &amp; AI UX","q":"O Gabarita usa Vercel, Supabase e Cloudflare R2 (pela API do S3), com o storage atrás de uma interface que escolhe o backend por variável de ambiente. Como descrever isso corretamente?","o":["Multi-cloud ativo, já que usa três provedores de nuvem diferentes","Arquitetura híbrida: parte on-premise, parte em nuvem pública","Portabilidade multi-fornecedor: costuras pra trocar cada peça","Vendor lock-in, porque cada peça depende de um fornecedor"],"c":2,"e":"Multi-cloud é a mesma carga rodando em mais de uma nuvem, com IAM duplicado, egress e o menor denominador comum como custo; usar um fornecedor por peça não é isso. O Gabarita tem portabilidade: o \u003ccode>ImageStorage\u003c/code> troca R2, Blob ou disco, e falar a API do S3 deixa a migração para a AWS barata — o oposto de lock-in. É a resposta honesta e a mais defensável."},{"id":"rm-proximo-yryy7s","t":"MCP & AI UX","q":"Num servidor MCP com transporte stdio, por que não usar \u003ccode>console.log\u003c/code>?","o":["O Node bloqueia console.log em processos filhos iniciados por outro programa","O stdout é o canal do protocolo, e um log corrompe a mensagem","O stdio só aceita mensagens de até 1 KB por linha de saída","O console.log deixa o servidor muito lento ao escrever no terminal"],"c":1,"e":"No stdio, o cliente lê JSON-RPC linha a linha do stdout; uma linha de log no meio vira JSON inválido. Todo log vai para o stderr (\u003ccode>console.error\u003c/code>) ou para arquivo. Em HTTP o problema não existe, porque o protocolo viaja na conexão."},{"id":"rm-proximo-xqql3m","t":"MCP & AI UX","q":"Na tool de um servidor MCP, o que o modelo lê para decidir quando usá-la?","o":["O código-fonte do handler, que ele lê por reflexão","O histórico de chamadas que outros usuários já fizeram","A descrição da ferramenta e o schema dos argumentos","O nome do pacote npm do servidor e o número da versão"],"c":2,"e":"A descrição é \u003cem>prompt\u003c/em>: ela deve dizer o que a ferramenta faz, quando usar e quando não usar. O \u003ccode>inputSchema\u003c/code> diz como chamar. Uma descrição vaga faz o modelo escolher mal ou ignorar a ferramenta."},{"id":"rm-proximo-1sqzp0h","t":"MCP & AI UX","q":"No MCP Apps, como o host mostra a interface de uma ferramenta?","o":["Executa o JavaScript do servidor dentro da própria página do host","Abre uma nova aba do navegador com a URL que o servidor informar","Converte a interface em texto simples antes de mostrar na conversa","Renderiza o recurso \u003ccode>ui://\u003c/code> num iframe isolado na conversa"],"c":3,"e":"A ferramenta aponta para um recurso \u003ccode>ui://\u003c/code> (em \u003ccode>_meta.ui.resourceUri\u003c/code>); o host busca o HTML e o renderiza num iframe isolado, que conversa com ele por \u003ccode>postMessage\u003c/code>. O isolamento impede o app de alcançar o DOM e os cookies do host, e é o que permite renderizar app de terceiros."},{"id":"rm-proximo-13bw4np","t":"MCP & AI UX","q":"Na spec do MCP de 2026-07-28 não há sessão no protocolo. O que o servidor deve fazer com um handle de estado (por exemplo, o id de um carrinho) recebido como argumento?","o":["Confiar nele, pois é aleatório e longo o suficiente para não ser adivinhado","Nunca tratar a posse como autenticação; vinculá-lo ao usuário do token","Guardar o handle no cliente e comparar com um cookie de sessão antigo","Trocar por um id sequencial, para facilitar a leitura dos logs"],"c":1,"e":"É o ataque &ldquo;state handle hijacking&rdquo;: quem obtém ou adivinha o handle opera no estado de outro. A defesa é verificar toda requisição, gerar handles aleatórios e com expiração e chavear o estado por \u003ccode>&lt;user_id&gt;:&lt;handle&gt;\u003c/code>, com o usuário vindo do token verificado, nunca do cliente."},{"id":"rm-proximo-16z7ekg","t":"MCP & AI UX","q":"Segundo a spec, por que o PKCE sozinho não impede um ataque mix-up?","o":["O PKCE só vale para clientes que guardam um client secret no servidor","O \u003ccode>code_challenge\u003c/code> é enviado sem proteção na URL de autorização","O cliente manda o \u003ccode>code_verifier\u003c/code> ao endpoint do atacante, com o código","O PKCE expira antes de o usuário terminar a autorização no navegador"],"c":2,"e":"No mix-up, um servidor de autorização controlado pelo atacante faz o cliente mandar a ele um código emitido por outro, honesto. Como o cliente também transmite o \u003ccode>code_verifier\u003c/code> ao endpoint errado, o PKCE não ajuda. A defesa é validar a resposta contra o servidor registrado (o \u003ccode>iss\u003c/code>) antes de resgatar."}]</script>
+    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-proximo-19n9t0y","t":"MCP &amp; AI UX","q":"Em uma frase, o que é o MCP?","o":["Um padrão para apps de IA plugarem ferramentas externas","Um modelo de linguagem treinado para usar ferramentas","Uma biblioteca de componentes para telas de chat","Um serviço de nuvem que hospeda servidores de IA"],"c":0,"e":"O Model Context Protocol é um protocolo: quem faz a ferramenta escreve um servidor MCP uma vez, e qualquer app que fale MCP consegue usá-la. Não é um modelo, não é biblioteca de UI e não é um serviço de hospedagem.","b":1},{"id":"rm-proximo-a8c69d","t":"MCP &amp; AI UX","q":"Por que mostrar a fonte (a citação) ao lado de uma resposta da IA?","o":["Para a pessoa conferir e calibrar quanto confiar","Para a resposta parecer mais longa e completa","Para o modelo errar menos na próxima resposta","Para cumprir uma exigência técnica do provedor"],"c":0,"e":"Com a fonte, a pessoa confere a afirmação e decide quanto confiar nela, que é o centro da boa AI UX. A citação não muda o modelo e não é exigência do provedor. Ela existe para quem lê.","b":1},{"id":"rm-proximo-uflivg","t":"MCP &amp; AI UX","q":"O que é portabilidade entre fornecedores, no sentido usado nesta página?","o":["Usar interfaces que deixam trocar uma peça de fornecedor","Rodar a mesma aplicação em duas nuvens ao mesmo tempo","Comprar o mesmo serviço de vários fornecedores juntos","Copiar o banco de dados para outra nuvem toda noite"],"c":0,"e":"Portabilidade é poder trocar uma peça sem reescrever o app, como gravar arquivos pela API do S3 e poder usar o R2 no lugar. Rodar a mesma carga em duas nuvens é multi-cloud, bem mais caro e raro. Copiar o banco toda noite é backup.","b":1},{"id":"rm-proximo-10tabxj","t":"MCP &amp; AI UX","q":"Na arquitetura do MCP, o Claude Code conectado a três servidores (filesystem, Sentry e um banco) tem quantos \u003cem>clients\u003c/em> MCP?","o":["Um só, que multiplexa as três conexões","Três: um client dedicado por servidor","Nenhum: o próprio Claude Code é o client","Depende do transporte: com stdio são três, com HTTP um só"],"c":1,"e":"O host (a aplicação de IA) coordena; para cada servidor ele instancia um client que mantém uma conexão dedicada, independente do transporte. Três servidores, três clients, todos dentro do mesmo host — o Claude Code é o host, não o client."},{"id":"rm-proximo-16ra4ak","t":"MCP &amp; AI UX","q":"Qual a relação entre tool calling da API do modelo e MCP?","o":["MCP substitui o tool calling: o modelo deixa de precisar de schema","MCP é o tool calling da Anthropic; OpenAI e Gemini têm o seu","Tool calling é o mecanismo; MCP padroniza de onde vêm as tools","MCP só cobre resources e prompts; as tools ficam fora do protocolo"],"c":2,"e":"O modelo continua chamando função por JSON Schema. O MCP resolve a distribuição: um serviço publica suas tools uma vez, e qualquer host as descobre (\u003ccode>tools/list\u003c/code>) e executa (\u003ccode>tools/call\u003c/code>), seja qual for o modelo. N&times;M integrações viram N+M. Tools são uma das três primitivas do servidor, ao lado de resources e prompts."},{"id":"rm-proximo-1wkef4n","t":"MCP &amp; AI UX","q":"Um servidor MCP remoto recebe do cliente um token emitido para a API do GitHub e o repassa direto pra ela. Segundo as boas práticas de segurança do MCP, isso é:","o":["Token passthrough, proibido: só vale token emitido pra ele","Aceitável se o transporte for HTTPS e o token tiver escopo pequeno","O padrão recomendado de delegação OAuth para servidores proxy","Permitido se o servidor validar a assinatura do token antes"],"c":0,"e":"Repassar um token que não foi emitido para o servidor fura os controles de rate limit, validação e auditoria, apaga a identidade de quem chamou e transforma o servidor num proxy de exfiltração. A regra é MUST NOT: o servidor só aceita token cuja audiência é ele próprio, e pra falar com o GitHub obtém o seu. HTTPS, escopo pequeno ou assinatura válida não mudam isso."},{"id":"rm-proximo-1estzhu","t":"MCP &amp; AI UX","q":"Segundo o People + AI Guidebook (Google PAIR), qual é o jeito mais arriscado de mostrar a confiança do modelo para um público geral?","o":["Categorias (alta/média/baixa) com uma ação para cada","N-best: &ldquo;pode ser A, B ou C&rdquo;","Mostrar a fonte que sustenta a resposta","Uma porcentagem numérica sem contexto"],"c":3,"e":"O usuário não sabe o que &ldquo;80%&rdquo; significa e espera 100% no óbvio. Categorias com ação clara e N-best funcionam melhor, e a primeira pergunta é se mostrar a confiança muda alguma decisão. No Gabarita, a confiança vem da citação literal verificada."},{"id":"rm-proximo-1x5t8rn","t":"MCP &amp; AI UX","q":"Na integração de microfrontends por \u003cem>build-time\u003c/em> (cada micro como pacote npm do container), qual é o principal problema?","o":["O payload fica maior, porque cada micro traz o seu React","Release em lockstep: toda mudança exige rebuildar o container","Cada micro precisa ser servido de um domínio próprio","Os micros não podem compartilhar uma biblioteca de componentes"],"c":1,"e":"O ponto de microfrontend é deploy independente. Se o container precisa ser rebuildado para cada mudança de um micro, você paga a complexidade sem o benefício. Por isso as integrações em runtime (JavaScript, Web Components) são as mais usadas. React duplicado no payload é o custo típico dessas integrações em runtime; no build-time o bundler deduplica."},{"id":"rm-proximo-1amhh6d","t":"MCP &amp; AI UX","q":"O Gabarita usa Vercel, Supabase e Cloudflare R2 (pela API do S3), com o storage atrás de uma interface que escolhe o backend por variável de ambiente. Como descrever isso corretamente?","o":["Multi-cloud ativo, já que usa três provedores de nuvem diferentes","Arquitetura híbrida: parte on-premise, parte em nuvem pública","Portabilidade multi-fornecedor: costuras pra trocar cada peça","Vendor lock-in, porque cada peça depende de um fornecedor"],"c":2,"e":"Multi-cloud é a mesma carga rodando em mais de uma nuvem, com IAM duplicado, egress e o menor denominador comum como custo; usar um fornecedor por peça não é isso. O Gabarita tem portabilidade: o \u003ccode>ImageStorage\u003c/code> troca R2, Blob ou disco, e falar a API do S3 deixa a migração para a AWS barata — o oposto de lock-in. É a resposta honesta e a mais defensável."},{"id":"rm-proximo-yryy7s","t":"MCP & AI UX","q":"Num servidor MCP com transporte stdio, por que não usar \u003ccode>console.log\u003c/code>?","o":["O Node bloqueia console.log em processos filhos iniciados por outro programa","O stdout é o canal do protocolo, e um log corrompe a mensagem","O stdio só aceita mensagens de até 1 KB por linha de saída","O console.log deixa o servidor muito lento ao escrever no terminal"],"c":1,"e":"No stdio, o cliente lê JSON-RPC linha a linha do stdout; uma linha de log no meio vira JSON inválido. Todo log vai para o stderr (\u003ccode>console.error\u003c/code>) ou para arquivo. Em HTTP o problema não existe, porque o protocolo viaja na conexão."},{"id":"rm-proximo-xqql3m","t":"MCP & AI UX","q":"Na tool de um servidor MCP, o que o modelo lê para decidir quando usá-la?","o":["O código-fonte do handler, que ele lê por reflexão","O histórico de chamadas que outros usuários já fizeram","A descrição da ferramenta e o schema dos argumentos","O nome do pacote npm do servidor e o número da versão"],"c":2,"e":"A descrição é \u003cem>prompt\u003c/em>: ela deve dizer o que a ferramenta faz, quando usar e quando não usar. O \u003ccode>inputSchema\u003c/code> diz como chamar. Uma descrição vaga faz o modelo escolher mal ou ignorar a ferramenta."},{"id":"rm-proximo-1sqzp0h","t":"MCP & AI UX","q":"No MCP Apps, como o host mostra a interface de uma ferramenta?","o":["Executa o JavaScript do servidor dentro da própria página do host","Abre uma nova aba do navegador com a URL que o servidor informar","Converte a interface em texto simples antes de mostrar na conversa","Renderiza o recurso \u003ccode>ui://\u003c/code> num iframe isolado na conversa"],"c":3,"e":"A ferramenta aponta para um recurso \u003ccode>ui://\u003c/code> (em \u003ccode>_meta.ui.resourceUri\u003c/code>); o host busca o HTML e o renderiza num iframe isolado, que conversa com ele por \u003ccode>postMessage\u003c/code>. O isolamento impede o app de alcançar o DOM e os cookies do host, e é o que permite renderizar app de terceiros."},{"id":"rm-proximo-13bw4np","t":"MCP & AI UX","q":"Na spec do MCP de 2026-07-28 não há sessão no protocolo. O que o servidor deve fazer com um handle de estado (por exemplo, o id de um carrinho) recebido como argumento?","o":["Confiar nele, pois é aleatório e longo o suficiente para não ser adivinhado","Nunca tratar a posse como autenticação; vinculá-lo ao usuário do token","Guardar o handle no cliente e comparar com um cookie de sessão antigo","Trocar por um id sequencial, para facilitar a leitura dos logs"],"c":1,"e":"É o ataque &ldquo;state handle hijacking&rdquo;: quem obtém ou adivinha o handle opera no estado de outro. A defesa é verificar toda requisição, gerar handles aleatórios e com expiração e chavear o estado por \u003ccode>&lt;user_id&gt;:&lt;handle&gt;\u003c/code>, com o usuário vindo do token verificado, nunca do cliente."},{"id":"rm-proximo-16z7ekg","t":"MCP & AI UX","q":"Segundo a spec, por que o PKCE sozinho não impede um ataque mix-up?","o":["O PKCE só vale para clientes que guardam um client secret no servidor","O \u003ccode>code_challenge\u003c/code> é enviado sem proteção na URL de autorização","O cliente manda o \u003ccode>code_verifier\u003c/code> ao endpoint do atacante, com o código","O PKCE expira antes de o usuário terminar a autorização no navegador"],"c":2,"e":"No mix-up, um servidor de autorização controlado pelo atacante faz o cliente mandar a ele um código emitido por outro, honesto. Como o cliente também transmite o \u003ccode>code_verifier\u003c/code> ao endpoint errado, o PKCE não ajuda. A defesa é validar a resposta contra o servidor registrado (o \u003ccode>iss\u003c/code>) antes de resgatar."}]</script>
   </div>
 </section>
 
@@ -428,7 +586,7 @@
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/10/2026
+    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 226 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 16/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

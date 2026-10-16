@@ -22,9 +22,115 @@
   <section class="week" id="rm5">
   <div class="week-head"><span class="week-num">R5</span><h2>Cloud &amp; Delivery na AWS</h2></div>
   <div class="week-meta">~8h &middot; sair do &ldquo;a Vercel faz isso sozinha&rdquo; e saber o que ela fazia</div>
-  <p class="intro">O Gabarita roda na Vercel e a API do Ally AI vai pro Google Cloud Run. Nenhum dos dois está na AWS, e é a AWS que aparece na maioria das vagas de Frontend Engineer com foco em IA lá fora. Ninguém espera que um front-end vire especialista em infra. Espera-se que você saiba <strong>o que muda quando o Next.js sai da Vercel</strong>: streaming atrás de proxy, cache por instância, <code>NEXT_PUBLIC_</code> embutido no build, CDN que guarda o que não devia. E que o pipeline faça deploy sem uma chave de acesso esquecida num secret. Esta página liga essas peças ao que os seus dois projetos já fazem. Pra base de observabilidade e deploy, veja o <a href="b17-producao.html">B17</a>; pra cache em camadas, o <a href="b01-system-design.html">B1</a>; pra cache do App Router, a <a href="02-nextjs-tailwind.html">semana 2</a>.</p>
+  <p class="intro">O Gabarita roda na Vercel, e a API do Ally AI no Google Cloud Run. Nenhum dos dois está na AWS, e é a AWS que aparece na maioria das vagas de fora. Ninguém espera que um front-end vire especialista em infraestrutura. Esperam que você saiba o que a Vercel fazia sozinha e o que muda quando o Next sai dela: cache, variáveis de ambiente, CDN e um deploy sem senha guardada. O <strong>Ver</strong> explica cada peça em linguagem simples. Base de produção e observabilidade: <a href="b17-producao.html">B17</a>.</p>
 
-  <h3 class="sub">Tópicos</h3>
+  <ol class="etapas">
+    <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
+    <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
+  </ol>
+
+  <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
+  <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. O que a Vercel fazia por você</h4>
+      <p><b class="r">Na Vercel</b>Você faz push, e ela cuida do build, da CDN, do HTTPS, de um link de preview por pull request, de escalar e de um cache compartilhado entre as cópias do app.</p>
+      <p><b class="r">Na AWS, três caminhos</b><strong>Amplify Hosting</strong> é o mais parecido com a Vercel, mas não suporta streaming nem <code>after()</code>. <strong>OpenNext</strong> transforma o build do Next em peças da AWS (Lambda, S3, CloudFront). <strong>Container</strong> (ECS Fargate ou App Runner) roda o <code>next start</code> numa imagem Docker, atrás do CloudFront.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Antes de escolher onde hospedar, eu cruzo os recursos do Next que o app usa com o que a plataforma suporta.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>2. Várias cópias do app</h4>
+      <p><b class="r">O problema</b>Na Vercel, o app parece um servidor só. Na AWS, você costuma rodar três cópias iguais atrás de um balanceador de carga.</p>
+      <p><b class="r">O que quebra</b>Cada cópia tem o próprio cache. Quando você manda &ldquo;atualizar a lista&rdquo; (<code>revalidateTag</code>), só a cópia que recebeu o pedido atualiza. As outras continuam mostrando o dado velho.</p>
+      <p><b class="r">Como resolve</b>Um cache compartilhado (Redis ou S3) que todas as cópias leem. E uma mesma chave de criptografia das Server Actions em todas as cópias, senão um formulário enviado a uma cópia diferente falha.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Sair da Vercel é assumir o que ela resolvia por mim, a começar pelo cache compartilhado.&rdquo;</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 222" role="img" aria-labelledby="r5d1">
+        <title id="r5d1">Três cópias do app com caches separados, comparadas com um cache compartilhado</title>
+        <text x="100" y="18" text-anchor="middle" class="h">Cada uma com o seu</text>
+        <text x="320" y="18" text-anchor="middle" class="h">Cache compartilhado</text>
+        <rect x="10" y="30" width="180" height="30" rx="6" class="bx-b"/><text x="100" y="50" text-anchor="middle" class="s">balanceador de carga</text>
+        <rect x="230" y="30" width="180" height="30" rx="6" class="bx-b"/><text x="320" y="50" text-anchor="middle" class="s">balanceador de carga</text>
+        <line x1="40" y1="60" x2="40" y2="82" class="ln"/><line x1="100" y1="60" x2="100" y2="82" class="ln"/><line x1="160" y1="60" x2="160" y2="82" class="ln"/>
+        <line x1="260" y1="60" x2="260" y2="82" class="ln"/><line x1="320" y1="60" x2="320" y2="82" class="ln"/><line x1="380" y1="60" x2="380" y2="82" class="ln"/>
+        <rect x="12" y="82" width="56" height="30" rx="5" class="bx"/><text x="40" y="102" text-anchor="middle" class="s">cópia 1</text>
+        <rect x="72" y="82" width="56" height="30" rx="5" class="bx"/><text x="100" y="102" text-anchor="middle" class="s">cópia 2</text>
+        <rect x="132" y="82" width="56" height="30" rx="5" class="bx"/><text x="160" y="102" text-anchor="middle" class="s">cópia 3</text>
+        <rect x="232" y="82" width="56" height="30" rx="5" class="bx"/><text x="260" y="102" text-anchor="middle" class="s">cópia 1</text>
+        <rect x="292" y="82" width="56" height="30" rx="5" class="bx"/><text x="320" y="102" text-anchor="middle" class="s">cópia 2</text>
+        <rect x="352" y="82" width="56" height="30" rx="5" class="bx"/><text x="380" y="102" text-anchor="middle" class="s">cópia 3</text>
+        <line x1="40" y1="112" x2="40" y2="130" class="ln"/><line x1="100" y1="112" x2="100" y2="130" class="ln"/><line x1="160" y1="112" x2="160" y2="130" class="ln"/>
+        <rect x="12" y="130" width="56" height="30" rx="5" class="bx-t"/><text x="40" y="150" text-anchor="middle" class="s">novo</text>
+        <rect x="72" y="130" width="56" height="30" rx="5" class="bx-a"/><text x="100" y="150" text-anchor="middle" class="s ta">velho</text>
+        <rect x="132" y="130" width="56" height="30" rx="5" class="bx-a"/><text x="160" y="150" text-anchor="middle" class="s ta">velho</text>
+        <line x1="260" y1="112" x2="300" y2="140" class="ln"/><line x1="320" y1="112" x2="320" y2="140" class="ln"/><line x1="380" y1="112" x2="340" y2="140" class="ln"/>
+        <rect x="262" y="140" width="116" height="30" rx="5" class="bx-t"/><text x="320" y="160" text-anchor="middle" class="s">Redis: um cache só</text>
+        <text x="100" y="186" text-anchor="middle" class="s">revalidateTag chegou</text>
+        <text x="100" y="202" text-anchor="middle" class="s">só na cópia 1</text>
+        <text x="320" y="196" text-anchor="middle" class="s">todas veem o mesmo dado</text>
+      </svg>
+      <figcaption>À esquerda, a atualização chega a uma cópia só e duas seguem com o dado velho. À direita, todas leem o mesmo cache.</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>3. CI/CD com GitHub Actions</h4>
+      <p><b class="r">CI</b>Integração contínua: a cada pull request, uma máquina roda lint, checagem de tipos, testes e build. O merge só é liberado se tudo passar.</p>
+      <p><b class="r">CD</b>Entrega contínua: depois do merge na <code>main</code>, o deploy acontece sozinho.</p>
+      <p><b class="r">Como se escreve</b>Um arquivo YAML em <code>.github/workflows/</code> diz quando rodar (<code>on: pull_request</code>) e quais passos seguir. O <code>concurrency</code> cancela a execução antiga quando chega um commit novo no mesmo PR.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Todo PR passa por lint, tipos, testes e build antes do merge, e o deploy sai sozinho da main.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>4. Deploy sem senha guardada (OIDC)</h4>
+      <p><b class="r">O jeito antigo</b>Guardar uma chave de acesso da AWS nos secrets do GitHub. Ela não expira e, se vazar, dá acesso até alguém perceber.</p>
+      <p><b class="r">Com OIDC</b>O GitHub prova para a AWS quem está pedindo: &ldquo;sou o workflow do repositório X, na branch main&rdquo;. A AWS confere essa prova e devolve uma credencial temporária, que vale por pouco tempo. Não existe chave guardada.</p>
+      <p><b class="r">Quem pode</b>Na AWS, a <em>trust policy</em> da role diz quais repositórios, branches ou environments podem fazer isso. É ela que impede um fork ou outro repositório de fazer deploy em produção.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Deploy com OIDC: credencial temporária, nenhuma chave guardada, e só a main do meu repositório pode assumir a role de produção.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>5. Ambientes e segredos</h4>
+      <p><b class="r">Ambientes</b>Desenvolvimento, preview (um por PR), staging e produção. Cada um com o seu banco e as suas chaves.</p>
+      <p><b class="r">Segredos</b>Senhas e chaves ficam no <em>Secrets Manager</em> ou no <em>SSM Parameter Store</em> da AWS, nunca no código.</p>
+      <p><b class="r">A armadilha</b>Variável com prefixo <code>NEXT_PUBLIC_</code> é escrita dentro do JavaScript na hora do <code>next build</code>. Trocar o valor no painel e reiniciar não muda nada: só um build novo muda.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;<code>NEXT_PUBLIC_</code> é valor de build. O que muda por ambiente eu leio no servidor, em runtime.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>6. CDN e Cache-Control</h4>
+      <p><b class="r">CDN</b>Uma rede de servidores espalhados pelo mundo que guarda cópias dos seus arquivos perto de quem acessa. Na AWS, é o CloudFront.</p>
+      <p><b class="r">Arquivo com hash no nome</b><code>main-a1b2c3.js</code> pode ficar em cache por um ano (<code>immutable</code>): quando o conteúdo muda, o nome muda junto.</p>
+      <p><b class="r">Página com dado de usuário</b><code>private, no-store</code>: nenhuma CDN pode guardar. Cuidado: no CloudFront, um TTL mínimo maior que zero ignora esse cabeçalho, e a página de uma pessoa pode ir para outra.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Cache longo só para arquivo com hash. Página com dado de usuário fica fora da CDN, com TTL mínimo zero.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>7. Observabilidade em três perguntas</h4>
+      <p><b class="r">Quebrou?</b>Erros com a linha exata do código (Sentry, com source maps).</p>
+      <p><b class="r">Está lento?</b>Web Vitals de usuários reais e tracing: quanto tempo cada parte do pedido levou.</p>
+      <p><b class="r">Está sendo usado?</b>Analytics de produto: quantas pessoas usam a função de IA, quantas regeram a resposta, quantas desistem.</p>
+      <p><b class="r">Custo</b>Guardar tudo sai caro. A <em>taxa de amostragem</em> decide quanto você registra.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Observabilidade responde três perguntas: quebrou, está lento, está sendo usado. A amostragem é uma decisão de custo.&rdquo;</p>
+    </div>
+  </div>
+
+  <dl class="glossario">
+    <dt>CloudFront</dt><dd>a CDN da AWS.</dd>
+    <dt>ECS Fargate / App Runner</dt><dd>serviços da AWS que rodam containers sem você gerenciar máquinas.</dd>
+    <dt>OIDC</dt><dd>OpenID Connect: um jeito padrão de um sistema provar a outro quem ele é, com um token assinado.</dd>
+    <dt>Role / trust policy</dt><dd>role é um conjunto de permissões na AWS; a trust policy diz quem pode assumir essa role.</dd>
+    <dt>TTL</dt><dd>time to live: quanto tempo uma cópia pode ficar no cache.</dd>
+    <dt>Source map</dt><dd>arquivo que liga o JavaScript minificado de volta ao código original, para o erro apontar a linha certa.</dd>
+  </dl>
+
+
+  <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
+  <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
     <li class="item"><input type="checkbox" id="w29-1"><label for="w29-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os três caminhos de Next.js na AWS: <strong>Amplify Hosting</strong> (gerenciado, o mais perto da Vercel), <strong>OpenNext</strong> com SST/CDK (Lambda + S3 + CloudFront) e <strong>container standalone</strong> em ECS Fargate ou App Runner atrás do CloudFront &mdash; e o que cada um troca entre controle, custo e funcionalidade suportada</span></label></li>
     <li class="item"><input type="checkbox" id="w29-2"><label for="w29-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O que quebra fora da Vercel: streaming (<code>loading.tsx</code>, Suspense) atrás de proxy ou load balancer que faz buffer, <code>after()</code> sem desligamento gracioso, otimização de imagem, e a lista de recursos que o Amplify não suporta</span></label></li>
@@ -37,260 +143,271 @@
     <li class="item"><input type="checkbox" id="w29-9"><label for="w29-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">App pra outros países: função na mesma região do banco, estático na borda, i18n por subcaminho ou domínio, e residência de dado (LGPD/GDPR) como restrição que escolhe a região antes da latência</span></label></li>
   </ul>
 
-  <h3 class="sub">Onde estudar (grátis)</h3>
+  <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
   <p class="leituras-bar" data-leituras-pagina></p>
     <ul class="resources">
     <li><div class="r-title"><a href="https://nextjs.org/docs/app/guides/self-hosting" target="_blank" rel="noopener">Next.js &mdash; How to self-host your Next.js application</a></div><div class="r-note">A lista oficial do que a Vercel resolvia por você: proxy reverso, variáveis de ambiente, cache por instância, encryption key de Server Actions, version skew, streaming atrás de proxy e <code>after()</code>.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~30 min</span>A página que mais rende nesta frente. Se só der pra ler uma, é esta: cada seção é uma pergunta de entrevista.</div><div class="r-src">nextjs.org &middot; oficial</div><details class="leitura" data-id="r05-cloud-aws--nextjs-org-docs-app-guides-self-hosting"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">A Vercel resolve em silêncio uma lista de problemas que, num servidor seu, viram responsabilidade sua. Esta página é essa lista: <strong>proxy na frente, variável de ambiente em runtime, cache por instância, mesma chave de criptografia em todas as instâncias, version skew, streaming sem buffer e desligamento gracioso pro <code>after()</code></strong>.</p>
+<p class="tldr"><strong>Em uma frase:</strong> a Vercel resolve em silêncio uma lista de problemas que, num servidor seu, passam a ser seus. Esta página é essa lista: proxy na frente, variável de ambiente lida na hora certa, cache por cópia do app, a mesma chave de criptografia em todas as cópias, versões misturadas durante um deploy, streaming sem travas e desligamento sem perder trabalho.</p>
+<p class="real"><b>No mundo real</b>A Netlify e a Cloudflare precisaram construir adaptadores para rodar o Next com todos os recursos. A Cloudflare usa o OpenNext, o mesmo projeto citado mais abaixo. Se empresas de infraestrutura tiveram esse trabalho, a lista desta página é o mínimo que um time precisa conhecer antes de sair da Vercel.</p>
 
-<h5>Proxy reverso e otimização de imagem</h5>
+<h5>Proxy na frente</h5>
 <ul>
-<li>A recomendação é <strong>não expor o <code>next start</code> direto</strong>. Um proxy (nginx, ou o load balancer da nuvem) cuida de request malformado, conexão lenta, limite de payload e rate limit, e o Next gasta CPU só renderizando.</li>
-<li><code>next/image</code> funciona sem configuração com <code>next start</code>. Dá pra trocar por um serviço externo com um <code>loader</code>. Em Linux com glibc, o Sharp pode precisar de ajuste de alocador pra não estourar memória.</li>
+<li>Não exponha o <code>next start</code> direto à internet. Um proxy (nginx ou o balanceador da nuvem) cuida de pedido malformado, conexão lenta, limite de tamanho e limite de pedidos. O Next fica só montando páginas.</li>
 </ul>
 
-<h5>Variáveis de ambiente: build vs. runtime</h5>
+<h5>Variáveis de ambiente: build ou execução</h5>
 <ul>
-<li>Por padrão, variável só existe no servidor. Com prefixo <code>NEXT_PUBLIC_</code> ela vai pro navegador, mas <strong>embutida no bundle durante o <code>next build</code></strong>. Trocar o valor depois não muda nada até o próximo build.</li>
-<li>No servidor, numa renderização dinâmica (depois de <code>await connection()</code>, <code>cookies()</code> ou <code>headers()</code>), <code>process.env.X</code> é lido em runtime. É isso que permite <strong>uma única imagem Docker promovida entre ambientes</strong> com valores diferentes.</li>
+<li>Por padrão, uma variável só existe no servidor.</li>
+<li>Com o prefixo <code>NEXT_PUBLIC_</code>, ela vai para o navegador, mas é <strong>escrita dentro do JavaScript no <code>next build</code></strong>. Trocar o valor depois não muda nada até o próximo build.</li>
+<li>No servidor, numa página dinâmica, <code>process.env.X</code> é lido na hora. É isso que permite usar a mesma imagem Docker em vários ambientes, cada um com os seus valores.</li>
 </ul>
 
-<h5>Cache e ISR</h5>
+<h5>Cache quando há várias cópias</h5>
 <ul>
-<li>Páginas em cache e ISR usam o mesmo cache do servidor, que <strong>por padrão fica no disco de cada instância</strong> (mais 50 MB em memória). Com uma instância e disco persistente, isso basta.</li>
-<li>Com várias instâncias, ou em computação efêmera, cada pod tem a própria cópia e pode servir dado velho. A saída é um <code>cacheHandler</code> próprio (Redis, S3) com <code>cacheMaxMemorySize: 0</code>.</li>
-<li><code>revalidateTag()</code> numa instância <strong>só invalida aquela instância</strong>. Coordenar exige implementar <code>refreshTags()</code> no handler.</li>
-<li>Os cabeçalhos automáticos importam pra CDN. Arquivo com hash no nome sai com <code>public, max-age=31536000, immutable</code>, ISR sai com <code>s-maxage</code> + <code>stale-while-revalidate</code>, e página dinâmica sai com <code>private, no-cache, no-store</code>.</li>
+<li>Por padrão, o cache de páginas fica no disco de cada cópia do app. Com uma cópia só, basta.</li>
+<li>Com várias, cada uma tem o seu cache e pode mostrar dado velho. E o <code>revalidateTag()</code> só limpa o cache da cópia que recebeu o pedido.</li>
+<li>A saída é um cache compartilhado (Redis, S3) configurado no <code>cacheHandler</code>.</li>
 </ul>
 
-<h5>Várias instâncias e deploy gradual</h5>
-<div class="tbl"><table>
-<tr><th>Problema</th><th>Sintoma</th><th>Conserto</th></tr>
-<tr><td>Chave das Server Actions diferente por build</td><td>&ldquo;Failed to find Server Action&rdquo;</td><td><code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code> igual em todas</td></tr>
-<tr><td>Version skew (cliente velho, servidor novo)</td><td>asset 404, navegação quebrada</td><td><code>deploymentId</code>: o Next detecta e força recarga completa</td></tr>
-<tr><td>Build refeito por ambiente</td><td>IDs de build diferentes entre containers</td><td><code>generateBuildId</code> fixo (ex.: hash do git)</td></tr>
-</table></div>
+<h5>Deploy com várias cópias</h5>
+<ul>
+<li><strong>Chave das Server Actions:</strong> cada build gera uma chave nova. Se as cópias têm chaves diferentes, um formulário enviado a outra cópia falha com &ldquo;Failed to find Server Action&rdquo;. Defina <code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code> igual em todas.</li>
+<li><strong>Versões misturadas</strong> (<em>version skew</em>): durante um deploy, um navegador com a página velha pode pedir arquivos que só existiam na versão antiga. O <code>deploymentId</code> faz o Next perceber e recarregar a página.</li>
+</ul>
 
 <h5>Streaming e <code>after()</code></h5>
 <ul>
-<li>Streaming (<code>loading.tsx</code>, Suspense) funciona self-hosted, mas <strong>todo salto do caminho tem que repassar a resposta em pedaços</strong>. No nginx, isso é <code>X-Accel-Buffering: no</code>. A página cita o ALB com integração Lambda como exemplo de algo que pode fazer buffer por padrão.</li>
-<li><code>after()</code> é suportado com <code>next start</code>. No desligamento (SIGINT/SIGTERM), o servidor termina os requests em andamento e os callbacks pendentes do <code>after()</code>, e a plataforma precisa dar um intervalo de drenagem (10&ndash;30 s é o recomendado).</li>
+<li>O streaming funciona fora da Vercel, mas todo intermediário precisa repassar a resposta aos pedaços, sem guardar tudo antes. No nginx, isso é <code>X-Accel-Buffering: no</code>.</li>
+<li>O <code>after()</code> funciona com <code>next start</code>. Ao desligar, o servidor termina os pedidos em andamento e os trabalhos pendentes do <code>after()</code>, desde que a plataforma dê alguns segundos para isso (10 a 30 s é o recomendado).</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Sair da Vercel não é só trocar onde o container roda. É assumir o cache compartilhado, a chave das Server Actions, o version skew e o streaming sem buffer, que antes a plataforma resolvia por mim.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Sair da Vercel não é só trocar onde o container roda. É assumir o cache compartilhado, a chave das Server Actions, as versões misturadas e o streaming sem travas, que antes a plataforma resolvia por mim.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://nextjs.org/docs/app/guides/self-hosting" target="_blank" rel="noopener">nextjs.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://docs.aws.amazon.com/amplify/latest/userguide/ssr-amplify-support.html" target="_blank" rel="noopener">AWS Amplify &mdash; Amplify support for Next.js</a></div><div class="r-note">O caminho gerenciado. O que importa está nas duas listas, a de suportado e a de <strong>não</strong> suportado.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~10 min</span>Leia &ldquo;Next.js feature support&rdquo;, com as duas listas. O resto é introdução a SSR.</div><div class="r-src">docs.aws.amazon.com &middot; oficial</div><details class="leitura" data-id="r05-cloud-aws--docs-aws-amazon-com-amplify-latest-userguide-ssr-amplify-support-html"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">Amplify Hosting é o caminho mais &ldquo;Vercel-like&rdquo; da AWS: você conecta o repositório e ele cuida do SSR, numa computação gerenciada lançada em novembro de 2022. O que decide se serve pro seu app <strong>não é a lista do que ele suporta, é a lista do que ele não suporta</strong>.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o Amplify Hosting é o caminho mais parecido com a Vercel dentro da AWS: você conecta o repositório e ele cuida do resto. O que decide se ele serve para o seu app não é a lista do que ele suporta, é a lista do que <strong>não</strong> suporta.</p>
+<p class="real"><b>No mundo real</b>É uma surpresa comum em migrações: o app funcionava na Vercel, vai para uma plataforma gerenciada, e o <code>loading.tsx</code> para de aparecer, porque o streaming não é suportado ali. O jeito de evitar é o desta página: listar os recursos do Next que o app usa e cruzar com a lista de não suportados antes de migrar. O Gabarita depende de streaming e de <code>after()</code>, então não caberia no Amplify.</p>
 
-<h5>Suportado</h5>
+<h5>O que funciona</h5>
 <ul>
-<li>Next.js da 12 à 15 (a página não cita a 16).</li>
-<li>SSR, páginas estáticas, SSG, ISR, API routes, rotas dinâmicas e catch-all.</li>
-<li>Diretório <code>app</code> (App Router), middleware e variáveis de ambiente.</li>
-<li>Otimização de imagem: o Amplify instala o Sharp sozinho, e a saída otimizada tem limite de 4,3 MB.</li>
-<li>i18n por subcaminho, por domínio e detecção automática de idioma.</li>
+<li>Next.js da versão 12 à 15.</li>
+<li>Renderização no servidor, páginas estáticas, ISR por tempo, API routes e rotas dinâmicas.</li>
+<li>App Router, middleware, variáveis de ambiente, otimização de imagem e idiomas por caminho ou domínio.</li>
 </ul>
 
-<h5>Não suportado, e por que isso pesa</h5>
-<div class="tbl"><table>
-<tr><th>Recurso</th><th>O que você perde</th></tr>
-<tr><td>Next.js streaming</td><td><code>loading.tsx</code>/Suspense deixam de mandar a casca antes; a página chega inteira no fim</td></tr>
-<tr><td><code>after()</code> (<code>unstable_after</code> do Next 15)</td><td>trabalho depois da resposta, como gerar algo com IA sem segurar o usuário</td></tr>
-<tr><td>ISR <em>sob demanda</em></td><td>invalidar uma página na hora em que o dado muda; sobra só o ISR por tempo</td></tr>
-<tr><td>Edge API Routes / middleware no runtime edge</td><td>o que dependia do runtime edge</td></tr>
-<tr><td>Middleware em asset estático e imagem otimizada</td><td>regra de acesso aplicada a esses arquivos</td></tr>
-</table></div>
-
-<h5>Como usar a página numa decisão</h5>
+<h5>O que não funciona, e o que você perde</h5>
 <ul>
-<li>Faça a lista dos recursos do Next que o app usa de verdade e cruze com a coluna de não suportados. Um app que usa só SSR, SSG e ISR por tempo cabe bem. Um app que depende de streaming de RSC ou de <code>after()</code> não cabe.</li>
-<li>Apps do Next 11 ou mais antigo ficam no provedor &ldquo;Classic&rdquo;, e a AWS recomenda migrar.</li>
+<li><strong>Streaming:</strong> o <code>loading.tsx</code> e o <code>Suspense</code> deixam de mandar a casca antes. A página chega inteira no fim.</li>
+<li><strong><code>after()</code>:</strong> não dá para fazer trabalho depois de responder, como gerar um texto com IA sem segurar o usuário.</li>
+<li><strong>ISR sob demanda:</strong> não dá para atualizar uma página no momento em que o dado muda. Sobra só a atualização por tempo.</li>
+<li><strong>Middleware no runtime edge</strong> e middleware aplicado a arquivos estáticos e imagens.</li>
 </ul>
 <p><strong>Frase de entrevista:</strong> &ldquo;Antes de escolher a hospedagem, eu cruzo os recursos do framework que o app usa com o que a plataforma suporta. O Amplify não roda <code>after()</code> nem streaming, e o meu app depende dos dois.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.aws.amazon.com/amplify/latest/userguide/ssr-amplify-support.html" target="_blank" rel="noopener">docs.aws.amazon.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://opennext.js.org/aws" target="_blank" rel="noopener">OpenNext for AWS</a></div><div class="r-note">Adaptador open source que transforma a saída do <code>next build</code> em peças de AWS: Lambda pro servidor, S3 pro estático, CloudFront na frente, fila de revalidação e cache de tags.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia a visão geral e a página de arquitetura (&ldquo;Inner workings &rarr; Architecture&rdquo;). Pule as páginas de configuração avançada.</div><div class="r-src">opennext.js.org &middot; projeto open source</div><details class="leitura" data-id="r05-cloud-aws--opennext-js-org-aws"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">OpenNext é um adaptador open source que pega a saída do <code>next build</code> e a transforma em <strong>peças de AWS que você mesmo implanta</strong>: Lambda pro servidor, S3 pro estático, CloudFront na frente, Lambda de imagem, fila de revalidação e DynamoDB pro cache de tags. É o que plataformas como o SST usam por baixo.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o OpenNext é um projeto de código aberto que pega o resultado do <code>next build</code> e o transforma em peças da AWS que você mesmo implanta: funções Lambda para o servidor, S3 para os arquivos estáticos e CloudFront na frente.</p>
+<p class="real"><b>No mundo real</b>O OpenNext nasceu dentro do SST, uma ferramenta para publicar apps na AWS, e hoje é também a base do suporte a Next.js na Cloudflare. Olhar a arquitetura dele é olhar, peça por peça, o que a Vercel faz por baixo.</p>
 
-<h5>O que ele suporta</h5>
+<h5>As peças</h5>
 <ul>
-<li>Next.js 15 com App Router e Pages Router, API routes e rotas dinâmicas.</li>
-<li>SSG, SSR e ISR, middleware e otimização de imagem.</li>
-<li>Integração com NextAuth, opção de rodar em Lambda@Edge, e cache componível com <code>'use cache'</code>.</li>
-<li>Implantação seletiva: dá pra mandar as rotas de API pra ECS, ISR/SSG pra Lambda e outras partes pra outro destino, conforme a necessidade.</li>
+<li><strong>CloudFront:</strong> a CDN, que também decide o caminho de cada pedido. Arquivos de <code>/_next/static</code> vão para o S3, com cache de um ano. Imagens vão para a função de imagem. O resto vai para a função do servidor.</li>
+<li><strong>Lambda do servidor:</strong> o Next rodando, atendendo as páginas dinâmicas e as APIs.</li>
+<li><strong>S3:</strong> os arquivos estáticos e o cache de páginas.</li>
+<li><strong>Fila de revalidação:</strong> quando uma página do ISR precisa ser refeita, uma mensagem entra na fila e uma função a refaz.</li>
+<li><strong>DynamoDB:</strong> guarda as tags de cache, para o <code>revalidateTag</code> valer para todas as execuções.</li>
+<li><strong>Lambda de imagem:</strong> otimiza imagens.</li>
+<li><strong>Aquecedor:</strong> chama as funções de tempos em tempos, para elas não começarem frias, o que deixa a primeira resposta lenta.</li>
 </ul>
-
-<h5>A arquitetura, peça por peça</h5>
-<div class="tbl"><table>
-<tr><th>Peça</th><th>Papel</th></tr>
-<tr><td>CloudFront</td><td>CDN e roteador: <code>/_next/static</code> vai pro S3 (com <code>public,max-age=31536000,immutable</code>), imagem vai pra função de imagem, o resto vai pra função do servidor</td></tr>
-<tr><td>Lambda do servidor</td><td>o Next em modo <em>standalone</em> (a classe <code>NextServer</code> + <code>node_modules</code>), atendendo SSR, ISR, SSG e API</td></tr>
-<tr><td>S3</td><td>assets estáticos e o cache de rotas e de <code>fetch</code></td></tr>
-<tr><td>Fila de revalidação</td><td>mensagens de ISR; uma função consome e faz um HEAD na rota pra regenerar</td></tr>
-<tr><td>DynamoDB</td><td>cache de tags, pra <code>revalidateTag</code> funcionar entre execuções</td></tr>
-<tr><td>Lambda de imagem</td><td>otimização com Sharp</td></tr>
-<tr><td>Warmer</td><td>invoca as funções periodicamente pra reduzir partida a frio</td></tr>
-</table></div>
 
 <h5>O que ele não faz</h5>
 <ul>
-<li><strong>Não cria a infraestrutura.</strong> Você descreve as peças com SST, CDK ou Terraform. A troca em relação ao Amplify é mais controle e mais recurso suportado, em troca de mais coisa pra manter.</li>
-<li>Suporte limitado a Windows por causa do tooling do Next. A recomendação é buildar em WSL, VM ou CI Linux.</li>
+<li><strong>Não cria a infraestrutura.</strong> Você descreve as peças com SST, CDK ou Terraform. Em relação ao Amplify, é mais controle e mais recursos suportados, em troca de mais coisa para manter.</li>
+<li>No Windows o suporte é limitado. Faça o build no WSL ou no CI, em Linux.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;O OpenNext mostra o que a Vercel faz por baixo: CDN roteando estático e dinâmico, função do servidor, fila de revalidação e cache de tags compartilhado. Saber isso é o que me deixa depurar ISR em qualquer nuvem.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;O OpenNext mostra o que a Vercel faz por baixo: CDN separando estático de dinâmico, função do servidor, fila de revalidação e cache de tags compartilhado. Saber isso é o que me deixa depurar ISR em qualquer nuvem.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://opennext.js.org/aws" target="_blank" rel="noopener">opennext.js.org</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services" target="_blank" rel="noopener">GitHub Actions &mdash; Configuring OpenID Connect in AWS</a></div><div class="r-note">Como o workflow troca um token de curta duração por credencial temporária da AWS, sem <code>AWS_SECRET_ACCESS_KEY</code> guardada em lugar nenhum.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Curta e prática: identity provider, trust policy com <code>sub</code>, <code>permissions</code> e o passo do <code>configure-aws-credentials</code>.</div><div class="r-src">docs.github.com &middot; oficial</div><details class="leitura" data-id="r05-cloud-aws--docs-github-com-en-actions-security-for-github-actions-security-harden"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">O workflow não guarda credencial da AWS. Ele pede ao GitHub um <strong>token OIDC de curta duração</strong>, e a AWS troca esse token por credencial temporária de uma role, se a trust policy permitir aquele repositório e aquela branch ou environment. Não há segredo de longa duração pra vazar.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o pipeline não guarda nenhuma chave da AWS. A cada execução, ele pede ao GitHub um comprovante de identidade de curta duração (um token OIDC), e a AWS troca esse comprovante por uma credencial temporária, se as regras permitirem aquele repositório e aquela branch.</p>
+<p class="real"><b>No mundo real</b>Chaves guardadas vazam. Em 2016, invasores acharam credenciais da AWS num repositório privado do GitHub da Uber e baixaram dados de 57 milhões de usuários e motoristas. Em 2023, a CircleCI, um serviço de CI, foi invadida e pediu a todos os clientes que trocassem todos os segredos guardados lá. Com OIDC, não existe chave guardada para roubar.</p>
 
 <h5>Os quatro passos</h5>
 <ol>
-<li><strong>Identity provider no IAM:</strong> URL <code>https://token.actions.githubusercontent.com</code>, audience <code>sts.amazonaws.com</code>.</li>
-<li><strong>Role com trust policy:</strong> condicione <code>aud</code> e principalmente <code>sub</code>, que identifica de onde o workflow roda.</li>
-<li><strong>Permissões do workflow:</strong> <code>id-token: write</code> pra poder emitir o token, e <code>contents: read</code> pro checkout.</li>
-<li><strong>Action oficial:</strong> <code>aws-actions/configure-aws-credentials</code> com <code>role-to-assume</code> e <code>aws-region</code>.</li>
+<li><strong>Na AWS, cadastrar o GitHub</strong> como provedor de identidade confiável.</li>
+<li><strong>Criar uma role</strong> (um conjunto de permissões) com uma <em>trust policy</em>: a regra que diz quem pode usar essa role.</li>
+<li><strong>No workflow</strong>, dar a permissão <code>id-token: write</code>, para o job poder pedir o comprovante.</li>
+<li><strong>Usar a action oficial</strong> <code>aws-actions/configure-aws-credentials</code>, dizendo qual role assumir.</li>
 </ol>
+
+<h5>Onde mora a segurança</h5>
 <pre><code>"Condition": {
   "StringEquals": {
     "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-    "token.actions.githubusercontent.com:sub": "repo:octo-org/octo-repo:environment:prod"
+    "token.actions.githubusercontent.com:sub": "repo:minha-org/meu-app:environment:prod"
   }
 }</code></pre>
-
-<h5>Onde mora a segurança</h5>
 <ul>
-<li>A condição <code>sub</code> é o controle. Com <code>repo:org/repo:ref:refs/heads/main</code>, só a <code>main</code> assume a role. Com <code>repo:org/repo:environment:prod</code>, só jobs no environment <code>prod</code>, que pode exigir aprovação manual.</li>
-<li>Sem a condição <code>sub</code> (ou com curinga largo demais), qualquer repositório do GitHub com o mesmo provider poderia tentar assumir a role. É o erro clássico de configuração.</li>
-<li>A credencial expira sozinha: não tem rotação pra lembrar, e um log vazado não serve pra nada amanhã.</li>
+<li>O campo <code>sub</code> diz de onde o pipeline está rodando. Com <code>repo:org/app:ref:refs/heads/main</code>, só a branch <code>main</code> pode usar a role. Com <code>repo:org/app:environment:prod</code>, só jobs do ambiente <code>prod</code>, que pode exigir aprovação manual.</li>
+<li>Sem essa condição, ou com um curinga largo demais, outro repositório poderia tentar usar a role. É o erro clássico de configuração.</li>
+<li>A credencial expira sozinha. Não há troca periódica de chave para lembrar, e um log vazado não serve para nada no dia seguinte.</li>
 </ul>
-<pre><code>permissions:
-  id-token: write
-  contents: read
-steps:
-  - uses: aws-actions/configure-aws-credentials@&lt;sha&gt;
-    with:
-      role-to-assume: arn:aws:iam::123456789012:role/deploy-web
-      aws-region: eu-west-1</code></pre>
-<h5>Um <code>ci.yml</code> comentado: do pull request ao deploy</h5>
-<p>É o arquivo que a entrevista pede pra você escrever no quadro. Cada linha comentada é uma decisão que dá pra defender. As versões das actions são ilustrativas: use as atuais e, em produção, fixe por SHA.</p>
-<pre><code>name: ci
-on:
-  pull_request:              # roda em todo PR
-  push:
-    branches: [main]         # e quando algo entra na main
 
-# um push novo no mesmo PR cancela a execução anterior: não paga minuto de código velho
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read             # o mínimo pra todo job; quem precisar de mais pede no próprio job
-
-jobs:
-  qualidade:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15      # job travado não pode consumir a cota inteira
-    services:
-      postgres:              # banco descartável pra suíte que usa banco de teste
-        image: postgres:16
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: app_test
-        ports: ['5432:5432']
-        options: &gt;-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 5s --health-timeout 5s --health-retries 10
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4        # lê a versão do campo "packageManager"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm                     # guarda o store do pnpm entre execuções
-      - run: pnpm install --frozen-lockfile   # falha se o lockfile estiver fora de sincronia
-      - run: pnpm turbo lint typecheck test build   # o Turborepo pula o que não mudou
-
-  deploy:
-    needs: qualidade                      # só depois que o CI passou
-    if: github.event_name == 'push' &amp;&amp; github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write                     # deixa o job pedir o token OIDC
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::123456789012:role/deploy-web
-          aws-region: eu-west-1
-      - run: ./scripts/deploy.sh          # build da imagem, push pro ECR, atualiza o serviço</code></pre>
+<h5>Um pipeline completo, em duas partes</h5>
 <ul>
-<li><strong>Dois jobs, uma porta:</strong> o deploy só roda na <code>main</code>, depois do CI, e só ele recebe <code>id-token: write</code>. O job que roda código de PR não tem poder de assumir role nenhuma.</li>
-<li><strong><code>concurrency</code> com <code>cancel-in-progress</code></strong> poupa minutos nos PRs. <strong>Não use no deploy de produção</strong> sem pensar: cancelar um deploy no meio pode deixar o ambiente pela metade.</li>
-<li>A trust policy da role precisa casar com o gatilho: com <code>environment: prod</code> no job, o <code>sub</code> vira <code>repo:org/repo:environment:prod</code>; sem environment, <code>repo:org/repo:ref:refs/heads/main</code>.</li>
-<li><strong>Check obrigatório:</strong> o CI só protege se a branch protection exigir o job <code>qualidade</code> pra mesclar.</li>
+<li><strong>Verificação</strong>, em todo pull request: instalar, lint, tipos, testes e build. Esse job só pode ler o repositório.</li>
+<li><strong>Deploy</strong>, só na <code>main</code> e só depois da verificação: é o único job com <code>id-token: write</code>. Assim, código de um pull request nunca ganha acesso à AWS.</li>
+<li><code>concurrency</code> com <code>cancel-in-progress</code> cancela a execução antiga quando chega um commit novo no mesmo pull request. Não use isso no deploy de produção: cancelar um deploy no meio pode deixar o ambiente pela metade.</li>
+<li>O CI só protege de verdade se a branch protegida exigir que a verificação passe antes do merge.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Meu pipeline não tem chave da AWS. Ele assume uma role por OIDC, e a trust policy só aceita o environment de produção do meu repositório.&rdquo;</p>
+<p>O arquivo completo, comentado linha a linha, está no <a href="r08-pratica.html#ex7">exercício 7 do R8</a>. A versão mínima, só com a verificação, está no Fazer desta página.</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Meu pipeline não tem chave da AWS. Ele assume uma role por OIDC, e a regra da role só aceita o ambiente de produção do meu repositório.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services" target="_blank" rel="noopener">docs.github.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://docs.sentry.io/platforms/javascript/guides/nextjs/" target="_blank" rel="noopener">Sentry &mdash; Next.js guide</a></div><div class="r-note">O guia que o Gabarita já seguiu: os quatro arquivos por runtime, <code>withSentryConfig</code>, source maps, túnel e amostragem.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~15 min</span>Leia a configuração manual e a parte de amostragem. Compare com o seu <code>src/instrumentation*.ts</code>: o exercício é explicar cada linha.</div><div class="r-src">docs.sentry.io &middot; oficial</div><details class="leitura" data-id="r05-cloud-aws--docs-sentry-io-platforms-javascript-guides-nextjs"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">O Next roda o seu código em até três runtimes (navegador, Node, edge), e o Sentry precisa de um ponto de entrada em cada um. O guia cobre esses arquivos, o <code>withSentryConfig</code> (source map e túnel) e a amostragem, que é a decisão de custo da observabilidade.</p>
+<p class="tldr"><strong>Em uma frase:</strong> o Sentry registra os erros do seu app com a linha exata do código onde aconteceram. No Next, o seu código roda em até três lugares (navegador, servidor Node e edge), e o Sentry precisa ser ligado em cada um. A decisão mais importante é de custo: quanto registrar.</p>
+<p class="real"><b>No mundo real</b>Sem os <em>source maps</em>, um erro de produção aponta para algo como <code>main.a1b2c3.js:1:48213</code>, uma posição num arquivo minificado de uma linha só, que ninguém consegue ler. Com eles, aponta para <code>CheckoutButton.tsx:42</code>. A amostragem é conta simples: com 10 milhões de visitas por dia, registrar 100% dos traces são 10 milhões de registros por dia na fatura.</p>
 
-<h5>Os arquivos e o que cada um faz</h5>
-<div class="tbl"><table>
-<tr><th>Arquivo</th><th>Papel</th></tr>
-<tr><td><code>instrumentation-client.ts</code></td><td>init no navegador; é onde entram replay e opções do cliente</td></tr>
-<tr><td><code>sentry.server.config.ts</code></td><td>init no runtime Node (Server Actions, Route Handlers, RSC)</td></tr>
-<tr><td><code>sentry.edge.config.ts</code></td><td>init no runtime edge (middleware)</td></tr>
-<tr><td><code>instrumentation.ts</code></td><td><code>register()</code> importa a config certa conforme <code>NEXT_RUNTIME</code>, e exporta <code>onRequestError</code> pra erro de servidor</td></tr>
-</table></div>
-<p>O wizard (<code>npx @sentry/wizard@latest -i nextjs</code>) gera tudo isso. Saber montar à mão é o que permite explicar cada linha.</p>
+<h5>Os arquivos e o papel de cada um</h5>
+<ul>
+<li><code>instrumentation-client.ts</code>: liga o Sentry no navegador.</li>
+<li><code>sentry.server.config.ts</code>: liga no servidor Node (Server Actions, Route Handlers, Server Components).</li>
+<li><code>sentry.edge.config.ts</code>: liga no runtime edge.</li>
+<li><code>instrumentation.ts</code>: carrega a configuração certa conforme o lugar onde o código está rodando e captura os erros do servidor.</li>
+<li>O assistente <code>npx @sentry/wizard@latest -i nextjs</code> gera tudo isso. Saber montar à mão é o que permite explicar cada linha.</li>
+</ul>
 
 <h5><code>withSentryConfig</code></h5>
 <ul>
-<li><strong>Source maps:</strong> com <code>SENTRY_AUTH_TOKEN</code> no build, os maps sobem pro Sentry e o stack trace de produção aparece com o código original, não minificado.</li>
-<li><strong>Túnel:</strong> <code>tunnelRoute</code> (o exemplo do guia é <code>/sentry-tunnel</code>) faz o navegador mandar os eventos pela sua própria origem, o que contorna bloqueador de anúncio. Efeito colateral bom: a CSP não precisa liberar o host do Sentry em <code>connect-src</code>.</li>
+<li><strong>Source maps:</strong> com <code>SENTRY_AUTH_TOKEN</code> no build, os mapas sobem para o Sentry, e o erro aparece apontando para o código original.</li>
+<li><strong>Túnel:</strong> o <code>tunnelRoute</code> faz o navegador mandar os eventos por um caminho do seu próprio site. Isso evita bloqueadores de anúncio e dispensa liberar o domínio do Sentry na CSP.</li>
 </ul>
 
 <h5>O que ele captura</h5>
 <ul>
-<li>Erro com stack completa, traces de carregamento e interação, replay de sessão em vídeo, logs estruturados via <code>Sentry.logger</code> e métricas próprias (contagem, gauge, distribuição).</li>
-<li><code>dataCollection</code> desliga categorias de dado. A verificação é feita na página <code>/sentry-example-page</code>, que tem um botão que lança erro.</li>
+<li>Erros com o caminho completo até a linha que falhou, medições de tempo de carregamento e de interação, gravação da sessão em vídeo e logs.</li>
 </ul>
 
 <h5>Amostragem</h5>
 <ul>
-<li>O guia sugere <code>tracesSampleRate</code> 1.0 em desenvolvimento e 0.1 em produção, ajustando pelo volume. 100% de tracing com tráfego alto vira fatura, e 1% com tráfego baixo vira ponto cego.</li>
+<li>O guia sugere registrar 100% dos traces em desenvolvimento e 10% em produção, ajustando pelo volume. Tudo, com muito tráfego, vira fatura. Pouco, com pouco tráfego, vira ponto cego.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Instrumentei os três runtimes do Next, mandei os eventos por um túnel same-origin pra não abrir a CSP, e deixei a amostragem em 100% por enquanto, com o motivo escrito: tráfego baixo, cabe no plano grátis.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Liguei o Sentry nos três lugares onde o Next roda, mandei os eventos por um túnel no meu próprio domínio para não abrir a CSP, e deixei a amostragem em 100% por enquanto, com o motivo escrito: tráfego baixo, cabe no plano gratuito.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.sentry.io/platforms/javascript/guides/nextjs/" target="_blank" rel="noopener">docs.sentry.io</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
     <li><div class="r-title"><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html" target="_blank" rel="noopener">CloudFront &mdash; Understand cache policies</a></div><div class="r-note">Cache key, TTLs contra <code>Cache-Control</code>, compressão. A página onde está a regra que vaza página privada se você não souber dela.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia &ldquo;Time to live (TTL) settings&rdquo; e &ldquo;Cache key settings&rdquo;. A parte longa de compressão é consulta.</div><div class="r-src">docs.aws.amazon.com &middot; oficial</div><details class="leitura" data-id="r05-cloud-aws--docs-aws-amazon-com-amazoncloudfront-latest-developerguide-cache-key-u"><summary>Resumo aqui na página</summary><div class="leitura-body">
-<p class="tldr">A cache policy do CloudFront decide duas coisas: <strong>quanto tempo</strong> um objeto fica na borda (TTLs, em conjunto com o <code>Cache-Control</code> da origem) e <strong>o que diferencia um objeto do outro</strong> (a cache key). Cada valor a mais na chave derruba a taxa de acerto. E um TTL mínimo errado guarda o que a origem pediu pra não guardar.</p>
+<p class="tldr"><strong>Em uma frase:</strong> a política de cache do CloudFront decide duas coisas: <strong>por quanto tempo</strong> uma cópia fica guardada e <strong>o que diferencia uma cópia de outra</strong> (a chave de cache). Uma configuração errada guarda o que não devia, e pode mostrar a página de uma pessoa para outra.</p>
+<p class="real"><b>No mundo real</b>No Natal de 2015, a Steam, da Valve, mudou a configuração de cache durante um ataque de tráfego. Por cerca de uma hora e meia, páginas de conta com dados pessoais foram guardadas e entregues a outros usuários, e cerca de 34 mil pessoas tiveram dados expostos. É exatamente o erro da linha do &ldquo;TTL mínimo&rdquo; abaixo.</p>
 
-<h5>TTLs contra o <code>Cache-Control</code> da origem</h5>
-<div class="tbl"><table>
-<tr><th>TTL</th><th>Quando vale</th></tr>
-<tr><td>Mínimo</td><td>piso. <strong>Se for maior que 0, o CloudFront guarda mesmo com <code>no-cache</code>, <code>no-store</code> ou <code>private</code> na origem</strong></td></tr>
-<tr><td>Máximo</td><td>teto, aplicado quando a origem manda <code>Cache-Control</code> ou <code>Expires</code></td></tr>
-<tr><td>Padrão</td><td>usado só quando a origem <em>não</em> manda <code>Cache-Control</code> nem <code>Expires</code></td></tr>
-</table></div>
-<p>Os três em 0 desligam o cache. A linha do TTL mínimo é a que vaza dado: página dinâmica de usuário logado sai do Next com <code>private, no-store</code>, e um piso de um dia faz a borda entregar a página de um usuário pra outro.</p>
-
-<h5>Cache key: headers, cookies e query strings</h5>
+<h5>Por quanto tempo</h5>
 <ul>
-<li>Pra cada tipo, as opções são: nada, uma lista específica, todos, ou &ldquo;todos exceto&rdquo;. Você nomeia a chave, mas o <strong>valor inteiro entra na cache key</strong>.</li>
-<li>Tudo o que entra na cache key também é repassado à origem automaticamente. Pra repassar algo à origem <em>sem</em> fragmentar o cache, existe a <strong>origin request policy</strong>, separada.</li>
-<li>O <code>*</code> é tratado como texto literal, não curinga.</li>
-<li>Exemplo do custo: <code>Accept-Language</code> na chave multiplica as cópias por idioma, o que pode ser certo pra i18n. Um cookie de sessão na chave torna cada usuário uma cópia, e aí não há cache.</li>
+<li><strong>TTL mínimo:</strong> o piso. <strong>Se for maior que zero, o CloudFront guarda a cópia mesmo quando a origem manda <code>no-store</code> ou <code>private</code>.</strong> É assim que a página de um usuário logado vaza para outro.</li>
+<li><strong>TTL máximo:</strong> o teto, aplicado quando a origem manda um tempo de cache.</li>
+<li><strong>TTL padrão:</strong> usado só quando a origem não diz nada.</li>
+<li>Os três em zero desligam o cache.</li>
+</ul>
+
+<h5>O que diferencia uma cópia de outra</h5>
+<ul>
+<li>Você escolhe quais cabeçalhos, cookies e parâmetros da URL entram na chave de cache. Cada valor diferente gera uma cópia separada.</li>
+<li><code>Accept-Language</code> na chave cria uma cópia por idioma, o que pode ser certo num site traduzido. Um cookie de sessão na chave cria uma cópia por usuário, e aí o cache não serve para nada.</li>
+<li>Tudo o que entra na chave também chega à origem. Para mandar algo à origem sem multiplicar as cópias, existe uma política separada, a <em>origin request policy</em>.</li>
 </ul>
 
 <h5>Compressão</h5>
 <ul>
-<li>Liga cache de objetos Gzip e/ou Brotli. O CloudFront normaliza o <code>Accept-Encoding</code> (por exemplo, pra <code>br,gzip</code>) antes de pôr na chave, pra não criar uma cópia por variação de navegador.</li>
-<li>Chrome e Firefox só aceitam Brotli em HTTPS. Com a compressão de cache ligada, não ponha <code>Accept-Encoding</code> na origin request policy, porque não tem efeito.</li>
+<li>Ligue o cache de versões comprimidas (Gzip e Brotli). O CloudFront padroniza o cabeçalho de compressão antes de usá-lo na chave, para não criar uma cópia para cada navegador.</li>
 </ul>
-<p><strong>Frase de entrevista:</strong> &ldquo;Na borda eu separo por comportamento: estático com hash no nome tem cache longo, e o dinâmico respeita o <code>Cache-Control</code> da origem com TTL mínimo zero. A cache key leva só o que muda a resposta.&rdquo;</p>
+<p><strong>Frase de entrevista:</strong> &ldquo;Na CDN eu separo por tipo de conteúdo: arquivo com hash no nome tem cache longo, e página dinâmica respeita o <code>Cache-Control</code> da origem, com TTL mínimo zero. A chave de cache leva só o que muda a resposta.&rdquo;</p>
 <div class="leitura-foot"><span>Resumo em português do recorte indicado &middot; original em <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cache-key-understand-cache-policy.html" target="_blank" rel="noopener">docs.aws.amazon.com</a></span><button type="button" aria-pressed="false">Marcar como lida</button></div></div></details></li>
   </ul>
+
+  <h3 class="sub">Segredos e app internacional: o que faltava nas leituras</h3>
+  <div class="ex">
+    <div class="ex-body">
+      <h4>Secrets Manager ou SSM Parameter Store?</h4>
+      <div class="table-scroll"><table class="roteiro">
+        <thead><tr><th></th><th>Secrets Manager</th><th>SSM Parameter Store</th></tr></thead>
+        <tbody>
+          <tr><td>Feito pra</td><td>segredos: senha de banco, chave de API</td><td>configuração, e segredos simples (<code>SecureString</code>)</td></tr>
+          <tr><td>Rotação</td><td>automática, com integração pronta pra bancos da AWS</td><td>não tem nativa</td></tr>
+          <tr><td>Custo</td><td>pago por segredo e por chamada</td><td>o nível padrão não tem custo</td></tr>
+          <tr><td>Organização</td><td>nome do segredo, versões</td><td>hierarquia por caminho (<code>/app/prod/db-url</code>)</td></tr>
+        </tbody>
+      </table></div>
+      <p>Regra prática: configuração e segredo que não gira, no <strong>SSM</strong>; segredo que precisa de rotação (a senha do banco), no <strong>Secrets Manager</strong>. Nos dois casos o valor é entregue <strong>em runtime</strong>: no ECS, a task definition tem o campo <code>secrets</code> com <code>valueFrom</code> apontando pro ARN, e o valor vira variável de ambiente do container sem passar pelo repositório nem pela imagem. A exceção que prende é o <code>NEXT_PUBLIC_*</code>, que é embutido no build.</p>
+      <h4>i18n: subcaminho ou domínio?</h4>
+      <ul>
+        <li><strong>Subcaminho</strong> (<code>/pt-BR/</code>, <code>/en/</code>): um domínio, um certificado, um deploy, e a autoridade de SEO concentrada. É o padrão: no App Router vira o segmento <code>[locale]</code>, com <code>generateStaticParams</code> pros idiomas e o <code>proxy</code> escolhendo o idioma na primeira visita pelo <code>Accept-Language</code> (e lembrando num cookie).</li>
+        <li><strong>Domínio por país</strong> (<code>.ie</code>, <code>.co.uk</code>): sinal geográfico forte pro buscador e confiança local, ao custo de N domínios, certificados e configurações.</li>
+        <li>Em qualquer um: <code>hreflang</code> e <code>canonical</code> por idioma, formatação de data, número e moeda com <code>Intl</code>, e espaço pra texto que cresce (o alemão costuma ficar uns 30% mais longo que o inglês).</li>
+        <li><strong>Residência de dado</strong> (LGPD, GDPR) é restrição que escolhe a região <em>antes</em> da latência: a pergunta &ldquo;onde ficam os dados dessa pessoa?&rdquo; vem primeiro.</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <div class="ex" id="fz1">
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Qual Cache-Control para cada resposta?</h3><span class="ex-meta">15 min &middot; decisão</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Escolha o cabeçalho <code>Cache-Control</code> de cada resposta e diga por quê, em uma frase.</p>
+      <ol>
+        <li><code>/_next/static/chunks/main-a1b2c3.js</code></li>
+        <li><code>/logo.svg</code>, sem hash no nome, que pode mudar num redesign.</li>
+        <li><code>/painel</code>, com o nome e as notas de quem está logado.</li>
+        <li><code>/api/cotacao</code>: igual para todos, muda a cada minuto.</li>
+        <li><code>/blog/meu-post</code>: igual para todos, pode ser corrigido de vez em quando.</li>
+      </ol>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p><code>max-age</code> vale para o navegador e <code>s-maxage</code> para a CDN. <code>stale-while-revalidate</code> deixa servir a cópia velha enquanto busca a nova em segundo plano.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+        <ol>
+          <li><code>public, max-age=31536000, immutable</code>. O hash muda quando o conteúdo muda, então a cópia nunca fica errada.</li>
+          <li><code>public, max-age=3600</code> ou menos. Sem hash, cache longo deixaria o logo antigo por meses. Uma alternativa é passar a usar hash no nome.</li>
+          <li><code>private, no-store</code>. Dado de uma pessoa nunca vai para a CDN, e o comportamento do CloudFront para essa rota precisa ter TTL mínimo 0.</li>
+          <li><code>public, s-maxage=60, stale-while-revalidate=30</code>. A CDN segura um minuto, e milhares de acessos viram um pedido por minuto à origem.</li>
+          <li><code>public, s-maxage=3600, stale-while-revalidate=86400</code>. É o que o ISR do Next produz. Quando o post é corrigido, uma revalidação sob demanda atualiza antes do prazo.</li>
+        </ol>
+        <p><strong>O que mostrar ao entrevistador:</strong> a pergunta é sempre a mesma, &ldquo;quem pode ver esta cópia e por quanto tempo ela continua certa?&rdquo;.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="fz2">
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Um CI mínimo no GitHub Actions</h3><span class="ex-meta">20 min &middot; YAML</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Escreva <code>.github/workflows/ci.yml</code> para um app Next com pnpm. Ele roda em todo pull request: instala com cache, depois lint, checagem de tipos, testes e build. Um commit novo no mesmo PR cancela a execução anterior. O workflow só pode ler o repositório.</p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Você vai precisar de <code>on: pull_request</code>, <code>permissions: contents: read</code>, <code>concurrency</code> com <code>cancel-in-progress: true</code>, e das actions <code>actions/checkout</code>, <code>pnpm/action-setup</code> e <code>actions/setup-node</code> (com <code>cache: pnpm</code>).</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code>name: CI
+on:
+  pull_request:
+
+permissions:
+  contents: read            # só leitura: este job não publica nada
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true  # commit novo cancela a execução velha do mesmo PR
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm        # reaproveita os pacotes baixados entre execuções
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> <code>--frozen-lockfile</code> falha se o lockfile não bate com o <code>package.json</code>, então o CI instala exatamente o que foi testado. O <code>pnpm/action-setup</code> lê a versão do campo <code>packageManager</code>. O deploy fica num workflow separado, que roda só na <code>main</code> e é o único com <code>id-token: write</code> para o OIDC (veja o <a href="r08-pratica.html#ex7">exercício 7 do R8</a>).</p>
+      </div></details>
+    </div>
+  </div>
+
+  <h3 class="sub etapa" id="contar"><span class="etapa-n">3 &middot; Contar</span>As suas decisões e onde você já aplicou</h3>
+  <p class="etapa-nota">É o que você fala na entrevista: por que escolheu cada coisa nos seus projetos e a resposta honesta para o que ainda não fez.</p>
 
   <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
   <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
@@ -298,6 +415,7 @@ jobs:
   <div class="tcards">
     <div class="tcard">
       <h4>Deploy: Vercel agora, container pronto para sair <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Produção na Vercel pela praticidade, com uma imagem Docker pronta para sair quando for preciso.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Produção na Vercel (região <code>gru1</code>, cron diário), mantendo uma imagem <em>standalone</em> portátil (<code>Dockerfile.web</code>) para sair quando for preciso.</dd>
@@ -310,10 +428,12 @@ jobs:
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: que sinal faria você sair da Vercel, e o que você teria de assumir ao sair?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Muitas empresas começam numa plataforma gerenciada e saem quando a conta ou a falta de controle pesam. A 37signals, dona do Basecamp, saiu da nuvem pública em 2023 e estimou economizar 7 milhões de dólares em cinco anos, número que em 2024 subiu para 10 milhões. Uma imagem portátil é o que torna uma saída assim possível sem reescrever o app.</p>
     </div>
 
     <div class="tcard">
       <h4>Observabilidade: Sentry nos três runtimes <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> O Sentry registra erros e lentidão nos três lugares onde o Next roda, com amostragem de 100% enquanto o tráfego é baixo.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Sentry em Node, edge e navegador, com <code>tracesSampleRate: 1</code> e os eventos saindo por uma rota do próprio domínio (<code>tunnelRoute</code>).</dd>
@@ -326,10 +446,12 @@ jobs:
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: a observabilidade tem três perguntas (erro, desempenho, uso). Qual delas ficou sem resposta aqui?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Com tráfego grande, ninguém registra tudo. O próprio guia do Sentry sugere 10% dos traces em produção, e produtos com milhões de usuários usam taxas menores ainda, guardando 100% só dos erros. Amostragem é uma decisão de custo, e ela muda conforme o produto cresce.</p>
     </div>
 
     <div class="tcard">
       <h4>Segredos: preferir não ter chave a guardar chave <span class="st p">em aberto</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Em vez de guardar chaves, o projeto prefere autenticação temporária por OIDC onde ela existe.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>No Gabarita, o storage da Vercel autentica por OIDC em produção, sem token guardado. Para o deploy na AWS, o plano é o mesmo: o GitHub assume uma <em>role</em> por OIDC (exercício 7), ainda não feito.</dd>
@@ -342,6 +464,7 @@ jobs:
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: o que a trust policy está limitando, exatamente? Quem poderia assumir a role se ela fosse frouxa?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Em 2022, a Toyota descobriu que uma chave de acesso tinha ficado num repositório público do GitHub por quase cinco anos, abrindo dados de cerca de 296 mil clientes. Uma chave que não existe não pode ficar esquecida num repositório.</p>
     </div>
   </div>
 
@@ -411,30 +534,6 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
 
   </details>
 
-  <h3 class="sub">Segredos e app internacional: o que faltava nas leituras</h3>
-  <div class="ex">
-    <div class="ex-body">
-      <h4>Secrets Manager ou SSM Parameter Store?</h4>
-      <div class="table-scroll"><table class="roteiro">
-        <thead><tr><th></th><th>Secrets Manager</th><th>SSM Parameter Store</th></tr></thead>
-        <tbody>
-          <tr><td>Feito pra</td><td>segredos: senha de banco, chave de API</td><td>configuração, e segredos simples (<code>SecureString</code>)</td></tr>
-          <tr><td>Rotação</td><td>automática, com integração pronta pra bancos da AWS</td><td>não tem nativa</td></tr>
-          <tr><td>Custo</td><td>pago por segredo e por chamada</td><td>o nível padrão não tem custo</td></tr>
-          <tr><td>Organização</td><td>nome do segredo, versões</td><td>hierarquia por caminho (<code>/app/prod/db-url</code>)</td></tr>
-        </tbody>
-      </table></div>
-      <p>Regra prática: configuração e segredo que não gira, no <strong>SSM</strong>; segredo que precisa de rotação (a senha do banco), no <strong>Secrets Manager</strong>. Nos dois casos o valor é entregue <strong>em runtime</strong>: no ECS, a task definition tem o campo <code>secrets</code> com <code>valueFrom</code> apontando pro ARN, e o valor vira variável de ambiente do container sem passar pelo repositório nem pela imagem. A exceção que prende é o <code>NEXT_PUBLIC_*</code>, que é embutido no build.</p>
-      <h4>i18n: subcaminho ou domínio?</h4>
-      <ul>
-        <li><strong>Subcaminho</strong> (<code>/pt-BR/</code>, <code>/en/</code>): um domínio, um certificado, um deploy, e a autoridade de SEO concentrada. É o padrão: no App Router vira o segmento <code>[locale]</code>, com <code>generateStaticParams</code> pros idiomas e o <code>proxy</code> escolhendo o idioma na primeira visita pelo <code>Accept-Language</code> (e lembrando num cookie).</li>
-        <li><strong>Domínio por país</strong> (<code>.ie</code>, <code>.co.uk</code>): sinal geográfico forte pro buscador e confiança local, ao custo de N domínios, certificados e configurações.</li>
-        <li>Em qualquer um: <code>hreflang</code> e <code>canonical</code> por idioma, formatação de data, número e moeda com <code>Intl</code>, e espaço pra texto que cresce (o alemão costuma ficar uns 30% mais longo que o inglês).</li>
-        <li><strong>Residência de dado</strong> (LGPD, GDPR) é restrição que escolhe a região <em>antes</em> da latência: a pergunta &ldquo;onde ficam os dados dessa pessoa?&rdquo; vem primeiro.</li>
-      </ul>
-    </div>
-  </div>
-
   <h3 class="sub">Você já usou...? A resposta honesta</h3>
   <div class="evid">
     <div class="evid-head">Não usei em produção &rarr; &ldquo;faria assim, por isso&rdquo;</div>
@@ -468,6 +567,9 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
       <p class="why"><strong>Por que isso importa:</strong> é a resposta pronta pra &ldquo;como você pensa região e latência numa aplicação internacional?&rdquo;. A regra que você aprendeu medindo, a função fica onde o dado está, vale igual pra Lambda, Fargate ou Cloud Run. E &ldquo;mediu, isolou, resolveu e pôs teste de orçamento&rdquo; é o roteiro que um painel sênior quer ouvir.</p>
     </div>
   </div>
+
+  <h3 class="sub etapa" id="provar"><span class="etapa-n">4 &middot; Provar</span>Perguntas abertas e múltipla escolha</h3>
+  <p class="etapa-nota">Responda em voz alta antes de abrir a resposta. A múltipla escolha, no fim, começa com três questões de aquecimento, só de conceito.</p>
 
   <div class="quiz">
     <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
@@ -510,10 +612,10 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
 
   <div class="qz-pagina" data-qz-pagina>
     <h3 class="sub">Múltipla escolha desta página</h3>
-    <p class="qz-pagina-intro">11 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
+    <p class="qz-pagina-intro">14 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
     <div class="qz-bar qz-pagina-barra"><span class="qz-score qz-pagina-placar" aria-live="polite"></span><button type="button" class="qz-acao" data-acao="rodada">Nova rodada</button></div>
     <div class="qz-pagina-lista"></div>
-    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-cloud-7418y0","t":"Cloud & Delivery","q":"O Gabarita gera a explicação da IA com \u003ccode>after()\u003c/code> e usa \u003ccode>loading.tsx\u003c/code> pra streaming de RSC. Por que o Amplify Hosting não é a escolha óbvia pra levá-lo à AWS?","o":["O Amplify não roda o App Router, só o Pages Router","O Amplify não suporta Route Handlers nem middleware","Streaming e \u003ccode>after()\u003c/code> estão na lista de não suportados","O Amplify só faz SSR até o Next 12, e o Gabarita usa o Next 15"],"c":2,"e":"A página oficial lista como não suportados o streaming do Next.js, o \u003ccode>after()\u003c/code> (\u003ccode>unstable_after\u003c/code>), o ISR sob demanda e o middleware no runtime edge. SSR, ISR por tempo, App Router, Route Handlers e middleware comum são suportados, em versões atuais do Next. Pra esse app, container standalone em ECS ou App Runner (ou o OpenNext) preserva o comportamento."},{"id":"rm-cloud-1u5ezvk","t":"Cloud & Delivery","q":"Num deploy via GitHub Actions com OIDC, o que a condição \u003ccode>token.actions.githubusercontent.com:sub\u003c/code> na trust policy da role controla?","o":["Quais repositório, branch ou environment podem assumir a role","Quanto tempo dura a credencial temporária emitida pelo STS","Quais ações e recursos da AWS a role pode acessar depois de assumida","Qual audiência o token precisa ter (\u003ccode>sts.amazonaws.com\u003c/code>)"],"c":0,"e":"O \u003ccode>sub\u003c/code> identifica de onde o workflow roda, por exemplo \u003ccode>repo:org/app:environment:prod\u003c/code>. É ele que impede outro repositório, um fork ou outra branch de assumir a role de produção. A audiência é a condição \u003ccode>:aud\u003c/code>; o que a role pode fazer está na policy de permissões, não na trust policy; e a duração vem da configuração da sessão."},{"id":"rm-cloud-12cqe4r","t":"Cloud & Delivery","q":"Você trocou \u003ccode>NEXT_PUBLIC_API_URL\u003c/code> no painel da hospedagem e reiniciou o servidor, mas o navegador continua chamando a URL antiga. Por quê?","o":["Variáveis \u003ccode>NEXT_PUBLIC_\u003c/code> só são lidas no primeiro request","O \u003ccode>process.env\u003c/code> fica congelado no cache do servidor Node","O painel só aplica a variável em rotas dinâmicas, não nas estáticas","O valor é embutido no bundle no \u003ccode>next build\u003c/code>; só um novo build troca"],"c":3,"e":"Prefixo \u003ccode>NEXT_PUBLIC_\u003c/code> significa &ldquo;substitua o valor no JavaScript na hora do build&rdquo;: o código do navegador nunca lê \u003ccode>process.env\u003c/code>, ele recebe a string já escrita. Reiniciar não adianta. O runbook do Ally AI registra exatamente isso. Pra uma imagem servir vários ambientes, o valor tem que ser lido no servidor em runtime, numa rota dinâmica."},{"id":"rm-cloud-1czef97","t":"Cloud & Delivery","q":"Uma cache policy do CloudFront tem TTL mínimo de 86400 s. A origem responde uma página logada com \u003ccode>Cache-Control: private, no-store\u003c/code>. O que acontece?","o":["Respeita o \u003ccode>private\u003c/code> e não guarda, porque a origem manda","Guarda por pelo menos um dia e pode servir a página a outro usuário","Guarda, mas a cache key inclui o cookie de sessão, então cada um vê a sua","Respeita o \u003ccode>no-store\u003c/code>, mas usa o TTL mínimo só nos estáticos"],"c":1,"e":"Com TTL mínimo maior que 0, o CloudFront guarda o objeto por esse tempo mesmo com \u003ccode>no-cache\u003c/code>, \u003ccode>no-store\u003c/code> ou \u003ccode>private\u003c/code> vindos da origem. E cookie só entra na cache key se a policy disser (por padrão não entra), então enquanto o objeto estiver dentro do TTL a mesma página pode sair pra usuários diferentes. Por isso o dinâmico precisa de um comportamento com TTL mínimo 0, e o cache longo fica restrito aos arquivos com hash no nome."},{"id":"rm-cloud-1inyg3e","t":"Cloud & Delivery","q":"Três containers do mesmo app Next atrás de um load balancer, cada um com o cache padrão. Uma Server Action chama \u003ccode>revalidateTag('questoes', 'max')\u003c/code>. O que acontece?","o":["As três invalidam juntas, porque o Next sincroniza por padrão","Nenhuma invalida: \u003ccode>revalidateTag\u003c/code> só funciona na Vercel","Só a instância que rodou a action; as outras servem o dado antigo","O load balancer propaga a invalidação pros outros containers via header"],"c":2,"e":"O cache padrão fica no disco e na memória de cada instância, e nada no Next nem no load balancer avisa as outras. Coordenar exige um \u003ccode>cacheHandler\u003c/code> compartilhado (Redis, S3) que implemente \u003ccode>refreshTags()\u003c/code>. É o que o OpenNext faz com DynamoDB, e o que a Vercel faz por você sem você ver."},{"id":"rm-cloud-1794j2o","t":"Cloud & Delivery","q":"No Gabarita, o Sentry usa \u003ccode>tunnelRoute: \"/monitoramento\"\u003c/code>. Qual o ganho principal disso?","o":["Os eventos chegam mais rápido, porque evitam um lookup de DNS","Envio same-origin: escapa de adblock e mantém \u003ccode>connect-src 'self'\u003c/code>","Os source maps passam a ser enviados junto, sem upload no build","Os eventos passam a ser criptografados, o que sem túnel não ocorre"],"c":1,"e":"O túnel faz o evento sair same-origin e o servidor repassá-lo ao Sentry. Bloqueadores de anúncio costumam barrar o host do Sentry, e uma CSP estrita teria que abrir exceção em \u003ccode>connect-src\u003c/code>. O túnel resolve os dois sem afrouxar a política (D111 no DECISOES.md do Gabarita). O envio direto já é HTTPS, e os source maps continuam sendo enviados no build."},{"id":"rm-cloud-1herukz","t":"Cloud & Delivery","q":"Num \u003ccode>ci.yml\u003c/code>, para que serve \u003ccode>concurrency\u003c/code> com \u003ccode>cancel-in-progress: true\u003c/code> em pull requests?","o":["Rodar os jobs do PR em paralelo, na mesma máquina virtual","Cancelar a execução anterior quando chega um commit novo no PR","Impedir que dois PRs sejam mesclados na main ao mesmo tempo","Reaproveitar o cache de dependências entre PRs diferentes do repositório"],"c":1,"e":"Só o último commit de um PR importa; as execuções antigas gastam minutos à toa. No deploy de produção, porém, cancelar no meio pode deixar o ambiente pela metade, então ali o grupo é próprio e sem cancelamento."},{"id":"rm-cloud-1tgu9c6","t":"Cloud & Delivery","q":"Por que o job de pull request não deve ter \u003ccode>permissions: id-token: write\u003c/code>?","o":["Porque o token OIDC só é emitido para branches protegidas","Porque o token OIDC expira antes de o job de testes terminar","Porque o cache do pnpm deixa de funcionar com essa permissão ligada","Porque código de um PR poderia pedir o token e tentar assumir a role"],"c":3,"e":"O \u003ccode>id-token: write\u003c/code> é o que permite ao job pedir o token OIDC. Só o job de deploy, que roda depois do CI e só na main, deve tê-lo, e a trust policy ainda restringe pelo \u003ccode>sub\u003c/code>. O job que executa código de PR nem tem como pedir."},{"id":"rm-cloud-4pm99c","t":"Cloud & Delivery","q":"A senha do banco precisa de rotação automática. Qual serviço da AWS usar?","o":["O Secrets Manager, que tem rotação com integração aos bancos da AWS","O SSM Parameter Store, que rotaciona todo \u003ccode>SecureString\u003c/code> sozinho","Qualquer um: os dois rotacionam do mesmo jeito","Nenhum: rotação só existe em variável de ambiente do ECS"],"c":0,"e":"Rotação é o recurso que separa os dois. O Secrets Manager rotaciona (com funções prontas para bancos da AWS) e cobra por segredo; o SSM Parameter Store, no nível padrão, é gratuito mas não rotaciona. Configuração e segredo que não gira cabem no SSM."},{"id":"rm-cloud-65lntp","t":"Cloud & Delivery","q":"Qual a vantagem do i18n por subcaminho (\u003ccode>/pt-BR/\u003c/code>, \u003ccode>/en/\u003c/code>) sobre um domínio por país?","o":["Resolve a residência de dados sem precisar escolher uma região","Dispensa hreflang e canonical nas páginas de cada idioma","O buscador entende o país melhor do que com um domínio .ie","Um domínio, um certificado e um deploy; SEO concentrado"],"c":3,"e":"O subcaminho é o padrão por custo operacional baixo. Domínio por país dá sinal geográfico mais forte e confiança local, ao preço de N domínios e certificados. Em qualquer um, \u003ccode>hreflang\u003c/code> e \u003ccode>canonical\u003c/code> por idioma continuam necessários, e residência de dado é uma restrição de região, não de URL."},{"id":"rm-cloud-1pk4tn1","t":"Cloud & Delivery","q":"Qual destas métricas indica insatisfação com respostas de IA e um monitor de erros não enxerga?","o":["A taxa de erro 5xx do servidor","A taxa de regenerar a resposta","O tempo de build do deploy","O tamanho do bundle da página"],"c":1,"e":"Regenerar e parar a resposta no meio são sinais de produto: a infraestrutura está saudável, mas a resposta não serviu. Junto de TTFT, custo por conversa e polegar para baixo, formam a parte de &ldquo;uso&rdquo; da observabilidade, que o Sentry sozinho não cobre."}]</script>
+    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-cloud-e81xlq","t":"Cloud & Delivery","q":"O que é CI (integração contínua)?","o":["Rodar testes e build automaticamente a cada mudança","Publicar o site em produção a cada commit na main","Monitorar os erros dos usuários depois do deploy","Juntar todas as branches numa só toda semana"],"c":0,"e":"CI é verificar cada mudança automaticamente (lint, tipos, testes, build) antes de ela entrar na main. Publicar sozinho depois do merge é o CD, entrega contínua. Monitorar erros é observabilidade.","b":1},{"id":"rm-cloud-59qk8m","t":"Cloud & Delivery","q":"Por que um arquivo como \u003ccode>main-a1b2c3.js\u003c/code> pode ficar em cache por um ano?","o":["O hash muda quando o conteúdo muda, e o nome não repete","Arquivos JavaScript nunca mudam depois do primeiro deploy","A CDN apaga o cache sozinha a cada novo deploy do app","O navegador confere o arquivo no servidor antes de usar"],"c":0,"e":"O trecho \u003ccode>a1b2c3\u003c/code> é calculado a partir do conteúdo. Se o código muda, o nome muda, e o navegador baixa um arquivo novo. Por isso a cópia antiga nunca fica errada. A CDN não limpa nada sozinha e, com \u003ccode>immutable\u003c/code>, o navegador nem confere o arquivo.","b":1},{"id":"rm-cloud-9p3ilq","t":"Cloud & Delivery","q":"Para que serve o OIDC entre o GitHub Actions e a AWS?","o":["Dar credencial temporária ao workflow, sem chave guardada","Criptografar o código antes de enviá-lo para a AWS","Fazer login dos usuários do site com a conta do GitHub","Acelerar o build usando máquinas da AWS no lugar do GitHub"],"c":0,"e":"Com OIDC, o GitHub prova à AWS qual repositório e qual branch estão rodando, e a AWS devolve uma credencial que expira logo. Nenhuma chave fica guardada nos secrets, então não há o que vazar. Não tem a ver com login de usuário nem com velocidade de build.","b":1},{"id":"rm-cloud-7418y0","t":"Cloud & Delivery","q":"O Gabarita gera a explicação da IA com \u003ccode>after()\u003c/code> e usa \u003ccode>loading.tsx\u003c/code> pra streaming de RSC. Por que o Amplify Hosting não é a escolha óbvia pra levá-lo à AWS?","o":["O Amplify não roda o App Router, só o Pages Router","O Amplify não suporta Route Handlers nem middleware","Streaming e \u003ccode>after()\u003c/code> estão na lista de não suportados","O Amplify só faz SSR até o Next 12, e o Gabarita usa o Next 15"],"c":2,"e":"A página oficial lista como não suportados o streaming do Next.js, o \u003ccode>after()\u003c/code> (\u003ccode>unstable_after\u003c/code>), o ISR sob demanda e o middleware no runtime edge. SSR, ISR por tempo, App Router, Route Handlers e middleware comum são suportados, em versões atuais do Next. Pra esse app, container standalone em ECS ou App Runner (ou o OpenNext) preserva o comportamento."},{"id":"rm-cloud-1u5ezvk","t":"Cloud & Delivery","q":"Num deploy via GitHub Actions com OIDC, o que a condição \u003ccode>token.actions.githubusercontent.com:sub\u003c/code> na trust policy da role controla?","o":["Quais repositório, branch ou environment podem assumir a role","Quanto tempo dura a credencial temporária emitida pelo STS","Quais ações e recursos da AWS a role pode acessar depois de assumida","Qual audiência o token precisa ter (\u003ccode>sts.amazonaws.com\u003c/code>)"],"c":0,"e":"O \u003ccode>sub\u003c/code> identifica de onde o workflow roda, por exemplo \u003ccode>repo:org/app:environment:prod\u003c/code>. É ele que impede outro repositório, um fork ou outra branch de assumir a role de produção. A audiência é a condição \u003ccode>:aud\u003c/code>; o que a role pode fazer está na policy de permissões, não na trust policy; e a duração vem da configuração da sessão."},{"id":"rm-cloud-12cqe4r","t":"Cloud & Delivery","q":"Você trocou \u003ccode>NEXT_PUBLIC_API_URL\u003c/code> no painel da hospedagem e reiniciou o servidor, mas o navegador continua chamando a URL antiga. Por quê?","o":["Variáveis \u003ccode>NEXT_PUBLIC_\u003c/code> só são lidas no primeiro request","O \u003ccode>process.env\u003c/code> fica congelado no cache do servidor Node","O painel só aplica a variável em rotas dinâmicas, não nas estáticas","O valor é embutido no bundle no \u003ccode>next build\u003c/code>; só um novo build troca"],"c":3,"e":"Prefixo \u003ccode>NEXT_PUBLIC_\u003c/code> significa &ldquo;substitua o valor no JavaScript na hora do build&rdquo;: o código do navegador nunca lê \u003ccode>process.env\u003c/code>, ele recebe a string já escrita. Reiniciar não adianta. O runbook do Ally AI registra exatamente isso. Pra uma imagem servir vários ambientes, o valor tem que ser lido no servidor em runtime, numa rota dinâmica."},{"id":"rm-cloud-1czef97","t":"Cloud & Delivery","q":"Uma cache policy do CloudFront tem TTL mínimo de 86400 s. A origem responde uma página logada com \u003ccode>Cache-Control: private, no-store\u003c/code>. O que acontece?","o":["Respeita o \u003ccode>private\u003c/code> e não guarda, porque a origem manda","Guarda por pelo menos um dia e pode servir a página a outro usuário","Guarda, mas a cache key inclui o cookie de sessão, então cada um vê a sua","Respeita o \u003ccode>no-store\u003c/code>, mas usa o TTL mínimo só nos estáticos"],"c":1,"e":"Com TTL mínimo maior que 0, o CloudFront guarda o objeto por esse tempo mesmo com \u003ccode>no-cache\u003c/code>, \u003ccode>no-store\u003c/code> ou \u003ccode>private\u003c/code> vindos da origem. E cookie só entra na cache key se a policy disser (por padrão não entra), então enquanto o objeto estiver dentro do TTL a mesma página pode sair pra usuários diferentes. Por isso o dinâmico precisa de um comportamento com TTL mínimo 0, e o cache longo fica restrito aos arquivos com hash no nome."},{"id":"rm-cloud-1inyg3e","t":"Cloud & Delivery","q":"Três containers do mesmo app Next atrás de um load balancer, cada um com o cache padrão. Uma Server Action chama \u003ccode>revalidateTag('questoes', 'max')\u003c/code>. O que acontece?","o":["As três invalidam juntas, porque o Next sincroniza por padrão","Nenhuma invalida: \u003ccode>revalidateTag\u003c/code> só funciona na Vercel","Só a instância que rodou a action; as outras servem o dado antigo","O load balancer propaga a invalidação pros outros containers via header"],"c":2,"e":"O cache padrão fica no disco e na memória de cada instância, e nada no Next nem no load balancer avisa as outras. Coordenar exige um \u003ccode>cacheHandler\u003c/code> compartilhado (Redis, S3) que implemente \u003ccode>refreshTags()\u003c/code>. É o que o OpenNext faz com DynamoDB, e o que a Vercel faz por você sem você ver."},{"id":"rm-cloud-1794j2o","t":"Cloud & Delivery","q":"No Gabarita, o Sentry usa \u003ccode>tunnelRoute: \"/monitoramento\"\u003c/code>. Qual o ganho principal disso?","o":["Os eventos chegam mais rápido, porque evitam um lookup de DNS","Envio same-origin: escapa de adblock e mantém \u003ccode>connect-src 'self'\u003c/code>","Os source maps passam a ser enviados junto, sem upload no build","Os eventos passam a ser criptografados, o que sem túnel não ocorre"],"c":1,"e":"O túnel faz o evento sair same-origin e o servidor repassá-lo ao Sentry. Bloqueadores de anúncio costumam barrar o host do Sentry, e uma CSP estrita teria que abrir exceção em \u003ccode>connect-src\u003c/code>. O túnel resolve os dois sem afrouxar a política (D111 no DECISOES.md do Gabarita). O envio direto já é HTTPS, e os source maps continuam sendo enviados no build."},{"id":"rm-cloud-1herukz","t":"Cloud & Delivery","q":"Num \u003ccode>ci.yml\u003c/code>, para que serve \u003ccode>concurrency\u003c/code> com \u003ccode>cancel-in-progress: true\u003c/code> em pull requests?","o":["Rodar os jobs do PR em paralelo, na mesma máquina virtual","Cancelar a execução anterior quando chega um commit novo no PR","Impedir que dois PRs sejam mesclados na main ao mesmo tempo","Reaproveitar o cache de dependências entre PRs diferentes do repositório"],"c":1,"e":"Só o último commit de um PR importa; as execuções antigas gastam minutos à toa. No deploy de produção, porém, cancelar no meio pode deixar o ambiente pela metade, então ali o grupo é próprio e sem cancelamento."},{"id":"rm-cloud-1tgu9c6","t":"Cloud & Delivery","q":"Por que o job de pull request não deve ter \u003ccode>permissions: id-token: write\u003c/code>?","o":["Porque o token OIDC só é emitido para branches protegidas","Porque o token OIDC expira antes de o job de testes terminar","Porque o cache do pnpm deixa de funcionar com essa permissão ligada","Porque código de um PR poderia pedir o token e tentar assumir a role"],"c":3,"e":"O \u003ccode>id-token: write\u003c/code> é o que permite ao job pedir o token OIDC. Só o job de deploy, que roda depois do CI e só na main, deve tê-lo, e a trust policy ainda restringe pelo \u003ccode>sub\u003c/code>. O job que executa código de PR nem tem como pedir."},{"id":"rm-cloud-4pm99c","t":"Cloud & Delivery","q":"A senha do banco precisa de rotação automática. Qual serviço da AWS usar?","o":["O Secrets Manager, que tem rotação com integração aos bancos da AWS","O SSM Parameter Store, que rotaciona todo \u003ccode>SecureString\u003c/code> sozinho","Qualquer um: os dois rotacionam do mesmo jeito","Nenhum: rotação só existe em variável de ambiente do ECS"],"c":0,"e":"Rotação é o recurso que separa os dois. O Secrets Manager rotaciona (com funções prontas para bancos da AWS) e cobra por segredo; o SSM Parameter Store, no nível padrão, é gratuito mas não rotaciona. Configuração e segredo que não gira cabem no SSM."},{"id":"rm-cloud-65lntp","t":"Cloud & Delivery","q":"Qual a vantagem do i18n por subcaminho (\u003ccode>/pt-BR/\u003c/code>, \u003ccode>/en/\u003c/code>) sobre um domínio por país?","o":["Resolve a residência de dados sem precisar escolher uma região","Dispensa hreflang e canonical nas páginas de cada idioma","O buscador entende o país melhor do que com um domínio .ie","Um domínio, um certificado e um deploy; SEO concentrado"],"c":3,"e":"O subcaminho é o padrão por custo operacional baixo. Domínio por país dá sinal geográfico mais forte e confiança local, ao preço de N domínios e certificados. Em qualquer um, \u003ccode>hreflang\u003c/code> e \u003ccode>canonical\u003c/code> por idioma continuam necessários, e residência de dado é uma restrição de região, não de URL."},{"id":"rm-cloud-1pk4tn1","t":"Cloud & Delivery","q":"Qual destas métricas indica insatisfação com respostas de IA e um monitor de erros não enxerga?","o":["A taxa de erro 5xx do servidor","A taxa de regenerar a resposta","O tempo de build do deploy","O tamanho do bundle da página"],"c":1,"e":"Regenerar e parar a resposta no meio são sinais de produto: a infraestrutura está saudável, mas a resposta não serviu. Junto de TTFT, custo por conversa e polegar para baixo, formam a parte de &ldquo;uso&rdquo; da observabilidade, que o Sentry sozinho não cobre."}]</script>
   </div>
 </section>
 
@@ -523,7 +625,7 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 202 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 15/10/2026
+    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 226 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 16/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

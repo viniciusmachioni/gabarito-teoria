@@ -1,9 +1,125 @@
 <section class="week" id="rm1">
   <div class="week-head"><span class="week-num">R1</span><h2>AI-Powered Frontend</h2></div>
   <div class="week-meta">~8h &middot; a parte da IA que o usuário vê: o tempo de espera, o formato da resposta e o que acontece quando ela falha</div>
-  <p class="intro">Vaga de Frontend Engineer com foco em IA não pergunta como treinar um modelo. Pergunta o que a interface faz durante os 10 segundos em que o modelo pensa, como transformar texto livre em dado que um componente consegue renderizar, e o que o usuário vê quando a cota estoura. Este bloco cobre as quatro frentes do roadmap: <strong>streaming e estados assíncronos</strong>, <strong>tool calling e structured outputs</strong>, <strong>Generative UI</strong> e <strong>UX de loading, erro, retry e human-in-the-loop</strong>. O Gabarita e o Ally AI já aplicam boa parte disso &mdash; a seção &ldquo;Onde você já aplicou&rdquo; mostra onde. O vocabulário de base (token, RAG, loop agentic) está no <a href="b02-ia-agentes.html">B2</a>, e estado de servidor no cliente está no <a href="b15-react-estado.html">B15</a>.</p>
+  <p class="intro">Esta página é sobre a parte da IA que o usuário <strong>vê</strong>. O modelo demora alguns segundos para responder, às vezes devolve o formato errado e às vezes falha. A entrevista quer saber o que a sua tela faz em cada um desses momentos. Comece pelo <strong>Ver</strong>, que explica as seis ideias da página em linguagem simples. Depois vêm dois exercícios curtos (<strong>Fazer</strong>), o que os seus projetos já fizeram (<strong>Contar</strong>) e as perguntas (<strong>Provar</strong>). O vocabulário de base (token, RAG, agente) está no <a href="b02-ia-agentes.html">B2</a>.</p>
 
-  <h3 class="sub">Tópicos</h3>
+  <ol class="etapas">
+    <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
+    <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
+  </ol>
+
+  <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
+  <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. Streaming: por que a resposta aparece aos pedaços</h4>
+      <p><b class="r">O problema</b>Um modelo leva de 5 a 15 segundos para escrever uma resposta inteira. Uma tela parada por 10 segundos parece quebrada.</p>
+      <p><b class="r">Como funciona</b>O servidor manda cada pedaço de texto assim que o modelo o escreve, sem esperar o fim. No navegador, <code>response.body</code> é um fluxo de dados (um <em>stream</em>). Você lê um pedaço de cada vez com <code>getReader()</code> e vai acrescentando o texto na tela.</p>
+      <p><b class="r">O detalhe</b>O tempo total <strong>não muda</strong>. O que muda é o tempo até aparecer o primeiro texto, o <em>TTFT</em> (time to first token). É isso que a pessoa sente.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Streaming não deixa o modelo mais rápido. Ele faz a primeira palavra aparecer em um segundo, em vez de dez.&rdquo;</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 152" role="img" aria-labelledby="r1d1">
+        <title id="r1d1">A mesma resposta de 10 segundos, com e sem streaming</title>
+        <text x="6" y="41" class="h">Sem streaming</text>
+        <rect x="120" y="24" width="228" height="26" rx="4" class="bx"/>
+        <text x="234" y="41" text-anchor="middle" class="s">tela parada, esperando</text>
+        <rect x="352" y="24" width="58" height="26" rx="4" class="bx-t"/>
+        <text x="381" y="41" text-anchor="middle" class="s">tudo</text>
+        <text x="6" y="91" class="h">Com streaming</text>
+        <rect x="120" y="74" width="24" height="26" rx="4" class="bx"/>
+        <rect x="148" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="170" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="192" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="214" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="236" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="258" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="280" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="302" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="324" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="346" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="368" y="74" width="18" height="26" rx="3" class="bx-t"/><rect x="390" y="74" width="18" height="26" rx="3" class="bx-t"/>
+        <text x="278" y="118" text-anchor="middle" class="s tt">o texto chega aos pedaços</text>
+        <line x1="120" y1="128" x2="410" y2="128" class="ln"/>
+        <text x="120" y="145" class="s">0 s</text>
+        <text x="144" y="145" class="s">1 s</text>
+        <text x="410" y="145" text-anchor="end" class="s">10 s</text>
+      </svg>
+      <figcaption>A resposta termina aos 10 s nos dois casos. Com streaming, o primeiro texto aparece em cerca de 1 s.</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>2. Os estados da tela</h4>
+      <p><b class="r">O problema</b>Um simples &ldquo;carregando: sim ou não&rdquo; não descreve uma tela de IA. Ela passa por mais fases, e cada fase mostra uma coisa diferente.</p>
+      <p><b class="r">Como funciona</b>A tela segue esta sequência: <code>idle</code> (parada) &rarr; <code>submitted</code> (pedido enviado, nada chegou ainda) &rarr; <code>streaming</code> (o texto está chegando) &rarr; <code>ready</code> (terminou) ou <code>error</code> (falhou). É o modelo do <code>useChat</code>, o hook mais usado para isso em React.</p>
+      <p><b class="r">Exemplo</b>Em <code>submitted</code>, mostre &ldquo;Pensando&hellip;&rdquo; e o botão Parar. Em <code>streaming</code>, o texto crescendo e o mesmo botão. Em <code>error</code>, uma mensagem clara e &ldquo;Tentar de novo&rdquo;. O botão Parar usa um <code>AbortController</code>, que cancela o pedido de verdade e não só esconde o texto.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Eu desenho os estados antes do componente: enviado, chegando, pronto, erro e parado pelo usuário.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>3. Structured output: pedir dados, não texto</h4>
+      <p><b class="r">O problema</b>O modelo devolve texto livre, mas o seu componente precisa de dados com formato fixo, por exemplo <code>{ resumo, alternativas: [...] }</code>.</p>
+      <p><b class="r">Como funciona</b>Você envia um <em>JSON Schema</em> junto com o pedido. O schema é a descrição do formato: quais campos existem e de que tipo. O modelo responde em JSON seguindo esse formato. Depois, o seu código valida a resposta de novo com <em>Zod</em>, uma biblioteca de validação.</p>
+      <p><b class="r">Por que validar duas vezes</b>O schema garante a <strong>forma</strong>, não o <strong>conteúdo</strong>. Um campo pode vir vazio, um id pode ser inventado e duas alternativas podem vir marcadas como corretas. Trate a saída do modelo como um formulário que o usuário preencheu: ela pode estar errada.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;O schema garante a forma, e o meu código confere o sentido.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>4. Tool calling: o modelo pede, o seu código faz</h4>
+      <p><b class="r">O problema</b>O modelo não sabe o que está no seu banco de dados e não consegue fazer nada fora da conversa.</p>
+      <p><b class="r">Como funciona</b>Você descreve algumas ferramentas: nome, para que servem e quais argumentos recebem. O modelo responde algo como &ldquo;quero chamar <code>buscarPedido</code> com <code>{ id: 42 }</code>&rdquo;. Quem executa é o <strong>seu código</strong>. O resultado volta para o modelo, que continua a resposta.</p>
+      <p><b class="r">Cuidado</b>O modelo não executa nada sozinho. Quem roda é o seu servidor, com as permissões dele. Então valide o argumento e confira se o usuário pode ver aquele pedido, como faria com qualquer formulário.</p>
+      <p><b class="r">Não confunda</b><em>Structured output</em> define o formato da resposta final. <em>Tool calling</em> é um pedido de ação no meio da conversa.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Se eu só preciso do formato, uso structured output. Se o modelo precisa decidir o que buscar, uso tool calling.&rdquo;</p>
+    </div>
+
+    <figure class="diag">
+      <svg viewBox="0 0 420 300" role="img" aria-labelledby="r1d2">
+        <title id="r1d2">O ciclo de tool calling em cinco passos</title>
+        <defs><marker id="r1s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="seta"/></marker></defs>
+        <rect x="30" y="8" width="150" height="30" rx="6" class="bx-b"/><text x="105" y="28" text-anchor="middle" class="h">Seu código</text>
+        <rect x="240" y="8" width="150" height="30" rx="6" class="bx-a"/><text x="315" y="28" text-anchor="middle" class="h">Modelo</text>
+        <line x1="105" y1="38" x2="105" y2="290" class="ln" stroke-dasharray="3 4"/>
+        <line x1="315" y1="38" x2="315" y2="290" class="ln" stroke-dasharray="3 4"/>
+        <text x="210" y="64" text-anchor="middle" class="s">1 · pergunta + lista de ferramentas</text>
+        <line x1="107" y1="72" x2="312" y2="72" class="ln" marker-end="url(#r1s)"/>
+        <text x="210" y="108" text-anchor="middle" class="m">2 · buscarPedido({ id: 42 })</text>
+        <line x1="313" y1="116" x2="108" y2="116" class="ln-a" marker-end="url(#r1s)"/>
+        <rect x="8" y="136" width="194" height="48" rx="6" class="bx-t"/>
+        <text x="105" y="156" text-anchor="middle" class="s">3 · valida, confere permissão</text>
+        <text x="105" y="174" text-anchor="middle" class="s">e executa a função</text>
+        <text x="210" y="214" text-anchor="middle" class="s">4 · resultado: { status: "enviado" }</text>
+        <line x1="107" y1="222" x2="312" y2="222" class="ln" marker-end="url(#r1s)"/>
+        <text x="210" y="258" text-anchor="middle" class="s">5 · resposta final, em texto</text>
+        <line x1="313" y1="266" x2="108" y2="266" class="ln" marker-end="url(#r1s)"/>
+      </svg>
+      <figcaption>O modelo só pede (passo 2). Quem executa e responde pelo risco é o seu código (passo 3).</figcaption>
+    </figure>
+
+    <div class="bcard">
+      <h4>5. Generative UI: a resposta vira componente</h4>
+      <p><b class="r">O problema</b>Alguns resultados ficam ruins em forma de parágrafo, como uma lista de voos, um gráfico ou um pedido para aprovar.</p>
+      <p><b class="r">Como funciona</b>Cada ferramenta tem um componente React. Quando o modelo chama <code>mostrarClima</code>, a tela renderiza <code>&lt;CartaoClima&gt;</code> com os dados que a ferramenta devolveu. O cartão também tem estados: carregando, pronto e erro. O modelo escolhe <strong>qual</strong> componente aparece, sempre de uma lista fechada que você definiu. Ele nunca gera HTML para a página executar.</p>
+      <p><b class="r">Quando não usar</b>Se a resposta tem sempre o mesmo formato, um card fixo preenchido com os dados é mais simples, mais fácil de testar e mais acessível.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Generative UI é o modelo escolhendo um componente de uma lista fechada. Eu só uso quando o formato da resposta muda de pedido para pedido.&rdquo;</p>
+    </div>
+
+    <div class="bcard">
+      <h4>6. Quando dá errado: erro, retry e aprovação humana</h4>
+      <p><b class="r">Erro passageiro</b>429 (limite de pedidos estourado), 503 (serviço fora do ar) e queda de rede costumam passar sozinhos. Vale tentar de novo, esperando cada vez mais entre as tentativas (<em>backoff</em>), ou esperando o tempo que a própria API pediu.</p>
+      <p><b class="r">Erro permanente</b>400 (pedido mal feito) e 404 (não existe) não melhoram com outra tentativa. Mostre a mensagem e pare.</p>
+      <p><b class="r">Prazo de desistência</b>A tela nunca fica carregando para sempre. Depois de um tempo, ela diz o que aconteceu e o que a pessoa pode fazer.</p>
+      <p><b class="r">Aprovação humana</b>Antes de uma ação com efeito real (enviar e-mail, apagar, pagar), a IA para e pede confirmação. O nome disso é <em>human-in-the-loop</em>.</p>
+      <p><b class="r">Acessibilidade</b>Quem usa leitor de tela não vê o texto aparecer. Um <code>role="status"</code> (ou <code>aria-live</code>) faz o leitor anunciar que a resposta chegou.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Eu desenho o caminho de erro junto com o caminho feliz: o que repete, quanto espera, quando desiste e o que a pessoa vê.&rdquo;</p>
+    </div>
+  </div>
+
+  <dl class="glossario">
+    <dt>TTFT</dt><dd>time to first token: quanto demora para aparecer o primeiro pedaço da resposta.</dd>
+    <dt>SSE</dt><dd>Server-Sent Events: um formato simples para o servidor mandar eventos ao navegador numa conexão aberta.</dd>
+    <dt>AbortController</dt><dd>objeto do navegador que cancela um <code>fetch</code> em andamento.</dd>
+    <dt>JSON Schema</dt><dd>descrição do formato de um JSON: campos, tipos e quais são obrigatórios.</dd>
+    <dt>Zod</dt><dd>biblioteca TypeScript que confere, em tempo de execução, se um dado tem o formato esperado.</dd>
+    <dt>Backoff</dt><dd>esperar cada vez mais entre uma tentativa e a próxima (1 s, 2 s, 4 s&hellip;).</dd>
+  </dl>
+
+
+  <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
+  <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
     <li class="item"><input type="checkbox" id="w25-1"><label for="w25-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM até o navegador: Route Handler devolvendo stream, <code>response.body.getReader()</code> no cliente, e por que streaming melhora o <strong>tempo até o primeiro token</strong> (o que o usuário percebe) sem mudar o tempo total</span></label></li>
     <li class="item"><input type="checkbox" id="w25-2"><label for="w25-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os estados de uma UI de IA: <code>submitted</code> &rarr; <code>streaming</code> &rarr; <code>ready</code> / <code>error</code> (o modelo do <code>useChat</code>), e <strong>cancelar</strong> (<code>stop()</code>, <code>AbortController</code>) como estado de primeira classe, não como detalhe</span></label></li>
@@ -16,7 +132,7 @@
     <li class="item"><input type="checkbox" id="w25-9"><label for="w25-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Human-in-the-loop: aprovação <strong>antes</strong> de executar ação sensível, revisão humana <strong>antes</strong> de publicar saída da IA, e o botão de reportar do usuário como sinal que reordena a fila</span></label></li>
   </ul>
 
-  <h3 class="sub">Onde estudar (grátis)</h3>
+  <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
   <ul class="resources">
     <li><div class="r-title"><a href="https://ai-sdk.dev/docs/ai-sdk-ui/chatbot" target="_blank" rel="noopener">AI SDK UI &mdash; Chatbot (useChat)</a></div><div class="r-note">A referência de mercado pra UI de LLM em React: streaming, os quatro estados, <code>stop()</code>, <code>regenerate()</code>, erro e throttle de re-render. Mesmo sem usar o SDK, é o vocabulário que a entrevista espera.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~25 min</span>Leia o exemplo inicial (route handler + página), Status, Error State, Modify messages / Cancellation and regeneration e Throttling UI Updates. Pule transports customizados e anexos.</div><div class="r-src">ai-sdk.dev &middot; oficial (Vercel)</div></li>
     <li><div class="r-title"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams" target="_blank" rel="noopener">MDN &mdash; Using readable streams</a></div><div class="r-note">O que existe por baixo de qualquer SDK: <code>response.body</code> é um <code>ReadableStream</code>, e ler pedaço por pedaço é um laço de <code>read()</code>.</div><div class="r-scope"><span class="r-tag t-part">Ler trechos &middot; ~20 min</span>Leia &ldquo;Consuming a fetch as a stream&rdquo; e &ldquo;Consuming a fetch() using asynchronous iteration&rdquo; (com o cancelamento via <code>AbortController</code>). Criar stream próprio e tee são consulta.</div><div class="r-src">developer.mozilla.org &middot; referência</div></li>
@@ -26,12 +142,125 @@
     <li><div class="r-title"><a href="https://ai-sdk.dev/docs/agents/tool-approvals" target="_blank" rel="noopener">AI SDK &mdash; Tool Approvals</a></div><div class="r-note">Human-in-the-loop na forma mais concreta: a ferramenta para, a UI pergunta, o usuário aprova ou nega, e o modelo segue sabendo da decisão.</div><div class="r-scope"><span class="r-tag t-full">Ler inteiro &middot; ~15 min</span>Página curta. Note a diferença entre aprovação estática (por ferramenta) e dinâmica (pelo valor do argumento).</div><div class="r-src">ai-sdk.dev &middot; oficial (Vercel)</div></li>
   </ul>
 
+  
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <div class="ex" id="fz1">
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Os estados de um chat num reducer</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Escreva o tipo <code>Estado</code> e a função <code>reducer(estado, acao)</code> de uma tela de chat com IA. As ações são <code>ENVIAR</code>, <code>PEDACO</code> (chegou um pedaço de texto), <code>FIM</code>, <code>FALHA</code> (com uma mensagem) e <code>PARAR</code> (o usuário clicou em Parar).</p>
+      <h4>Regras</h4>
+      <ul>
+        <li>Não dá para <code>ENVIAR</code> enquanto uma resposta ainda está chegando.</li>
+        <li><code>PARAR</code> no meio guarda o texto que já chegou e marca a resposta como interrompida.</li>
+        <li>Um pedaço que chega depois de parar ou de falhar é ignorado.</li>
+        <li>O tipo não pode permitir estado impossível, como texto em <code>idle</code> ou mensagem de erro em <code>ready</code>.</li>
+      </ul>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Use uma <em>união discriminada</em>: cada estado é um objeto com um campo <code>tipo</code> e só os campos que fazem sentido nele. Aí o TypeScript não deixa você ler <code>texto</code> num estado que não tem texto.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type Estado =
+  | { tipo: 'idle' }
+  | { tipo: 'submitted' }
+  | { tipo: 'streaming'; texto: string }
+  | { tipo: 'ready'; texto: string; interrompida: boolean }
+  | { tipo: 'error'; mensagem: string; texto: string };
+
+type Acao =
+  | { tipo: 'ENVIAR' }
+  | { tipo: 'PEDACO'; texto: string }
+  | { tipo: 'FIM' }
+  | { tipo: 'FALHA'; mensagem: string }
+  | { tipo: 'PARAR' };
+
+export function reducer(e: Estado, a: Acao): Estado {
+  switch (a.tipo) {
+    case 'ENVIAR':
+      // enquanto chega resposta, um segundo envio é ignorado
+      return e.tipo === 'submitted' || e.tipo === 'streaming' ? e : { tipo: 'submitted' };
+    case 'PEDACO':
+      if (e.tipo === 'submitted') return { tipo: 'streaming', texto: a.texto };
+      if (e.tipo === 'streaming') return { tipo: 'streaming', texto: e.texto + a.texto };
+      return e; // pedaço atrasado, depois de parar ou falhar
+    case 'FIM':
+      if (e.tipo === 'streaming') return { tipo: 'ready', texto: e.texto, interrompida: false };
+      if (e.tipo === 'submitted') return { tipo: 'ready', texto: '', interrompida: false };
+      return e;
+    case 'FALHA':
+      if (e.tipo !== 'submitted' && e.tipo !== 'streaming') return e;
+      // guarda o que já chegou: a tela pode mostrar o texto parcial junto do erro
+      return { tipo: 'error', mensagem: a.mensagem, texto: e.tipo === 'streaming' ? e.texto : '' };
+    case 'PARAR':
+      if (e.tipo === 'streaming') return { tipo: 'ready', texto: e.texto, interrompida: true };
+      if (e.tipo === 'submitted') return { tipo: 'idle' };
+      return e;
+  }
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o tipo impede estado impossível (não existe <code>texto</code> em <code>idle</code>), o pedaço atrasado não &ldquo;ressuscita&rdquo; uma resposta parada, e parar é um estado de verdade, não um detalhe. Na tela real, o <code>PARAR</code> também chama <code>abortController.abort()</code> para cancelar o pedido.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="fz2">
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Validar a resposta do modelo com Zod</h3><span class="ex-meta">15 min &middot; TypeScript + Zod</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">O modelo devolve um texto que deveria ser este JSON: <code>{ "resumo": "...", "alternativas": [{ "letra": "A", "correta": false, "motivo": "..." }, ...] }</code>. Escreva <code>parseExplicacao(texto, gabarito)</code>, que devolve os dados validados ou <code>null</code>.</p>
+      <h4>Regras</h4>
+      <ul>
+        <li>O texto pode nem ser JSON válido.</li>
+        <li><code>resumo</code> e cada <code>motivo</code> não podem ser vazios. São de 4 a 5 alternativas, com letras de A a E, sem repetir.</li>
+        <li>Exatamente uma alternativa correta, e ela tem de ser a letra do <code>gabarito</code>.</li>
+      </ul>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Separe em três portas: <code>JSON.parse</code> dentro de <code>try</code> (o texto é JSON?), <code>safeParse</code> do Zod com <code>refine</code> (a forma e as regras estão certas?) e uma comparação com o gabarito (o sentido está certo?).</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+import { z } from 'zod';
+
+const Alternativa = z.object({
+  letra: z.enum(['A', 'B', 'C', 'D', 'E']),
+  correta: z.boolean(),
+  motivo: z.string().trim().min(1),
+});
+
+const Explicacao = z
+  .object({
+    resumo: z.string().trim().min(1),
+    alternativas: z.array(Alternativa).min(4).max(5),
+  })
+  .refine((x) => x.alternativas.filter((a) => a.correta).length === 1, 'precisa de exatamente uma correta')
+  .refine((x) => new Set(x.alternativas.map((a) => a.letra)).size === x.alternativas.length, 'letra repetida');
+
+export type Explicacao = z.infer<typeof Explicacao>;
+
+export function parseExplicacao(texto: string, gabarito: string): Explicacao | null {
+  let bruto: unknown;
+  try {
+    bruto = JSON.parse(texto); // porta 1: é JSON?
+  } catch {
+    return null;
+  }
+  const r = Explicacao.safeParse(bruto); // porta 2: forma e regras
+  if (!r.success) return null;
+  const correta = r.data.alternativas.find((a) => a.correta)!;
+  return correta.letra === gabarito ? r.data : null; // porta 3: concorda com o gabarito?
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> quando volta <code>null</code>, quem chama refaz o pedido ao modelo (até 3 vezes, como no Gabarita). Isso serve para resposta malformada. Para erro de rede ou de cota, refazer na hora não ajuda: aí entra o retry com espera do cartão 6.</p>
+      </div></details>
+    </div>
+  </div>
+
+  <h3 class="sub etapa" id="contar"><span class="etapa-n">3 &middot; Contar</span>As suas decisões e onde você já aplicou</h3>
+  <p class="etapa-nota">É o que você fala na entrevista: por que escolheu cada coisa nos seus projetos e a resposta honesta para o que ainda não fez.</p>
+
   <h3 class="sub">Decisões e tradeoffs: escolha, custo e restrição</h3>
   <p class="tnota">Cada cartão responde à mesma pergunta: <strong>por que assim, e não de outro jeito?</strong> Os quatro primeiros campos são um rascunho feito a partir do código; o último é seu. Antes de ler a pista, diga a sua versão em voz alta. O que mais se cobra em entrevista é a linha &ldquo;Restrição que forçou&rdquo;: o que impedia a outra opção.</p>
 
   <div class="tcards">
     <div class="tcard">
       <h4>Streaming: por que o Gabarita gera a explicação antes <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> O Gabarita não mostra a explicação aparecendo aos pedaços: gera tudo antes, confere e só então mostra.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Gerar a explicação em segundo plano (<code>after()</code>) assim que a questão abre, e mostrá-la pronta, em vez de transmitir token a token.</dd>
@@ -44,10 +273,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: pense numa tela de chat, em que a pessoa fica olhando a espera. A mesma decisão se mantém?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>O ChatGPT transmite a resposta aos pedaços porque a pessoa está olhando a tela, esperando. O YouTube gera as legendas automáticas depois do upload e entrega o resultado pronto, porque ninguém está acompanhando palavra por palavra. A pergunta que decide é: tem alguém esperando na frente da tela?</p>
     </div>
 
     <div class="tcard">
       <h4>Saída da IA: o schema garante a forma, o código garante o sentido <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> O schema garante o formato da resposta. Se ela faz sentido, quem confere é o código, que pede de novo quando ela não passa.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Pedir JSON ao modelo e validar a saída no código com Zod, refazendo a chamada até 3 vezes quando a validação recusa. No Ally AI o schema também vai na chamada (<code>responseJsonSchema</code>).</dd>
@@ -60,10 +291,12 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: por que repetir a chamada serve para saída malformada, mas não para erro de rede ou de cota?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Sistemas que usam IA para ler notas fiscais fazem o mesmo: o modelo extrai os campos, e o código confere se a soma dos itens bate com o total antes de aceitar. Em 2024, a Air Canada mostrou o que acontece sem conferência: o chatbot dela inventou uma regra de reembolso, e um tribunal do Canadá mandou a empresa cumprir.</p>
     </div>
 
     <div class="tcard">
       <h4>Retry: quando repetir e quanto esperar <span class="st y">decisão tomada</span></h4>
+      <p class="tresumo"><strong>Em uma frase:</strong> Só repete o que pode dar certo numa nova tentativa, e espera o tempo que a própria API pediu.</p>
       <dl>
         <dt>Escolha</dt>
         <dd>Repetir só o que é transitório (429, 5xx, rede), esperando o <code>retryDelay</code> que a API mandou, com teto; erro permanente (400, 404) não repete.</dd>
@@ -76,6 +309,7 @@
         <dt>Quando eu faria diferente</dt>
         <dd class="seu">Sua vez.<small>Pista: retry automático no servidor ou botão de &ldquo;tentar de novo&rdquo; na tela? O que muda para a pessoa?</small></dd>
       </dl>
+      <p class="real"><b>No mundo real</b>Em 2015, a AWS publicou o artigo &ldquo;Exponential Backoff and Jitter&rdquo;, que virou referência: esperas que dobram e um pouco de sorteio, para milhares de clientes não tentarem de novo no mesmo segundo e derrubarem o serviço outra vez. Os SDKs oficiais da OpenAI e da Anthropic já repetem sozinhos os erros 429 e 5xx, com espera crescente.</p>
     </div>
   </div>
 
@@ -191,6 +425,9 @@
       <p class="why"><strong>Por que isso importa:</strong> qualquer um liga um <code>useChat</code>. O que separa sênior é escolher a técnica pelo caso, tratar a saída do modelo como entrada a validar, e desenhar o estado de falha junto com o estado feliz.</p>
     </div>
   </div>
+
+  <h3 class="sub etapa" id="provar"><span class="etapa-n">4 &middot; Provar</span>Perguntas abertas e múltipla escolha</h3>
+  <p class="etapa-nota">Responda em voz alta antes de abrir a resposta. A múltipla escolha, no fim, começa com três questões de aquecimento, só de conceito.</p>
 
   <div class="quiz">
     <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>

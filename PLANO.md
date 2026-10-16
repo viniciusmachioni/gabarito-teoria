@@ -159,3 +159,38 @@ Checagem estrutural sobre o gerado, com **0 problemas**:
   usando `03-postgresql.html` como referência de nível (um `<p class="tldr">`, seções por `<h5>`, tabela em
   `<div class="tbl">`, e uma frase de entrevista no fim quando fizer sentido). O build casa pelo `data-href`
   automaticamente e avisa se algum `<article>` não encontrar recurso correspondente.
+
+## Ver → Fazer → Contar → Provar (16/10/2026)
+
+Motivo: o texto das páginas do roadmap era tecnicamente bom, mas denso. A lista de "Tópicos" funcionava como índice, e faltava
+a explicação básica antes do detalhe. A ideia de "ver, fazer, provar" veio do codeclass.tech.
+
+- **Barra de etapas** (`ol.etapas`) logo depois da intro de R1–R8, com âncoras `#ver`, `#fazer`, `#contar`, `#provar`
+  (R8 sem `#contar`). Cada etapa abre com um `h3.sub.etapa` e uma `p.etapa-nota`.
+- **Ver**: intro reescrita em frases curtas e um bloco `.basico` com 6 ou 7 cartões `.bcard` por página (rótulos em
+  `b.r`, frase de entrevista em `p.frase`), 1 ou 2 diagramas SVG inline (`figure.diag`, cores pelas classes `.bx*`, `.ln*`
+  e pelos tokens, então funcionam nos dois temas) e um glossário `dl.glossario`. Depois vêm o checklist (antigo "Tópicos",
+  mesmos ids de checkbox) e as leituras. As seções extras de R2, R5 e R6 (que ficavam depois de "Onde você já aplicou")
+  subiram para o Ver.
+- **Fazer**: 2 exercícios curtos por página em R1–R6 (`.ex` com ids `fz1`/`fz2`) e 1 no R7 (STAR). Os trechos TS/TSX
+  compilam com `tsc --strict` (zod 4, vitest 4, @types/react), as soluções de R1 (reducer, Zod) e R4 (polling, Vitest)
+  passaram em testes, e o YAML do R5 foi parseado.
+- **Contar**: os cartões de tradeoff, "Onde você já aplicou" e "Você já usou...?", sem mudança de conteúdo.
+- **Provar**: perguntas abertas e múltipla escolha. **3 questões de aquecimento** por página (R1–R8), marcadas com `b: 1`
+  nas fontes, vêm primeiro e aparecem com o selo "aquecimento" (`quiz-pagina.js`). A meta do build passou para 10–15
+  questões por página.
+- Nada foi apagado: tópicos, leituras, perguntas abertas e questões antigas continuam iguais.
+
+## Leituras e cartões reescritos, com exemplos globais (16/10/2026)
+
+- **As 36 leituras de R1–R6** (`_montagem/leituras/r0*.html`) foram reescritas em linguagem simples: `p.tldr` começa com
+  "Em uma frase", termos são definidos na primeira vez, detalhes que não caem em entrevista saíram (MIME de tokens, JSON
+  Pointer, modos raros) e tabelas densas viraram listas. Frases caíram de 17–23 para 14–17 palavras em média. Os
+  `data-href` não mudaram, então as leituras continuam no mesmo recurso e o "marcar como lida" salvo vale.
+- **"No mundo real"** (`p.real`, caixa azul): um caso de produto global em cada leitura (ChatGPT, GitHub, Spotify,
+  Zalando, Vercel, Steam, Uber, Toyota, Pinterest, redBus, Supabase, Material Design 3, Carbon…) e em cada um dos 19
+  cartões de tradeoff, mostrando onde a decisão, ou a oposta, aparece. Os fatos menos óbvios foram conferidos em fonte
+  pública (web.dev, blogs de engenharia, comunicados) em 16/10/2026.
+- **Cartões de tradeoff**: ganharam `p.tresumo` ("Em uma frase") no topo. Os cinco campos e a linha "Sua vez" não mudaram.
+- **R7**: 4 cartões do Ver com `p.real` (LinkedIn Recruiter, Sonner/Emil Kowalski, ATS, STAR na Amazon). **R8**: a tabela
+  "qual exercício treina qual conceito" diz onde cada conceito existe num produto real.
