@@ -161,35 +161,35 @@
       <p class="ex-enunciado">Você vai expor a busca de questões do Gabarita como ferramenta MCP. Escreva em JSON: (1) como a ferramenta aparece na resposta de <code>tools/list</code>; (2) o pedido <code>tools/call</code> que o host manda quando o modelo pede 3 questões de cardiologia; (3) uma resposta de sucesso.</p>
       <h4>Regras</h4>
       <ul>
-        <li><code>tema</code> é texto e obrigatório. <code>limite</code> é inteiro de 1 a 20, com padrão 5.</li>
+        <li><code>topic</code> é texto e obrigatório. <code>limit</code> é inteiro de 1 a 20, com padrão 5.</li>
         <li>A descrição precisa dizer ao modelo <strong>quando</strong> usar a ferramenta.</li>
       </ul>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://modelcontextprotocol.io/specification/2025-06-18/server/tools">MCP: tools</a> &middot; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Os argumentos são descritos por um JSON Schema no campo <code>inputSchema</code>. As mensagens seguem o JSON-RPC 2.0: <code>jsonrpc</code>, <code>id</code>, <code>method</code> e <code>params</code> no pedido; <code>result</code> na resposta.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-// (1) um item de result.tools na resposta de tools/list
+// (1) one item of result.tools in the tools/list response
 {
-  "name": "buscar_questoes",
-  "description": "Busca questões de residência médica por tema. Use quando a pessoa pedir questões para treinar um assunto.",
+  "name": "search_questions",
+  "description": "Searches medical residency questions by topic. Use it when the user asks for questions to practice a subject.",
   "inputSchema": {
     "type": "object",
     "properties": {
-      "tema": { "type": "string", "description": "Assunto, por exemplo cardiologia ou pediatria" },
-      "limite": { "type": "integer", "minimum": 1, "maximum": 20, "default": 5 }
+      "topic": { "type": "string", "description": "Subject, for example cardiology or pediatrics" },
+      "limit": { "type": "integer", "minimum": 1, "maximum": 20, "default": 5 }
     },
-    "required": ["tema"]
+    "required": ["topic"]
   }
 }
 
-// (2) o host chama a ferramenta
+// (2) the host calls the tool
 { "jsonrpc": "2.0", "id": 7, "method": "tools/call",
-  "params": { "name": "buscar_questoes", "arguments": { "tema": "cardiologia", "limite": 3 } } }
+  "params": { "name": "search_questions", "arguments": { "topic": "cardiology", "limit": 3 } } }
 
-// (3) a resposta do servidor
+// (3) the server response
 { "jsonrpc": "2.0", "id": 7,
   "result": {
-    "content": [{ "type": "text", "text": "3 questões de cardiologia: Q1012, Q1048, Q1101." }],
+    "content": [{ "type": "text", "text": "3 cardiology questions: Q1012, Q1048, Q1101." }],
     "isError": false
   } }
 </code></pre>
@@ -200,13 +200,13 @@
         <h5>1 &middot; Explique em voz alta</h5>
         <ol>
           <li>Por que a descrição diz <em>quando</em> usar a ferramenta, e não só o que ela faz?</li>
-          <li>Se o <code>inputSchema</code> já diz que <code>limite</code> vai de 1 a 20, por que o servidor valida de novo?</li>
+          <li>Se o <code>inputSchema</code> já diz que <code>limit</code> vai de 1 a 20, por que o servidor valida de novo?</li>
           <li>Qual a diferença entre responder com <code>isError: true</code> e responder com um <code>error</code> do JSON-RPC?</li>
         </ol>
         <details class="rv"><summary>respostas</summary><div class="rv-body">
           <ol>
             <li>Porque o modelo escolhe a ferramenta lendo a descrição. &ldquo;Busca questões&rdquo; não diz em que situação ela serve; &ldquo;use quando a pessoa pedir questões para treinar um assunto&rdquo; diz.</li>
-            <li>O schema <em>descreve</em> o que é esperado, mas não impede nada: qualquer cliente pode mandar <code>limite: 5000</code>. O servidor trata o argumento como um formulário vindo de fora.</li>
+            <li>O schema <em>descreve</em> o que é esperado, mas não impede nada: qualquer cliente pode mandar <code>limit: 5000</code>. O servidor trata o argumento como um formulário vindo de fora.</li>
             <li><code>isError: true</code> quer dizer &ldquo;a ferramenta rodou e falhou&rdquo; (o banco caiu, o tema não existe). O texto volta para o modelo, que pode explicar ou tentar outra coisa. O <code>error</code> do JSON-RPC é problema de protocolo: ferramenta que não existe, pedido malformado.</li>
           </ol>
         </div></details>
@@ -215,25 +215,25 @@
         <p>Esta definição e este pedido foram escritos às pressas. Ache os quatro problemas.</p>
 <pre><code class="esc">
 {
-  "name": "buscar_questoes",
-  "description": "Busca questões.",
+  "name": "search_questions",
+  "description": "Searches questions.",
   "inputSchema": {
     "type": "object",
     "properties": {
-      "tema": { "type": "string" },
-      "limite": { "type": "number", "maximum": 20, "default": 5 }
+      "topic": { "type": "string" },
+      "limit": { "type": "number", "maximum": 20, "default": 5 }
     }
   }
 }
 
 { "jsonrpc": "2.0", "method": "tools/call",
-  "params": { "name": "buscar_questoes", "arguments": { "tema": "cardiologia", "limite": 3 } } }
+  "params": { "name": "search_questions", "arguments": { "topic": "cardiology", "limit": 3 } } }
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
             <li><strong>A descrição não diz quando usar.</strong> O modelo tem menos informação para escolher esta ferramenta, ou escolhe na hora errada.</li>
-            <li><strong><code>limite</code> é <code>number</code> e não tem mínimo.</strong> Aceita <code>2.5</code>, <code>0</code> e <code>-1</code>. O certo é <code>integer</code> com <code>minimum: 1</code>.</li>
-            <li><strong>Falta <code>"required": ["tema"]</code>.</strong> O modelo pode chamar a ferramenta sem tema.</li>
+            <li><strong><code>limit</code> é <code>number</code> e não tem mínimo.</strong> Aceita <code>2.5</code>, <code>0</code> e <code>-1</code>. O certo é <code>integer</code> com <code>minimum: 1</code>.</li>
+            <li><strong>Falta <code>"required": ["topic"]</code>.</strong> O modelo pode chamar a ferramenta sem tema.</li>
             <li><strong>O pedido não tem <code>id</code>.</strong> No JSON-RPC, uma mensagem sem <code>id</code> é uma <em>notificação</em>: quem recebe não manda resposta. O host fica esperando um resultado que nunca chega.</li>
           </ol>
         </div></details>
@@ -241,7 +241,7 @@
         <h5>3 &middot; Mude um requisito</h5>
         <p>A ferramenta passa a aceitar uma dificuldade opcional: fácil, média ou difícil. O que muda na definição? Clientes antigos quebram?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
-          <p>Uma propriedade nova: <code>"dificuldade": { "type": "string", "enum": ["facil", "media", "dificil"], "description": "Use só se a pessoa pedir um nível" }</code>. Ela não entra no <code>required</code>. O <code>enum</code> mostra ao modelo os valores válidos, e o servidor valida de novo.</p>
+          <p>Uma propriedade nova: <code>"difficulty": { "type": "string", "enum": ["easy", "medium", "hard"], "description": "Use only if the user asks for a level" }</code>. Ela não entra no <code>required</code>. O <code>enum</code> mostra ao modelo os valores válidos, e o servidor valida de novo.</p>
           <p>Ninguém quebra: quem não manda a dificuldade continua funcionando, porque o campo é opcional. Essa é a regra para evoluir uma ferramenta (ou uma API): adicionar campo opcional é seguro; tornar obrigatório ou mudar o tipo de um campo existente quebra quem já usa.</p>
         </div></details>
       </div>

@@ -233,3 +233,19 @@ vezes sem IA), e o roadmap da mentoria, que mira front com IA e design systems, 
   estudo para o nível. Nenhum conteúdo do roadmap foi apagado. A capa trocou o selo "SENIOR" pelo alvo novo e a caixa do
   roadmap virou "Diferencial".
 
+
+## Código em inglês (19/10/2026)
+
+Regra: **todo código de exercício e de exemplo é escrito em inglês** (nomes, tipos, chaves de JSON, rotas, mensagens de
+erro técnicas e comentários), porque é assim que se escreve código no mercado. O texto que aparece na tela do usuário
+(rótulos, mensagens de interface) continua em português, porque é conteúdo do produto.
+
+- Traduzidos: E1, E2 e E3 inteiros, as menções de E0 e E4 e o quiz do E4; o Fazer e o Revisar de R1 a R6; os 31 blocos
+  do R8; os exemplos das leituras (01, 02, 03, R1, R2, R4, R5); e o código dentro dos quizzes.
+- **Não traduzidos, de propósito:** os trechos que citam o código real do Gabarita e do Ally AI (o "Onde você já
+  aplicou" de R1–R6, as páginas 01–05 e B1–B9 com `assinaturaVigente`, `gerarNonce`, `validarExplicacao`...) e os
+  caminhos de arquivo reais (`src/lib/diretrizes/citacao.ts`). Eles precisam bater com o repositório.
+- Verificação: os blocos de solução foram extraídos das páginas e rodados com testes (E1: 16 funções; E3: 12; E2: 7
+  componentes; R1: reducer e Zod; R4: `waitForJob` e o próprio teste do exercício; R8: os testes do leitor SSE e do
+  `fetchWithRetry` que vêm na página). Corrigido junto: o `\u0300-\u036f` do slug do E1 estava gravado como caractere
+  invisível, e a B16 tinha um `</span>` sobrando.

@@ -21,7 +21,7 @@
     <div class="bcard">
       <h4>3. O esqueleto de todo componente</h4>
       <p><b class="r">Estado mínimo</b>Guarde só o que não dá para calcular. A lista filtrada, o total e a página atual derivam do estado; não precisam de <code>useState</code> próprio.</p>
-      <p><b class="r">Nunca mude o estado</b>Crie objetos e listas novos (<code>[...lista, item]</code>, <code>map</code>, <code>filter</code>). Mudar no lugar não avisa o React, e a tela não atualiza.</p>
+      <p><b class="r">Nunca mude o estado</b>Crie objetos e listas novos (<code>[...list, item]</code>, <code>map</code>, <code>filter</code>). Mudar no lugar não avisa o React, e a tela não atualiza.</p>
       <p><b class="r">Efeito é para o mundo de fora</b><code>useEffect</code> sincroniza com algo externo (API, timer, evento). E todo efeito que começa algo devolve uma função que limpa.</p>
       <p><b class="r">Os quatro estados</b>Carregando, erro (com &ldquo;tentar de novo&rdquo;), vazio e pronto. O vazio é o mais esquecido.</p>
       <p class="frase"><b class="r">Na entrevista</b>&ldquo;Isto não precisa ser estado, eu calculo a partir da lista.&rdquo; Essa frase mostra mais maturidade em React do que qualquer hook avançado.</p>
@@ -55,62 +55,63 @@
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O estado é a lista de tarefas, o texto do campo e o filtro. A lista visível e o número de restantes <em>não</em> são estado: calcule-os a partir da lista. Use um <code>&lt;form&gt;</code> com <code>onSubmit</code>, que já dá o Enter de graça.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Tarefa = { id: string; texto: string; feita: boolean };
-type Filtro = 'todas' | 'ativas' | 'feitas';
+type Todo = { id: string; text: string; done: boolean };
+type Filter = 'all' | 'active' | 'done';
+const FILTER_LABELS: Record<Filter, string> = { all: 'todas', active: 'ativas', done: 'feitas' };
 
-export function ListaDeTarefas() {
-  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
-  const [texto, setTexto] = useState('');
-  const [filtro, setFiltro] = useState<Filtro>('todas');
+export function TodoList() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [text, setText] = useState('');
+  const [filter, setFilter] = useState<Filter>('all');
 
-  function adicionar(e: FormEvent) {
-    e.preventDefault(); // sem isto, o form recarrega a página
-    const limpo = texto.trim();
-    if (!limpo) return;
-    setTarefas((ts) => [...ts, { id: crypto.randomUUID(), texto: limpo, feita: false }]);
-    setTexto('');
+  function add(e: FormEvent) {
+    e.preventDefault(); // without this, the form reloads the page
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    setTodos((ts) => [...ts, { id: crypto.randomUUID(), text: trimmed, done: false }]);
+    setText('');
   }
-  function alternar(id: string) {
-    setTarefas((ts) => ts.map((t) => (t.id === id ? { ...t, feita: !t.feita } : t)));
+  function toggle(id: string) {
+    setTodos((ts) => ts.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
   }
-  function remover(id: string) {
-    setTarefas((ts) => ts.filter((t) => t.id !== id));
+  function remove(id: string) {
+    setTodos((ts) => ts.filter((t) => t.id !== id));
   }
 
-  // derivados do estado: não precisam de useState
-  const visiveis = tarefas.filter((t) => filtro === 'todas' || (filtro === 'feitas' ? t.feita : !t.feita));
-  const restantes = tarefas.filter((t) => !t.feita).length;
+  // derived from state: no useState needed
+  const visible = todos.filter((t) => filter === 'all' || (filter === 'done' ? t.done : !t.done));
+  const remaining = todos.filter((t) => !t.done).length;
 
   return (
     <div>
-      <form onSubmit={adicionar}>
-        <label htmlFor="nova-tarefa">Nova tarefa</label>
-        <input id="nova-tarefa" value={texto} onChange={(e) => setTexto(e.target.value)} />
+      <form onSubmit={add}>
+        <label htmlFor="new-todo">Nova tarefa</label>
+        <input id="new-todo" value={text} onChange={(e) => setText(e.target.value)} />
         <button type="submit">Adicionar</button>
       </form>
       <div role="group" aria-label="Filtro">
-        {(['todas', 'ativas', 'feitas'] as const).map((f) => (
-          <button key={f} type="button" aria-pressed={filtro === f} onClick={() => setFiltro(f)}>
-            {f}
+        {(['all', 'active', 'done'] as const).map((f) => (
+          <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}>
+            {FILTER_LABELS[f]}
           </button>
         ))}
       </div>
-      {visiveis.length === 0 ? (
+      {visible.length === 0 ? (
         <p>Nada por aqui.</p>
       ) : (
         <ul>
-          {visiveis.map((t) => (
+          {visible.map((t) => (
             <li key={t.id}>
               <label>
-                <input type="checkbox" checked={t.feita} onChange={() => alternar(t.id)} />
-                {t.texto}
+                <input type="checkbox" checked={t.done} onChange={() => toggle(t.id)} />
+                {t.text}
               </label>
-              <button type="button" aria-label={`Remover ${t.texto}`} onClick={() => remover(t.id)}>×</button>
+              <button type="button" aria-label={`Remover ${t.text}`} onClick={() => remove(t.id)}>×</button>
             </li>
           ))}
         </ul>
       )}
-      <p>{restantes === 1 ? '1 tarefa restante' : `${restantes} tarefas restantes`}</p>
+      <p>{remaining === 1 ? '1 tarefa restante' : `${remaining} tarefas restantes`}</p>
     </div>
   );
 }
@@ -122,13 +123,13 @@ export function ListaDeTarefas() {
         <h5>Caça ao bug</h5>
         <p>Um colega escreveu assim. A tela não atualiza ao marcar uma tarefa, e às vezes o item errado fica marcado depois de remover. Por quê?</p>
 <pre><code class="esc">
-function alternar(id: string) {
-  const t = tarefas.find((t) => t.id === id)!;
-  t.feita = !t.feita;
-  setTarefas(tarefas);
+function toggle(id: string) {
+  const t = todos.find((t) => t.id === id)!;
+  t.done = !t.done;
+  setTodos(todos);
 }
 // ...
-{visiveis.map((t, i) => <li key={i}>...</li>)}
+{visible.map((t, i) => <li key={i}>...</li>)}
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
@@ -138,7 +139,7 @@ function alternar(id: string) {
         </div></details>
         <h5>Mude um requisito</h5>
         <p>As tarefas precisam sobreviver ao recarregar a página. Onde você mexe?</p>
-        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Leia o <code>localStorage</code> no valor inicial (<code>useState(() =&gt; carregar())</code>, a forma com função, que só roda uma vez) e grave num <code>useEffect</code> que depende de <code>tarefas</code>. Envolva a leitura em <code>try/catch</code>: o dado salvo pode estar corrompido ou o navegador pode bloquear o acesso. Num app com Next, a leitura precisa esperar o navegador, porque o servidor não tem <code>localStorage</code>.</p></div></details>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Leia o <code>localStorage</code> no valor inicial (<code>useState(() =&gt; load())</code>, a forma com função, que só roda uma vez) e grave num <code>useEffect</code> que depende de <code>todos</code>. Envolva a leitura em <code>try/catch</code>: o dado salvo pode estar corrompido ou o navegador pode bloquear o acesso. Num app com Next, a leitura precisa esperar o navegador, porque o servidor não tem <code>localStorage</code>.</p></div></details>
       </div>
     </div>
   </div>
@@ -151,45 +152,45 @@ function alternar(id: string) {
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um estado com três formas (carregando, erro, pronto), como no reducer do R1. O efeito busca e devolve uma limpeza que aborta. Para &ldquo;tentar de novo&rdquo;, um contador nas dependências do efeito faz ele rodar outra vez.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Usuario = { id: number; name: string; email: string };
-type Estado = { tipo: 'carregando' } | { tipo: 'erro' } | { tipo: 'pronto'; usuarios: Usuario[] };
+type User = { id: number; name: string; email: string };
+type State = { status: 'loading' } | { status: 'error' } | { status: 'ready'; users: User[] };
 
-export function ListaDeUsuarios() {
-  const [estado, setEstado] = useState<Estado>({ tipo: 'carregando' });
-  const [tentativa, setTentativa] = useState(0); // mudar o número refaz o efeito
+export function UserList() {
+  const [state, setState] = useState<State>({ status: 'loading' });
+  const [attempt, setAttempt] = useState(0); // changing the number re-runs the effect
 
   useEffect(() => {
-    const controle = new AbortController();
-    fetch('https://jsonplaceholder.typicode.com/users', { signal: controle.signal })
+    const controller = new AbortController();
+    fetch('https://jsonplaceholder.typicode.com/users', { signal: controller.signal })
       .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`); // fetch não falha sozinho em 404 ou 500
-        return res.json() as Promise<Usuario[]>;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`); // fetch does not reject on 404 or 500
+        return res.json() as Promise<User[]>;
       })
-      .then((usuarios) => setEstado({ tipo: 'pronto', usuarios }))
+      .then((users) => setState({ status: 'ready', users }))
       .catch(() => {
-        if (!controle.signal.aborted) setEstado({ tipo: 'erro' }); // cancelado não é erro
+        if (!controller.signal.aborted) setState({ status: 'error' }); // cancelled is not an error
       });
-    return () => controle.abort(); // saiu da tela, ou vai buscar de novo: cancela este
-  }, [tentativa]);
+    return () => controller.abort(); // left the screen, or fetching again: cancel this one
+  }, [attempt]);
 
-  function tentarDeNovo() {
-    setEstado({ tipo: 'carregando' });
-    setTentativa((n) => n + 1);
+  function retry() {
+    setState({ status: 'loading' });
+    setAttempt((n) => n + 1);
   }
 
-  if (estado.tipo === 'carregando') return <p role="status">Carregando usuários…</p>;
-  if (estado.tipo === 'erro') {
+  if (state.status === 'loading') return <p role="status">Carregando usuários…</p>;
+  if (state.status === 'error') {
     return (
       <div role="alert">
         <p>Não foi possível carregar os usuários.</p>
-        <button type="button" onClick={tentarDeNovo}>Tentar de novo</button>
+        <button type="button" onClick={retry}>Tentar de novo</button>
       </div>
     );
   }
-  if (estado.usuarios.length === 0) return <p>Nenhum usuário encontrado.</p>;
+  if (state.users.length === 0) return <p>Nenhum usuário encontrado.</p>;
   return (
     <ul>
-      {estado.usuarios.map((u) => <li key={u.id}>{u.name} ({u.email})</li>)}
+      {state.users.map((u) => <li key={u.id}>{u.name} ({u.email})</li>)}
     </ul>
   );
 }
@@ -205,7 +206,7 @@ export function ListaDeUsuarios() {
 useEffect(() => {
   fetch(URL)
     .then((r) => r.json())
-    .then((usuarios) => setEstado({ tipo: 'pronto', usuarios }));
+    .then((users) => setState({ status: 'ready', users }));
 }, []);
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
@@ -225,67 +226,67 @@ useEffect(() => {
   <div class="ex" id="lc3">
     <div class="ex-head"><span class="ex-n">LC 3</span><h3>Busca enquanto digita</h3><span class="ex-meta">40 min &middot; debounce, corrida entre pedidos</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Um campo de busca de países chama <code>GET /api/paises?q=termo</code>. Só busque 300 ms depois que a pessoa parar de digitar. Mostre &ldquo;Buscando&hellip;&rdquo;, os resultados, &ldquo;Nenhum país com X&rdquo; e o erro. Uma resposta atrasada de um termo antigo nunca pode aparecer na tela.</p>
+      <p class="ex-enunciado">Um campo de busca de países chama <code>GET /api/countries?q=term</code>. Só busque 300 ms depois que a pessoa parar de digitar. Mostre &ldquo;Buscando&hellip;&rdquo;, os resultados, &ldquo;Nenhum país com X&rdquo; e o erro. Uma resposta atrasada de um termo antigo nunca pode aparecer na tela.</p>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/learn/you-might-not-need-an-effect">React: você talvez não precise de um efeito</a> &middot; o exercício 13 do <a href="e01-fluencia.html#fl13">E1</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Separe em duas partes: um hook <code>useDebounce(valor, ms)</code> que devolve o valor atrasado, e um efeito que busca quando o termo atrasado muda. Para a corrida, aborte o pedido anterior na limpeza e guarde junto da resposta o termo a que ela pertence.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Separe em duas partes: um hook <code>useDebounce(value, ms)</code> que devolve o valor atrasado, e um efeito que busca quando o termo atrasado muda. Para a corrida, aborte o pedido anterior na limpeza e guarde junto da resposta o termo a que ela pertence.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-export function useDebounce<T>(valor: T, ms: number): T {
-  const [atrasado, setAtrasado] = useState(valor);
+export function useDebounce<T>(value: T, ms: number): T {
+  const [delayed, setDelayed] = useState(value);
   useEffect(() => {
-    const t = setTimeout(() => setAtrasado(valor), ms);
-    return () => clearTimeout(t); // digitou de novo antes do prazo: cancela
-  }, [valor, ms]);
-  return atrasado;
+    const t = setTimeout(() => setDelayed(value), ms);
+    return () => clearTimeout(t); // typed again before the delay: cancel
+  }, [value, ms]);
+  return delayed;
 }
 
-async function buscarPaises(termo: string, signal: AbortSignal): Promise<string[]> {
-  const res = await fetch(`/api/paises?q=${encodeURIComponent(termo)}`, { signal });
+async function fetchCountries(query: string, signal: AbortSignal): Promise<string[]> {
+  const res = await fetch(`/api/countries?q=${encodeURIComponent(query)}`, { signal });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-type Resposta = { termo: string; itens: string[] } | { termo: string; erro: true };
+type SearchResult = { query: string; items: string[] } | { query: string; error: true };
 
-export function BuscaDePaises() {
-  const [texto, setTexto] = useState('');
-  const termo = useDebounce(texto.trim(), 300);
-  const [resposta, setResposta] = useState<Resposta | null>(null);
+export function CountrySearch() {
+  const [text, setText] = useState('');
+  const query = useDebounce(text.trim(), 300);
+  const [result, setResult] = useState<SearchResult | null>(null);
 
   useEffect(() => {
-    if (!termo) return;
-    const controle = new AbortController();
-    buscarPaises(termo, controle.signal)
-      .then((itens) => setResposta({ termo, itens }))
+    if (!query) return;
+    const controller = new AbortController();
+    fetchCountries(query, controller.signal)
+      .then((items) => setResult({ query, items }))
       .catch(() => {
-        if (!controle.signal.aborted) setResposta({ termo, erro: true });
+        if (!controller.signal.aborted) setResult({ query, error: true });
       });
-    return () => controle.abort(); // termo mudou: a resposta antiga não interessa mais
-  }, [termo]);
+    return () => controller.abort(); // query changed: the old response no longer matters
+  }, [query]);
 
-  // só vale a resposta do termo atual
-  const atual = resposta && resposta.termo === termo ? resposta : null;
-  const carregando = termo !== '' && atual === null;
+  // only the result for the current query counts
+  const current = result && result.query === query ? result : null;
+  const loading = query !== '' && current === null;
 
   return (
     <div>
-      <label htmlFor="busca">Buscar país</label>
-      <input id="busca" type="search" value={texto} onChange={(e) => setTexto(e.target.value)} />
+      <label htmlFor="search">Buscar país</label>
+      <input id="search" type="search" value={text} onChange={(e) => setText(e.target.value)} />
       <div role="status">
-        {carregando && 'Buscando…'}
-        {atual && 'erro' in atual && 'Não foi possível buscar agora.'}
-        {atual && 'itens' in atual && atual.itens.length === 0 && `Nenhum país com “${termo}”.`}
+        {loading && 'Buscando…'}
+        {current && 'error' in current && 'Não foi possível buscar agora.'}
+        {current && 'items' in current && current.items.length === 0 && `Nenhum país com “${query}”.`}
       </div>
-      {atual && 'itens' in atual && atual.itens.length > 0 && (
+      {current && 'items' in current && current.items.length > 0 && (
         <ul>
-          {atual.itens.map((p) => <li key={p}>{p}</li>)}
+          {current.items.map((c) => <li key={c}>{c}</li>)}
         </ul>
       )}
     </div>
   );
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> são duas proteções contra a corrida. O <code>abort</code> cancela o pedido velho, e a comparação <code>resposta.termo === termo</code> garante que, mesmo se ele chegar, não aparece. O &ldquo;carregando&rdquo; não é estado: é &ldquo;tenho termo e ainda não tenho a resposta dele&rdquo;. O <code>role="status"</code> faz o leitor de tela anunciar o resultado.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> são duas proteções contra a corrida. O <code>abort</code> cancela o pedido velho, e a comparação <code>result.query === query</code> garante que, mesmo se ele chegar, não aparece. O &ldquo;carregando&rdquo; não é estado: é &ldquo;tenho termo e ainda não tenho a resposta dele&rdquo;. O <code>role="status"</code> faz o leitor de tela anunciar o resultado.</p>
         <p><strong>O teste que pegaria o bug:</strong> o termo &ldquo;br&rdquo; responde em 500 ms e &ldquo;bra&rdquo; em 10 ms. Sem as proteções, &ldquo;br&rdquo; chega por último e substitui o resultado certo.</p>
       </div></details>
       <div class="revisar">
@@ -295,7 +296,7 @@ export function BuscaDePaises() {
         <details class="rv"><summary>respostas</summary><div class="rv-body"><p>Sem ele, um termo como &ldquo;a&amp;b&rdquo; quebraria a URL (o <code>&amp;</code> começaria outro parâmetro). O hook separado pode ser reaproveitado e testado sozinho, e deixa o componente lendo como uma frase: &ldquo;o termo é o texto atrasado em 300 ms&rdquo;.</p></div></details>
         <h5>Mude um requisito</h5>
         <p>Buscar com 1 letra traz resultado demais. Só busque a partir de 2 letras, e mostre &ldquo;Digite pelo menos 2 letras&rdquo;.</p>
-        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>No efeito, troque <code>if (!termo)</code> por <code>if (termo.length &lt; 2)</code>. O &ldquo;carregando&rdquo; também usa essa regra, e a mensagem nova é mais uma linha derivada: <code>termo.length === 1</code>. Repare que nenhum estado novo foi preciso.</p></div></details>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>No efeito, troque <code>if (!query)</code> por <code>if (query.length &lt; 2)</code>. O &ldquo;carregando&rdquo; também usa essa regra, e a mensagem nova é mais uma linha derivada: <code>query.length === 1</code>. Repare que nenhum estado novo foi preciso.</p></div></details>
       </div>
     </div>
   </div>
@@ -310,76 +311,76 @@ export function BuscaDePaises() {
         <li>O leitor de tela precisa ouvir o erro ao chegar no campo.</li>
       </ul>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid">MDN: aria-invalid</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby">MDN: aria-describedby</a> &middot; <a href="https://react.dev/reference/react-dom/components/input">React: input</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma função pura <code>validar(campos)</code> que devolve um objeto de erros é fácil de testar e de explicar. No campo, <code>aria-invalid</code> marca o erro e <code>aria-describedby</code> aponta para o id da mensagem. Um componente <code>Campo</code> evita repetir isso três vezes.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma função pura <code>validate(fields)</code> que devolve um objeto de erros é fácil de testar e de explicar. No campo, <code>aria-invalid</code> marca o erro e <code>aria-describedby</code> aponta para o id da mensagem. Um componente <code>Field</code> evita repetir isso três vezes.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Campos = { email: string; senha: string; confirmar: string };
-type Erros = Partial<Record<keyof Campos, string>>;
+type Fields = { email: string; password: string; confirm: string };
+type Errors = Partial<Record<keyof Fields, string>>;
 
-export function validar(c: Campos): Erros {
-  const erros: Erros = {};
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) erros.email = 'Digite um e-mail válido.';
-  if (c.senha.length < 8) erros.senha = 'A senha precisa de pelo menos 8 caracteres.';
-  else if (!/\d/.test(c.senha)) erros.senha = 'A senha precisa de pelo menos um número.';
-  if (c.confirmar !== c.senha) erros.confirmar = 'As senhas não são iguais.';
-  return erros;
+export function validate(f: Fields): Errors {
+  const errors: Errors = {};
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) errors.email = 'Digite um e-mail válido.';
+  if (f.password.length < 8) errors.password = 'A senha precisa de pelo menos 8 caracteres.';
+  else if (!/\d/.test(f.password)) errors.password = 'A senha precisa de pelo menos um número.';
+  if (f.confirm !== f.password) errors.confirm = 'As senhas não são iguais.';
+  return errors;
 }
 
-function Campo(props: {
-  nome: keyof Campos; rotulo: string; tipo: string; valor: string; erro?: string;
+function Field(props: {
+  name: keyof Fields; label: string; type: string; value: string; error?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) {
-  const idErro = `${props.nome}-erro`;
+  const errorId = `${props.name}-error`;
   return (
     <div>
-      <label htmlFor={props.nome}>{props.rotulo}</label>
+      <label htmlFor={props.name}>{props.label}</label>
       <input
-        id={props.nome} name={props.nome} type={props.tipo} value={props.valor} onChange={props.onChange}
-        aria-invalid={props.erro ? true : undefined}
-        aria-describedby={props.erro ? idErro : undefined} // o leitor lê a mensagem junto do campo
+        id={props.name} name={props.name} type={props.type} value={props.value} onChange={props.onChange}
+        aria-invalid={props.error ? true : undefined}
+        aria-describedby={props.error ? errorId : undefined} // the screen reader reads the message with the field
       />
-      {props.erro && <p id={idErro}>{props.erro}</p>}
+      {props.error && <p id={errorId}>{props.error}</p>}
     </div>
   );
 }
 
-export function Cadastro({ enviar }: { enviar: (c: Campos) => Promise<void> }) {
-  const [campos, setCampos] = useState<Campos>({ email: '', senha: '', confirmar: '' });
-  const [erros, setErros] = useState<Erros>({});
-  const [status, setStatus] = useState<'editando' | 'enviando' | 'enviado' | 'falhou'>('editando');
+export function SignUpForm({ submit }: { submit: (f: Fields) => Promise<void> }) {
+  const [fields, setFields] = useState<Fields>({ email: '', password: '', confirm: '' });
+  const [errors, setErrors] = useState<Errors>({});
+  const [status, setStatus] = useState<'editing' | 'submitting' | 'done' | 'failed'>('editing');
 
-  function mudar(e: ChangeEvent<HTMLInputElement>) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setCampos((c) => ({ ...c, [name]: value }));
+    setFields((f) => ({ ...f, [name]: value }));
   }
 
-  async function aoEnviar(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const novos = validar(campos);
-    setErros(novos);
-    const primeiro = Object.keys(novos)[0];
-    if (primeiro) {
-      document.getElementById(primeiro)?.focus(); // leva a pessoa ao primeiro erro
+    const found = validate(fields);
+    setErrors(found);
+    const first = Object.keys(found)[0];
+    if (first) {
+      document.getElementById(first)?.focus(); // take the user to the first error
       return;
     }
-    setStatus('enviando');
+    setStatus('submitting');
     try {
-      await enviar(campos);
-      setStatus('enviado');
+      await submit(fields);
+      setStatus('done');
     } catch {
-      setStatus('falhou');
+      setStatus('failed');
     }
   }
 
-  if (status === 'enviado') return <p role="status">Conta criada. Confira o seu e-mail.</p>;
+  if (status === 'done') return <p role="status">Conta criada. Confira o seu e-mail.</p>;
   return (
-    <form onSubmit={aoEnviar} noValidate>
-      <Campo nome="email" rotulo="E-mail" tipo="email" valor={campos.email} erro={erros.email} onChange={mudar} />
-      <Campo nome="senha" rotulo="Senha" tipo="password" valor={campos.senha} erro={erros.senha} onChange={mudar} />
-      <Campo nome="confirmar" rotulo="Confirmar senha" tipo="password" valor={campos.confirmar} erro={erros.confirmar} onChange={mudar} />
-      {status === 'falhou' && <p role="alert">Não foi possível criar a conta. Tente de novo.</p>}
-      <button type="submit" disabled={status === 'enviando'}>
-        {status === 'enviando' ? 'Criando…' : 'Criar conta'}
+    <form onSubmit={handleSubmit} noValidate>
+      <Field name="email" label="E-mail" type="email" value={fields.email} error={errors.email} onChange={handleChange} />
+      <Field name="password" label="Senha" type="password" value={fields.password} error={errors.password} onChange={handleChange} />
+      <Field name="confirm" label="Confirmar senha" type="password" value={fields.confirm} error={errors.confirm} onChange={handleChange} />
+      {status === 'failed' && <p role="alert">Não foi possível criar a conta. Tente de novo.</p>}
+      <button type="submit" disabled={status === 'submitting'}>
+        {status === 'submitting' ? 'Criando…' : 'Criar conta'}
       </button>
     </form>
   );
@@ -394,7 +395,7 @@ export function Cadastro({ enviar }: { enviar: (c: Campos) => Promise<void> }) {
         <details class="rv"><summary>respostas</summary><div class="rv-body"><p>Validar a cada tecla grita &ldquo;e-mail inválido&rdquo; enquanto a pessoa ainda está digitando o e-mail. Ao sair do campo (<code>onBlur</code>) é um meio-termo bom para formulários longos: o aviso chega cedo, mas só depois de a pessoa terminar aquele campo. Depois que o erro apareceu, revalidar a cada tecla é bom, porque o aviso some assim que o campo fica certo.</p></div></details>
         <h5>Mude um requisito</h5>
         <p>O servidor responde que o e-mail já está em uso. Onde essa mensagem aparece?</p>
-        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>No próprio campo de e-mail, como os outros erros. O <code>enviar</code> passa a devolver os erros do servidor (ou a lançar um erro com eles), e o <code>catch</code> faz <code>setErros({ email: 'Este e-mail já tem conta.' })</code> e foca o campo. Um aviso genérico no topo obrigaria a pessoa a adivinhar qual campo corrigir.</p></div></details>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>No próprio campo de e-mail, como os outros erros. O <code>submit</code> passa a devolver os erros do servidor (ou a lançar um erro com eles), e o <code>catch</code> faz <code>setErrors({ email: 'Este e-mail já tem conta.' })</code> e foca o campo. Um aviso genérico no topo obrigaria a pessoa a adivinhar qual campo corrigir.</p></div></details>
       </div>
     </div>
   </div>
@@ -402,58 +403,58 @@ export function Cadastro({ enviar }: { enviar: (c: Campos) => Promise<void> }) {
   <div class="ex" id="lc5">
     <div class="ex-head"><span class="ex-n">LC 5</span><h3>Abas acessíveis</h3><span class="ex-meta">30 min &middot; ARIA, teclado, refs</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Faça um componente <code>Abas</code> que recebe uma lista <code>{ id, titulo, conteudo }</code>. Clicar troca a aba. No teclado: Tab entra na aba ativa, setas trocam de aba, Home e End vão para a primeira e a última, e o próximo Tab vai para o conteúdo.</p>
+      <p class="ex-enunciado">Faça um componente <code>Tabs</code> que recebe uma lista <code>{ id, title, content }</code>. Clicar troca a aba. No teclado: Tab entra na aba ativa, setas trocam de aba, Home e End vão para a primeira e a última, e o próximo Tab vai para o conteúdo.</p>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.w3.org/WAI/ARIA/apg/patterns/tabs/">W3C: padrão de abas</a> &middot; <a href="https://react.dev/learn/manipulating-the-dom-with-refs">React: refs e o DOM</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Papéis: <code>tablist</code> no grupo, <code>tab</code> em cada botão, <code>tabpanel</code> no conteúdo. Só a aba ativa tem <code>tabIndex={0}</code>; as outras, <code>-1</code>. Assim o Tab entra numa aba só, e as setas fazem o resto. Para mover o foco, guarde os botões num <code>useRef</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Aba = { id: string; titulo: string; conteudo: ReactNode };
+type Tab = { id: string; title: string; content: ReactNode };
 
-export function Abas({ abas }: { abas: Aba[] }) {
-  const [ativa, setAtiva] = useState(0);
-  const botoes = useRef<(HTMLButtonElement | null)[]>([]);
+export function Tabs({ tabs }: { tabs: Tab[] }) {
+  const [active, setActive] = useState(0);
+  const buttons = useRef<(HTMLButtonElement | null)[]>([]);
 
-  function teclado(e: KeyboardEvent<HTMLDivElement>) {
-    let nova: number;
-    if (e.key === 'ArrowRight') nova = (ativa + 1) % abas.length;               // depois da última, volta à primeira
-    else if (e.key === 'ArrowLeft') nova = (ativa - 1 + abas.length) % abas.length;
-    else if (e.key === 'Home') nova = 0;
-    else if (e.key === 'End') nova = abas.length - 1;
-    else return; // outras teclas seguem normais
+  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    let next: number;
+    if (e.key === 'ArrowRight') next = (active + 1) % tabs.length;               // after the last, wrap to the first
+    else if (e.key === 'ArrowLeft') next = (active - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = tabs.length - 1;
+    else return; // other keys behave as usual
     e.preventDefault();
-    setAtiva(nova);
-    botoes.current[nova]?.focus();
+    setActive(next);
+    buttons.current[next]?.focus();
   }
 
   return (
     <div>
-      <div role="tablist" aria-label="Seções" onKeyDown={teclado}>
-        {abas.map((aba, i) => (
+      <div role="tablist" aria-label="Seções" onKeyDown={handleKeyDown}>
+        {tabs.map((tab, i) => (
           <button
-            key={aba.id}
-            ref={(el) => { botoes.current[i] = el; }}
+            key={tab.id}
+            ref={(el) => { buttons.current[i] = el; }}
             type="button"
             role="tab"
-            id={`aba-${aba.id}`}
-            aria-selected={i === ativa}
-            aria-controls={`painel-${aba.id}`}
-            tabIndex={i === ativa ? 0 : -1} // só a ativa entra na ordem do Tab
-            onClick={() => setAtiva(i)}
+            id={`tab-${tab.id}`}
+            aria-selected={i === active}
+            aria-controls={`panel-${tab.id}`}
+            tabIndex={i === active ? 0 : -1} // only the active tab is in the Tab order
+            onClick={() => setActive(i)}
           >
-            {aba.titulo}
+            {tab.title}
           </button>
         ))}
       </div>
-      {abas.map((aba, i) => (
-        <div key={aba.id} role="tabpanel" id={`painel-${aba.id}`} aria-labelledby={`aba-${aba.id}`} hidden={i !== ativa} tabIndex={0}>
-          {aba.conteudo}
+      {tabs.map((tab, i) => (
+        <div key={tab.id} role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={i !== active} tabIndex={0}>
+          {tab.content}
         </div>
       ))}
     </div>
   );
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o <code>%</code> faz a seta &ldquo;dar a volta&rdquo;; o <code>+ abas.length</code> evita índice negativo; e os painéis escondidos continuam no DOM com <code>hidden</code>, então trocar de aba não perde o que foi digitado dentro deles.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> o <code>%</code> faz a seta &ldquo;dar a volta&rdquo;; o <code>+ tabs.length</code> evita índice negativo; e os painéis escondidos continuam no DOM com <code>hidden</code>, então trocar de aba não perde o que foi digitado dentro deles.</p>
       </div></details>
       <div class="revisar">
         <h4>Revisar</h4>
@@ -470,37 +471,37 @@ export function Abas({ abas }: { abas: Aba[] }) {
   <div class="ex" id="lc6">
     <div class="ex-head"><span class="ex-n">LC 6</span><h3>Tabela com ordenação e paginação</h3><span class="ex-meta">40 min &middot; estado derivado, useMemo</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Mostre uma lista de pessoas (<code>{ id, nome, idade, cidade }</code>) numa tabela de 5 linhas por página. Clicar no cabeçalho ordena pela coluna; clicar de novo inverte. Ao mudar a ordem, volte para a página 1. Os botões Anterior e Próxima ficam desabilitados nas pontas.</p>
+      <p class="ex-enunciado">Mostre uma lista de pessoas (<code>{ id, name, age, city }</code>) numa tabela de 5 linhas por página. Clicar no cabeçalho ordena pela coluna; clicar de novo inverte. Ao mudar a ordem, volte para a página 1. Os botões Anterior e Próxima ficam desabilitados nas pontas.</p>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useMemo">React: useMemo</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort">MDN: aria-sort</a> &middot; o exercício 8 do <a href="e01-fluencia.html#fl8">E1</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O estado é só a ordem (coluna e direção) e o número da página. A lista ordenada, a fatia da página e o total de páginas são calculados. Ordene uma cópia, e use <code>localeCompare</code> para texto com acento.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Pessoa = { id: number; nome: string; idade: number; cidade: string };
-type Coluna = 'nome' | 'idade' | 'cidade';
-const POR_PAGINA = 5;
-const ROTULOS: Record<Coluna, string> = { nome: 'Nome', idade: 'Idade', cidade: 'Cidade' };
+type Person = { id: number; name: string; age: number; city: string };
+type Column = 'name' | 'age' | 'city';
+const PAGE_SIZE = 5;
+const LABELS: Record<Column, string> = { name: 'Nome', age: 'Idade', city: 'Cidade' };
 
-export function TabelaDePessoas({ pessoas }: { pessoas: Pessoa[] }) {
-  const [ordem, setOrdem] = useState<{ coluna: Coluna; direcao: 'asc' | 'desc' }>({ coluna: 'nome', direcao: 'asc' });
-  const [pagina, setPagina] = useState(1);
+export function PeopleTable({ people }: { people: Person[] }) {
+  const [sort, setSort] = useState<{ column: Column; direction: 'asc' | 'desc' }>({ column: 'name', direction: 'asc' });
+  const [page, setPage] = useState(1);
 
-  const ordenadas = useMemo(() => {
-    const sinal = ordem.direcao === 'asc' ? 1 : -1;
-    return [...pessoas].sort((a, b) => {
-      const x = a[ordem.coluna];
-      const y = b[ordem.coluna];
+  const sorted = useMemo(() => {
+    const sign = sort.direction === 'asc' ? 1 : -1;
+    return [...people].sort((a, b) => {
+      const x = a[sort.column];
+      const y = b[sort.column];
       const cmp = typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y), 'pt-BR');
-      return cmp * sinal;
+      return cmp * sign;
     });
-  }, [pessoas, ordem]);
+  }, [people, sort]);
 
-  const totalPaginas = Math.max(1, Math.ceil(ordenadas.length / POR_PAGINA));
-  const paginaAtual = Math.min(pagina, totalPaginas); // a lista pode ter encolhido
-  const visiveis = ordenadas.slice((paginaAtual - 1) * POR_PAGINA, paginaAtual * POR_PAGINA);
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages); // the list may have shrunk
+  const visible = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  function ordenarPor(coluna: Coluna) {
-    setOrdem((o) => ({ coluna, direcao: o.coluna === coluna && o.direcao === 'asc' ? 'desc' : 'asc' }));
-    setPagina(1); // nova ordem: volta ao começo
+  function sortByColumn(column: Column) {
+    setSort((s) => ({ column, direction: s.column === column && s.direction === 'asc' ? 'desc' : 'asc' }));
+    setPage(1); // new order: back to the start
   }
 
   return (
@@ -508,23 +509,23 @@ export function TabelaDePessoas({ pessoas }: { pessoas: Pessoa[] }) {
       <table>
         <thead>
           <tr>
-            {(Object.keys(ROTULOS) as Coluna[]).map((c) => (
-              <th key={c} aria-sort={ordem.coluna === c ? (ordem.direcao === 'asc' ? 'ascending' : 'descending') : 'none'}>
-                <button type="button" onClick={() => ordenarPor(c)}>{ROTULOS[c]}</button>
+            {(Object.keys(LABELS) as Column[]).map((c) => (
+              <th key={c} aria-sort={sort.column === c ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                <button type="button" onClick={() => sortByColumn(c)}>{LABELS[c]}</button>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {visiveis.map((p) => (
-            <tr key={p.id}><td>{p.nome}</td><td>{p.idade}</td><td>{p.cidade}</td></tr>
+          {visible.map((p) => (
+            <tr key={p.id}><td>{p.name}</td><td>{p.age}</td><td>{p.city}</td></tr>
           ))}
         </tbody>
       </table>
       <nav aria-label="Paginação">
-        <button type="button" onClick={() => setPagina(paginaAtual - 1)} disabled={paginaAtual === 1}>Anterior</button>
-        <span>Página {paginaAtual} de {totalPaginas}</span>
-        <button type="button" onClick={() => setPagina(paginaAtual + 1)} disabled={paginaAtual === totalPaginas}>Próxima</button>
+        <button type="button" onClick={() => setPage(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
+        <span>Página {currentPage} de {totalPages}</span>
+        <button type="button" onClick={() => setPage(currentPage + 1)} disabled={currentPage === totalPages}>Próxima</button>
       </nav>
     </div>
   );
@@ -536,17 +537,17 @@ export function TabelaDePessoas({ pessoas }: { pessoas: Pessoa[] }) {
       <div class="revisar">
         <h4>Revisar</h4>
         <h5>Caça ao bug</h5>
-        <p>Um colega guardou a lista ordenada no estado, assim. O que dá errado quando a prop <code>pessoas</code> muda?</p>
+        <p>Um colega guardou a lista ordenada no estado, assim. O que dá errado quando a prop <code>people</code> muda?</p>
 <pre><code class="esc">
-const [ordenadas, setOrdenadas] = useState(pessoas);
-function ordenarPor(coluna: Coluna) {
-  setOrdenadas([...ordenadas].sort(/* ... */));
+const [sorted, setSorted] = useState(people);
+function sortByColumn(column: Column) {
+  setSorted([...sorted].sort(/* ... */));
 }
 </code></pre>
-        <details class="rv"><summary>o erro</summary><div class="rv-body"><p>O <code>useState(pessoas)</code> só usa o valor na primeira renderização. Se o pai mandar uma lista nova (uma pessoa cadastrada), a tabela continua mostrando a antiga. É o erro de <em>estado duplicado</em>: a mesma informação em dois lugares, que deixam de concordar. A solução é derivar a lista ordenada da prop, como na solução.</p></div></details>
+        <details class="rv"><summary>o erro</summary><div class="rv-body"><p>O <code>useState(people)</code> só usa o valor na primeira renderização. Se o pai mandar uma lista nova (uma pessoa cadastrada), a tabela continua mostrando a antiga. É o erro de <em>estado duplicado</em>: a mesma informação em dois lugares, que deixam de concordar. A solução é derivar a lista ordenada da prop, como na solução.</p></div></details>
         <h5>Mude um requisito</h5>
-        <p>Os dados passam a vir paginados do servidor (<code>?pagina=2&amp;ordem=idade</code>), porque são 100 mil pessoas.</p>
-        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Ordenar e fatiar saem do componente e vão para o servidor (o banco faz <code>ORDER BY</code> e <code>LIMIT</code>/<code>OFFSET</code>). A ordem e a página continuam sendo estado, mas agora entram nas dependências de um efeito de busca, como no LC 2. Pôr os dois na URL (<code>?pagina=2</code>) permite compartilhar o link e usar o botão voltar.</p></div></details>
+        <p>Os dados passam a vir paginados do servidor (<code>?page=2&amp;sort=age</code>), porque são 100 mil pessoas.</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Ordenar e fatiar saem do componente e vão para o servidor (o banco faz <code>ORDER BY</code> e <code>LIMIT</code>/<code>OFFSET</code>). A ordem e a página continuam sendo estado, mas agora entram nas dependências de um efeito de busca, como no LC 2. Pôr os dois na URL (<code>?page=2</code>) permite compartilhar o link e usar o botão voltar.</p></div></details>
       </div>
     </div>
   </div>
@@ -556,51 +557,51 @@ function ordenarPor(coluna: Coluna) {
     <div class="ex-body">
       <p class="ex-enunciado">Faça um cronômetro <code>mm:ss.d</code> com Iniciar/Continuar, Pausar e Zerar. O tempo mostrado não pode atrasar, mesmo depois de vários minutos ou com a aba em segundo plano. Ao sair da tela, nenhum timer fica rodando.</p>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useRef">React: useRef</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/setInterval">MDN: setInterval</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Não some 100 a cada tick: o navegador não garante o intervalo exato. Guarde o horário em que a contagem começou e calcule <code>Date.now() - inicio</code> a cada tick. Valores que não aparecem na tela (o início, o acumulado) ficam num <code>useRef</code>.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Não some 100 a cada tick: o navegador não garante o intervalo exato. Guarde o horário em que a contagem começou e calcule <code>Date.now() - startedAt</code> a cada tick. Valores que não aparecem na tela (o início, o acumulado) ficam num <code>useRef</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function formatar(ms: number) {
-  const totalSeg = Math.floor(ms / 1000);
-  const min = String(Math.floor(totalSeg / 60)).padStart(2, '0');
-  const seg = String(totalSeg % 60).padStart(2, '0');
-  const decimo = Math.floor((ms % 1000) / 100);
-  return `${min}:${seg}.${decimo}`;
+function format(ms: number) {
+  const totalSec = Math.floor(ms / 1000);
+  const min = String(Math.floor(totalSec / 60)).padStart(2, '0');
+  const sec = String(totalSec % 60).padStart(2, '0');
+  const tenth = Math.floor((ms % 1000) / 100);
+  return `${min}:${sec}.${tenth}`;
 }
 
-export function Cronometro() {
-  const [decorrido, setDecorrido] = useState(0); // o que a tela mostra
-  const [rodando, setRodando] = useState(false);
-  const acumulado = useRef(0); // tempo somado até a última pausa
-  const inicio = useRef(0);    // quando começou a rodada atual
+export function Stopwatch() {
+  const [elapsed, setElapsed] = useState(0); // what the screen shows
+  const [running, setRunning] = useState(false);
+  const accumulated = useRef(0); // time added up until the last pause
+  const startedAt = useRef(0);   // when the current run started
 
   useEffect(() => {
-    if (!rodando) return;
-    const id = setInterval(() => setDecorrido(acumulado.current + Date.now() - inicio.current), 100);
-    return () => clearInterval(id); // pausou ou saiu da tela: para o intervalo
-  }, [rodando]);
+    if (!running) return;
+    const id = setInterval(() => setElapsed(accumulated.current + Date.now() - startedAt.current), 100);
+    return () => clearInterval(id); // paused or left the screen: stop the interval
+  }, [running]);
 
-  function iniciar() {
-    inicio.current = Date.now();
-    setRodando(true);
+  function start() {
+    startedAt.current = Date.now();
+    setRunning(true);
   }
-  function pausar() {
-    acumulado.current += Date.now() - inicio.current;
-    setDecorrido(acumulado.current);
-    setRodando(false);
+  function pause() {
+    accumulated.current += Date.now() - startedAt.current;
+    setElapsed(accumulated.current);
+    setRunning(false);
   }
-  function zerar() {
-    acumulado.current = 0;
-    setDecorrido(0);
-    setRodando(false);
+  function reset() {
+    accumulated.current = 0;
+    setElapsed(0);
+    setRunning(false);
   }
 
   return (
     <div>
-      <p>{formatar(decorrido)}</p>
-      {rodando
-        ? <button type="button" onClick={pausar}>Pausar</button>
-        : <button type="button" onClick={iniciar}>{decorrido === 0 ? 'Iniciar' : 'Continuar'}</button>}
-      <button type="button" onClick={zerar} disabled={decorrido === 0 && !rodando}>Zerar</button>
+      <p>{format(elapsed)}</p>
+      {running
+        ? <button type="button" onClick={pause}>Pausar</button>
+        : <button type="button" onClick={start}>{elapsed === 0 ? 'Iniciar' : 'Continuar'}</button>}
+      <button type="button" onClick={reset} disabled={elapsed === 0 && !running}>Zerar</button>
     </div>
   );
 }
@@ -613,20 +614,20 @@ export function Cronometro() {
         <p>Esta é a versão que quase todo mundo escreve primeiro. Ache os três problemas.</p>
 <pre><code class="esc">
 useEffect(() => {
-  if (!rodando) return;
-  setInterval(() => setDecorrido(decorrido + 100), 100);
-}, [rodando]);
+  if (!running) return;
+  setInterval(() => setElapsed(elapsed + 100), 100);
+}, [running]);
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
-            <li><strong>Closure velha (<em>stale closure</em>).</strong> A função do intervalo lembra o <code>decorrido</code> do momento em que foi criada (0). Ela calcula 0 + 100 para sempre, e a tela trava em 00:00.1. Com <code>setDecorrido((d) =&gt; d + 100)</code>, esse problema some.</li>
+            <li><strong>Closure velha (<em>stale closure</em>).</strong> A função do intervalo lembra o <code>elapsed</code> do momento em que foi criada (0). Ela calcula 0 + 100 para sempre, e a tela trava em 00:00.1. Com <code>setElapsed((e) =&gt; e + 100)</code>, esse problema some.</li>
             <li><strong>Sem limpeza.</strong> Pausar não para o intervalo, e cada Iniciar cria mais um. Depois de três pausas, são três intervalos rodando juntos.</li>
             <li><strong>Somar 100 a cada tick atrasa.</strong> O intervalo não é exato, e navegadores como o Chrome reduzem os timers de abas em segundo plano para no máximo um por segundo. Contando ticks, o cronômetro mostra menos tempo do que passou.</li>
           </ol>
         </div></details>
         <h5>Mude um requisito</h5>
         <p>O cronômetro ganha um botão &ldquo;Volta&rdquo;, que registra o tempo atual numa lista, como no app de relógio do celular.</p>
-        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Um estado novo, <code>voltas: number[]</code>. O botão calcula o tempo atual do mesmo jeito que o intervalo (<code>acumulado.current + Date.now() - inicio.current</code>) e acrescenta à lista. O tempo de cada volta (a diferença para a anterior) é derivado na hora de mostrar, e o Zerar também limpa as voltas.</p></div></details>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Um estado novo, <code>laps: number[]</code>. O botão calcula o tempo atual do mesmo jeito que o intervalo (<code>accumulated.current + Date.now() - startedAt.current</code>) e acrescenta à lista. O tempo de cada volta (a diferença para a anterior) é derivado na hora de mostrar, e o Zerar também limpa as voltas.</p></div></details>
       </div>
     </div>
   </div>
@@ -639,20 +640,20 @@ useEffect(() => {
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Antes de montar tudo à mão, lembre que o HTML já tem um elemento para isto. O <code>&lt;dialog&gt;</code> aberto com <code>showModal()</code> já bloqueia o fundo, fecha com Esc e devolve o foco. Um <code>&lt;form method="dialog"&gt;</code> dentro dele fecha o modal ao enviar.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-export function ConfirmarExclusao({ nome, onConfirmar }: { nome: string; onConfirmar: () => void }) {
-  const dialogo = useRef<HTMLDialogElement>(null);
+export function ConfirmDelete({ name, onConfirm }: { name: string; onConfirm: () => void }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   return (
     <>
-      <button type="button" onClick={() => dialogo.current?.showModal()}>
-        Excluir {nome}
+      <button type="button" onClick={() => dialogRef.current?.showModal()}>
+        Excluir {name}
       </button>
-      <dialog ref={dialogo} aria-labelledby="titulo-excluir">
-        <h2 id="titulo-excluir">Excluir “{nome}”?</h2>
+      <dialog ref={dialogRef} aria-labelledby="delete-title">
+        <h2 id="delete-title">Excluir “{name}”?</h2>
         <p>Essa ação não pode ser desfeita.</p>
-        {/* method="dialog": enviar este form fecha o diálogo, sem recarregar nada */}
+        {/* method="dialog": submitting this form closes the dialog, no reload */}
         <form method="dialog">
-          <button value="cancelar">Cancelar</button>
-          <button value="excluir" onClick={onConfirmar}>Excluir</button>
+          <button value="cancel">Cancelar</button>
+          <button value="delete" onClick={onConfirm}>Excluir</button>
         </form>
       </dialog>
     </>
@@ -668,7 +669,7 @@ export function ConfirmarExclusao({ nome, onConfirmar }: { nome: string; onConfi
         <details class="rv"><summary>resposta</summary><div class="rv-body"><p>Prender o foco dentro do modal (o Tab não pode sair para a página atrás), fechar com Esc, devolver o foco ao botão que abriu, impedir clique e rolagem no fundo, e os atributos <code>role="dialog"</code> e <code>aria-modal="true"</code>. Bibliotecas como Radix e Headless UI existem justamente para isso; o <code>&lt;dialog&gt;</code> nativo cobre a maior parte.</p></div></details>
         <h5>Mude um requisito</h5>
         <p>A exclusão agora chama a API e pode falhar. O modal só fecha se der certo.</p>
-        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>O botão Excluir sai do <code>form method="dialog"</code> (que fecha na hora) e vira um botão comum que chama a API. Enquanto espera, ele fica desabilitado com &ldquo;Excluindo&hellip;&rdquo;; se der certo, <code>dialogo.current?.close()</code>; se falhar, uma mensagem com <code>role="alert"</code> aparece dentro do modal, que continua aberto.</p></div></details>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>O botão Excluir sai do <code>form method="dialog"</code> (que fecha na hora) e vira um botão comum que chama a API. Enquanto espera, ele fica desabilitado com &ldquo;Excluindo&hellip;&rdquo;; se der certo, <code>dialogRef.current?.close()</code>; se falhar, uma mensagem com <code>role="alert"</code> aparece dentro do modal, que continua aberto.</p></div></details>
       </div>
     </div>
   </div>

@@ -301,10 +301,10 @@
     <div class="ex-body">
       <p class="ex-enunciado">Para cada rota de um app de estudos, diga como ela deve ser renderizada e por quê, em uma frase.</p>
       <ol>
-        <li><code>/precos</code>: muda duas vezes por ano.</li>
-        <li><code>/painel</code>: mostra o nome e o desempenho de quem está logado.</li>
-        <li><code>/questoes/[id]</code>: pública, igual para todos, mas o admin corrige um erro de vez em quando.</li>
-        <li><code>/busca?q=...</code>: resultado depende do texto digitado.</li>
+        <li><code>/pricing</code>: muda duas vezes por ano.</li>
+        <li><code>/dashboard</code>: mostra o nome e o desempenho de quem está logado.</li>
+        <li><code>/questions/[id]</code>: pública, igual para todos, mas o admin corrige um erro de vez em quando.</li>
+        <li><code>/search?q=...</code>: resultado depende do texto digitado.</li>
         <li><code>/blog/[slug]</code>: posts novos toda semana, os antigos quase nunca mudam.</li>
       </ol>
       <p class="ex-consulta"><b>Pode consultar</b>os cartões do Ver &middot; <a href="https://nextjs.org/docs/app/getting-started/caching-and-revalidating">Next.js: caching e revalidação</a></p>
@@ -313,7 +313,7 @@
         <ol>
           <li><strong>Estática.</strong> É igual para todos e quase não muda. Um deploy novo resolve quando mudar.</li>
           <li><strong>Dinâmica.</strong> Depende do cookie de sessão. Use streaming (<code>loading.tsx</code> ou <code>Suspense</code>) para mostrar a casca enquanto os números carregam.</li>
-          <li><strong>Estática com revalidação sob demanda.</strong> Igual para todos. Quando o admin salva a correção, a ação chama <code>revalidateTag('questao-' + id)</code> e só aquela página é refeita.</li>
+          <li><strong>Estática com revalidação sob demanda.</strong> Igual para todos. Quando o admin salva a correção, a ação chama <code>revalidateTag('question-' + id)</code> e só aquela página é refeita.</li>
           <li><strong>Dinâmica.</strong> Depende do <code>searchParams</code>. Dá para pôr em cache o resultado de buscas comuns, mas a página em si é gerada no pedido.</li>
           <li><strong>Estática com ISR.</strong> Gere os posts no build e use <code>generateStaticParams</code> com revalidação por tempo ou por tag para os novos.</li>
         </ol>
@@ -323,8 +323,8 @@
         <h4>Revisar &middot; depois da solução</h4>
         <h5>1 &middot; Explique em voz alta</h5>
         <ol>
-          <li>Por que <code>/questoes/[id]</code> usa revalidação sob demanda, e não <code>revalidate: 60</code>?</li>
-          <li>O que pode dar errado se <code>/painel</code> for parar num cache compartilhado?</li>
+          <li>Por que <code>/questions/[id]</code> usa revalidação sob demanda, e não <code>revalidate: 60</code>?</li>
+          <li>O que pode dar errado se <code>/dashboard</code> for parar num cache compartilhado?</li>
         </ol>
         <details class="rv"><summary>respostas</summary><div class="rv-body">
           <ol>
@@ -336,10 +336,10 @@
         <h5>2 &middot; Caça ao bug</h5>
         <p>Esta foi a resposta de um colega. Três itens estão errados. Quais, e por quê?</p>
         <ol>
-          <li><code>/precos</code>: dinâmica, para sempre mostrar o preço atual.</li>
-          <li><code>/painel</code>: estática com <code>revalidate: 60</code>, para não sobrecarregar o banco.</li>
-          <li><code>/questoes/[id]</code>: ISR com <code>revalidate: 1</code>, para a correção aparecer logo.</li>
-          <li><code>/busca?q=...</code>: dinâmica, porque depende do texto digitado.</li>
+          <li><code>/pricing</code>: dinâmica, para sempre mostrar o preço atual.</li>
+          <li><code>/dashboard</code>: estática com <code>revalidate: 60</code>, para não sobrecarregar o banco.</li>
+          <li><code>/questions/[id]</code>: ISR com <code>revalidate: 1</code>, para a correção aparecer logo.</li>
+          <li><code>/search?q=...</code>: dinâmica, porque depende do texto digitado.</li>
           <li><code>/blog/[slug]</code>: estática com ISR.</li>
         </ol>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
@@ -353,7 +353,7 @@
         </div></details>
 
         <h5>3 &middot; Mude um requisito</h5>
-        <p><code>/questoes/[id]</code> agora mostra &ldquo;você acertou esta questão&rdquo; para quem está logado. A página inteira vira dinâmica?</p>
+        <p><code>/questions/[id]</code> agora mostra &ldquo;você acertou esta questão&rdquo; para quem está logado. A página inteira vira dinâmica?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
           <p>Não precisa. A questão continua igual para todos e pode continuar estática. Só o selo depende de quem pede. Separe os dois: a página estática com a questão, e um componente pequeno que busca o status da pessoa. Ele pode ser um componente de cliente, ou um trecho dinâmico dentro de <code>&lt;Suspense&gt;</code>.</p>
           <p>Transformar a página inteira em dinâmica por causa de um selo é o erro comum: todo mundo perde o cache para um detalhe que só alguns veem.</p>
@@ -365,29 +365,29 @@
   <div class="ex" id="fz2">
     <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Tire a cascata desta página</h3><span class="ex-meta">15 min &middot; Next.js + TS</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Esta página demora 750 ms para começar a responder. <code>getUsuario</code> leva 300 ms, <code>getEstatisticas</code> leva 200 ms e <code>getRecomendadas</code> leva 250 ms. As recomendações dependem do nível do usuário. Reescreva para que a página fique o mais rápida possível.</p>
-<pre><code>export default async function Painel({ params }: { params: Promise&lt;{ id: string }&gt; }) {
+      <p class="ex-enunciado">Esta página demora 750 ms para começar a responder. <code>getUser</code> leva 300 ms, <code>getStats</code> leva 200 ms e <code>getRecommendations</code> leva 250 ms. As recomendações dependem do nível do usuário. Reescreva para que a página fique o mais rápida possível.</p>
+<pre><code>export default async function Dashboard({ params }: { params: Promise&lt;{ id: string }&gt; }) {
   const { id } = await params;
-  const usuario = await getUsuario(id);
-  const stats = await getEstatisticas(id);
-  const recomendadas = await getRecomendadas(usuario.nivel);
-  return &lt;Tela usuario={usuario} stats={stats} recomendadas={recomendadas} /&gt;;
+  const user = await getUser(id);
+  const stats = await getStats(id);
+  const recommendations = await getRecommendations(user.level);
+  return &lt;Screen user={user} stats={stats} recommendations={recommendations} /&gt;;
 }
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">MDN: Promise.all</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Desenhe as dependências: <code>stats</code> não depende de ninguém, e <code>recomendadas</code> depende de <code>usuario</code>. Qual é o caminho mais longo?</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Desenhe as dependências: <code>stats</code> não depende de ninguém, e <code>recommendations</code> depende de <code>user</code>. Qual é o caminho mais longo?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>export default async function Painel({ params }: { params: Promise&lt;{ id: string }&gt; }) {
+<pre><code>export default async function Dashboard({ params }: { params: Promise&lt;{ id: string }&gt; }) {
   const { id } = await params;
-  const [usuario, stats] = await Promise.all([
-    getUsuario(id),        // 300 ms
-    getEstatisticas(id),   // 200 ms, ao mesmo tempo
+  const [user, stats] = await Promise.all([
+    getUser(id),    // 300 ms
+    getStats(id),   // 200 ms, at the same time
   ]);
-  const recomendadas = await getRecomendadas(usuario.nivel); // + 250 ms: precisa do nível
-  return &lt;Tela usuario={usuario} stats={stats} recomendadas={recomendadas} /&gt;;
+  const recommendations = await getRecommendations(user.level); // + 250 ms: needs the level
+  return &lt;Screen user={user} stats={stats} recommendations={recommendations} /&gt;;
 }
 </code></pre>
-        <p>O tempo cai de 750 ms para 550 ms. O caminho mais longo é <code>usuario</code> e depois <code>recomendadas</code> (300 + 250). <code>stats</code> roda em paralelo e não entra na conta.</p>
+        <p>O tempo cai de 750 ms para 550 ms. O caminho mais longo é <code>user</code> e depois <code>recommendations</code> (300 + 250). <code>stats</code> roda em paralelo e não entra na conta.</p>
         <p><strong>Próximo passo:</strong> se as recomendações são a parte lenta e menos importante, mova-as para um componente próprio dentro de <code>&lt;Suspense&gt;</code>. A página aparece em 300 ms e as recomendações chegam depois, por streaming.</p>
       </div></details>
       <div class="revisar">
@@ -396,11 +396,11 @@
         <ol>
           <li>Por que o tempo cai para 550 ms, e não para 300 ms?</li>
           <li>Por que dois <code>await</code> seguidos esperam um de cada vez, mas o <code>Promise.all</code> não?</li>
-          <li>O que acontece com a página se <code>getEstatisticas</code> falhar?</li>
+          <li>O que acontece com a página se <code>getStats</code> falhar?</li>
         </ol>
         <details class="rv"><summary>respostas</summary><div class="rv-body">
           <ol>
-            <li>Porque <code>recomendadas</code> precisa do nível do usuário, então só começa depois que <code>getUsuario</code> termina: 300 + 250. Paralelizar só ajuda o que não depende de nada.</li>
+            <li>Porque <code>recommendations</code> precisa do nível do usuário, então só começa depois que <code>getUser</code> termina: 300 + 250. Paralelizar só ajuda o que não depende de nada.</li>
             <li>A busca começa quando a função é <em>chamada</em>, e o <code>await</code> só pausa até ela terminar. Com dois <code>await</code> seguidos, a segunda chamada só acontece depois da primeira terminar. No <code>Promise.all</code>, as duas chamadas acontecem antes de qualquer pausa.</li>
             <li>A página inteira falha. O <code>Promise.all</code> rejeita assim que uma das promessas rejeita. Se as estatísticas forem opcionais, é preciso tratar isso (veja o passo 3).</li>
           </ol>
@@ -408,36 +408,36 @@
 
         <h5>2 &middot; Caça ao bug</h5>
         <p>Três colegas mandaram versões diferentes. Calcule o tempo de cada uma e diga qual tem problema.</p>
-<pre><code>// Versão A
-const usuario = await getUsuario(id);
-const recomendadas = await getRecomendadas(usuario.nivel);
-const [stats] = await Promise.all([getEstatisticas(id)]);
+<pre><code>// Version A
+const user = await getUser(id);
+const recommendations = await getRecommendations(user.level);
+const [stats] = await Promise.all([getStats(id)]);
 
-// Versão B
-const usuario = await getUsuario(id);
-const [stats, recomendadas] = await Promise.all([
-  getEstatisticas(id),
-  getRecomendadas(usuario.nivel),
+// Version B
+const user = await getUser(id);
+const [stats, recommendations] = await Promise.all([
+  getStats(id),
+  getRecommendations(user.level),
 ]);
 
-// Versão C
-const statsPromessa = getEstatisticas(id); // começa já, sem await
-const usuario = await getUsuario(id);
-const recomendadas = await getRecomendadas(usuario.nivel);
-const stats = await statsPromessa;
+// Version C
+const statsPromise = getStats(id); // starts right away, no await
+const user = await getUser(id);
+const recommendations = await getRecommendations(user.level);
+const stats = await statsPromise;
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ul>
             <li><strong>A: 750 ms, errada.</strong> Um <code>Promise.all</code> com um item só não paraleliza nada. As três buscas continuam em fila. Ela <em>parece</em> otimizada porque tem <code>Promise.all</code>.</li>
             <li><strong>B: 550 ms, certa.</strong> É outro jeito de chegar no mesmo caminho mais longo: usuário (300) e depois o maior entre stats (200) e recomendadas (250).</li>
-            <li><strong>C: 550 ms, mas com uma armadilha.</strong> Se <code>getEstatisticas</code> falhar aos 200 ms, ninguém está esperando por ela ainda (o <code>await</code> só vem aos 550 ms). O Node trata isso como <em>rejeição não tratada</em>: num script Node puro, o processo cai, mesmo que um <code>try</code> pegue o erro depois. O <code>Promise.all</code> evita isso, porque ele já está esperando todas desde o começo.</li>
+            <li><strong>C: 550 ms, mas com uma armadilha.</strong> Se <code>getStats</code> falhar aos 200 ms, ninguém está esperando por ela ainda (o <code>await</code> só vem aos 550 ms). O Node trata isso como <em>rejeição não tratada</em>: num script Node puro, o processo cai, mesmo que um <code>try</code> pegue o erro depois. O <code>Promise.all</code> evita isso, porque ele já está esperando todas desde o começo.</li>
           </ul>
         </div></details>
 
         <h5>3 &middot; Mude um requisito</h5>
-        <p>As estatísticas passam a ser opcionais: se <code>getEstatisticas</code> falhar, a página abre sem os números. Se <code>getUsuario</code> falhar, a página continua mostrando erro. O que muda?</p>
+        <p>As estatísticas passam a ser opcionais: se <code>getStats</code> falhar, a página abre sem os números. Se <code>getUser</code> falhar, a página continua mostrando erro. O que muda?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
-          <p>A falha precisa ser tratada <em>só</em> nas estatísticas: <code>getEstatisticas(id).catch(() =&gt; null)</code> dentro do <code>Promise.all</code>. O <code>Tela</code> passa a aceitar <code>stats</code> nulo e mostra &ldquo;estatísticas indisponíveis&rdquo;. Outra saída é <code>Promise.allSettled</code>, que nunca rejeita e diz o resultado de cada uma.</p>
+          <p>A falha precisa ser tratada <em>só</em> nas estatísticas: <code>getStats(id).catch(() =&gt; null)</code> dentro do <code>Promise.all</code>. O <code>Screen</code> passa a aceitar <code>stats</code> nulo e mostra &ldquo;estatísticas indisponíveis&rdquo;. Outra saída é <code>Promise.allSettled</code>, que nunca rejeita e diz o resultado de cada uma.</p>
           <p>A saída mais limpa no Next é mover as estatísticas para um componente próprio, com <code>&lt;Suspense&gt;</code> e uma <em>error boundary</em> em volta. Elas carregam e falham sozinhas, sem segurar nem derrubar o resto da página.</p>
         </div></details>
       </div>

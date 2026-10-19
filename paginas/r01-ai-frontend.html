@@ -82,7 +82,7 @@
 
     <div class="bcard">
       <h4>3. Structured output: pedir dados, não texto</h4>
-      <p><b class="r">O problema</b>O modelo devolve texto livre, mas o seu componente precisa de dados com formato fixo, por exemplo <code>{ resumo, alternativas: [...] }</code>.</p>
+      <p><b class="r">O problema</b>O modelo devolve texto livre, mas o seu componente precisa de dados com formato fixo, por exemplo <code>{ summary, options: [...] }</code>.</p>
       <p><b class="r">Como funciona</b>Você envia um <em>JSON Schema</em> junto com o pedido. O schema é a descrição do formato: quais campos existem e de que tipo. O modelo responde em JSON seguindo esse formato. Depois, o seu código valida a resposta de novo com <em>Zod</em>, uma biblioteca de validação.</p>
       <p><b class="r">Por que validar duas vezes</b>O schema garante a <strong>forma</strong>, não o <strong>conteúdo</strong>. Um campo pode vir vazio, um id pode ser inventado e duas alternativas podem vir marcadas como corretas. Trate a saída do modelo como um formulário que o usuário preencheu: ela pode estar errada.</p>
       <p class="frase"><b class="r">Na entrevista</b>&ldquo;O schema garante a forma, e o meu código confere o sentido.&rdquo;</p>
@@ -91,7 +91,7 @@
     <div class="bcard">
       <h4>4. Tool calling: o modelo pede, o seu código faz</h4>
       <p><b class="r">O problema</b>O modelo não sabe o que está no seu banco de dados e não consegue fazer nada fora da conversa.</p>
-      <p><b class="r">Como funciona</b>Você descreve algumas ferramentas: nome, para que servem e quais argumentos recebem. O modelo responde algo como &ldquo;quero chamar <code>buscarPedido</code> com <code>{ id: 42 }</code>&rdquo;. Quem executa é o <strong>seu código</strong>. O resultado volta para o modelo, que continua a resposta.</p>
+      <p><b class="r">Como funciona</b>Você descreve algumas ferramentas: nome, para que servem e quais argumentos recebem. O modelo responde algo como &ldquo;quero chamar <code>getOrder</code> com <code>{ id: 42 }</code>&rdquo;. Quem executa é o <strong>seu código</strong>. O resultado volta para o modelo, que continua a resposta.</p>
       <p><b class="r">Cuidado</b>O modelo não executa nada sozinho. Quem roda é o seu servidor, com as permissões dele. Então valide o argumento e confira se o usuário pode ver aquele pedido, como faria com qualquer formulário.</p>
       <p><b class="r">Não confunda</b><em>Structured output</em> define o formato da resposta final. <em>Tool calling</em> é um pedido de ação no meio da conversa.</p>
       <p class="frase"><b class="r">Na entrevista</b>&ldquo;Se eu só preciso do formato, uso structured output. Se o modelo precisa decidir o que buscar, uso tool calling.&rdquo;</p>
@@ -107,12 +107,12 @@
         <line x1="315" y1="38" x2="315" y2="290" class="ln" stroke-dasharray="3 4"/>
         <text x="210" y="64" text-anchor="middle" class="s">1 · pergunta + lista de ferramentas</text>
         <line x1="107" y1="72" x2="312" y2="72" class="ln" marker-end="url(#r1s)"/>
-        <text x="210" y="108" text-anchor="middle" class="m">2 · buscarPedido({ id: 42 })</text>
+        <text x="210" y="108" text-anchor="middle" class="m">2 · getOrder({ id: 42 })</text>
         <line x1="313" y1="116" x2="108" y2="116" class="ln-a" marker-end="url(#r1s)"/>
         <rect x="8" y="136" width="194" height="48" rx="6" class="bx-t"/>
         <text x="105" y="156" text-anchor="middle" class="s">3 · valida, confere permissão</text>
         <text x="105" y="174" text-anchor="middle" class="s">e executa a função</text>
-        <text x="210" y="214" text-anchor="middle" class="s">4 · resultado: { status: "enviado" }</text>
+        <text x="210" y="214" text-anchor="middle" class="s">4 · resultado: { status: "shipped" }</text>
         <line x1="107" y1="222" x2="312" y2="222" class="ln" marker-end="url(#r1s)"/>
         <text x="210" y="258" text-anchor="middle" class="s">5 · resposta final, em texto</text>
         <line x1="313" y1="266" x2="108" y2="266" class="ln" marker-end="url(#r1s)"/>
@@ -123,7 +123,7 @@
     <div class="bcard">
       <h4>5. Generative UI: a resposta vira componente</h4>
       <p><b class="r">O problema</b>Alguns resultados ficam ruins em forma de parágrafo, como uma lista de voos, um gráfico ou um pedido para aprovar.</p>
-      <p><b class="r">Como funciona</b>Cada ferramenta tem um componente React. Quando o modelo chama <code>mostrarClima</code>, a tela renderiza <code>&lt;CartaoClima&gt;</code> com os dados que a ferramenta devolveu. O cartão também tem estados: carregando, pronto e erro. O modelo escolhe <strong>qual</strong> componente aparece, sempre de uma lista fechada que você definiu. Ele nunca gera HTML para a página executar.</p>
+      <p><b class="r">Como funciona</b>Cada ferramenta tem um componente React. Quando o modelo chama <code>showWeather</code>, a tela renderiza <code>&lt;WeatherCard&gt;</code> com os dados que a ferramenta devolveu. O cartão também tem estados: carregando, pronto e erro. O modelo escolhe <strong>qual</strong> componente aparece, sempre de uma lista fechada que você definiu. Ele nunca gera HTML para a página executar.</p>
       <p><b class="r">Quando não usar</b>Se a resposta tem sempre o mesmo formato, um card fixo preenchido com os dados é mais simples, mais fácil de testar e mais acessível.</p>
       <p class="frase"><b class="r">Na entrevista</b>&ldquo;Generative UI é o modelo escolhendo um componente de uma lista fechada. Eu só uso quando o formato da resposta muda de pedido para pedido.&rdquo;</p>
     </div>
@@ -157,7 +157,7 @@
     <li class="item"><input type="checkbox" id="w25-3"><label for="w25-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs: JSON Schema na chamada pra garantir o <em>formato</em>, Zod depois pra validar o <em>significado</em> &mdash; e por que a saída do modelo é entrada não confiável, mesmo com schema <span class="nivel n-base">base</span></span></label></li>
     <li class="item"><input type="checkbox" id="w25-4"><label for="w25-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tool calling: o modelo devolve um <strong>pedido</strong> de chamada (nome + argumentos), quem executa é o seu código, e o resultado volta pro modelo &mdash; os modos <code>auto</code>/<code>any</code>/<code>none</code> e validar argumento como se viesse de um formulário <span class="nivel n-dif">diferencial</span></span></label></li>
     <li class="item"><input type="checkbox" id="w25-5"><label for="w25-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs vs. tool calling: o primeiro formata a <strong>resposta final</strong>, o segundo pede uma <strong>ação no meio</strong> da conversa &mdash; saber escolher entre os dois é pergunta clássica <span class="nivel n-dif">diferencial</span></span></label></li>
-    <li class="item"><input type="checkbox" id="w25-6"><label for="w25-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Generative UI: o resultado de uma ferramenta vira um <strong>componente tipado</strong> (parts <code>tool-&lt;nome&gt;</code> com estados carregando/pronto/erro) em vez de um parágrafo &mdash; e a diferença entre isso e só renderizar JSON num card fixo <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-6"><label for="w25-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Generative UI: o resultado de uma ferramenta vira um <strong>componente tipado</strong> (parts <code>tool-&lt;name&gt;</code> com estados carregando/pronto/erro) em vez de um parágrafo &mdash; e a diferença entre isso e só renderizar JSON num card fixo <span class="nivel n-dif">diferencial</span></span></label></li>
     <li class="item"><input type="checkbox" id="w25-7"><label for="w25-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Loading que respeita o tempo da IA: skeleton, mensagem de progresso, <strong>prazo de desistência</strong>, e <code>aria-live</code>/<code>role="status"</code> pra quem usa leitor de tela saber que a resposta chegou <span class="nivel n-base">base</span></span></label></li>
     <li class="item"><input type="checkbox" id="w25-8"><label for="w25-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Erro e retry: transitório (429/503/rede) vs. permanente (400/404), backoff que respeita o <code>retryDelay</code> da API, mensagem humanizada &mdash; e retry automático no servidor vs. botão de &ldquo;tentar de novo&rdquo; na UI <span class="nivel n-base">base</span></span></label></li>
     <li class="item"><input type="checkbox" id="w25-9"><label for="w25-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Human-in-the-loop: aprovação <strong>antes</strong> de executar ação sensível, revisão humana <strong>antes</strong> de publicar saída da IA, e o botão de reportar do usuário como sinal que reordena a fila <span class="nivel n-dif">diferencial</span></span></label></li>
@@ -208,8 +208,8 @@ const decoder = new TextDecoder();
 while (true) {
   const { done, value } = await reader.read();
   if (done) break;
-  const texto = decoder.decode(value, { stream: true }); // bytes viram texto
-  // acrescente o texto na tela
+  const text = decoder.decode(value, { stream: true }); // bytes become text
+  // append the text to the screen
 }</code></pre>
 <ul>
 <li><code>getReader()</code> cria um leitor. Só existe um leitor por vez para cada fluxo.</li>
@@ -352,115 +352,115 @@ while (true) {
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Os estados de um chat num reducer</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva o tipo <code>Estado</code> e a função <code>reducer(estado, acao)</code> de uma tela de chat com IA. As ações são <code>ENVIAR</code>, <code>PEDACO</code> (chegou um pedaço de texto), <code>FIM</code>, <code>FALHA</code> (com uma mensagem) e <code>PARAR</code> (o usuário clicou em Parar).</p>
+      <p class="ex-enunciado">Escreva o tipo <code>State</code> e a função <code>reducer(state, action)</code> de uma tela de chat com IA. As ações são <code>SEND</code> (enviar), <code>CHUNK</code> (chegou um pedaço de texto), <code>DONE</code> (a resposta terminou), <code>FAIL</code> (falhou, com uma mensagem) e <code>STOP</code> (o usuário clicou em Parar).</p>
       <h4>Regras</h4>
       <ul>
-        <li>Não dá para <code>ENVIAR</code> enquanto uma resposta ainda está chegando.</li>
-        <li><code>PARAR</code> no meio guarda o texto que já chegou e marca a resposta como interrompida.</li>
+        <li>Não dá para <code>SEND</code> enquanto uma resposta ainda está chegando.</li>
+        <li><code>STOP</code> no meio guarda o texto que já chegou e marca a resposta como interrompida.</li>
         <li>Um pedaço que chega depois de parar ou de falhar é ignorado.</li>
         <li>O tipo não pode permitir estado impossível, como texto em <code>idle</code> ou mensagem de erro em <code>ready</code>.</li>
       </ul>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions">TypeScript: discriminated unions</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/switch">MDN: switch</a> &middot; cartão 2 do Ver</p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Use uma <em>união discriminada</em>: cada estado é um objeto com um campo <code>tipo</code> e só os campos que fazem sentido nele. Aí o TypeScript não deixa você ler <code>texto</code> num estado que não tem texto.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Use uma <em>união discriminada</em>: cada estado é um objeto com um campo <code>status</code> e só os campos que fazem sentido nele. Aí o TypeScript não deixa você ler <code>text</code> num estado que não tem texto.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Estado =
-  | { tipo: 'idle' }
-  | { tipo: 'submitted' }
-  | { tipo: 'streaming'; texto: string }
-  | { tipo: 'ready'; texto: string; interrompida: boolean }
-  | { tipo: 'error'; mensagem: string; texto: string };
+<pre><code>type State =
+  | { status: 'idle' }
+  | { status: 'submitted' }
+  | { status: 'streaming'; text: string }
+  | { status: 'ready'; text: string; interrupted: boolean }
+  | { status: 'error'; message: string; text: string };
 
-type Acao =
-  | { tipo: 'ENVIAR' }
-  | { tipo: 'PEDACO'; texto: string }
-  | { tipo: 'FIM' }
-  | { tipo: 'FALHA'; mensagem: string }
-  | { tipo: 'PARAR' };
+type Action =
+  | { type: 'SEND' }
+  | { type: 'CHUNK'; text: string }
+  | { type: 'DONE' }
+  | { type: 'FAIL'; message: string }
+  | { type: 'STOP' };
 
-export function reducer(e: Estado, a: Acao): Estado {
-  switch (a.tipo) {
-    case 'ENVIAR':
-      // enquanto chega resposta, um segundo envio é ignorado
-      return e.tipo === 'submitted' || e.tipo === 'streaming' ? e : { tipo: 'submitted' };
-    case 'PEDACO':
-      if (e.tipo === 'submitted') return { tipo: 'streaming', texto: a.texto };
-      if (e.tipo === 'streaming') return { tipo: 'streaming', texto: e.texto + a.texto };
-      return e; // pedaço atrasado, depois de parar ou falhar
-    case 'FIM':
-      if (e.tipo === 'streaming') return { tipo: 'ready', texto: e.texto, interrompida: false };
-      if (e.tipo === 'submitted') return { tipo: 'ready', texto: '', interrompida: false };
-      return e;
-    case 'FALHA':
-      if (e.tipo !== 'submitted' &amp;&amp; e.tipo !== 'streaming') return e;
-      // guarda o que já chegou: a tela pode mostrar o texto parcial junto do erro
-      return { tipo: 'error', mensagem: a.mensagem, texto: e.tipo === 'streaming' ? e.texto : '' };
-    case 'PARAR':
-      if (e.tipo === 'streaming') return { tipo: 'ready', texto: e.texto, interrompida: true };
-      if (e.tipo === 'submitted') return { tipo: 'idle' };
-      return e;
+export function reducer(s: State, a: Action): State {
+  switch (a.type) {
+    case 'SEND':
+      // while a response is arriving, a second send is ignored
+      return s.status === 'submitted' || s.status === 'streaming' ? s : { status: 'submitted' };
+    case 'CHUNK':
+      if (s.status === 'submitted') return { status: 'streaming', text: a.text };
+      if (s.status === 'streaming') return { status: 'streaming', text: s.text + a.text };
+      return s; // late chunk, after a stop or a failure
+    case 'DONE':
+      if (s.status === 'streaming') return { status: 'ready', text: s.text, interrupted: false };
+      if (s.status === 'submitted') return { status: 'ready', text: '', interrupted: false };
+      return s;
+    case 'FAIL':
+      if (s.status !== 'submitted' &amp;&amp; s.status !== 'streaming') return s;
+      // keep what already arrived: the screen can show the partial text next to the error
+      return { status: 'error', message: a.message, text: s.status === 'streaming' ? s.text : '' };
+    case 'STOP':
+      if (s.status === 'streaming') return { status: 'ready', text: s.text, interrupted: true };
+      if (s.status === 'submitted') return { status: 'idle' };
+      return s;
   }
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o tipo impede estado impossível (não existe <code>texto</code> em <code>idle</code>), o pedaço atrasado não &ldquo;ressuscita&rdquo; uma resposta parada, e parar é um estado de verdade, não um detalhe. Na tela real, o <code>PARAR</code> também chama <code>abortController.abort()</code> para cancelar o pedido.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> o tipo impede estado impossível (não existe <code>text</code> em <code>idle</code>), o pedaço atrasado não &ldquo;ressuscita&rdquo; uma resposta parada, e parar é um estado de verdade, não um detalhe. Na tela real, o <code>STOP</code> também chama <code>abortController.abort()</code> para cancelar o pedido.</p>
       </div></details>
       <div class="revisar">
         <h4>Revisar &middot; depois da solução</h4>
         <h5>1 &middot; Explique em voz alta</h5>
         <ol>
-          <li>Por que o <code>Estado</code> é uma união, e não um objeto só, como <code>{ tipo: string; texto?: string; mensagem?: string }</code>?</li>
-          <li>Por que <code>PARAR</code> em <code>submitted</code> volta para <code>idle</code>, mas em <code>streaming</code> vai para <code>ready</code>?</li>
+          <li>Por que o <code>State</code> é uma união, e não um objeto só, como <code>{ status: string; text?: string; message?: string }</code>?</li>
+          <li>Por que <code>STOP</code> em <code>submitted</code> volta para <code>idle</code>, mas em <code>streaming</code> vai para <code>ready</code>?</li>
           <li>Por que o estado <code>error</code> guarda o texto que já tinha chegado?</li>
         </ol>
         <details class="rv"><summary>respostas</summary><div class="rv-body">
           <ol>
-            <li>No objeto único, todos os campos são opcionais. Nada impede <code>{ tipo: 'idle', mensagem: 'erro' }</code>, e o código precisa conferir <code>undefined</code> em todo lugar. Na união, cada estado tem só os seus campos, e o TypeScript sabe quais existem depois de um <code>if (e.tipo === ...)</code>.</li>
+            <li>No objeto único, todos os campos são opcionais. Nada impede <code>{ status: 'idle', message: 'erro' }</code>, e o código precisa conferir <code>undefined</code> em todo lugar. Na união, cada estado tem só os seus campos, e o TypeScript sabe quais existem depois de um <code>if (s.status === ...)</code>.</li>
             <li>Em <code>submitted</code> nada chegou ainda, então não existe resposta para guardar: a tela volta ao começo. Em <code>streaming</code> já existe texto, e a regra 2 manda guardá-lo, marcado como interrompido.</li>
             <li>Para a pessoa não perder o que já leu. A tela mostra o texto parcial e, abaixo, o aviso de erro com &ldquo;Tentar de novo&rdquo;.</li>
           </ol>
         </div></details>
 
         <h5>2 &middot; Caça ao bug</h5>
-        <p>Esta versão compila sem erro e parece certa. Ela quebra três das quatro regras. Ache os três erros e diga qual regra cada um quebra. (O tipo <code>Acao</code> é o mesmo da solução.)</p>
-<pre><code>type Estado =
-  | { tipo: 'idle' }
-  | { tipo: 'submitted' }
-  | { tipo: 'streaming'; texto: string }
-  | { tipo: 'ready'; texto: string; interrompida: boolean; mensagem?: string }
-  | { tipo: 'error'; mensagem: string; texto: string };
+        <p>Esta versão compila sem erro e parece certa. Ela quebra três das quatro regras. Ache os três erros e diga qual regra cada um quebra. (O tipo <code>Action</code> é o mesmo da solução.)</p>
+<pre><code>type State =
+  | { status: 'idle' }
+  | { status: 'submitted' }
+  | { status: 'streaming'; text: string }
+  | { status: 'ready'; text: string; interrupted: boolean; message?: string }
+  | { status: 'error'; message: string; text: string };
 
-export function reducer(e: Estado, a: Acao): Estado {
-  switch (a.tipo) {
-    case 'ENVIAR':
-      return { tipo: 'submitted' };
-    case 'PEDACO':
-      if (e.tipo === 'submitted') return { tipo: 'streaming', texto: a.texto };
-      if (e.tipo === 'streaming') return { tipo: 'streaming', texto: e.texto + a.texto };
-    case 'FIM':
-      return { tipo: 'ready', texto: e.tipo === 'streaming' ? e.texto : '', interrompida: false };
-    case 'FALHA':
-      if (e.tipo !== 'submitted' &amp;&amp; e.tipo !== 'streaming') return e;
-      return { tipo: 'error', mensagem: a.mensagem, texto: e.tipo === 'streaming' ? e.texto : '' };
-    case 'PARAR':
-      if (e.tipo === 'streaming') return { tipo: 'ready', texto: e.texto, interrompida: true };
-      if (e.tipo === 'submitted') return { tipo: 'idle' };
-      return e;
+export function reducer(s: State, a: Action): State {
+  switch (a.type) {
+    case 'SEND':
+      return { status: 'submitted' };
+    case 'CHUNK':
+      if (s.status === 'submitted') return { status: 'streaming', text: a.text };
+      if (s.status === 'streaming') return { status: 'streaming', text: s.text + a.text };
+    case 'DONE':
+      return { status: 'ready', text: s.status === 'streaming' ? s.text : '', interrupted: false };
+    case 'FAIL':
+      if (s.status !== 'submitted' &amp;&amp; s.status !== 'streaming') return s;
+      return { status: 'error', message: a.message, text: s.status === 'streaming' ? s.text : '' };
+    case 'STOP':
+      if (s.status === 'streaming') return { status: 'ready', text: s.text, interrupted: true };
+      if (s.status === 'submitted') return { status: 'idle' };
+      return s;
   }
 }
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
-            <li><strong><code>ENVIAR</code> não olha o estado</strong> (regra 1). No meio de uma resposta, um segundo envio volta para <code>submitted</code> e joga fora o texto que estava chegando.</li>
-            <li><strong><code>PEDACO</code> não termina com <code>return e</code></strong> (regra 3). Quando o estado não é <code>submitted</code> nem <code>streaming</code>, o código <em>cai</em> no <code>case 'FIM'</code> logo abaixo. Isso se chama <em>fall-through</em>. E o <code>FIM</code> também não confere o estado. Resultado: um pedaço que chega depois de um erro transforma o erro em <code>ready</code> com texto vazio, e a mensagem de erro some.</li>
-            <li><strong><code>mensagem?</code> no <code>ready</code></strong> (regra 4). O tipo passa a aceitar &ldquo;pronto com mensagem de erro&rdquo;, um estado impossível.</li>
+            <li><strong><code>SEND</code> não olha o estado</strong> (regra 1). No meio de uma resposta, um segundo envio volta para <code>submitted</code> e joga fora o texto que estava chegando.</li>
+            <li><strong><code>CHUNK</code> não termina com <code>return s</code></strong> (regra 3). Quando o estado não é <code>submitted</code> nem <code>streaming</code>, o código <em>cai</em> no <code>case 'DONE'</code> logo abaixo. Isso se chama <em>fall-through</em>. E o <code>DONE</code> também não confere o estado. Resultado: um pedaço que chega depois de um erro transforma o erro em <code>ready</code> com texto vazio, e a mensagem de erro some.</li>
+            <li><strong><code>message?</code> no <code>ready</code></strong> (regra 4). O tipo passa a aceitar &ldquo;pronto com mensagem de erro&rdquo;, um estado impossível.</li>
           </ol>
           <p>Para o TypeScript achar o erro 2 sozinho, ligue <code>noFallthroughCasesInSwitch</code> no <code>tsconfig.json</code>. Com ela, um <code>case</code> que cai no próximo vira erro de compilação.</p>
         </div></details>
 
         <h5>3 &middot; Mude um requisito</h5>
-        <p>Agora existe o botão &ldquo;Tentar de novo&rdquo;. Ele gera a ação <code>TENTAR_DE_NOVO</code>, que só vale no estado <code>error</code> e recomeça o pedido. O que muda no tipo e no reducer? O que o TypeScript faz se você esquecer uma parte?</p>
+        <p>Agora existe o botão &ldquo;Tentar de novo&rdquo;. Ele gera a ação <code>RETRY</code>, que só vale no estado <code>error</code> e recomeça o pedido. O que muda no tipo e no reducer? O que o TypeScript faz se você esquecer uma parte?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
-          <p>Duas mudanças. No tipo, mais uma opção: <code>| { tipo: 'TENTAR_DE_NOVO' }</code>. No reducer, mais um <code>case</code>: se <code>e.tipo === 'error'</code>, devolve <code>{ tipo: 'submitted' }</code>; senão, <code>return e</code>.</p>
-          <p>Se você mudar o tipo e esquecer o <code>case</code>, o TypeScript reclama que a função nem sempre devolve um <code>Estado</code>. É a união discriminada trabalhando a seu favor: ela aponta todos os lugares que precisam tratar a ação nova.</p>
+          <p>Duas mudanças. No tipo, mais uma opção: <code>| { type: 'RETRY' }</code>. No reducer, mais um <code>case</code>: se <code>s.status === 'error'</code>, devolve <code>{ status: 'submitted' }</code>; senão, <code>return s</code>.</p>
+          <p>Se você mudar o tipo e esquecer o <code>case</code>, o TypeScript reclama que a função nem sempre devolve um <code>State</code>. É a união discriminada trabalhando a seu favor: ela aponta todos os lugares que precisam tratar a ação nova.</p>
           <p>Fora do reducer: a tela precisa disparar um <code>fetch</code> novo, com um <code>AbortController</code> novo. O reducer só descreve a tela; quem faz o pedido é o componente.</p>
         </div></details>
       </div>
@@ -470,45 +470,45 @@ export function reducer(e: Estado, a: Acao): Estado {
   <div class="ex" id="fz2">
     <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Validar a resposta do modelo com Zod</h3><span class="ex-meta">15 min &middot; TypeScript + Zod</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">O modelo devolve um texto que deveria ser este JSON: <code>{ "resumo": "...", "alternativas": [{ "letra": "A", "correta": false, "motivo": "..." }, ...] }</code>. Escreva <code>parseExplicacao(texto, gabarito)</code>, que devolve os dados validados ou <code>null</code>.</p>
+      <p class="ex-enunciado">O modelo devolve um texto que deveria ser este JSON: <code>{ "summary": "...", "options": [{ "letter": "A", "correct": false, "reason": "..." }, ...] }</code>. Escreva <code>parseExplanation(text, answerKey)</code>, que devolve os dados validados ou <code>null</code>.</p>
       <h4>Regras</h4>
       <ul>
         <li>O texto pode nem ser JSON válido.</li>
-        <li><code>resumo</code> e cada <code>motivo</code> não podem ser vazios. São de 4 a 5 alternativas, com letras de A a E, sem repetir.</li>
-        <li>Exatamente uma alternativa correta, e ela tem de ser a letra do <code>gabarito</code>.</li>
+        <li><code>summary</code> e cada <code>reason</code> não podem ser vazios. São de 4 a 5 alternativas, com letras de A a E, sem repetir.</li>
+        <li>Exatamente uma alternativa correta, e ela tem de ser a letra do gabarito (<code>answerKey</code>).</li>
       </ul>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://zod.dev/api">Zod: API</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse">MDN: JSON.parse</a> &middot; cartão 3 do Ver</p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Separe em três portas: <code>JSON.parse</code> dentro de <code>try</code> (o texto é JSON?), <code>safeParse</code> do Zod com <code>refine</code> (a forma e as regras estão certas?) e uma comparação com o gabarito (o sentido está certo?).</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code>import { z } from 'zod';
 
-const Alternativa = z.object({
-  letra: z.enum(['A', 'B', 'C', 'D', 'E']),
-  correta: z.boolean(),
-  motivo: z.string().trim().min(1),
+const Option = z.object({
+  letter: z.enum(['A', 'B', 'C', 'D', 'E']),
+  correct: z.boolean(),
+  reason: z.string().trim().min(1),
 });
 
-const Explicacao = z
+const Explanation = z
   .object({
-    resumo: z.string().trim().min(1),
-    alternativas: z.array(Alternativa).min(4).max(5),
+    summary: z.string().trim().min(1),
+    options: z.array(Option).min(4).max(5),
   })
-  .refine((x) =&gt; x.alternativas.filter((a) =&gt; a.correta).length === 1, 'precisa de exatamente uma correta')
-  .refine((x) =&gt; new Set(x.alternativas.map((a) =&gt; a.letra)).size === x.alternativas.length, 'letra repetida');
+  .refine((x) =&gt; x.options.filter((o) =&gt; o.correct).length === 1, 'needs exactly one correct option')
+  .refine((x) =&gt; new Set(x.options.map((o) =&gt; o.letter)).size === x.options.length, 'duplicate letter');
 
-export type Explicacao = z.infer&lt;typeof Explicacao&gt;;
+export type Explanation = z.infer&lt;typeof Explanation&gt;;
 
-export function parseExplicacao(texto: string, gabarito: string): Explicacao | null {
-  let bruto: unknown;
+export function parseExplanation(text: string, answerKey: string): Explanation | null {
+  let raw: unknown;
   try {
-    bruto = JSON.parse(texto); // porta 1: é JSON?
+    raw = JSON.parse(text); // gate 1: is it JSON?
   } catch {
     return null;
   }
-  const r = Explicacao.safeParse(bruto); // porta 2: forma e regras
+  const r = Explanation.safeParse(raw); // gate 2: shape and rules
   if (!r.success) return null;
-  const correta = r.data.alternativas.find((a) =&gt; a.correta)!;
-  return correta.letra === gabarito ? r.data : null; // porta 3: concorda com o gabarito?
+  const correct = r.data.options.find((o) =&gt; o.correct)!;
+  return correct.letter === answerKey ? r.data : null; // gate 3: does it match the answer key?
 }
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> quando volta <code>null</code>, quem chama refaz o pedido ao modelo (até 3 vezes, como no Gabarita). Isso serve para resposta malformada. Para erro de rede ou de cota, refazer na hora não ajuda: aí entra o retry com espera do cartão 6.</p>
@@ -531,31 +531,31 @@ export function parseExplicacao(texto: string, gabarito: string): Explicacao | n
 
         <h5>2 &middot; Caça ao bug</h5>
         <p>Esta versão compila e passa no caso feliz. Ache os três erros. Para cada um, escreva uma resposta do modelo que passa quando não deveria (ou que quebra a função).</p>
-<pre><code>const Alternativa = z.object({
-  letra: z.string(),
-  correta: z.boolean(),
-  motivo: z.string(),
+<pre><code>const Option = z.object({
+  letter: z.string(),
+  correct: z.boolean(),
+  reason: z.string(),
 });
 
-const Explicacao = z
+const Explanation = z
   .object({
-    resumo: z.string().min(1),
-    alternativas: z.array(Alternativa).min(4).max(5),
+    summary: z.string().min(1),
+    options: z.array(Option).min(4).max(5),
   })
-  .refine((x) =&gt; x.alternativas.some((a) =&gt; a.correta), 'precisa de uma correta');
+  .refine((x) =&gt; x.options.some((o) =&gt; o.correct), 'needs a correct option');
 
-export function parseExplicacao(texto: string, gabarito: string) {
-  const r = Explicacao.safeParse(JSON.parse(texto));
+export function parseExplanation(text: string, answerKey: string) {
+  const r = Explanation.safeParse(JSON.parse(text));
   if (!r.success) return null;
-  const correta = r.data.alternativas.find((a) =&gt; a.correta)!;
-  return correta.letra === gabarito ? r.data : null;
+  const correct = r.data.options.find((o) =&gt; o.correct)!;
+  return correct.letter === answerKey ? r.data : null;
 }
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
             <li><strong><code>JSON.parse</code> fora do <code>try</code>.</strong> Com o texto <code>"Claro! Aqui está"</code>, a função lança <code>SyntaxError</code> em vez de devolver <code>null</code>, e quem chama não refaz o pedido.</li>
             <li><strong><code>some</code> aceita duas corretas.</strong> Com A e C marcadas como corretas e gabarito A, o <code>find</code> pega a primeira (A) e a resposta passa. A regra pede <em>exatamente</em> uma.</li>
-            <li><strong>Campos frouxos.</strong> <code>letra</code> aceita <code>"F"</code> e letras repetidas; <code>motivo</code> aceita <code>""</code>; e <code>resumo</code> aceita <code>"   "</code>, porque o <code>min(1)</code> conta os espaços (faltou o <code>trim()</code>).</li>
+            <li><strong>Campos frouxos.</strong> <code>letter</code> aceita <code>"F"</code> e letras repetidas; <code>reason</code> aceita <code>""</code>; e <code>summary</code> aceita <code>"   "</code>, porque o <code>min(1)</code> conta os espaços (faltou o <code>trim()</code>).</li>
           </ol>
           <p>Repare que a versão com bug fica verde no teste do caso feliz. É por isso que a revisão precisa pensar nas entradas ruins, uma por regra.</p>
         </div></details>
@@ -563,7 +563,7 @@ export function parseExplicacao(texto: string, gabarito: string) {
         <h5>3 &middot; Mude um requisito</h5>
         <p>O modelo passou a mandar o JSON dentro de um bloco de código: <code>```json ... ```</code>. A função deve aceitar isso. Onde você mexe? E onde você <em>não</em> mexe?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
-          <p>Só antes da porta 1: limpe as cercas e depois faça o <code>JSON.parse</code>. Por exemplo, <code>texto.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '')</code>.</p>
+          <p>Só antes da porta 1: limpe as cercas e depois faça o <code>JSON.parse</code>. Por exemplo, <code>text.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '')</code>.</p>
           <p>O schema e a comparação com o gabarito não mudam. A mudança está na <em>embalagem</em> da resposta, não nas regras. Afrouxar o schema para &ldquo;aceitar mais coisas&rdquo; seria o erro clássico.</p>
           <p>A solução melhor é na origem: pedir <em>structured output</em> ao modelo (o cartão 3 do Ver). Aí ele devolve só o JSON, sem cerca.</p>
         </div></details>
@@ -796,7 +796,7 @@ export function parseExplicacao(texto: string, gabarito: string) {
     <p class="qz-pagina-intro">14 questões fechadas, com as alternativas embaralhadas a cada rodada. As respostas contam no <a href="quiz.html">Questionário rápido</a> (mesmo histórico). Tente sem reabrir a página.</p>
     <div class="qz-bar qz-pagina-barra"><span class="qz-score qz-pagina-placar" aria-live="polite"></span><button type="button" class="qz-acao" data-acao="rodada">Nova rodada</button></div>
     <div class="qz-pagina-lista"></div>
-    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-ai-frontend-2p6lz0","t":"AI Frontend","q":"A pessoa clicou em \u003cstrong>Parar\u003c/strong> no meio de uma resposta em streaming. O que a tela deve fazer?","o":["Cancelar o pedido e manter o texto que já chegou","Esconder o texto e deixar o pedido terminar sozinho","Apagar tudo e voltar a tela para o estado inicial","Esperar a resposta terminar e só então mostrar tudo"],"c":0,"e":"Parar é uma ação real: o \u003ccode>AbortController\u003c/code> cancela o pedido (e o gasto de tokens), e o texto que já chegou continua na tela, marcado como interrompido. Esconder sem cancelar continua gastando, e apagar joga fora algo que a pessoa talvez queira ler.","b":1},{"id":"rm-ai-frontend-592a57","t":"AI Frontend","q":"Você só precisa que o modelo devolva um resumo e uma lista de tópicos num formato fixo. O que usar?","o":["Structured output, com um schema do formato","Tool calling, com uma ferramenta por tópico","Generative UI, com um componente por tópico","Streaming, lendo o texto e cortando por linha"],"c":0,"e":"Quando você já sabe quais dados quer e só precisa do formato, structured output resolve: o schema descreve o JSON e o modelo responde nele. Tool calling serve para o modelo pedir uma ação no meio da conversa, e Generative UI é para quando o formato muda de pedido para pedido.","b":1},{"id":"rm-ai-frontend-585fa1","t":"AI Frontend","q":"Para que serve \u003ccode>role=\"status\"\u003c/code> em volta da área onde a resposta da IA aparece?","o":["Fazer o leitor de tela anunciar que a resposta chegou","Mostrar um spinner enquanto a resposta não chega","Impedir que a pessoa clique enquanto a IA responde","Avisar o navegador para guardar a resposta em cache"],"c":0,"e":"Quem usa leitor de tela não vê o texto aparecer. Uma região com \u003ccode>role=\"status\"\u003c/code> (equivale a \u003ccode>aria-live=\"polite\"\u003c/code>) faz o leitor anunciar a mudança sem tirar o foco de onde a pessoa está. Ela não desenha spinner, não bloqueia clique e não tem relação com cache.","b":1},{"id":"rm-ai-frontend-4u71ym","t":"AI Frontend","q":"O que o streaming de resposta de um LLM melhora, de fato?","o":["O tempo total de resposta, porque gerar e enviar ocorrem em paralelo","O tempo até o primeiro token, ou seja, a espera percebida","A velocidade de geração do modelo, em tokens por segundo","A latência de rede, porque a conexão HTTP fica aberta e reaproveitada"],"c":1,"e":"O modelo leva o mesmo tempo pra gerar tudo, com ou sem streaming: o tempo total não cai, ele só deixa de ficar escondido atrás de um spinner. O ganho é perceptivo: o usuário vê a resposta começar em centenas de milissegundos em vez de esperar o bloco inteiro. Quando não há espera percebida (a explicação do Gabarita já está pronta quando a aluna responde), streaming quase não ajuda."},{"id":"rm-ai-frontend-oqqn13","t":"AI Frontend","q":"Você usa structured output com JSON Schema no Gemini. Por que ainda validar a resposta com Zod no código?","o":["O schema é só uma sugestão no prompt, e o modelo o ignora com frequência","O JSON Schema do Gemini checa os nomes dos campos, mas não os tipos","O schema garante a forma, não o significado: valor errado ainda passa","O schema só é respeitado com temperatura zero; acima disso, não"],"c":2,"e":"O schema reduz drasticamente JSON quebrado, mas não impede valor errado, campo vazio, id inventado ou resposta que contradiz o banco. O Ally AI descarta item com \u003ccode>id\u003c/code> que não foi enviado; o Gabarita recusa explicação cuja alternativa correta não é a do gabarito e pede de novo. &ldquo;Só uma sugestão no prompt&rdquo; descreve o antigo modo JSON por instrução; com structured output o formato é imposto na geração, e regras como &ldquo;exatamente uma correta&rdquo; continuam no código."},{"id":"rm-ai-frontend-px4bfh","t":"AI Frontend","q":"Num fluxo de tool calling com funções que você declarou, quem executa a função?","o":["O provedor do modelo, chamando o endpoint informado na declaração","O modelo, num sandbox do provedor, com os argumentos que ele gerou","Ninguém: o modelo prevê a saída provável da função e segue com ela","A sua aplicação, que recebe nome e argumentos e devolve o resultado"],"c":3,"e":"O modelo só emite um pedido estruturado (nome + argumentos). Executar é responsabilidade (e risco) do seu código, com as permissões do seu servidor, e o resultado volta pro modelo continuar. O sandbox do provedor existe para ferramentas embutidas dele (busca, execução de código), não para funções declaradas por você. Por isso os argumentos são validados e autorizados como qualquer input de usuário, e ação sensível pode exigir aprovação humana."},{"id":"rm-ai-frontend-8h0qt1","t":"AI Frontend","q":"No sentido usado pelo AI SDK, o que caracteriza Generative UI, em comparação com renderizar o JSON da IA num card fixo?","o":["O modelo escolhe, via ferramenta, qual componente aparece e com que dados","O modelo gera o JSX do componente, que o cliente avalia em tempo de execução","A IA preenche sempre o mesmo card com o texto estruturado que ela devolveu","O modelo reordena o layout da página a cada resposta, mudando o CSS"],"c":0,"e":"No Gabarita e no Ally AI, a IA preenche componentes fixos com dado estruturado: o card é sempre o mesmo, e essa é a base da Generative UI. Nela, a escolha da ferramenta pelo modelo decide o componente (lista filtrada, card de diff, gráfico), e a part \u003ccode>tool-&lt;nome&gt;\u003c/code> é renderizada por estado: carregando, pronto, erro. Gerar JSX pra avaliar no cliente é outra coisa, e abriria execução de código vindo do modelo."},{"id":"rm-ai-frontend-nkw9hp","t":"AI Frontend","q":"A API do LLM devolveu 429 com \u003ccode>retryDelay: \"22s\"\u003c/code>. Qual é a política de retry mais defensável?","o":["Repetir na hora, até 3 vezes, porque 429 costuma passar em segundos","Tratar 429 como erro do cliente (4xx) e não repetir, como um 400","Esperar o tempo pedido (com teto) e repetir só erros transitórios","Backoff exponencial fixo (1s, 2s, 4s), ignorando o valor que a API mandou"],"c":2,"e":"É o que o \u003ccode>withRetry\u003c/code> do Gabarita faz (\u003ccode>src/lib/ai/retry.ts\u003c/code>): 429/5xx/rede são transitórios, 400/404 não; se a API diz quanto esperar, espera isso, senão backoff exponencial, sempre com teto. Um backoff fixo de 1s, 2s e 4s gasta as três tentativas antes dos 22s e falha do mesmo jeito; repetir na hora só aumenta a pressão sobre uma cota que já estourou."},{"id":"rm-ai-frontend-htq0lu","t":"AI Frontend","q":"Qual destes é o melhor exemplo de human-in-the-loop bem desenhado?","o":["Pedir ao usuário que confirme cada chamada de ferramenta antes de executar","Revisão humana antes de publicar, com reportes do aluno priorizando a fila","Deixar o próprio modelo avaliar a confiança e chamar um humano quando quiser","Marcar o conteúdo como gerado por IA e deixar o usuário decidir se confia"],"c":1,"e":"Revisão humana funciona quando entra no ponto certo (antes de publicar a questão extraída, onde o erro custa caro) e é alimentada por sinal real (o report do aluno). Confirmação pra tudo treina o usuário a clicar &ldquo;sim&rdquo; sem ler; a autoavaliação de confiança do modelo não é confiável o bastante pra decidir sozinha; e onde existe critério objetivo, como citação literal verificada, o código decide sem humano."},{"id":"rm-ai-frontend-j93p2n","t":"AI Frontend","q":"Por que o status de um chat de IA é melhor modelado como um único valor (\u003ccode>submitted\u003c/code> | \u003ccode>streaming\u003c/code> | \u003ccode>ready\u003c/code> | \u003ccode>error\u003c/code>) do que como três booleanos?","o":["Os booleanos permitem combinações impossíveis, como carregando e erro juntos","Booleanos são mais lentos de atualizar e disparam mais re-renders no React","O TypeScript não aceita mais de um booleano descrevendo o mesmo estado","Um valor único dispensa o cleanup do AbortController ao desmontar o componente"],"c":0,"e":"Com \u003ccode>isLoading\u003c/code>, \u003ccode>isStreaming\u003c/code> e \u003ccode>hasError\u003c/code> há oito combinações e só quatro fazem sentido; as outras são bugs esperando acontecer. Um valor único é uma máquina de estados: a interface só pode estar num estado por vez, e cada transição é explícita."},{"id":"rm-ai-frontend-j0hl83","t":"AI Frontend","q":"Ao ler um stream SSE com \u003ccode>fetch\u003c/code>, por que é preciso um buffer?","o":["O fetch entrega o corpo inteiro de uma vez quando não há nenhum buffer","O TextDecoder só aceita blocos de mais de 1 KB por chamada","O servidor reenvia cada evento até receber a confirmação do cliente","Um evento ou um caractere pode chegar partido entre dois pedaços"],"c":3,"e":"A rede não respeita a fronteira dos eventos: um \u003ccode>data:\u003c/code> pode vir pela metade, e um \u003ccode>ç\u003c/code> ou um emoji pode ter os bytes divididos. O leitor acumula texto, processa só até a última fronteira completa (\u003ccode>\\n\\n\u003c/code>), guarda o resto e usa \u003ccode>TextDecoder\u003c/code> com \u003ccode>stream: true\u003c/code>."},{"id":"rm-ai-frontend-1dfja7h","t":"AI Frontend","q":"O usuário clicou em &ldquo;Parar&rdquo; no meio de uma resposta em streaming. O que a interface deve fazer com o texto que já chegou?","o":["Apagá-lo, porque a resposta ficou incompleta e pode confundir","Mantê-lo na tela, marcado como interrompido","Reenviar a pergunta sozinha, para completar a resposta em segundo plano","Guardá-lo só na memória e escondê-lo, até o usuário pedir de novo"],"c":1,"e":"Apagar o que a pessoa já leu é a pior opção. O parcial fica, com a marca de interrompido, e a interface oferece continuar ou tentar de novo. O mesmo vale para uma queda de conexão: parar é escolha do usuário, e o texto parcial continua sendo dele."},{"id":"rm-ai-frontend-1kon6h4","t":"AI Frontend","q":"Numa ferramenta que exclui dados, como funciona o human-in-the-loop nas aprovações de ferramenta do AI SDK?","o":["O servidor bloqueia toda ferramenta que tenha algum efeito colateral","A ferramenta pausa, a UI pede aprovação e o modelo sabe da decisão","O modelo decide sozinho, a cada chamada, se vale a pena pedir aprovação","A interface executa primeiro e desfaz depois, se o usuário negar"],"c":1,"e":"A execução fica suspensa até a pessoa aprovar ou negar, e a decisão volta ao modelo, que segue a conversa sabendo o que aconteceu. A aprovação pode ser estática (sempre, por ferramenta) ou dinâmica (conforme o valor do argumento). Desfazer depois não serve pra ação irreversível."},{"id":"rm-ai-frontend-49x206","t":"AI Frontend","q":"Num assistente com várias capacidades, quando a Generative UI compensa mais que um card fixo?","o":["Quando o resultado é sempre uma lista com os mesmos campos","Quando o time prefere manter menos componentes de interface","Quando a forma do resultado varia conforme a intenção do usuário","Quando a resposta precisa chegar o mais rápido possível"],"c":2,"e":"Se a forma é sempre a mesma, um card fixo é mais simples, testável e acessível. A Generative UI vale quando o formato muda com a intenção (uma lista filtrada, um gráfico, um cartão de aprovação) e o modelo escolhe, por uma ferramenta, qual componente de um conjunto fechado aparece."}]</script>
+    <script type="application/json" class="qz-pagina-dados">[{"id":"rm-ai-frontend-2p6lz0","t":"AI Frontend","q":"A pessoa clicou em \u003cstrong>Parar\u003c/strong> no meio de uma resposta em streaming. O que a tela deve fazer?","o":["Cancelar o pedido e manter o texto que já chegou","Esconder o texto e deixar o pedido terminar sozinho","Apagar tudo e voltar a tela para o estado inicial","Esperar a resposta terminar e só então mostrar tudo"],"c":0,"e":"Parar é uma ação real: o \u003ccode>AbortController\u003c/code> cancela o pedido (e o gasto de tokens), e o texto que já chegou continua na tela, marcado como interrompido. Esconder sem cancelar continua gastando, e apagar joga fora algo que a pessoa talvez queira ler.","b":1},{"id":"rm-ai-frontend-592a57","t":"AI Frontend","q":"Você só precisa que o modelo devolva um resumo e uma lista de tópicos num formato fixo. O que usar?","o":["Structured output, com um schema do formato","Tool calling, com uma ferramenta por tópico","Generative UI, com um componente por tópico","Streaming, lendo o texto e cortando por linha"],"c":0,"e":"Quando você já sabe quais dados quer e só precisa do formato, structured output resolve: o schema descreve o JSON e o modelo responde nele. Tool calling serve para o modelo pedir uma ação no meio da conversa, e Generative UI é para quando o formato muda de pedido para pedido.","b":1},{"id":"rm-ai-frontend-585fa1","t":"AI Frontend","q":"Para que serve \u003ccode>role=\"status\"\u003c/code> em volta da área onde a resposta da IA aparece?","o":["Fazer o leitor de tela anunciar que a resposta chegou","Mostrar um spinner enquanto a resposta não chega","Impedir que a pessoa clique enquanto a IA responde","Avisar o navegador para guardar a resposta em cache"],"c":0,"e":"Quem usa leitor de tela não vê o texto aparecer. Uma região com \u003ccode>role=\"status\"\u003c/code> (equivale a \u003ccode>aria-live=\"polite\"\u003c/code>) faz o leitor anunciar a mudança sem tirar o foco de onde a pessoa está. Ela não desenha spinner, não bloqueia clique e não tem relação com cache.","b":1},{"id":"rm-ai-frontend-4u71ym","t":"AI Frontend","q":"O que o streaming de resposta de um LLM melhora, de fato?","o":["O tempo total de resposta, porque gerar e enviar ocorrem em paralelo","O tempo até o primeiro token, ou seja, a espera percebida","A velocidade de geração do modelo, em tokens por segundo","A latência de rede, porque a conexão HTTP fica aberta e reaproveitada"],"c":1,"e":"O modelo leva o mesmo tempo pra gerar tudo, com ou sem streaming: o tempo total não cai, ele só deixa de ficar escondido atrás de um spinner. O ganho é perceptivo: o usuário vê a resposta começar em centenas de milissegundos em vez de esperar o bloco inteiro. Quando não há espera percebida (a explicação do Gabarita já está pronta quando a aluna responde), streaming quase não ajuda."},{"id":"rm-ai-frontend-oqqn13","t":"AI Frontend","q":"Você usa structured output com JSON Schema no Gemini. Por que ainda validar a resposta com Zod no código?","o":["O schema é só uma sugestão no prompt, e o modelo o ignora com frequência","O JSON Schema do Gemini checa os nomes dos campos, mas não os tipos","O schema garante a forma, não o significado: valor errado ainda passa","O schema só é respeitado com temperatura zero; acima disso, não"],"c":2,"e":"O schema reduz drasticamente JSON quebrado, mas não impede valor errado, campo vazio, id inventado ou resposta que contradiz o banco. O Ally AI descarta item com \u003ccode>id\u003c/code> que não foi enviado; o Gabarita recusa explicação cuja alternativa correta não é a do gabarito e pede de novo. &ldquo;Só uma sugestão no prompt&rdquo; descreve o antigo modo JSON por instrução; com structured output o formato é imposto na geração, e regras como &ldquo;exatamente uma correta&rdquo; continuam no código."},{"id":"rm-ai-frontend-px4bfh","t":"AI Frontend","q":"Num fluxo de tool calling com funções que você declarou, quem executa a função?","o":["O provedor do modelo, chamando o endpoint informado na declaração","O modelo, num sandbox do provedor, com os argumentos que ele gerou","Ninguém: o modelo prevê a saída provável da função e segue com ela","A sua aplicação, que recebe nome e argumentos e devolve o resultado"],"c":3,"e":"O modelo só emite um pedido estruturado (nome + argumentos). Executar é responsabilidade (e risco) do seu código, com as permissões do seu servidor, e o resultado volta pro modelo continuar. O sandbox do provedor existe para ferramentas embutidas dele (busca, execução de código), não para funções declaradas por você. Por isso os argumentos são validados e autorizados como qualquer input de usuário, e ação sensível pode exigir aprovação humana."},{"id":"rm-ai-frontend-8h0qt1","t":"AI Frontend","q":"No sentido usado pelo AI SDK, o que caracteriza Generative UI, em comparação com renderizar o JSON da IA num card fixo?","o":["O modelo escolhe, via ferramenta, qual componente aparece e com que dados","O modelo gera o JSX do componente, que o cliente avalia em tempo de execução","A IA preenche sempre o mesmo card com o texto estruturado que ela devolveu","O modelo reordena o layout da página a cada resposta, mudando o CSS"],"c":0,"e":"No Gabarita e no Ally AI, a IA preenche componentes fixos com dado estruturado: o card é sempre o mesmo, e essa é a base da Generative UI. Nela, a escolha da ferramenta pelo modelo decide o componente (lista filtrada, card de diff, gráfico), e a part \u003ccode>tool-&lt;name&gt;\u003c/code> é renderizada por estado: carregando, pronto, erro. Gerar JSX pra avaliar no cliente é outra coisa, e abriria execução de código vindo do modelo."},{"id":"rm-ai-frontend-nkw9hp","t":"AI Frontend","q":"A API do LLM devolveu 429 com \u003ccode>retryDelay: \"22s\"\u003c/code>. Qual é a política de retry mais defensável?","o":["Repetir na hora, até 3 vezes, porque 429 costuma passar em segundos","Tratar 429 como erro do cliente (4xx) e não repetir, como um 400","Esperar o tempo pedido (com teto) e repetir só erros transitórios","Backoff exponencial fixo (1s, 2s, 4s), ignorando o valor que a API mandou"],"c":2,"e":"É o que o \u003ccode>withRetry\u003c/code> do Gabarita faz (\u003ccode>src/lib/ai/retry.ts\u003c/code>): 429/5xx/rede são transitórios, 400/404 não; se a API diz quanto esperar, espera isso, senão backoff exponencial, sempre com teto. Um backoff fixo de 1s, 2s e 4s gasta as três tentativas antes dos 22s e falha do mesmo jeito; repetir na hora só aumenta a pressão sobre uma cota que já estourou."},{"id":"rm-ai-frontend-htq0lu","t":"AI Frontend","q":"Qual destes é o melhor exemplo de human-in-the-loop bem desenhado?","o":["Pedir ao usuário que confirme cada chamada de ferramenta antes de executar","Revisão humana antes de publicar, com reportes do aluno priorizando a fila","Deixar o próprio modelo avaliar a confiança e chamar um humano quando quiser","Marcar o conteúdo como gerado por IA e deixar o usuário decidir se confia"],"c":1,"e":"Revisão humana funciona quando entra no ponto certo (antes de publicar a questão extraída, onde o erro custa caro) e é alimentada por sinal real (o report do aluno). Confirmação pra tudo treina o usuário a clicar &ldquo;sim&rdquo; sem ler; a autoavaliação de confiança do modelo não é confiável o bastante pra decidir sozinha; e onde existe critério objetivo, como citação literal verificada, o código decide sem humano."},{"id":"rm-ai-frontend-j93p2n","t":"AI Frontend","q":"Por que o status de um chat de IA é melhor modelado como um único valor (\u003ccode>submitted\u003c/code> | \u003ccode>streaming\u003c/code> | \u003ccode>ready\u003c/code> | \u003ccode>error\u003c/code>) do que como três booleanos?","o":["Os booleanos permitem combinações impossíveis, como carregando e erro juntos","Booleanos são mais lentos de atualizar e disparam mais re-renders no React","O TypeScript não aceita mais de um booleano descrevendo o mesmo estado","Um valor único dispensa o cleanup do AbortController ao desmontar o componente"],"c":0,"e":"Com \u003ccode>isLoading\u003c/code>, \u003ccode>isStreaming\u003c/code> e \u003ccode>hasError\u003c/code> há oito combinações e só quatro fazem sentido; as outras são bugs esperando acontecer. Um valor único é uma máquina de estados: a interface só pode estar num estado por vez, e cada transição é explícita."},{"id":"rm-ai-frontend-j0hl83","t":"AI Frontend","q":"Ao ler um stream SSE com \u003ccode>fetch\u003c/code>, por que é preciso um buffer?","o":["O fetch entrega o corpo inteiro de uma vez quando não há nenhum buffer","O TextDecoder só aceita blocos de mais de 1 KB por chamada","O servidor reenvia cada evento até receber a confirmação do cliente","Um evento ou um caractere pode chegar partido entre dois pedaços"],"c":3,"e":"A rede não respeita a fronteira dos eventos: um \u003ccode>data:\u003c/code> pode vir pela metade, e um \u003ccode>ç\u003c/code> ou um emoji pode ter os bytes divididos. O leitor acumula texto, processa só até a última fronteira completa (\u003ccode>\\n\\n\u003c/code>), guarda o resto e usa \u003ccode>TextDecoder\u003c/code> com \u003ccode>stream: true\u003c/code>."},{"id":"rm-ai-frontend-1dfja7h","t":"AI Frontend","q":"O usuário clicou em &ldquo;Parar&rdquo; no meio de uma resposta em streaming. O que a interface deve fazer com o texto que já chegou?","o":["Apagá-lo, porque a resposta ficou incompleta e pode confundir","Mantê-lo na tela, marcado como interrompido","Reenviar a pergunta sozinha, para completar a resposta em segundo plano","Guardá-lo só na memória e escondê-lo, até o usuário pedir de novo"],"c":1,"e":"Apagar o que a pessoa já leu é a pior opção. O parcial fica, com a marca de interrompido, e a interface oferece continuar ou tentar de novo. O mesmo vale para uma queda de conexão: parar é escolha do usuário, e o texto parcial continua sendo dele."},{"id":"rm-ai-frontend-1kon6h4","t":"AI Frontend","q":"Numa ferramenta que exclui dados, como funciona o human-in-the-loop nas aprovações de ferramenta do AI SDK?","o":["O servidor bloqueia toda ferramenta que tenha algum efeito colateral","A ferramenta pausa, a UI pede aprovação e o modelo sabe da decisão","O modelo decide sozinho, a cada chamada, se vale a pena pedir aprovação","A interface executa primeiro e desfaz depois, se o usuário negar"],"c":1,"e":"A execução fica suspensa até a pessoa aprovar ou negar, e a decisão volta ao modelo, que segue a conversa sabendo o que aconteceu. A aprovação pode ser estática (sempre, por ferramenta) ou dinâmica (conforme o valor do argumento). Desfazer depois não serve pra ação irreversível."},{"id":"rm-ai-frontend-49x206","t":"AI Frontend","q":"Num assistente com várias capacidades, quando a Generative UI compensa mais que um card fixo?","o":["Quando o resultado é sempre uma lista com os mesmos campos","Quando o time prefere manter menos componentes de interface","Quando a forma do resultado varia conforme a intenção do usuário","Quando a resposta precisa chegar o mais rápido possível"],"c":2,"e":"Se a forma é sempre a mesma, um card fixo é mais simples, testável e acessível. A Generative UI vale quando o formato muda com a intenção (uma lista filtrada, um gráfico, um cartão de aprovação) e o modelo escolhe, por uma ferramenta, qual componente de um conjunto fechado aparece."}]</script>
   </div>
 </section>
 

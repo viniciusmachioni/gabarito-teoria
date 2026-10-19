@@ -58,7 +58,7 @@
       <p><b class="r">A regra</b>O componente só enxerga o semântico. Para criar o tema escuro, você muda apenas para qual primitivo o semântico aponta. Nenhum componente muda.</p>
 <pre><code>:root { --color-brand: var(--orange-560); }
 [data-theme="dark"] { --color-brand: var(--orange-400); }
-.button { background: var(--color-brand); } /* nunca var(--orange-560) */
+.button { background: var(--color-brand); } /* never var(--orange-560) */
 </code></pre>
       <p class="frase"><b class="r">Na entrevista</b>&ldquo;Componente só usa token semântico. Tema é trocar o mapeamento, não reescrever componente.&rdquo;</p>
     </div>
@@ -225,8 +225,8 @@ const meta = { component: Button } satisfies Meta&lt;typeof Button&gt;;
 export default meta;
 type Story = StoryObj&lt;typeof meta&gt;;
 
-export const Primario: Story = { args: { label: 'Salvar', intent: 'primary' } };
-export const Desabilitado: Story = { args: { label: 'Salvar', disabled: true } };</code></pre>
+export const Primary: Story = { args: { label: 'Salvar', intent: 'primary' } };
+export const Disabled: Story = { args: { label: 'Salvar', disabled: true } };</code></pre>
 <ul>
 <li>O <code>export default</code> diz qual componente o arquivo documenta.</li>
 <li>Cada <code>export</code> com nome é uma story, com as props que ela usa.</li>
@@ -360,17 +360,17 @@ parameters: {
 <pre><code>.btn {
   transition: background-color 150ms ease-out, transform 100ms ease-out;
 }
-/* hover só onde existe ponteiro de verdade: no toque ele "gruda" depois do toque */
+/* hover only where there is a real pointer: on touch it "sticks" after the tap */
 @media (hover: hover) {
   .btn:hover { background-color: var(--btn-hover); }
 }
 .btn:active { transform: scale(0.98); }
-/* outline, e não box-shadow: sobrevive ao modo de alto contraste (forced-colors) */
+/* outline, not box-shadow: it survives high-contrast mode (forced-colors) */
 .btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn { transition: background-color 150ms ease-out; } /* mantém a cor, tira o movimento */
+  .btn { transition: background-color 150ms ease-out; } /* keep the color, drop the motion */
   .btn:active { transform: none; }
 }
 </code></pre>
@@ -378,13 +378,13 @@ parameters: {
       <p><code>document.startViewTransition(callback)</code> tira uma foto do estado atual, executa a atualização do DOM e anima da foto antiga pra nova com pseudo-elementos (<code>::view-transition-old</code> e <code>::view-transition-new</code>). <code>view-transition-name</code> num elemento faz ele &ldquo;viajar&rdquo; entre os dois estados (a miniatura que vira a imagem grande). Duas regras: sempre tenha o <strong>fallback</strong> (nem todo navegador suporta) e respeite o <code>reduce</code>. No React, a atualização precisa estar concluída quando o callback devolve, por isso o <code>flushSync</code>.</p>
 <pre><code>import { flushSync } from 'react-dom';
 
-function comTransicao(atualiza: () =&gt; void) {
-  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!document.startViewTransition || semMovimento) return atualiza();
-  document.startViewTransition(() =&gt; flushSync(atualiza));
+function withTransition(update: () =&gt; void) {
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || reducedMotion) return update();
+  document.startViewTransition(() =&gt; flushSync(update));
 }
 
-comTransicao(() =&gt; setAberto(true));
+withTransition(() =&gt; setOpen(true));
 </code></pre>
       <h4>Estados que um componente acabado tem</h4>
       <p>Padrão, hover, <code>:focus-visible</code>, pressionado, desabilitado e carregando &mdash; e o anel de foco com contraste de pelo menos 3:1 contra o fundo ao lado (WCAG 1.4.11). Mostrar a lista dos estados no Storybook é a forma mais rápida de ver o que falta. O <a href="r08-pratica.html#ex12">exercício 12</a> do R8 treina isso num toast feito a partir de um mock.</p>
@@ -418,7 +418,7 @@ comTransicao(() =&gt; setAberto(true));
   --color-bg: var(--gray-950);
   --color-text: var(--gray-50);
   --color-text-soft: var(--gray-300);
-  --color-brand: var(--orange-400); /* mais claro: o laranja escuro perde contraste no fundo escuro */
+  --color-brand: var(--orange-400); /* lighter: the dark orange loses contrast on a dark background */
   --color-border: var(--gray-700);
 }
 body { background: var(--color-bg); color: var(--color-text); }
@@ -490,37 +490,37 @@ body { background: var(--color-bg); color: var(--color-text); }
     <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Ache e conserte os problemas de acessibilidade</h3><span class="ex-meta">20 min &middot; React</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">Esta é uma alternativa de uma questão de prova. Depois de responder, ela fica verde se acertou e vermelha se errou. Encontre pelo menos quatro problemas de acessibilidade e reescreva o componente.</p>
-<pre><code>function Opcao({ letra, texto, estado, onEscolher }) {
-  // estado: 'neutra' | 'certa' | 'errada'
-  const cor = estado === 'certa' ? 'green' : estado === 'errada' ? 'red' : '#9a9a9a';
+<pre><code>function Option({ letter, text, state, onSelect }) {
+  // state: 'neutral' | 'correct' | 'wrong'
+  const color = state === 'correct' ? 'green' : state === 'wrong' ? 'red' : '#9a9a9a';
   return (
-    &lt;div className="opcao" style={{ color: cor }} onClick={onEscolher}&gt;
-      {letra}) {texto}
+    &lt;div className="option" style={{ color }} onClick={onSelect}&gt;
+      {letter}) {text}
     &lt;/div&gt;
   );
 }
-/* no CSS: .opcao:focus { outline: none; } */
+/* in the CSS: .option:focus { outline: none; } */
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/button">MDN: &lt;button&gt;</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible">MDN: :focus-visible</a> &middot; <a href="https://webaim.org/resources/contrastchecker/">WebAIM: contraste</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Pense em quem usa só o teclado, em quem usa leitor de tela, em quem não distingue verde de vermelho e em quem enxerga pouco. Cada um encontra um problema diferente.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
         <p><strong>Os problemas:</strong> (1) <code>div</code> com <code>onClick</code> não recebe foco nem responde a Enter ou Espaço; (2) o leitor de tela não sabe que é um botão; (3) certo e errado são só cor; (4) <code>outline: none</code> esconde o foco; (5) o cinza <code>#9a9a9a</code> no branco tem contraste de cerca de 2,8:1, abaixo de 4,5:1.</p>
-<pre><code>const ROTULO = { certa: 'Correta', errada: 'Incorreta' } as const;
+<pre><code>const LABEL = { correct: 'Correta', wrong: 'Incorreta' } as const;
 
-function Opcao({ letra, texto, estado, onEscolher }: {
-  letra: string; texto: string; estado: 'neutra' | 'certa' | 'errada'; onEscolher: () =&gt; void;
+function Option({ letter, text, state, onSelect }: {
+  letter: string; text: string; state: 'neutral' | 'correct' | 'wrong'; onSelect: () =&gt; void;
 }) {
-  const respondida = estado !== 'neutra';
+  const answered = state !== 'neutral';
   return (
-    &lt;button type="button" className={`opcao opcao--${estado}`} onClick={onEscolher} disabled={respondida}&gt;
-      &lt;span aria-hidden="true"&gt;{estado === 'certa' ? '✓' : estado === 'errada' ? '✗' : ''}&lt;/span&gt;
-      &lt;span&gt;{letra}) {texto}&lt;/span&gt;
-      {estado !== 'neutra' &amp;&amp; &lt;span className="opcao-rotulo"&gt;{ROTULO[estado]}&lt;/span&gt;}
+    &lt;button type="button" className={`option option--${state}`} onClick={onSelect} disabled={answered}&gt;
+      &lt;span aria-hidden="true"&gt;{state === 'correct' ? '✓' : state === 'wrong' ? '✗' : ''}&lt;/span&gt;
+      &lt;span&gt;{letter}) {text}&lt;/span&gt;
+      {state !== 'neutral' &amp;&amp; &lt;span className="option-label"&gt;{LABEL[state]}&lt;/span&gt;}
     &lt;/button&gt;
   );
 }
-/* CSS: .opcao:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
-        cores de texto vindas de tokens com contraste conferido */
+/* CSS: .option:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+        text colors come from tokens with checked contrast */
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> <code>&lt;button&gt;</code> resolve foco, teclado e papel de uma vez só. O resultado aparece como texto (&ldquo;Correta&rdquo;) e como ícone, além da cor. E o foco ganhou um estilo próprio em vez de sumir.</p>
       </div></details>
@@ -542,15 +542,15 @@ function Opcao({ letra, texto, estado, onEscolher }: {
 
         <h5>2 &middot; Caça ao bug</h5>
         <p>Um assistente de IA &ldquo;corrigiu&rdquo; o componente assim. Ele ainda tem três problemas. Quais?</p>
-<pre><code>function Opcao({ letra, texto, estado, onEscolher }: Props) {
+<pre><code>function Option({ letter, text, state, onSelect }: Props) {
   return (
-    &lt;div role="button" className={`opcao opcao--${estado}`} onClick={onEscolher}&gt;
-      &lt;span&gt;{estado === 'certa' ? '✓' : estado === 'errada' ? '✗' : ''}&lt;/span&gt;
-      &lt;span&gt;{letra}) {texto}&lt;/span&gt;
+    &lt;div role="button" className={`option option--${state}`} onClick={onSelect}&gt;
+      &lt;span&gt;{state === 'correct' ? '✓' : state === 'wrong' ? '✗' : ''}&lt;/span&gt;
+      &lt;span&gt;{letter}) {text}&lt;/span&gt;
     &lt;/div&gt;
   );
 }
-/* CSS: .opcao:focus-visible { outline: 2px solid var(--color-brand); } */
+/* CSS: .option:focus-visible { outline: 2px solid var(--color-brand); } */
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>

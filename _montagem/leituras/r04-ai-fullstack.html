@@ -13,7 +13,7 @@
 <pre><code>export async function POST(req: Request) {
   const stream = new ReadableStream({
     async pull(controller) {
-      const { value, done } = await pedacos.next(); // pedaços vindos do modelo
+      const { value, done } = await chunks.next(); // chunks coming from the model
       if (done) controller.close();
       else controller.enqueue(new TextEncoder().encode(value));
     },
@@ -66,8 +66,8 @@
 
 <h5>O mínimo para começar</h5>
 <pre><code>CREATE EXTENSION vector;
-CREATE TABLE questoes (id bigserial PRIMARY KEY, embedding vector(768));
-SELECT id FROM questoes ORDER BY embedding &lt;=&gt; $1 LIMIT 5; -- as 5 mais parecidas</code></pre>
+CREATE TABLE questions (id bigserial PRIMARY KEY, embedding vector(768));
+SELECT id FROM questions ORDER BY embedding &lt;=&gt; $1 LIMIT 5; -- the 5 most similar</code></pre>
 <ul>
 <li><code>&lt;=&gt;</code> é a distância de cosseno, a mais usada para texto. Quanto menor, mais parecido.</li>
 <li>A coluna aceita vetores grandes, mas o índice só aceita até <strong>2.000 números</strong> (até 4.000 com <code>halfvec</code>, meia precisão). Como o Gemini devolve 3.072 por padrão, peça um vetor menor ou o índice nem é criado.</li>
@@ -148,7 +148,7 @@ SELECT id FROM questoes ORDER BY embedding &lt;=&gt; $1 LIMIT 5; -- as 5 mais pa
 
 <h5>Responder no lugar do servidor</h5>
 <pre><code>await page.route('**/api/chat', async (route) =&gt; {
-  await route.fulfill({ json: { resposta: 'Olá! Como posso ajudar?' } });
+  await route.fulfill({ json: { answer: 'Olá! Como posso ajudar?' } });
 });</code></pre>
 <p>Todo pedido que bate com o padrão é interceptado e <strong>não chega ao servidor</strong>. Troque o caminho por <code>/api/audit</code> e o JSON por um relatório, e você tem o teste de ponta a ponta do Ally AI sem rodar o navegador de auditoria nem o Gemini.</p>
 

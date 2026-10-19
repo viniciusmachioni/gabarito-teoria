@@ -28,8 +28,8 @@
     <div class="bcard">
       <h4>Como treinar</h4>
       <p><b class="r">Sem IA</b>Desligue o autocomplete de IA do editor (Copilot, Cursor Tab). Na entrevista, ele não vai estar lá.</p>
-      <p><b class="r">Onde</b>Um arquivo <code>treino.ts</code> e o terminal: com Node 24, <code>node treino.ts</code> já roda TypeScript. Sem instalar nada, use o <a href="https://www.typescriptlang.org/play">TypeScript Playground</a>.</p>
-      <p><b class="r">Como conferir</b>Cada exercício traz exemplos de entrada e saída. Escreva-os como <code>console.log(funcao(entrada)) // esperado: ...</code> antes de começar.</p>
+      <p><b class="r">Onde</b>Um arquivo <code>practice.ts</code> e o terminal: com Node 24, <code>node practice.ts</code> já roda TypeScript. Sem instalar nada, use o <a href="https://www.typescriptlang.org/play">TypeScript Playground</a>.</p>
+      <p><b class="r">Como conferir</b>Cada exercício traz exemplos de entrada e saída. Escreva-os como <code>console.log(fn(input)) // expected: ...</code> antes de começar.</p>
       <p><b class="r">Consulta</b>Pode consultar a sintaxe (os links estão em cada exercício). Não consulte a lógica. Travou por 10 minutos? Abra a dica.</p>
       <p><b class="r">Repetição</b>No dia seguinte, reescreva de memória o exercício de ontem antes do de hoje. É a repetição que tira a trava.</p>
       <p class="frase"><b class="r">Na entrevista</b>Fale enquanto escreve: &ldquo;vou percorrer a lista e guardar a soma numa variável&rdquo;. Treine isso aqui também, em voz alta.</p>
@@ -42,7 +42,7 @@
     <li class="item"><input type="checkbox" id="e1-2"><label for="e1-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Nível 2 (arrays e objetos) feito sem abrir a dica</span></label></li>
     <li class="item"><input type="checkbox" id="e1-3"><label for="e1-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Nível 3 (Map, Set, recursão) feito sem abrir a dica</span></label></li>
     <li class="item"><input type="checkbox" id="e1-4"><label for="e1-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Nível 4 (funções e assíncrono) feito sem abrir a dica</span></label></li>
-    <li class="item"><input type="checkbox" id="e1-5"><label for="e1-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Debounce, <code>comTimeout</code> e <code>mapComLimite</code> escritos de memória, uma semana depois, em menos de 10 minutos cada</span></label></li>
+    <li class="item"><input type="checkbox" id="e1-5"><label for="e1-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Debounce, <code>withTimeout</code> e <code>mapWithLimit</code> escritos de memória, uma semana depois, em menos de 10 minutos cada</span></label></li>
     <li class="item"><input type="checkbox" id="e1-6"><label for="e1-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Um exercício qualquer feito em voz alta e gravado, explicando cada linha enquanto escreve</span></label></li>
   </ul>
 
@@ -52,44 +52,44 @@
   <div class="ex" id="fl1">
     <div class="ex-head"><span class="ex-n">1</span><h3>Soma dos pares</h3><span class="ex-meta">nível 1 &middot; 5 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>somaPares(nums)</code>, que devolve a soma dos números pares da lista.</p>
-<pre><code>somaPares([1, 2, 3, 4])   // 6
-somaPares([1, 3, 5])      // 0
-somaPares([])             // 0
+      <p class="ex-enunciado">Escreva <code>sumEvens(nums)</code>, que devolve a soma dos números pares da lista.</p>
+<pre><code>sumEvens([1, 2, 3, 4])   // 6
+sumEvens([1, 3, 5])      // 0
+sumEvens([])             // 0
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/for...of">MDN: for...of</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder">MDN: resto (%)</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um número é par quando o resto da divisão por 2 é zero: <code>n % 2 === 0</code>. Guarde a soma numa variável que começa em zero.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function somaPares(nums: number[]): number {
-  let soma = 0;            // começa em zero: lista vazia já devolve o certo
+<pre><code>function sumEvens(nums: number[]): number {
+  let sum = 0;             // starts at zero: an empty list already returns the right answer
   for (const n of nums) {
-    if (n % 2 === 0) soma += n;
+    if (n % 2 === 0) sum += n;
   }
-  return soma;
+  return sum;
 }
 </code></pre>
         <p><strong>Outra forma:</strong> <code>nums.filter((n) =&gt; n % 2 === 0).reduce((s, n) =&gt; s + n, 0)</code>. As duas estão certas. Na entrevista, escreva a que você consegue explicar sem hesitar.</p>
       </div></details>
-      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Devolva também quantos pares havia: <code>{ soma, quantidade }</code>. Repare que é o mesmo laço com uma segunda variável.</p></div></details>
+      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Devolva também quantos pares havia: <code>{ sum, count }</code>. Repare que é o mesmo laço com uma segunda variável.</p></div></details>
     </div>
   </div>
 
   <div class="ex" id="fl2">
     <div class="ex-head"><span class="ex-n">2</span><h3>Contar vogais</h3><span class="ex-meta">nível 1 &middot; 5 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>contarVogais(texto)</code>. Maiúsculas e letras acentuadas contam: &ldquo;Á&rdquo; é uma vogal.</p>
-<pre><code>contarVogais('Programação')  // 5
-contarVogais('xyz')          // 0
+      <p class="ex-enunciado">Escreva <code>countVowels(text)</code>. Maiúsculas e letras acentuadas contam: &ldquo;Á&rdquo; é uma vogal.</p>
+<pre><code>countVowels('Programação')  // 5
+countVowels('xyz')          // 0
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/String/includes">MDN: String.includes</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/normalize">MDN: String.normalize</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Passe tudo para minúscula com <code>toLowerCase()</code>. Para o acento, <code>normalize('NFD')</code> separa &ldquo;ã&rdquo; em &ldquo;a&rdquo; + o til, e aí o &ldquo;a&rdquo; é contado.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function contarVogais(texto: string): number {
-  const vogais = 'aeiou';
+<pre><code>function countVowels(text: string): number {
+  const vowels = 'aeiou';
   let total = 0;
-  // NFD separa a letra do acento: 'ã' vira 'a' + '~'
-  for (const letra of texto.normalize('NFD').toLowerCase()) {
-    if (vogais.includes(letra)) total++;
+  // NFD splits the letter from its accent: 'ã' becomes 'a' + '~'
+  for (const char of text.normalize('NFD').toLowerCase()) {
+    if (vowels.includes(char)) total++;
   }
   return total;
 }
@@ -103,18 +103,18 @@ contarVogais('xyz')          // 0
   <div class="ex" id="fl3">
     <div class="ex-head"><span class="ex-n">3</span><h3>Inverter as palavras</h3><span class="ex-meta">nível 1 &middot; 10 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>inverterPalavras(frase)</code>, que inverte a ordem das palavras (não das letras). Espaços extras no começo, no fim ou entre palavras não podem aparecer na saída. Faça <strong>sem</strong> <code>reverse()</code>.</p>
-<pre><code>inverterPalavras('olá mundo bonito')        // 'bonito mundo olá'
-inverterPalavras('  olá   mundo bonito ')   // 'bonito mundo olá'
+      <p class="ex-enunciado">Escreva <code>reverseWords(sentence)</code>, que inverte a ordem das palavras (não das letras). Espaços extras no começo, no fim ou entre palavras não podem aparecer na saída. Faça <strong>sem</strong> <code>reverse()</code>.</p>
+<pre><code>reverseWords('olá mundo bonito')        // 'bonito mundo olá'
+reverseWords('  olá   mundo bonito ')   // 'bonito mundo olá'
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/String/split">MDN: String.split</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/for">MDN: for</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p><code>trim()</code> tira os espaços das pontas, e <code>split(/\s+/)</code> separa por um ou mais espaços. Depois, um <code>for</code> que anda de trás para a frente: <code>for (let i = lista.length - 1; i &gt;= 0; i--)</code>.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p><code>trim()</code> tira os espaços das pontas, e <code>split(/\s+/)</code> separa por um ou mais espaços. Depois, um <code>for</code> que anda de trás para a frente: <code>for (let i = list.length - 1; i &gt;= 0; i--)</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function inverterPalavras(frase: string): string {
-  const palavras = frase.trim().split(/\s+/); // um ou mais espaços contam como um
-  const invertidas: string[] = [];
-  for (let i = palavras.length - 1; i &gt;= 0; i--) invertidas.push(palavras[i]);
-  return invertidas.join(' ');
+<pre><code>function reverseWords(sentence: string): string {
+  const words = sentence.trim().split(/\s+/); // one or more spaces count as one
+  const reversed: string[] = [];
+  for (let i = words.length - 1; i &gt;= 0; i--) reversed.push(words[i]);
+  return reversed.join(' ');
 }
 </code></pre>
         <p><strong>Erro comum:</strong> <code>split(' ')</code> com espaços duplos gera palavras vazias (<code>''</code>), e a saída fica com espaços sobrando.</p>
@@ -134,14 +134,14 @@ fizzBuzz(15)  // [..., '13', '14', 'FizzBuzz']
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A ordem dos <code>if</code> importa. Qual teste precisa vir primeiro para o 15 não virar só &ldquo;Fizz&rdquo;?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code>function fizzBuzz(n: number): string[] {
-  const saida: string[] = [];
+  const output: string[] = [];
   for (let i = 1; i &lt;= n; i++) {
-    if (i % 15 === 0) saida.push('FizzBuzz'); // o caso mais específico vem primeiro
-    else if (i % 3 === 0) saida.push('Fizz');
-    else if (i % 5 === 0) saida.push('Buzz');
-    else saida.push(String(i));
+    if (i % 15 === 0) output.push('FizzBuzz'); // the most specific case comes first
+    else if (i % 3 === 0) output.push('Fizz');
+    else if (i % 5 === 0) output.push('Buzz');
+    else output.push(String(i));
   }
-  return saida;
+  return output;
 }
 </code></pre>
         <p>Parece bobo, e é por isso que ainda aparece em triagem: mostra em dois minutos se a pessoa escreve laço e condição sem travar.</p>
@@ -156,50 +156,50 @@ fizzBuzz(15)  // [..., '13', '14', 'FizzBuzz']
   <div class="ex" id="fl5">
     <div class="ex-head"><span class="ex-n">5</span><h3>Agrupar por categoria</h3><span class="ex-meta">nível 2 &middot; 10 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>agruparPorCategoria(produtos)</code>. Cada produto tem <code>{ nome, categoria, preco }</code>. A saída é um objeto em que cada chave é uma categoria, e o valor é a lista dos produtos dela, na ordem original.</p>
-<pre><code>agruparPorCategoria([
-  { nome: 'Teclado', categoria: 'perifericos', preco: 200 },
-  { nome: 'Monitor', categoria: 'telas', preco: 900 },
-  { nome: 'Mouse', categoria: 'perifericos', preco: 80 },
+      <p class="ex-enunciado">Escreva <code>groupByCategory(products)</code>. Cada produto tem <code>{ name, category, price }</code>. A saída é um objeto em que cada chave é uma categoria, e o valor é a lista dos produtos dela, na ordem original.</p>
+<pre><code>groupByCategory([
+  { name: 'Keyboard', category: 'peripherals', price: 200 },
+  { name: 'Monitor', category: 'displays', price: 900 },
+  { name: 'Mouse', category: 'peripherals', price: 80 },
 ])
-// { perifericos: [Teclado, Mouse], telas: [Monitor] }
+// { peripherals: [Keyboard, Mouse], displays: [Monitor] }
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type">TypeScript: Record</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Working_with_objects">MDN: objetos</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Comece com <code>{}</code>. Para cada produto: se a categoria ainda não existe no objeto, crie uma lista vazia para ela; depois, ponha o produto na lista.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Produto = { nome: string; categoria: string; preco: number };
+<pre><code>type Product = { name: string; category: string; price: number };
 
-function agruparPorCategoria(produtos: Produto[]): Record&lt;string, Produto[]&gt; {
-  const grupos: Record&lt;string, Produto[]&gt; = {};
-  for (const p of produtos) {
-    if (!grupos[p.categoria]) grupos[p.categoria] = []; // primeira vez que a categoria aparece
-    grupos[p.categoria].push(p);
+function groupByCategory(products: Product[]): Record&lt;string, Product[]&gt; {
+  const groups: Record&lt;string, Product[]&gt; = {};
+  for (const p of products) {
+    if (!groups[p.category]) groups[p.category] = []; // first time this category shows up
+    groups[p.category].push(p);
   }
-  return grupos;
+  return groups;
 }
 </code></pre>
-        <p><strong>Na prática:</strong> o JavaScript novo tem <code>Object.groupBy(produtos, (p) =&gt; p.categoria)</code>, que faz exatamente isso. Vale citar, mas a entrevista quer ver você escrever o laço.</p>
+        <p><strong>Na prática:</strong> o JavaScript novo tem <code>Object.groupBy(products, (p) =&gt; p.category)</code>, que faz exatamente isso. Vale citar, mas a entrevista quer ver você escrever o laço.</p>
       </div></details>
-      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Em vez da lista, devolva o total de preço por categoria: <code>{ perifericos: 280, telas: 900 }</code>. A estrutura é a mesma; o valor inicial vira <code>0</code> e o <code>push</code> vira uma soma.</p></div></details>
+      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Em vez da lista, devolva o total de preço por categoria: <code>{ peripherals: 280, displays: 900 }</code>. A estrutura é a mesma; o valor inicial vira <code>0</code> e o <code>push</code> vira uma soma.</p></div></details>
     </div>
   </div>
 
   <div class="ex" id="fl6">
     <div class="ex-head"><span class="ex-n">6</span><h3>Total do carrinho</h3><span class="ex-meta">nível 2 &middot; 10 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>totalDoCarrinho(itens, cupomPct)</code>. Cada item tem <code>{ nome, precoCentavos, quantidade }</code>. O cupom é uma porcentagem de desconto (opcional, padrão 0). Devolva o total em centavos, arredondado.</p>
-<pre><code>totalDoCarrinho([{ nome: 'Camiseta', precoCentavos: 1990, quantidade: 3 }])      // 5970
-totalDoCarrinho([{ nome: 'Livro', precoCentavos: 1999, quantidade: 1 }], 10)    // 1799
+      <p class="ex-enunciado">Escreva <code>cartTotal(items, couponPct)</code>. Cada item tem <code>{ name, priceCents, quantity }</code>. O cupom é uma porcentagem de desconto (opcional, padrão 0). Devolva o total em centavos, arredondado.</p>
+<pre><code>cartTotal([{ name: 'T-shirt', priceCents: 1990, quantity: 3 }])     // 5970
+cartTotal([{ name: 'Book', priceCents: 1999, quantity: 1 }], 10)    // 1799
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce">MDN: Array.reduce</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Functions/Default_parameters">MDN: parâmetro padrão</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Primeiro o subtotal (preço vezes quantidade, somado). Depois o desconto, com <code>Math.round</code>. Por que o preço está em centavos, e não em reais?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Item = { nome: string; precoCentavos: number; quantidade: number };
+<pre><code>type Item = { name: string; priceCents: number; quantity: number };
 
-function totalDoCarrinho(itens: Item[], cupomPct = 0): number {
-  const subtotal = itens.reduce((soma, item) =&gt; soma + item.precoCentavos * item.quantidade, 0);
-  const desconto = Math.round((subtotal * cupomPct) / 100);
-  return subtotal - desconto;
+function cartTotal(items: Item[], couponPct = 0): number {
+  const subtotal = items.reduce((sum, item) =&gt; sum + item.priceCents * item.quantity, 0);
+  const discount = Math.round((subtotal * couponPct) / 100);
+  return subtotal - discount;
 }
 </code></pre>
         <p><strong>Por que centavos:</strong> número decimal em JavaScript é aproximado. <code>0.1 + 0.2</code> dá <code>0.30000000000000004</code>, e <code>19.9 * 3</code> dá <code>59.699999999999996</code>. Com inteiros (centavos), a conta fecha. Stripe e outras APIs de pagamento usam centavos pelo mesmo motivo.</p>
@@ -211,22 +211,22 @@ function totalDoCarrinho(itens: Item[], cupomPct = 0): number {
   <div class="ex" id="fl7">
     <div class="ex-head"><span class="ex-n">7</span><h3>Remover duplicados por id</h3><span class="ex-meta">nível 2 &middot; 10 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Duas páginas da API devolveram itens repetidos. Escreva <code>removerDuplicados(lista)</code>, que mantém só a <strong>primeira</strong> ocorrência de cada <code>id</code>, na ordem original.</p>
-<pre><code>removerDuplicados([{ id: 1, n: 'a' }, { id: 2, n: 'b' }, { id: 1, n: 'c' }])
+      <p class="ex-enunciado">Duas páginas da API devolveram itens repetidos. Escreva <code>removeDuplicates(list)</code>, que mantém só a <strong>primeira</strong> ocorrência de cada <code>id</code>, na ordem original.</p>
+<pre><code>removeDuplicates([{ id: 1, n: 'a' }, { id: 2, n: 'b' }, { id: 1, n: 'c' }])
 // [{ id: 1, n: 'a' }, { id: 2, n: 'b' }]
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Set">MDN: Set</a> &middot; <a href="https://www.typescriptlang.org/docs/handbook/2/generics.html">TypeScript: generics</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um <code>Set</code> guarda os ids já vistos, e <code>has()</code> responde na hora se um id já apareceu. Procurar com <code>find</code> na lista de saída também funciona, mas fica lento com listas grandes.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function removerDuplicados&lt;T extends { id: number }&gt;(lista: T[]): T[] {
-  const vistos = new Set&lt;number&gt;();
-  const resultado: T[] = [];
-  for (const item of lista) {
-    if (vistos.has(item.id)) continue; // já apareceu: pula
-    vistos.add(item.id);
-    resultado.push(item);
+<pre><code>function removeDuplicates&lt;T extends { id: number }&gt;(list: T[]): T[] {
+  const seen = new Set&lt;number&gt;();
+  const result: T[] = [];
+  for (const item of list) {
+    if (seen.has(item.id)) continue; // already seen: skip
+    seen.add(item.id);
+    result.push(item);
   }
-  return resultado;
+  return result;
 }
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> o <code>Set</code> deixa a função em O(n). Com <code>find</code> dentro do laço, ela vira O(n²): com 10 mil itens, são cerca de 50 milhões de comparações. O <code>T extends { id: number }</code> faz a função servir para qualquer objeto que tenha <code>id</code>.</p>
@@ -238,25 +238,25 @@ function totalDoCarrinho(itens: Item[], cupomPct = 0): number {
   <div class="ex" id="fl8">
     <div class="ex-head"><span class="ex-n">8</span><h3>Ordenar por um campo</h3><span class="ex-meta">nível 2 &middot; 10 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>ordenarPor(lista, campo, direcao)</code>, que devolve uma <strong>nova</strong> lista ordenada pelo campo, em ordem crescente (<code>'asc'</code>, padrão) ou decrescente (<code>'desc'</code>). A lista original não pode mudar. É o que uma tabela faz quando você clica no cabeçalho.</p>
-<pre><code>const lista = [{ nome: 'Bia', idade: 30 }, { nome: 'Ana', idade: 25 }];
-ordenarPor(lista, 'nome')           // Ana, Bia
-ordenarPor(lista, 'idade', 'desc')  // Bia (30), Ana (25)
-lista[0].nome                       // 'Bia': a original não mudou
+      <p class="ex-enunciado">Escreva <code>sortBy(list, key, direction)</code>, que devolve uma <strong>nova</strong> lista ordenada pelo campo, em ordem crescente (<code>'asc'</code>, padrão) ou decrescente (<code>'desc'</code>). A lista original não pode mudar. É o que uma tabela faz quando você clica no cabeçalho.</p>
+<pre><code>const people = [{ name: 'Bia', age: 30 }, { name: 'Ana', age: 25 }];
+sortBy(people, 'name')          // Ana, Bia
+sortBy(people, 'age', 'desc')   // Bia (30), Ana (25)
+people[0].name                  // 'Bia': the original did not change
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN: Array.sort</a> &middot; <a href="https://www.typescriptlang.org/docs/handbook/2/keyof-types.html">TypeScript: keyof</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O <code>sort</code> <em>muda</em> a lista original. Copie antes: <code>[...lista]</code>. A função de comparação devolve um número negativo (a vem antes), positivo (b vem antes) ou zero.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O <code>sort</code> <em>muda</em> a lista original. Copie antes: <code>[...list]</code>. A função de comparação devolve um número negativo (a vem antes), positivo (b vem antes) ou zero.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function ordenarPor&lt;T&gt;(lista: T[], campo: keyof T, direcao: 'asc' | 'desc' = 'asc'): T[] {
-  const sinal = direcao === 'asc' ? 1 : -1;
-  return [...lista].sort((a, b) =&gt; {   // cópia: o sort muda a lista em que é chamado
-    if (a[campo] &lt; b[campo]) return -1 * sinal;
-    if (a[campo] &gt; b[campo]) return 1 * sinal;
+<pre><code>function sortBy&lt;T&gt;(list: T[], key: keyof T, direction: 'asc' | 'desc' = 'asc'): T[] {
+  const sign = direction === 'asc' ? 1 : -1;
+  return [...list].sort((a, b) =&gt; {   // copy: sort mutates the array it is called on
+    if (a[key] &lt; b[key]) return -1 * sign;
+    if (a[key] &gt; b[key]) return 1 * sign;
     return 0;
   });
 }
 </code></pre>
-        <p><strong>Erro comum:</strong> esquecer a cópia. Em React, ordenar o array do estado no lugar muda o estado sem passar pelo <code>setState</code>, e a tela não atualiza (ou atualiza errado). O JavaScript novo tem <code>lista.toSorted(...)</code>, que já devolve uma cópia.</p>
+        <p><strong>Erro comum:</strong> esquecer a cópia. Em React, ordenar o array do estado no lugar muda o estado sem passar pelo <code>setState</code>, e a tela não atualiza (ou atualiza errado). O JavaScript novo tem <code>list.toSorted(...)</code>, que já devolve uma cópia.</p>
       </div></details>
       <details class="rv"><summary>variação</summary><div class="rv-body"><p>Os nomes têm acento e maiúsculas (&ldquo;Álvaro&rdquo;, &ldquo;ana&rdquo;). Com <code>&lt;</code>, &ldquo;Álvaro&rdquo; vai para o fim. Para texto, use <code>a.localeCompare(b, 'pt-BR')</code>, que ordena como uma pessoa espera.</p></div></details>
     </div>
@@ -268,21 +268,21 @@ lista[0].nome                       // 'Bia': a original não mudou
   <div class="ex" id="fl9">
     <div class="ex-head"><span class="ex-n">9</span><h3>Palavras mais frequentes</h3><span class="ex-meta">nível 3 &middot; 15 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>palavrasMaisFrequentes(texto, n)</code>, que devolve as <code>n</code> palavras que mais aparecem, com a contagem, da mais frequente para a menos. Ignore maiúsculas e pontuação. Empate: ordem alfabética.</p>
-<pre><code>palavrasMaisFrequentes('O gato e o rato. O rato fugiu!', 2)
+      <p class="ex-enunciado">Escreva <code>topWords(text, n)</code>, que devolve as <code>n</code> palavras que mais aparecem, com a contagem, da mais frequente para a menos. Ignore maiúsculas e pontuação. Empate: ordem alfabética.</p>
+<pre><code>topWords('O gato e o rato. O rato fugiu!', 2)
 // [['o', 3], ['rato', 2]]
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Map">MDN: Map</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/String/match">MDN: String.match</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Três passos: separar as palavras (<code>match(/\p{L}+/gu)</code> pega sequências de letras, com acento), contar num <code>Map</code> e ordenar as entradas pela contagem.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function palavrasMaisFrequentes(texto: string, n: number): [string, number][] {
-  const contagem = new Map&lt;string, number&gt;();
-  // \p{L} = qualquer letra, inclusive acentuada; o 'u' liga esse modo
-  for (const palavra of texto.toLowerCase().match(/\p{L}+/gu) ?? []) {
-    contagem.set(palavra, (contagem.get(palavra) ?? 0) + 1);
+<pre><code>function topWords(text: string, n: number): [string, number][] {
+  const counts = new Map&lt;string, number&gt;();
+  // \p{L} = any letter, accented ones included; the 'u' flag enables it
+  for (const word of text.toLowerCase().match(/\p{L}+/gu) ?? []) {
+    counts.set(word, (counts.get(word) ?? 0) + 1);
   }
-  return [...contagem.entries()]
-    .sort((a, b) =&gt; b[1] - a[1] || a[0].localeCompare(b[0])) // contagem, depois alfabeto
+  return [...counts.entries()]
+    .sort((a, b) =&gt; b[1] - a[1] || a[0].localeCompare(b[0])) // by count, then alphabetically
     .slice(0, n);
 }
 </code></pre>
@@ -295,25 +295,25 @@ lista[0].nome                       // 'Bia': a original não mudou
   <div class="ex" id="fl10">
     <div class="ex-head"><span class="ex-n">10</span><h3>São anagramas?</h3><span class="ex-meta">nível 3 &middot; 10 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>saoAnagramas(a, b)</code>: as duas palavras usam exatamente as mesmas letras, nas mesmas quantidades? Ignore maiúsculas e espaços.</p>
-<pre><code>saoAnagramas('Roma', 'amor')             // true
-saoAnagramas('aab', 'abb')               // false
-saoAnagramas('dormitory', 'dirty room')  // true
+      <p class="ex-enunciado">Escreva <code>areAnagrams(a, b)</code>: as duas palavras usam exatamente as mesmas letras, nas mesmas quantidades? Ignore maiúsculas e espaços.</p>
+<pre><code>areAnagrams('Roma', 'amor')             // true
+areAnagrams('aab', 'abb')               // false
+areAnagrams('dormitory', 'dirty room')  // true
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Map">MDN: Map</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Conte as letras da primeira palavra num <code>Map</code>. Depois, para cada letra da segunda, desconte. Se alguma faltar, não são anagramas.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function saoAnagramas(a: string, b: string): boolean {
-  const limpa = (s: string) =&gt; s.toLowerCase().replace(/\s/g, '');
-  const x = limpa(a);
-  const y = limpa(b);
-  if (x.length !== y.length) return false; // atalho: tamanhos diferentes nunca batem
-  const conta = new Map&lt;string, number&gt;();
-  for (const c of x) conta.set(c, (conta.get(c) ?? 0) + 1);
+<pre><code>function areAnagrams(a: string, b: string): boolean {
+  const clean = (s: string) =&gt; s.toLowerCase().replace(/\s/g, '');
+  const x = clean(a);
+  const y = clean(b);
+  if (x.length !== y.length) return false; // shortcut: different lengths never match
+  const counts = new Map&lt;string, number&gt;();
+  for (const c of x) counts.set(c, (counts.get(c) ?? 0) + 1);
   for (const c of y) {
-    const n = conta.get(c);
-    if (!n) return false; // letra que não existe, ou que já acabou
-    conta.set(c, n - 1);
+    const n = counts.get(c);
+    if (!n) return false; // letter missing, or already used up
+    counts.set(c, n - 1);
   }
   return true;
 }
@@ -327,19 +327,19 @@ saoAnagramas('dormitory', 'dirty room')  // true
   <div class="ex" id="fl11">
     <div class="ex-head"><span class="ex-n">11</span><h3>Slug para URL</h3><span class="ex-meta">nível 3 &middot; 10 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>slugify(texto)</code>, que transforma um título no pedaço de URL de um post: sem acento, minúsculo, só letras e números, com hífen entre as palavras e sem hífen nas pontas.</p>
+      <p class="ex-enunciado">Escreva <code>slugify(text)</code>, que transforma um título no pedaço de URL de um post: sem acento, minúsculo, só letras e números, com hífen entre as palavras e sem hífen nas pontas.</p>
 <pre><code>slugify('  Olá, Mundo! Ação 2026  ')  // 'ola-mundo-acao-2026'
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/String/replace">MDN: String.replace</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Regular_expressions">MDN: expressões regulares</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma corrente de passos: <code>normalize('NFD')</code>, tirar os acentos (<code>/[̀-ͯ]/g</code>), minúscula, trocar tudo que não é letra ou número por hífen, e tirar os hífens das pontas.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma corrente de passos: <code>normalize('NFD')</code>, tirar os acentos (<code>/[\u0300-\u036f]/g</code>), minúscula, trocar tudo que não é letra ou número por hífen, e tirar os hífens das pontas.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function slugify(texto: string): string {
-  return texto
-    .normalize('NFD')                 // 'ã' vira 'a' + til
-    .replace(/[̀-ͯ]/g, '')  // remove os acentos soltos
+<pre><code>function slugify(text: string): string {
+  return text
+    .normalize('NFD')                 // 'ã' becomes 'a' + tilde
+    .replace(/[\u0300-\u036f]/g, '')  // drop the loose accents
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')      // qualquer sequência de outros caracteres vira um hífen
-    .replace(/^-+|-+$/g, '');         // sem hífen no começo nem no fim
+    .replace(/[^a-z0-9]+/g, '-')      // any run of other characters becomes one hyphen
+    .replace(/^-+|-+$/g, '');         // no hyphen at the start or the end
 }
 </code></pre>
         <p>É código que existe de verdade em todo blog e loja: a URL <code>/blog/ola-mundo</code> do post &ldquo;Olá, Mundo!&rdquo;. Bom exemplo para citar quando perguntarem onde você já usou expressão regular.</p>
@@ -351,26 +351,26 @@ saoAnagramas('dormitory', 'dirty room')  // true
   <div class="ex" id="fl12">
     <div class="ex-head"><span class="ex-n">12</span><h3>Achatar uma lista aninhada</h3><span class="ex-meta">nível 3 &middot; 15 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>achatar(lista)</code>, que transforma listas dentro de listas, em qualquer profundidade, numa lista só. Faça sem <code>flat()</code>.</p>
-<pre><code>achatar([1, [2, [3, [4]], 5], []])  // [1, 2, 3, 4, 5]
+      <p class="ex-enunciado">Escreva <code>flatten(list)</code>, que transforma listas dentro de listas, em qualquer profundidade, numa lista só. Faça sem <code>flat()</code>.</p>
+<pre><code>flatten([1, [2, [3, [4]], 5], []])  // [1, 2, 3, 4, 5]
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray">MDN: Array.isArray</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Glossary/Recursion">MDN: recursão</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Recursão: se o item é uma lista, achate essa lista com a própria função e junte o resultado. Se é um número, ponha direto na saída.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Aninhado = number | Aninhado[];
+<pre><code>type Nested = number | Nested[];
 
-function achatar(lista: Aninhado[]): number[] {
-  const saida: number[] = [];
-  for (const item of lista) {
-    if (Array.isArray(item)) saida.push(...achatar(item)); // a função chama a si mesma
-    else saida.push(item);
+function flatten(list: Nested[]): number[] {
+  const output: number[] = [];
+  for (const item of list) {
+    if (Array.isArray(item)) output.push(...flatten(item)); // the function calls itself
+    else output.push(item);
   }
-  return saida;
+  return output;
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o caso que para a recursão é o número (não tem mais o que abrir). O tipo <code>Aninhado</code> também é recursivo: ele se usa na própria definição. Na vida real, esse padrão aparece ao percorrer um menu com submenus ou uma árvore de comentários.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> o caso que para a recursão é o número (não tem mais o que abrir). O tipo <code>Nested</code> também é recursivo: ele se usa na própria definição. Na vida real, esse padrão aparece ao percorrer um menu com submenus ou uma árvore de comentários.</p>
       </div></details>
-      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Receba uma profundidade máxima: <code>achatar([1, [2, [3]]], 1)</code> dá <code>[1, 2, [3]]</code>. Passe a profundidade para a chamada de dentro, menos 1, e pare de abrir quando chegar a zero.</p></div></details>
+      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Receba uma profundidade máxima: <code>flatten([1, [2, [3]]], 1)</code> dá <code>[1, 2, [3]]</code>. Passe a profundidade para a chamada de dentro, menos 1, e pare de abrir quando chegar a zero.</p></div></details>
     </div>
   </div>
 
@@ -381,18 +381,18 @@ function achatar(lista: Aninhado[]): number[] {
     <div class="ex-head"><span class="ex-n">13</span><h3>Debounce</h3><span class="ex-meta">nível 4 &middot; 15 min</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">Escreva <code>debounce(fn, ms)</code>. Ele devolve uma função nova que só chama <code>fn</code> depois de <code>ms</code> milissegundos <strong>sem nenhuma chamada nova</strong>, com os argumentos da última chamada. É o que um campo de busca usa para não chamar a API a cada tecla.</p>
-<pre><code>const buscar = debounce((termo: string) =&gt; console.log('buscando', termo), 300);
-buscar('r'); buscar('re'); buscar('rea'); buscar('react');
-// 300 ms depois da última chamada: 'buscando react' (uma vez só)
+<pre><code>const search = debounce((query: string) =&gt; console.log('searching', query), 300);
+search('r'); search('re'); search('rea'); search('react');
+// 300 ms after the last call: 'searching react' (only once)
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout">MDN: setTimeout</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Closures">MDN: closures</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Guarde o timer numa variável <em>fora</em> da função devolvida (é a closure). A cada chamada, cancele o timer anterior com <code>clearTimeout</code> e crie outro.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code>function debounce&lt;A extends unknown[]&gt;(fn: (...args: A) =&gt; void, ms: number) {
-  let timer: ReturnType&lt;typeof setTimeout&gt; | undefined; // vive entre as chamadas: closure
+  let timer: ReturnType&lt;typeof setTimeout&gt; | undefined; // lives between calls: closure
   return (...args: A) =&gt; {
-    clearTimeout(timer);                              // cancela a espera anterior
-    timer = setTimeout(() =&gt; fn(...args), ms);        // recomeça a contar
+    clearTimeout(timer);                              // cancel the previous wait
+    timer = setTimeout(() =&gt; fn(...args), ms);        // start counting again
   };
 }
 </code></pre>
@@ -407,10 +407,10 @@ buscar('r'); buscar('re'); buscar('rea'); buscar('react');
     <div class="ex-head"><span class="ex-n">14</span><h3>Memoize</h3><span class="ex-meta">nível 4 &middot; 10 min</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">Escreva <code>memoize(fn)</code> para uma função que recebe um número. A versão nova guarda os resultados: chamada de novo com o mesmo número, ela devolve o resultado guardado sem chamar <code>fn</code>.</p>
-<pre><code>const dobroLento = (n: number) =&gt; { /* conta pesada */ return n * 2; };
-const dobro = memoize(dobroLento);
-dobro(4); // calcula: 8
-dobro(4); // devolve o guardado: 8, sem chamar dobroLento
+<pre><code>const slowDouble = (n: number) =&gt; { /* heavy computation */ return n * 2; };
+const double = memoize(slowDouble);
+double(4); // computes: 8
+double(4); // returns the cached 8 without calling slowDouble
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Map">MDN: Map</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A mesma ideia do debounce: um <code>Map</code> fora da função devolvida, como cache. Confira com <code>has</code> antes de calcular.</p></div></details>
@@ -418,7 +418,7 @@ dobro(4); // devolve o guardado: 8, sem chamar dobroLento
 <pre><code>function memoize&lt;R&gt;(fn: (n: number) =&gt; R): (n: number) =&gt; R {
   const cache = new Map&lt;number, R&gt;();
   return (n) =&gt; {
-    if (cache.has(n)) return cache.get(n)!; // has, e não get: o resultado guardado pode ser 0 ou undefined
+    if (cache.has(n)) return cache.get(n)!; // has, not get: the cached result may be 0 or undefined
     const r = fn(n);
     cache.set(n, r);
     return r;
@@ -434,19 +434,19 @@ dobro(4); // devolve o guardado: 8, sem chamar dobroLento
   <div class="ex" id="fl15">
     <div class="ex-head"><span class="ex-n">15</span><h3>Promessa com prazo</h3><span class="ex-meta">nível 4 &middot; 15 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva <code>comTimeout(promessa, ms)</code>. Se a promessa terminar antes do prazo, devolve o resultado dela. Se não, rejeita com o erro <code>"Demorou mais de {ms} ms"</code>. O timer não pode ficar rodando depois que tudo terminou.</p>
-<pre><code>await comTimeout(fetch('/api/lenta'), 5000);  // erro 'Demorou mais de 5000 ms' se a API travar
-await comTimeout(Promise.resolve(1), 100);   // 1
+      <p class="ex-enunciado">Escreva <code>withTimeout(promise, ms)</code>. Se a promessa terminar antes do prazo, devolve o resultado dela. Se não, rejeita com o erro <code>"Timed out after {ms} ms"</code>. O timer não pode ficar rodando depois que tudo terminou.</p>
+<pre><code>await withTimeout(fetch('/api/slow'), 5000);  // rejects with 'Timed out after 5000 ms' if the API hangs
+await withTimeout(Promise.resolve(1), 100);   // 1
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/race">MDN: Promise.race</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally">MDN: Promise.finally</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Crie uma segunda promessa que só rejeita, depois de <code>ms</code>. <code>Promise.race</code> devolve a que terminar primeiro. No <code>finally</code>, limpe o timer.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function comTimeout&lt;T&gt;(promessa: Promise&lt;T&gt;, ms: number): Promise&lt;T&gt; {
+<pre><code>function withTimeout&lt;T&gt;(promise: Promise&lt;T&gt;, ms: number): Promise&lt;T&gt; {
   let timer: ReturnType&lt;typeof setTimeout&gt; | undefined;
-  const limite = new Promise&lt;never&gt;((_, reject) =&gt; {
-    timer = setTimeout(() =&gt; reject(new Error(`Demorou mais de ${ms} ms`)), ms);
+  const deadline = new Promise&lt;never&gt;((_, reject) =&gt; {
+    timer = setTimeout(() =&gt; reject(new Error(`Timed out after ${ms} ms`)), ms);
   });
-  return Promise.race([promessa, limite]).finally(() =&gt; clearTimeout(timer));
+  return Promise.race([promise, deadline]).finally(() =&gt; clearTimeout(timer));
 }
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> o <code>race</code> não <em>cancela</em> a promessa perdedora. O <code>fetch</code> continua rodando por baixo, só ninguém espera mais por ele. Para cancelar de verdade, passe um <code>AbortController</code> ao <code>fetch</code>, ou use <code>AbortSignal.timeout(ms)</code>.</p>
@@ -458,33 +458,33 @@ await comTimeout(Promise.resolve(1), 100);   // 1
   <div class="ex" id="fl16">
     <div class="ex-head"><span class="ex-n">16</span><h3>Várias tarefas, no máximo N ao mesmo tempo</h3><span class="ex-meta">nível 4 &middot; 25 min</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Você precisa enviar 200 fotos, mas o servidor aceita só 3 uploads ao mesmo tempo. Escreva <code>mapComLimite(itens, limite, fn)</code>: chama a função assíncrona <code>fn</code> para cada item, com no máximo <code>limite</code> rodando juntas, e devolve os resultados <strong>na ordem dos itens</strong>.</p>
-<pre><code>const urls = await mapComLimite(fotos, 3, (foto) =&gt; enviar(foto));
-// nunca mais de 3 envios ao mesmo tempo; urls[i] é a URL de fotos[i]
+      <p class="ex-enunciado">Você precisa enviar 200 fotos, mas o servidor aceita só 3 uploads ao mesmo tempo. Escreva <code>mapWithLimit(items, limit, fn)</code>: chama a função assíncrona <code>fn</code> para cada item, com no máximo <code>limit</code> rodando juntas, e devolve os resultados <strong>na ordem dos itens</strong>.</p>
+<pre><code>const urls = await mapWithLimit(photos, 3, (photo) =&gt; upload(photo));
+// never more than 3 uploads at once; urls[i] is the URL of photos[i]
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">MDN: Promise.all</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/async_function">MDN: async function</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Crie <code>limite</code> &ldquo;trabalhadores&rdquo;. Cada um é um laço que pega o próximo índice livre, espera a tarefa e repete até acabar a lista. Guarde o resultado na posição do índice, não com <code>push</code>.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Crie <code>limit</code> &ldquo;trabalhadores&rdquo; (<em>workers</em>). Cada um é um laço que pega o próximo índice livre, espera a tarefa e repete até acabar a lista. Guarde o resultado na posição do índice, não com <code>push</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>async function mapComLimite&lt;T, R&gt;(itens: T[], limite: number, fn: (item: T) =&gt; Promise&lt;R&gt;): Promise&lt;R[]&gt; {
-  const resultados: R[] = new Array(itens.length);
-  let proximo = 0; // o índice do próximo item livre, dividido entre os trabalhadores
+<pre><code>async function mapWithLimit&lt;T, R&gt;(items: T[], limit: number, fn: (item: T) =&gt; Promise&lt;R&gt;): Promise&lt;R[]&gt; {
+  const results: R[] = new Array(items.length);
+  let next = 0; // index of the next free item, shared by all workers
 
-  async function trabalhador() {
-    while (proximo &lt; itens.length) {
-      const i = proximo++;                // pega o índice e já avança
-      resultados[i] = await fn(itens[i]); // pela posição: a ordem dos itens se mantém
+  async function worker() {
+    while (next &lt; items.length) {
+      const i = next++;                 // take the index and move on
+      results[i] = await fn(items[i]);  // by position: results keep the order of the items
     }
   }
 
-  const trabalhadores = Array.from({ length: Math.min(limite, itens.length) }, trabalhador);
-  await Promise.all(trabalhadores);
-  return resultados;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, worker);
+  await Promise.all(workers);
+  return results;
 }
 </code></pre>
-        <p><strong>Por que não há conflito no <code>proximo++</code>:</strong> JavaScript roda uma coisa por vez. Dois trabalhadores nunca executam essa linha no mesmo instante; eles só se alternam nos <code>await</code>.</p>
-        <p><strong>Erro comum:</strong> <code>Promise.all(itens.map(fn))</code>. Isso dispara os 200 envios de uma vez, que é exatamente o que o servidor não aceita.</p>
+        <p><strong>Por que não há conflito no <code>next++</code>:</strong> JavaScript roda uma coisa por vez. Dois trabalhadores nunca executam essa linha no mesmo instante; eles só se alternam nos <code>await</code>.</p>
+        <p><strong>Erro comum:</strong> <code>Promise.all(items.map(fn))</code>. Isso dispara os 200 envios de uma vez, que é exatamente o que o servidor não aceita.</p>
       </div></details>
-      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Uma foto falha. Hoje, o <code>Promise.all</code> rejeita e você perde todos os resultados. Mude para guardar <code>{ ok: true, valor }</code> ou <code>{ ok: false, erro }</code> em cada posição, como o <code>Promise.allSettled</code> faz, para a tela mostrar quais fotos precisam ser reenviadas.</p></div></details>
+      <details class="rv"><summary>variação</summary><div class="rv-body"><p>Uma foto falha. Hoje, o <code>Promise.all</code> rejeita e você perde todos os resultados. Mude para guardar <code>{ ok: true, value }</code> ou <code>{ ok: false, error }</code> em cada posição, como o <code>Promise.allSettled</code> faz, para a tela mostrar quais fotos precisam ser reenviadas.</p></div></details>
     </div>
   </div>
 </section>

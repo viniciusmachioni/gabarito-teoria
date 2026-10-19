@@ -72,8 +72,8 @@ const meta = { component: Button } satisfies Meta&lt;typeof Button&gt;;
 export default meta;
 type Story = StoryObj&lt;typeof meta&gt;;
 
-export const Primario: Story = { args: { label: 'Salvar', intent: 'primary' } };
-export const Desabilitado: Story = { args: { label: 'Salvar', disabled: true } };</code></pre>
+export const Primary: Story = { args: { label: 'Salvar', intent: 'primary' } };
+export const Disabled: Story = { args: { label: 'Salvar', disabled: true } };</code></pre>
 <ul>
 <li>O <code>export default</code> diz qual componente o arquivo documenta.</li>
 <li>Cada <code>export</code> com nome é uma story, com as props que ela usa.</li>

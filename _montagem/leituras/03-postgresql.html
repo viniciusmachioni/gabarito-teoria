@@ -121,9 +121,9 @@
 
 <h5>Como verificar em vez de supor</h5>
 <pre><code>EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM questoes WHERE materia_id = 3 AND criado_em &gt; now() - interval '7 days';
--- procure: Seq Scan em tabela grande, "Rows Removed by Filter" alto,
--- estimativa (rows=) muito diferente do real (actual rows=)</code></pre>
+SELECT * FROM questions WHERE subject_id = 3 AND created_at &gt; now() - interval '7 days';
+-- look for: Seq Scan on a big table, a high "Rows Removed by Filter",
+-- an estimate (rows=) far from the real count (actual rows=)</code></pre>
 </article>
 
 <article data-href="https://www.pgbouncer.org/features.html">
@@ -179,19 +179,19 @@ SELECT * FROM questoes WHERE materia_id = 3 AND criado_em &gt; now() - interval 
 </ul>
 
 <h5>Contagem de relação</h5>
-<pre><code>prisma.materia.findMany({
-  select: { nome: true, _count: { select: { questoes: true } } },
+<pre><code>prisma.subject.findMany({
+  select: { name: true, _count: { select: { questions: true } } },
 });</code></pre>
 <p>Conta no banco em vez de trazer todas as questões pra contar em JavaScript.</p>
 
 <h5>O problema N+1</h5>
-<pre><code>// N+1: 1 query pras sessões + 1 query por sessão
-const sessoes = await prisma.sessao.findMany();
-for (const s of sessoes) {
-  s.itens = await prisma.item.findMany({ where: { sessaoId: s.id } });
+<pre><code>// N+1: 1 query for the sessions + 1 query per session
+const sessions = await prisma.session.findMany();
+for (const s of sessions) {
+  s.items = await prisma.item.findMany({ where: { sessionId: s.id } });
 }
-// correto: uma leitura aninhada
-const sessoes = await prisma.sessao.findMany({ include: { itens: true } });</code></pre>
+// right: one nested read
+const sessions = await prisma.session.findMany({ include: { items: true } });</code></pre>
 <ul>
 <li>O Prisma agrupa automaticamente chamadas de <code>findUnique</code> feitas no mesmo tick (tipo DataLoader) — por isso resolvers GraphQL com <code>findUnique</code> não explodem. <code>findMany</code> em laço não tem essa ajuda.</li>
 <li>Filtros por relação (<code>some</code>, <code>every</code>, <code>none</code>) viram subconsulta no banco, não laço na aplicação.</li>

@@ -98,7 +98,7 @@
     <div class="bcard">
       <h4>7. Testar IA sem chamar a IA</h4>
       <p><b class="r">O problema</b>Chamar o modelo de verdade em cada teste é lento, custa dinheiro e dá uma resposta diferente a cada vez.</p>
-      <p><b class="r">Como resolve</b>O código fala com a IA através de uma interface (<code>gerar(prompt)</code>). No teste, você passa um <em>fake</em> que devolve respostas prontas: uma válida, uma quebrada, um erro 429. No teste de ponta a ponta com Playwright, o <code>page.route</code> intercepta a chamada e devolve uma resposta gravada.</p>
+      <p><b class="r">Como resolve</b>O código fala com a IA através de uma interface (<code>generate(prompt)</code>). No teste, você passa um <em>fake</em> que devolve respostas prontas: uma válida, uma quebrada, um erro 429. No teste de ponta a ponta com Playwright, o <code>page.route</code> intercepta a chamada e devolve uma resposta gravada.</p>
       <p class="frase"><b class="r">Na entrevista</b>&ldquo;O modelo fica atrás de uma interface. No teste, entra um fake determinístico, de graça e rápido.&rdquo;</p>
     </div>
   </div>
@@ -144,60 +144,60 @@
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Esperar um job, com prazo</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">O <code>GET /api/jobs/:id</code> devolve <code>{ status: 'na_fila' | 'rodando' | 'pronto' | 'falhou', resultado?, erro? }</code>. Escreva <code>esperarJob(id, signal)</code>, que pergunta pelo status até o job terminar.</p>
+      <p class="ex-enunciado">O <code>GET /api/jobs/:id</code> devolve <code>{ status: 'queued' | 'running' | 'done' | 'failed', result?, error? }</code>. Escreva <code>waitForJob(id, signal)</code>, que pergunta pelo status até o job terminar.</p>
       <h4>Regras</h4>
       <ul>
         <li>Espera 1 s, depois 2 s, 4 s e 8 s entre as perguntas, e não passa de 8 s.</li>
-        <li><code>pronto</code> devolve o resultado. <code>falhou</code> lança um erro com a mensagem do job.</li>
+        <li><code>done</code> devolve o resultado. <code>failed</code> lança um erro com a mensagem do job.</li>
         <li>Desiste depois de 60 s no total. O <code>signal</code> cancela tudo, inclusive a espera.</li>
       </ul>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal">MDN: AbortSignal</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">MDN: Promise</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Faça uma função <code>dormir(ms, signal)</code> que devolve uma Promise e rejeita se o signal abortar. Assim o cancelamento interrompe a espera, e não só o <code>fetch</code>.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Faça uma função <code>sleep(ms, signal)</code> que devolve uma Promise e rejeita se o signal abortar. Assim o cancelamento interrompe a espera, e não só o <code>fetch</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
 type Job<T> =
-  | { status: 'na_fila' | 'rodando' }
-  | { status: 'pronto'; resultado: T }
-  | { status: 'falhou'; erro: string };
+  | { status: 'queued' | 'running' }
+  | { status: 'done'; result: T }
+  | { status: 'failed'; error: string };
 
-function dormir(ms: number, signal?: AbortSignal) {
+function sleep(ms: number, signal?: AbortSignal) {
   return new Promise<void>((resolve, reject) => {
     if (signal?.aborted) return reject(signal.reason);
-    const t = setTimeout(() => { signal?.removeEventListener('abort', parar); resolve(); }, ms);
-    function parar() { clearTimeout(t); reject(signal!.reason); }
-    signal?.addEventListener('abort', parar, { once: true });
+    const t = setTimeout(() => { signal?.removeEventListener('abort', onAbort); resolve(); }, ms);
+    function onAbort() { clearTimeout(t); reject(signal!.reason); }
+    signal?.addEventListener('abort', onAbort, { once: true });
   });
 }
 
-export async function esperarJob<T>(id: string, signal?: AbortSignal): Promise<T> {
-  const limite = Date.now() + 60_000;
-  let espera = 1000;
+export async function waitForJob<T>(id: string, signal?: AbortSignal): Promise<T> {
+  const deadline = Date.now() + 60_000;
+  let delay = 1000;
   while (true) {
     const res = await fetch(`/api/jobs/${id}`, { signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const job: Job<T> = await res.json();
-    if (job.status === 'pronto') return job.resultado;
-    if (job.status === 'falhou') throw new Error(job.erro);
-    if (Date.now() + espera > limite) throw new Error('O job demorou demais. Tente de novo mais tarde.');
-    await dormir(espera, signal);
-    espera = Math.min(espera * 2, 8000);
+    if (job.status === 'done') return job.result;
+    if (job.status === 'failed') throw new Error(job.error);
+    if (Date.now() + delay > deadline) throw new Error('The job took too long. Try again later.');
+    await sleep(delay, signal);
+    delay = Math.min(delay * 2, 8000);
   }
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o tipo do job deixa o TypeScript saber que <code>resultado</code> só existe em <code>pronto</code>; o cancelamento interrompe a espera, e não só o <code>fetch</code>; e o prazo é conferido antes de dormir, para não passar de 60 s. Num componente, quem chama cria um <code>AbortController</code> e aborta no cleanup do <code>useEffect</code>.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> o tipo do job deixa o TypeScript saber que <code>result</code> só existe em <code>done</code>; o cancelamento interrompe a espera, e não só o <code>fetch</code>; e o prazo é conferido antes de dormir, para não passar de 60 s. Num componente, quem chama cria um <code>AbortController</code> e aborta no cleanup do <code>useEffect</code>.</p>
       </div></details>
       <div class="revisar">
         <h4>Revisar &middot; depois da solução</h4>
         <h5>1 &middot; Explique em voz alta</h5>
         <ol>
           <li>Por que o prazo é conferido <em>antes</em> de dormir?</li>
-          <li>Por que o <code>dormir</code> precisa receber o <code>signal</code>, se o <code>fetch</code> já recebe?</li>
+          <li>Por que o <code>sleep</code> precisa receber o <code>signal</code>, se o <code>fetch</code> já recebe?</li>
           <li>Para que serve o <code>removeEventListener</code> dentro do <code>setTimeout</code>?</li>
         </ol>
         <details class="rv"><summary>respostas</summary><div class="rv-body">
           <ol>
             <li>Para não começar uma espera que vai passar do limite. Conferindo depois, a função dorme 8 s, passa dos 60 s e só então desiste.</li>
-            <li>Porque a maior parte do tempo é gasta dormindo, não buscando. Se a pessoa cancela no meio de uma espera de 8 s, sem o <code>signal</code> no <code>dormir</code> o código só percebe quando a espera acaba e o próximo <code>fetch</code> é chamado.</li>
+            <li>Porque a maior parte do tempo é gasta dormindo, não buscando. Se a pessoa cancela no meio de uma espera de 8 s, sem o <code>signal</code> no <code>sleep</code> o código só percebe quando a espera acaba e o próximo <code>fetch</code> é chamado.</li>
             <li>Cada volta do laço adiciona um ouvinte de <code>abort</code> no mesmo <code>signal</code>. Sem remover, eles se acumulam enquanto o job roda. É um vazamento pequeno, mas é o tipo de detalhe que a revisão procura.</li>
           </ol>
         </div></details>
@@ -205,29 +205,29 @@ export async function esperarJob<T>(id: string, signal?: AbortSignal): Promise<T
         <h5>2 &middot; Caça ao bug</h5>
         <p>Esta versão compila e funciona no caso feliz. Ache os três erros. (O tipo <code>Job</code> é o mesmo da solução.)</p>
 <pre><code class="esc">
-function dormir(ms: number) {
+function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
-export async function esperarJob<T>(id: string, signal?: AbortSignal): Promise<T> {
-  const inicio = Date.now();
-  let espera = 1000;
-  while (Date.now() - inicio < 60_000) {
+export async function waitForJob<T>(id: string, signal?: AbortSignal): Promise<T> {
+  const start = Date.now();
+  let delay = 1000;
+  while (Date.now() - start < 60_000) {
     const res = await fetch(`/api/jobs/${id}`, { signal });
     const job: Job<T> = await res.json();
-    if (job.status === 'pronto') return job.resultado;
-    if (job.status === 'falhou') throw new Error(job.erro);
-    await dormir(espera);
-    espera = espera * 2;
+    if (job.status === 'done') return job.result;
+    if (job.status === 'failed') throw new Error(job.error);
+    await sleep(delay);
+    delay = delay * 2;
   }
-  throw new Error('O job demorou demais.');
+  throw new Error('The job took too long.');
 }
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
-            <li><strong>O <code>dormir</code> ignora o cancelamento.</strong> A pessoa clica em cancelar e a função continua dormindo até o fim da espera.</li>
+            <li><strong>O <code>sleep</code> ignora o cancelamento.</strong> A pessoa clica em cancelar e a função continua dormindo até o fim da espera.</li>
             <li><strong>A espera não tem teto.</strong> Ela vai a 1, 2, 4, 8, 16 e 32 s, quebrando a regra dos 8 s. E como o prazo só é conferido no começo do laço, a última espera de 32 s leva o total para mais de 60 s.</li>
-            <li><strong>Não confere <code>res.ok</code>.</strong> Se o servidor responde 500 com uma página HTML, o <code>res.json()</code> lança um erro confuso de JSON. Se responde 404 com <code>{ "erro": "não existe" }</code>, o <code>status</code> vem <code>undefined</code>, e a função fica perguntando até dar o prazo.</li>
+            <li><strong>Não confere <code>res.ok</code>.</strong> Se o servidor responde 500 com uma página HTML, o <code>res.json()</code> lança um erro confuso de JSON. Se responde 404 com <code>{ "error": "não existe" }</code>, o <code>status</code> vem <code>undefined</code>, e a função fica perguntando até dar o prazo.</li>
           </ol>
         </div></details>
 
@@ -246,49 +246,49 @@ export async function esperarJob<T>(id: string, signal?: AbortSignal): Promise<T
     <div class="ex-body">
       <p class="ex-enunciado">A função abaixo pede um resumo ao modelo, valida o JSON e tenta mais uma vez se a resposta vier quebrada. Escreva três testes com um provedor <em>fake</em>: resposta válida de primeira; resposta quebrada e depois válida (duas chamadas); e resposta sempre quebrada (lança erro).</p>
 <pre><code class="esc">
-export interface ProvedorIA { gerar(prompt: string): Promise<string>; }
+export interface AIProvider { generate(prompt: string): Promise<string>; }
 
-export async function resumir(texto: string, ia: ProvedorIA): Promise<string> {
-  for (let tentativa = 1; tentativa <= 2; tentativa++) {
-    const bruto = await ia.gerar(`Resuma em JSON {"resumo": string}: ${texto}`);
+export async function summarize(text: string, ai: AIProvider): Promise<string> {
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const raw = await ai.generate(`Summarize as JSON {"summary": string}: ${text}`);
     try {
-      const { resumo } = JSON.parse(bruto);
-      if (typeof resumo === 'string' && resumo.trim()) return resumo;
-    } catch { /* tenta de novo */ }
+      const { summary } = JSON.parse(raw);
+      if (typeof summary === 'string' && summary.trim()) return summary;
+    } catch { /* try again */ }
   }
-  throw new Error('resposta inválida do modelo');
+  throw new Error('invalid model response');
 }
 </code></pre>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://vitest.dev/api/mock">Vitest: mock functions</a> &middot; <a href="https://vitest.dev/api/expect">Vitest: expect</a></p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O fake pode ser um objeto com <code>gerar: vi.fn()</code>. Use <code>mockResolvedValueOnce</code> em sequência para devolver uma resposta diferente a cada chamada, e confira <code>toHaveBeenCalledTimes</code>.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O fake pode ser um objeto com <code>generate: vi.fn()</code>. Use <code>mockResolvedValueOnce</code> em sequência para devolver uma resposta diferente a cada chamada, e confira <code>toHaveBeenCalledTimes</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
 import { describe, it, expect, vi } from 'vitest';
-import { resumir, type ProvedorIA } from './resumir';
+import { summarize, type AIProvider } from './summarize';
 
-function fake(...respostas: string[]) {
-  const gerar = vi.fn<ProvedorIA['gerar']>();
-  for (const r of respostas) gerar.mockResolvedValueOnce(r);
-  return { gerar };
+function fake(...responses: string[]) {
+  const generate = vi.fn<AIProvider['generate']>();
+  for (const r of responses) generate.mockResolvedValueOnce(r);
+  return { generate };
 }
 
-describe('resumir', () => {
-  it('devolve o resumo quando a primeira resposta é válida', async () => {
-    const ia = fake('{"resumo":"Texto curto"}');
-    await expect(resumir('...', ia)).resolves.toBe('Texto curto');
-    expect(ia.gerar).toHaveBeenCalledTimes(1);
+describe('summarize', () => {
+  it('returns the summary when the first response is valid', async () => {
+    const ai = fake('{"summary":"Short text"}');
+    await expect(summarize('...', ai)).resolves.toBe('Short text');
+    expect(ai.generate).toHaveBeenCalledTimes(1);
   });
 
-  it('tenta de novo quando a resposta vem quebrada', async () => {
-    const ia = fake('isto não é JSON', '{"resumo":"Agora sim"}');
-    await expect(resumir('...', ia)).resolves.toBe('Agora sim');
-    expect(ia.gerar).toHaveBeenCalledTimes(2);
+  it('retries when the response is broken', async () => {
+    const ai = fake('this is not JSON', '{"summary":"Now it works"}');
+    await expect(summarize('...', ai)).resolves.toBe('Now it works');
+    expect(ai.generate).toHaveBeenCalledTimes(2);
   });
 
-  it('desiste depois de duas respostas inválidas', async () => {
-    const ia = fake('{"resumo":""}', '{"outro":1}');
-    await expect(resumir('...', ia)).rejects.toThrow('resposta inválida do modelo');
-    expect(ia.gerar).toHaveBeenCalledTimes(2);
+  it('gives up after two invalid responses', async () => {
+    const ai = fake('{"summary":""}', '{"other":1}');
+    await expect(summarize('...', ai)).rejects.toThrow('invalid model response');
+    expect(ai.generate).toHaveBeenCalledTimes(2);
   });
 });
 </code></pre>
@@ -311,35 +311,35 @@ describe('resumir', () => {
         </div></details>
 
         <h5>2 &middot; Caça ao bug</h5>
-        <p>Estes três testes passam. Mesmo assim, se alguém apagar o retry de <code>resumir</code> (trocando <code>tentativa &lt;= 2</code> por <code>tentativa &lt;= 1</code>), <em>os três continuam passando</em>. Por quê? Ache os problemas.</p>
+        <p>Estes três testes passam. Mesmo assim, se alguém apagar o retry de <code>summarize</code> (trocando <code>attempt &lt;= 2</code> por <code>attempt &lt;= 1</code>), <em>os três continuam passando</em>. Por quê? Ache os problemas.</p>
 <pre><code class="esc">
-it('devolve o resumo quando a primeira resposta é válida', async () => {
-  const ia = fake('{"resumo":"Texto curto"}');
-  await expect(resumir('...', ia)).resolves.toBe('Texto curto');
+it('returns the summary when the first response is valid', async () => {
+  const ai = fake('{"summary":"Short text"}');
+  await expect(summarize('...', ai)).resolves.toBe('Short text');
 });
 
-it('tenta de novo quando a resposta vem quebrada', async () => {
-  const ia = { gerar: vi.fn<ProvedorIA['gerar']>().mockResolvedValue('{"resumo":"Agora sim"}') };
-  await expect(resumir('...', ia)).resolves.toBe('Agora sim');
+it('retries when the response is broken', async () => {
+  const ai = { generate: vi.fn<AIProvider['generate']>().mockResolvedValue('{"summary":"Now it works"}') };
+  await expect(summarize('...', ai)).resolves.toBe('Now it works');
 });
 
-it('desiste depois de duas respostas inválidas', async () => {
-  const ia = fake('isto não é JSON', 'isto não é JSON');
-  await expect(resumir('...', ia)).rejects.toThrow();
+it('gives up after two invalid responses', async () => {
+  const ai = fake('this is not JSON', 'this is not JSON');
+  await expect(summarize('...', ai)).rejects.toThrow();
 });
 </code></pre>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
             <li><strong>O teste do retry nunca manda uma resposta quebrada.</strong> O <code>mockResolvedValue</code> devolve a resposta válida já na primeira chamada. O nome do teste promete o retry, mas o código não passa por ele.</li>
             <li><strong>Nenhum teste confere quantas chamadas houve.</strong> Sem <code>toHaveBeenCalledTimes(2)</code>, uma versão que desiste na primeira tentativa também &ldquo;desiste depois de duas respostas inválidas&rdquo;.</li>
-            <li><strong><code>toThrow()</code> sem mensagem aceita qualquer erro.</strong> Um <code>TypeError</code> causado por um bug dentro de <code>resumir</code> também faria o teste passar.</li>
-            <li><strong>Só um tipo de resposta inválida.</strong> As duas são texto que não é JSON. O caminho &ldquo;é JSON, mas o <code>resumo</code> está vazio&rdquo; nunca é testado.</li>
+            <li><strong><code>toThrow()</code> sem mensagem aceita qualquer erro.</strong> Um <code>TypeError</code> causado por um bug dentro de <code>summarize</code> também faria o teste passar.</li>
+            <li><strong>Só um tipo de resposta inválida.</strong> As duas são texto que não é JSON. O caminho &ldquo;é JSON, mas o <code>summary</code> está vazio&rdquo; nunca é testado.</li>
           </ol>
           <p>É assim que se revisa um teste: pergunte &ldquo;se eu quebrar o código de propósito, este teste fica vermelho?&rdquo;. Se não fica, ele não protege nada.</p>
         </div></details>
 
         <h5>3 &middot; Mude um requisito</h5>
-        <p><code>resumir</code> passa a fazer até 3 tentativas. Quais testes da solução precisam mudar, e qual teste novo vale escrever?</p>
+        <p><code>summarize</code> passa a fazer até 3 tentativas. Quais testes da solução precisam mudar, e qual teste novo vale escrever?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
           <p>O terceiro teste quebra, e é bom que quebre: ele confere <code>toHaveBeenCalledTimes(2)</code>. Atualize-o para três respostas inválidas e 3 chamadas. Escreva também um teste novo: &ldquo;quebrada, quebrada, válida&rdquo;, que deve funcionar com 3 chamadas.</p>
           <p>Repare que o teste que falhou foi justamente o que conferia a contagem. Um teste que quebra quando o comportamento muda de propósito está fazendo o trabalho dele: avisando que a mudança foi percebida.</p>

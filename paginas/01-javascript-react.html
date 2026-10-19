@@ -71,10 +71,10 @@
 <li>Buscar dados num efeito exige tratar corrida:</li>
 </ul>
 <pre><code>useEffect(() =&gt; {
-  let ignorar = false;
-  buscar(termo).then(r =&gt; { if (!ignorar) setResultado(r); });
-  return () =&gt; { ignorar = true; };   // resposta antiga chega depois? é descartada
-}, [termo]);</code></pre>
+  let ignore = false;
+  search(query).then(r =&gt; { if (!ignore) setResults(r); });
+  return () =&gt; { ignore = true; };   // an old response arrives later? it is discarded
+}, [query]);</code></pre>
 
 <h5>You Might Not Need an Effect — os casos em que NÃO usar</h5>
 <div class="tbl"><table>
@@ -103,7 +103,7 @@
 <p>Pare de perguntar “quando isso roda?” (montagem, atualização). Pergunte “com quais valores este efeito precisa estar sincronizado?”. O resultado deve ser o mesmo se o componente montasse já com os valores finais ou se chegasse neles depois de dez atualizações.</p>
 
 <h5>Não minta sobre dependências</h5>
-<pre><code>// bug: count fica congelado em 0, o contador para em 1
+<pre><code>// bug: count is frozen at 0, the counter stops at 1
 useEffect(() =&gt; {
   const id = setInterval(() =&gt; setCount(count + 1), 1000);
   return () =&gt; clearInterval(id);
@@ -203,8 +203,8 @@ useEffect(() =&gt; {
 </ul>
 
 <h5>O laço</h5>
-<pre><code>while (fila.aguardarMensagem()) {
-  fila.processarProximaMensagem();   // roda até o fim, sem ser interrompida
+<pre><code>while (queue.waitForMessage()) {
+  queue.processNextMessage();   // runs to completion, never interrupted
 }</code></pre>
 
 <h5>Run-to-completion</h5>
@@ -216,7 +216,7 @@ useEffect(() =&gt; {
 <h5>Microtasks</h5>
 <p>Callbacks de Promise (<code>then</code>/<code>await</code>), <code>queueMicrotask</code> e <code>MutationObserver</code> vão pra fila de microtasks, que é <strong>esvaziada por completo</strong> ao fim de cada tarefa, antes da próxima tarefa e antes de renderizar. Uma microtask que agenda outra microtask também roda antes — dá pra travar a página assim.</p>
 <pre><code>console.log('1');
-setTimeout(() =&gt; console.log('4'), 0);          // tarefa
+setTimeout(() =&gt; console.log('4'), 0);          // task
 Promise.resolve().then(() =&gt; console.log('3'));  // microtask
 console.log('2');
 // 1, 2, 3, 4</code></pre>

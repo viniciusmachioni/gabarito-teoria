@@ -7,7 +7,7 @@
     <div class="bcard">
       <h4>1. Big-O em linguagem simples</h4>
       <p><b class="r">O que é</b>Big-O diz como o tempo (ou a memória) cresce quando a entrada cresce. Não é o tempo em segundos.</p>
-      <p><b class="r">Os que importam</b><code>O(1)</code>: não depende do tamanho (ler <code>mapa.get(x)</code>). <code>O(log n)</code>: corta pela metade a cada passo (busca binária). <code>O(n)</code>: passa uma vez por tudo. <code>O(n log n)</code>: ordenar. <code>O(n²)</code>: um laço dentro de outro.</p>
+      <p><b class="r">Os que importam</b><code>O(1)</code>: não depende do tamanho (ler <code>map.get(x)</code>). <code>O(log n)</code>: corta pela metade a cada passo (busca binária). <code>O(n)</code>: passa uma vez por tudo. <code>O(n log n)</code>: ordenar. <code>O(n²)</code>: um laço dentro de outro.</p>
       <p><b class="r">A conta que convence</b>Com um milhão de itens, O(n) são um milhão de passos. O(n²) são um trilhão: o que levaria um segundo passa a levar dias.</p>
       <p class="frase"><b class="r">Na entrevista</b>&ldquo;A força bruta é O(n²) porque compara cada par. Com um Map, eu troco memória por tempo e fico em O(n).&rdquo;</p>
     </div>
@@ -57,18 +57,18 @@
     <div class="ex-body">
       <p class="ex-enunciado">Dada uma lista de números e um alvo, devolva os índices dos dois números que somam o alvo. Existe no máximo uma resposta; se não existir, devolva <code>null</code>.</p>
 <pre><code class="esc">
-doisSomam([2, 7, 11, 15], 9)  // [0, 1]
-doisSomam([3, 2, 4], 6)       // [1, 2]
+twoSum([2, 7, 11, 15], 9)  // [0, 1]
+twoSum([3, 2, 4], 6)       // [1, 2]
 </code></pre>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>A força bruta testa todos os pares: O(n²). Para cada número, você sabe exatamente qual outro precisa achar: <code>alvo - numero</code>. Um <code>Map</code> responde &ldquo;já vi esse número?&rdquo; em O(1).</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>A força bruta testa todos os pares: O(n²). Para cada número, você sabe exatamente qual outro precisa achar: <code>target - num</code>. Um <code>Map</code> responde &ldquo;já vi esse número?&rdquo; em O(1).</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function doisSomam(nums: number[], alvo: number): [number, number] | null {
-  const vistos = new Map<number, number>(); // valor -> índice
+function twoSum(nums: number[], target: number): [number, number] | null {
+  const seen = new Map<number, number>(); // value -> index
   for (let i = 0; i < nums.length; i++) {
-    const falta = alvo - nums[i];
-    if (vistos.has(falta)) return [vistos.get(falta)!, i];
-    vistos.set(nums[i], i); // guarda depois de procurar: o número não faz par consigo mesmo
+    const missing = target - nums[i];
+    if (seen.has(missing)) return [seen.get(missing)!, i];
+    seen.set(nums[i], i); // store after looking up: a number cannot pair with itself
   }
   return null;
 }
@@ -84,18 +84,18 @@ function doisSomam(nums: number[], alvo: number): [number, number] | null {
     <div class="ex-body">
       <p class="ex-enunciado">Devolva o índice do primeiro caractere que aparece uma vez só no texto, ou <code>-1</code> se não houver.</p>
 <pre><code class="esc">
-primeiroUnico('leetcode')      // 0 ('l')
-primeiroUnico('loveleetcode')  // 2 ('v')
-primeiroUnico('aabb')          // -1
+firstUniqChar('leetcode')      // 0 ('l')
+firstUniqChar('loveleetcode')  // 2 ('v')
+firstUniqChar('aabb')          // -1
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Duas passadas. Na primeira, conte cada caractere. Na segunda, ache o primeiro com contagem 1.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function primeiroUnico(s: string): number {
-  const conta = new Map<string, number>();
-  for (const c of s) conta.set(c, (conta.get(c) ?? 0) + 1); // 1ª passada: contar
+function firstUniqChar(s: string): number {
+  const counts = new Map<string, number>();
+  for (const c of s) counts.set(c, (counts.get(c) ?? 0) + 1); // 1st pass: count
   for (let i = 0; i < s.length; i++) {
-    if (conta.get(s[i]) === 1) return i;                     // 2ª passada: achar
+    if (counts.get(s[i]) === 1) return i;                      // 2nd pass: find
   }
   return -1;
 }
@@ -111,20 +111,20 @@ function primeiroUnico(s: string): number {
     <div class="ex-body">
       <p class="ex-enunciado">Agrupe as palavras que são anagramas umas das outras (mesmas letras, em outra ordem).</p>
 <pre><code class="esc">
-agruparAnagramas(['amor', 'gato', 'roma', 'toga', 'sol'])
+groupAnagrams(['amor', 'gato', 'roma', 'toga', 'sol'])
 // [['amor', 'roma'], ['gato', 'toga'], ['sol']]
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Anagramas ficam iguais quando você ordena as letras: &ldquo;amor&rdquo; e &ldquo;roma&rdquo; viram &ldquo;amor&rdquo;. Use isso como chave de um <code>Map</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function agruparAnagramas(palavras: string[]): string[][] {
-  const grupos = new Map<string, string[]>();
-  for (const p of palavras) {
-    const chave = [...p].sort().join(''); // a "assinatura" do anagrama
-    if (!grupos.has(chave)) grupos.set(chave, []);
-    grupos.get(chave)!.push(p);
+function groupAnagrams(words: string[]): string[][] {
+  const groups = new Map<string, string[]>();
+  for (const w of words) {
+    const key = [...w].sort().join(''); // the anagram's "signature"
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(w);
   }
-  return [...grupos.values()];
+  return [...groups.values()];
 }
 </code></pre>
         <p><strong>Custo:</strong> O(n &middot; k log k), em que n é o número de palavras e k o tamanho da maior. Cada palavra é ordenada uma vez.</p>
@@ -140,25 +140,25 @@ function agruparAnagramas(palavras: string[]): string[][] {
     <div class="ex-body">
       <p class="ex-enunciado">O texto é igual lido de trás para a frente, considerando só letras e números e ignorando maiúsculas?</p>
 <pre><code class="esc">
-ehPalindromo('A man, a plan, a canal: Panama')  // true
-ehPalindromo('race a car')                      // false
+isPalindrome('A man, a plan, a canal: Panama')  // true
+isPalindrome('race a car')                      // false
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Limpe o texto e compare as pontas: um ponteiro no começo, outro no fim, andando um em direção ao outro.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function ehPalindromo(s: string): boolean {
-  const limpo = s.toLowerCase().replace(/[^a-z0-9]/g, '');
-  let esq = 0;
-  let dir = limpo.length - 1;
-  while (esq < dir) {
-    if (limpo[esq] !== limpo[dir]) return false;
-    esq++;
-    dir--;
+function isPalindrome(s: string): boolean {
+  const clean = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  let left = 0;
+  let right = clean.length - 1;
+  while (left < right) {
+    if (clean[left] !== clean[right]) return false;
+    left++;
+    right--;
   }
   return true;
 }
 </code></pre>
-        <p><strong>Custo:</strong> O(n). A versão <code>limpo === [...limpo].reverse().join('')</code> também é O(n) e vale citar, mas o entrevistador quase sempre quer ver os dois ponteiros, porque o padrão volta em outros problemas.</p>
+        <p><strong>Custo:</strong> O(n). A versão <code>clean === [...clean].reverse().join('')</code> também é O(n) e vale citar, mas o entrevistador quase sempre quer ver os dois ponteiros, porque o padrão volta em outros problemas.</p>
       </div></details>
       <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;não pudesse criar o texto limpo (memória O(1))?</strong> Os ponteiros pulam sozinhos o que não é letra nem número, com um <code>while</code> dentro do laço principal, antes de comparar.</p></div></details>
     </div>
@@ -169,22 +169,22 @@ function ehPalindromo(s: string): boolean {
     <div class="ex-body">
       <p class="ex-enunciado">Junte duas listas já ordenadas numa lista ordenada, sem usar <code>sort</code>.</p>
 <pre><code class="esc">
-juntarOrdenados([1, 3, 5], [2, 3, 6, 8])  // [1, 2, 3, 3, 5, 6, 8]
+mergeSorted([1, 3, 5], [2, 3, 6, 8])  // [1, 2, 3, 3, 5, 6, 8]
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um ponteiro em cada lista. A cada passo, pegue o menor dos dois e avance só aquele ponteiro. Quando uma lista acabar, copie o resto da outra.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function juntarOrdenados(a: number[], b: number[]): number[] {
-  const saida: number[] = [];
+function mergeSorted(a: number[], b: number[]): number[] {
+  const output: number[] = [];
   let i = 0;
   let j = 0;
   while (i < a.length && j < b.length) {
-    if (a[i] <= b[j]) saida.push(a[i++]); // i++ usa o valor e depois avança
-    else saida.push(b[j++]);
+    if (a[i] <= b[j]) output.push(a[i++]); // i++ uses the value, then advances
+    else output.push(b[j++]);
   }
-  while (i < a.length) saida.push(a[i++]); // sobrou em a
-  while (j < b.length) saida.push(b[j++]); // sobrou em b
-  return saida;
+  while (i < a.length) output.push(a[i++]); // leftovers in a
+  while (j < b.length) output.push(b[j++]); // leftovers in b
+  return output;
 }
 </code></pre>
         <p><strong>Custo:</strong> O(n + m). Juntar com <code>[...a, ...b].sort()</code> custaria O((n + m) log(n + m)) e jogaria fora a informação de que as listas já estavam ordenadas.</p>
@@ -198,29 +198,29 @@ function juntarOrdenados(a: number[], b: number[]): number[] {
     <div class="ex-body">
       <p class="ex-enunciado">Devolva o tamanho do maior trecho contínuo do texto em que nenhum caractere se repete.</p>
 <pre><code class="esc">
-maiorSemRepetir('abcabcbb')  // 3 ('abc')
-maiorSemRepetir('bbbbb')     // 1
-maiorSemRepetir('pwwkew')    // 3 ('wke')
+lengthOfLongestSubstring('abcabcbb')  // 3 ('abc')
+lengthOfLongestSubstring('bbbbb')     // 1
+lengthOfLongestSubstring('pwwkew')    // 3 ('wke')
 </code></pre>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma janela com <code>inicio</code> e <code>fim</code>. O fim anda sempre. Quando o caractere novo já está dentro da janela, o início pula para logo depois da última vez em que ele apareceu. Um <code>Map</code> guarda essa última posição.</p></div></details>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma janela com <code>start</code> e <code>end</code>. O fim anda sempre. Quando o caractere novo já está dentro da janela, o início pula para logo depois da última vez em que ele apareceu. Um <code>Map</code> guarda essa última posição.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function maiorSemRepetir(s: string): number {
-  const ultimo = new Map<string, number>(); // caractere -> último índice
-  let inicio = 0;
-  let melhor = 0;
-  for (let fim = 0; fim < s.length; fim++) {
-    const c = s[fim];
-    // só conta se a repetição está DENTRO da janela atual
-    if (ultimo.has(c) && ultimo.get(c)! >= inicio) inicio = ultimo.get(c)! + 1;
-    ultimo.set(c, fim);
-    melhor = Math.max(melhor, fim - inicio + 1);
+function lengthOfLongestSubstring(s: string): number {
+  const lastSeen = new Map<string, number>(); // char -> last index
+  let start = 0;
+  let best = 0;
+  for (let end = 0; end < s.length; end++) {
+    const c = s[end];
+    // only counts if the repeat is INSIDE the current window
+    if (lastSeen.has(c) && lastSeen.get(c)! >= start) start = lastSeen.get(c)! + 1;
+    lastSeen.set(c, end);
+    best = Math.max(best, end - start + 1);
   }
-  return melhor;
+  return best;
 }
 </code></pre>
         <p><strong>Custo:</strong> O(n). Cada caractere entra na janela uma vez.</p>
-        <p><strong>Erro comum:</strong> esquecer o <code>&gt;= inicio</code>. Com &ldquo;abba&rdquo;, o segundo &ldquo;a&rdquo; puxaria o início para trás, e a resposta sairia 3 em vez de 2.</p>
+        <p><strong>Erro comum:</strong> esquecer o <code>&gt;= start</code>. Com &ldquo;abba&rdquo;, o segundo &ldquo;a&rdquo; puxaria o início para trás, e a resposta sairia 3 em vez de 2.</p>
       </div></details>
       <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;cada caractere pudesse aparecer até 2 vezes?</strong> Troque a última posição por uma contagem dentro da janela. Quando uma contagem passar de 2, avance o início, descontando, até ela voltar a 2. É o mesmo esqueleto de janela.</p></div></details>
     </div>
@@ -233,23 +233,23 @@ function maiorSemRepetir(s: string): number {
     <div class="ex-body">
       <p class="ex-enunciado">O texto tem <code>()</code>, <code>[]</code> e <code>{}</code>. Ele é válido se cada um que abre fecha com o tipo certo, na ordem certa.</p>
 <pre><code class="esc">
-parentesesValidos('({[]})')  // true
-parentesesValidos('([)]')    // false
-parentesesValidos('((')      // false
+isValid('({[]})')  // true
+isValid('([)]')    // false
+isValid('((')      // false
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O último que abriu é o primeiro que precisa fechar. Isso é uma pilha: <code>push</code> ao abrir, <code>pop</code> ao fechar, e confira se combinam.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function parentesesValidos(s: string): boolean {
-  const par: Record<string, string> = { ')': '(', ']': '[', '}': '{' };
-  const pilha: string[] = [];
+function isValid(s: string): boolean {
+  const pairs: Record<string, string> = { ')': '(', ']': '[', '}': '{' };
+  const stack: string[] = [];
   for (const c of s) {
-    if (c === '(' || c === '[' || c === '{') pilha.push(c);
-    else if (c in par) {
-      if (pilha.pop() !== par[c]) return false; // fechou o tipo errado, ou nada estava aberto
+    if (c === '(' || c === '[' || c === '{') stack.push(c);
+    else if (c in pairs) {
+      if (stack.pop() !== pairs[c]) return false; // closed the wrong type, or nothing was open
     }
   }
-  return pilha.length === 0; // sobrou algo aberto?
+  return stack.length === 0; // anything left open?
 }
 </code></pre>
         <p><strong>Custo:</strong> O(n). No mundo real, é como um editor de código confere se as chaves do seu arquivo fecham, e como o &ldquo;desfazer&rdquo; funciona: a última ação é a primeira a ser desfeita.</p>
@@ -263,27 +263,27 @@ function parentesesValidos(s: string): boolean {
     <div class="ex-body">
       <p class="ex-enunciado">Numa lista ordenada, devolva o índice do alvo, ou <code>-1</code>. Precisa ser O(log n).</p>
 <pre><code class="esc">
-buscaBinaria([1, 3, 5, 7, 9, 11], 7)  // 3
-buscaBinaria([1, 3, 5, 7, 9, 11], 4)  // -1
+binarySearch([1, 3, 5, 7, 9, 11], 7)  // 3
+binarySearch([1, 3, 5, 7, 9, 11], 4)  // -1
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Olhe o meio. Se o alvo é maior, ele só pode estar na metade da direita; se é menor, na da esquerda. Repita até achar ou a faixa ficar vazia.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function buscaBinaria(nums: number[], alvo: number): number {
-  let esq = 0;
-  let dir = nums.length - 1;
-  while (esq <= dir) {                       // <= : a faixa de um item só ainda conta
-    const meio = Math.floor((esq + dir) / 2);
-    if (nums[meio] === alvo) return meio;
-    if (nums[meio] < alvo) esq = meio + 1;   // +1 e -1: o meio já foi testado
-    else dir = meio - 1;
+function binarySearch(nums: number[], target: number): number {
+  let left = 0;
+  let right = nums.length - 1;
+  while (left <= right) {                     // <= : a one-item range still counts
+    const mid = Math.floor((left + right) / 2);
+    if (nums[mid] === target) return mid;
+    if (nums[mid] < target) left = mid + 1;   // +1 and -1: mid was already checked
+    else right = mid - 1;
   }
   return -1;
 }
 </code></pre>
-        <p><strong>Custo:</strong> O(log n). Com um milhão de itens, são no máximo 20 passos. Os erros clássicos são de borda: <code>&lt;</code> no lugar de <code>&lt;=</code>, ou <code>esq = meio</code> sem o <code>+ 1</code>, que pode entrar em laço infinito.</p>
+        <p><strong>Custo:</strong> O(log n). Com um milhão de itens, são no máximo 20 passos. Os erros clássicos são de borda: <code>&lt;</code> no lugar de <code>&lt;=</code>, ou <code>left = mid</code> sem o <code>+ 1</code>, que pode entrar em laço infinito.</p>
       </div></details>
-      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;houvesse repetidos e você quisesse a primeira posição do alvo?</strong> Ao achar, não pare: guarde a posição e continue procurando à esquerda (<code>dir = meio - 1</code>). É o mesmo esqueleto com uma linha a mais.</p></div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;houvesse repetidos e você quisesse a primeira posição do alvo?</strong> Ao achar, não pare: guarde a posição e continue procurando à esquerda (<code>right = mid - 1</code>). É o mesmo esqueleto com uma linha a mais.</p></div></details>
     </div>
   </div>
 
@@ -292,24 +292,24 @@ function buscaBinaria(nums: number[], alvo: number): number {
   <div class="ex" id="al9">
     <div class="ex-head"><span class="ex-n">9</span><h3>Profundidade de uma árvore</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/">LeetCode 104</a></span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Cada nó tem <code>{ valor, esq, dir }</code>, e os filhos podem ser <code>null</code>. Devolva quantos níveis tem o caminho mais longo, da raiz até uma folha.</p>
+      <p class="ex-enunciado">Cada nó tem <code>{ val, left, right }</code>, e os filhos podem ser <code>null</code>. Devolva quantos níveis tem o caminho mais longo, da raiz até uma folha.</p>
 <pre><code class="esc">
 //      3
 //     / \
 //    9  20
 //       / \
 //      15  7
-profundidade(raiz)  // 3
-profundidade(null)  // 0
+maxDepth(root)  // 3
+maxDepth(null)  // 0
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A profundidade de uma árvore é 1 (o próprio nó) mais a maior profundidade entre os dois filhos. A árvore vazia tem profundidade 0, e é aí que a recursão para.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type No = { valor: number; esq: No | null; dir: No | null };
+type TreeNode = { val: number; left: TreeNode | null; right: TreeNode | null };
 
-function profundidade(raiz: No | null): number {
-  if (raiz === null) return 0; // caso base
-  return 1 + Math.max(profundidade(raiz.esq), profundidade(raiz.dir));
+function maxDepth(root: TreeNode | null): number {
+  if (root === null) return 0; // base case
+  return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
 }
 </code></pre>
         <p><strong>Custo:</strong> O(n), porque visita cada nó uma vez. A memória é a altura da árvore (as chamadas empilhadas).</p>
@@ -324,7 +324,7 @@ function profundidade(raiz: No | null): number {
     <div class="ex-body">
       <p class="ex-enunciado">Numa grade de <code>'1'</code> (terra) e <code>'0'</code> (água), conte as ilhas. Uma ilha é um grupo de terra ligado na horizontal ou na vertical. A grade de entrada não pode ser alterada.</p>
 <pre><code class="esc">
-contarIlhas([
+numIslands([
   ['1', '1', '0', '0', '0'],
   ['1', '1', '0', '0', '0'],
   ['0', '0', '1', '0', '0'],
@@ -334,30 +334,30 @@ contarIlhas([
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Percorra a grade. Ao achar terra, conte uma ilha e &ldquo;afunde&rdquo; a ilha inteira (marque como água), visitando os vizinhos com recursão. Assim ela não é contada de novo. Trabalhe numa cópia.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function contarIlhas(grade: string[][]): number {
-  const linhas = grade.length;
-  const colunas = grade[0]?.length ?? 0;
-  const g = grade.map((l) => [...l]); // cópia: a entrada não muda
-  let ilhas = 0;
+function numIslands(grid: string[][]): number {
+  const rows = grid.length;
+  const cols = grid[0]?.length ?? 0;
+  const g = grid.map((row) => [...row]); // copy: the input does not change
+  let islands = 0;
 
-  function afundar(l: number, c: number) {
-    if (l < 0 || c < 0 || l >= linhas || c >= colunas || g[l][c] !== '1') return; // fora ou água
-    g[l][c] = '0';
-    afundar(l + 1, c);
-    afundar(l - 1, c);
-    afundar(l, c + 1);
-    afundar(l, c - 1);
+  function sink(r: number, c: number) {
+    if (r < 0 || c < 0 || r >= rows || c >= cols || g[r][c] !== '1') return; // outside, or water
+    g[r][c] = '0';
+    sink(r + 1, c);
+    sink(r - 1, c);
+    sink(r, c + 1);
+    sink(r, c - 1);
   }
 
-  for (let l = 0; l < linhas; l++) {
-    for (let c = 0; c < colunas; c++) {
-      if (g[l][c] === '1') {
-        ilhas++;
-        afundar(l, c);
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (g[r][c] === '1') {
+        islands++;
+        sink(r, c);
       }
     }
   }
-  return ilhas;
+  return islands;
 }
 </code></pre>
         <p><strong>Custo:</strong> O(linhas &times; colunas): cada célula é visitada um número fixo de vezes. É o mesmo algoritmo do balde de tinta do Paint e do Photoshop (<em>flood fill</em>).</p>
@@ -373,21 +373,21 @@ function contarIlhas(grade: string[][]): number {
     <div class="ex-body">
       <p class="ex-enunciado">Junte os intervalos que se sobrepõem. Pense em reuniões na agenda: <code>[1, 3]</code> e <code>[2, 6]</code> ocupam juntas de 1 a 6.</p>
 <pre><code class="esc">
-juntarIntervalos([[8, 10], [1, 3], [2, 6], [15, 18]])  // [[1, 6], [8, 10], [15, 18]]
-juntarIntervalos([[1, 4], [4, 5]])                     // [[1, 5]]
+mergeIntervals([[8, 10], [1, 3], [2, 6], [15, 18]])  // [[1, 6], [8, 10], [15, 18]]
+mergeIntervals([[1, 4], [4, 5]])                     // [[1, 5]]
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Ordene pelo começo. Depois, cada intervalo ou encosta no último que você guardou (aí estique o fim dele), ou começa um novo.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function juntarIntervalos(intervalos: [number, number][]): [number, number][] {
-  const ordenados = [...intervalos].sort((a, b) => a[0] - b[0]);
-  const saida: [number, number][] = [];
-  for (const [ini, fim] of ordenados) {
-    const ultimo = saida[saida.length - 1];
-    if (ultimo && ini <= ultimo[1]) ultimo[1] = Math.max(ultimo[1], fim); // sobrepõe: estica
-    else saida.push([ini, fim]);                                          // não sobrepõe: novo
+function mergeIntervals(intervals: [number, number][]): [number, number][] {
+  const sorted = [...intervals].sort((a, b) => a[0] - b[0]);
+  const output: [number, number][] = [];
+  for (const [start, end] of sorted) {
+    const last = output[output.length - 1];
+    if (last && start <= last[1]) last[1] = Math.max(last[1], end); // overlaps: stretch it
+    else output.push([start, end]);                                 // no overlap: new one
   }
-  return saida;
+  return output;
 }
 </code></pre>
         <p><strong>Custo:</strong> O(n log n), por causa da ordenação. O <code>Math.max</code> cobre um intervalo inteiro dentro do outro (<code>[1, 10]</code> e <code>[2, 3]</code>).</p>
@@ -401,25 +401,25 @@ function juntarIntervalos(intervalos: [number, number][]): [number, number][] {
     <div class="ex-body">
       <p class="ex-enunciado">Devolva a maior soma possível de um trecho contínuo da lista (com pelo menos um número).</p>
 <pre><code class="esc">
-maiorSomaContigua([-2, 1, -3, 4, -1, 2, 1, -5, 4])  // 6 ([4, -1, 2, 1])
-maiorSomaContigua([-3, -1, -2])                     // -1
+maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4])  // 6 ([4, -1, 2, 1])
+maxSubArray([-3, -1, -2])                     // -1
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Em cada posição, decida: vale mais continuar o trecho anterior ou começar um novo aqui? Se a soma acumulada ficou menor que o número atual, recomece.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function maiorSomaContigua(nums: number[]): number {
-  let atual = nums[0];  // a melhor soma de um trecho que TERMINA aqui
-  let melhor = nums[0]; // a melhor de todas até agora
+function maxSubArray(nums: number[]): number {
+  let current = nums[0]; // best sum of a run that ENDS here
+  let best = nums[0];    // best of all so far
   for (let i = 1; i < nums.length; i++) {
-    atual = Math.max(nums[i], atual + nums[i]); // recomeçar ou continuar
-    melhor = Math.max(melhor, atual);
+    current = Math.max(nums[i], current + nums[i]); // restart or keep going
+    best = Math.max(best, current);
   }
-  return melhor;
+  return best;
 }
 </code></pre>
         <p><strong>Custo:</strong> O(n). Tem nome, <em>algoritmo de Kadane</em>, e é a porta de entrada da programação dinâmica: guardar a melhor resposta parcial e decidir passo a passo. Começar em <code>nums[0]</code>, e não em 0, é o que acerta a lista só de negativos.</p>
       </div></details>
-      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;quisessem também onde o trecho começa e termina?</strong> Guarde o índice em que o trecho atual começou (muda quando você recomeça) e, sempre que <code>melhor</code> mudar, salve o início e o fim.</p></div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;quisessem também onde o trecho começa e termina?</strong> Guarde o índice em que o trecho atual começou (muda quando você recomeça) e, sempre que <code>best</code> mudar, salve o início e o fim.</p></div></details>
     </div>
   </div>
 

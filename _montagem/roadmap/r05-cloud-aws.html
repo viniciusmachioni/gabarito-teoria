@@ -176,9 +176,9 @@
       <ol>
         <li><code>/_next/static/chunks/main-a1b2c3.js</code></li>
         <li><code>/logo.svg</code>, sem hash no nome, que pode mudar num redesign.</li>
-        <li><code>/painel</code>, com o nome e as notas de quem está logado.</li>
-        <li><code>/api/cotacao</code>: igual para todos, muda a cada minuto.</li>
-        <li><code>/blog/meu-post</code>: igual para todos, pode ser corrigido de vez em quando.</li>
+        <li><code>/dashboard</code>, com o nome e as notas de quem está logado.</li>
+        <li><code>/api/quotes</code>: igual para todos, muda a cada minuto.</li>
+        <li><code>/blog/my-post</code>: igual para todos, pode ser corrigido de vez em quando.</li>
       </ol>
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Headers/Cache-Control">MDN: Cache-Control</a> &middot; os cartões do Ver</p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p><code>max-age</code> vale para o navegador e <code>s-maxage</code> para a CDN. <code>stale-while-revalidate</code> deixa servir a cópia velha enquanto busca a nova em segundo plano.</p></div></details>
@@ -213,9 +213,9 @@
         <ol>
           <li><code>main-a1b2c3.js</code>: <code>public, max-age=31536000, immutable</code></li>
           <li><code>/logo.svg</code>: <code>public, max-age=31536000, immutable</code></li>
-          <li><code>/painel</code>: <code>public, s-maxage=60</code></li>
-          <li><code>/api/cotacao</code>: <code>public, s-maxage=60, stale-while-revalidate=30</code></li>
-          <li><code>/blog/meu-post</code>: <code>public, max-age=86400</code></li>
+          <li><code>/dashboard</code>: <code>public, s-maxage=60</code></li>
+          <li><code>/api/quotes</code>: <code>public, s-maxage=60, stale-while-revalidate=30</code></li>
+          <li><code>/blog/my-post</code>: <code>public, max-age=86400</code></li>
         </ol>
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
@@ -228,10 +228,10 @@
         </div></details>
 
         <h5>3 &middot; Mude um requisito</h5>
-        <p><code>/api/cotacao</code> passa a devolver também a carteira de quem está logado. O que acontece com o cache?</p>
+        <p><code>/api/quotes</code> passa a devolver também a carteira de quem está logado. O que acontece com o cache?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
           <p>A resposta agora depende de quem pede, então ela vira <code>private, no-store</code>, e toda pessoa passa a ir até a origem. Mil acessos voltam a ser mil pedidos ao servidor.</p>
-          <p>A saída melhor é separar em duas rotas: <code>/api/cotacao</code>, igual para todos e com cache na CDN, e <code>/api/carteira</code>, privada. A tela junta as duas. Misturar dado público com dado pessoal na mesma resposta faz você perder o cache do dado público.</p>
+          <p>A saída melhor é separar em duas rotas: <code>/api/quotes</code>, igual para todos e com cache na CDN, e <code>/api/portfolio</code>, privada. A tela junta as duas. Misturar dado público com dado pessoal na mesma resposta faz você perder o cache do dado público.</p>
         </div></details>
       </div>
     </div>
@@ -250,14 +250,14 @@ on:
   pull_request:
 
 permissions:
-  contents: read            # só leitura: este job não publica nada
+  contents: read            # read-only: this job does not publish anything
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true  # commit novo cancela a execução velha do mesmo PR
+  cancel-in-progress: true  # a new commit cancels the old run of the same PR
 
 jobs:
-  verificar:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -265,7 +265,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm        # reaproveita os pacotes baixados entre execuções
+          cache: pnpm        # reuses downloaded packages between runs
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
@@ -302,7 +302,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verificar:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

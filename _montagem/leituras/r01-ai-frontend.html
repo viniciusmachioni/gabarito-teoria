@@ -41,8 +41,8 @@ const decoder = new TextDecoder();
 while (true) {
   const { done, value } = await reader.read();
   if (done) break;
-  const texto = decoder.decode(value, { stream: true }); // bytes viram texto
-  // acrescente o texto na tela
+  const text = decoder.decode(value, { stream: true }); // bytes become text
+  // append the text to the screen
 }</code></pre>
 <ul>
 <li><code>getReader()</code> cria um leitor. Só existe um leitor por vez para cada fluxo.</li>
