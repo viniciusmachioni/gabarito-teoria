@@ -1,0 +1,675 @@
+<section class="week" id="ent2">
+  <div class="week-head"><span class="week-num">E2</span><h2>Live coding de front em React</h2></div>
+  <div class="week-meta">~10h, um componente por sessão de 45 min &middot; 8 clássicos de entrevista, com solução testada</div>
+  <p class="intro">Em uma frase: <strong>em vaga de front, o código ao vivo mais comum é construir um componente React pequeno, e o que se avalia é o estado bem pensado, os casos de erro e a acessibilidade, não a quantidade de recurso.</strong> Os oito exercícios abaixo são os temas que mais aparecem: lista com estado, dados de uma API, busca enquanto digita, formulário, abas, tabela, cronômetro e modal. Todas as soluções foram rodadas com testes (React 19 + Testing Library). Faça o <a href="e01-fluencia.html">E1</a> até o nível 2 antes de começar.</p>
+
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. Como é a etapa</h4>
+      <p><b class="r">Formato</b>De 45 a 60 minutos, num editor online (CodeSandbox, StackBlitz) ou no seu, com a tela compartilhada. Às vezes há uma API pronta; às vezes, um mock com dados.</p>
+      <p><b class="r">O que pedem</b>&ldquo;Faça uma lista de tarefas com filtro&rdquo;, &ldquo;busque e mostre os usuários desta API&rdquo;, &ldquo;faça um campo de busca que não chame a API a cada tecla&rdquo;.</p>
+      <p><b class="r">O que avaliam</b>Se você pergunta antes de supor, se o estado é o mínimo necessário, se trata carregando, erro e vazio, se o HTML é semântico, e se explica o que faz.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Primeiro faço o caminho feliz funcionar; depois trato carregando, erro e lista vazia; no fim, teclado e leitor de tela.&rdquo;</p>
+    </div>
+    <div class="bcard">
+      <h4>2. Como treinar</h4>
+      <p><b class="r">Projeto</b><code>npm create vite@latest treino -- --template react-ts</code>, e um arquivo por exercício. Ou abra um projeto React no StackBlitz.</p>
+      <p><b class="r">Cronômetro</b>45 minutos. Passou do tempo? Pare, leia a solução, feche e refaça do zero dois dias depois.</p>
+      <p><b class="r">Em voz alta</b>Explique cada decisão enquanto escreve. Grave um dos exercícios e assista: os silêncios longos são o que mais pesa contra.</p>
+      <p><b class="r">Teste rápido</b>No fim, use o componente só com o teclado (Tab, Enter, setas). É o teste de acessibilidade mais barato que existe.</p>
+    </div>
+    <div class="bcard">
+      <h4>3. O esqueleto de todo componente</h4>
+      <p><b class="r">Estado mínimo</b>Guarde só o que não dá para calcular. A lista filtrada, o total e a página atual derivam do estado; não precisam de <code>useState</code> próprio.</p>
+      <p><b class="r">Nunca mude o estado</b>Crie objetos e listas novos (<code>[...lista, item]</code>, <code>map</code>, <code>filter</code>). Mudar no lugar não avisa o React, e a tela não atualiza.</p>
+      <p><b class="r">Efeito é para o mundo de fora</b><code>useEffect</code> sincroniza com algo externo (API, timer, evento). E todo efeito que começa algo devolve uma função que limpa.</p>
+      <p><b class="r">Os quatro estados</b>Carregando, erro (com &ldquo;tentar de novo&rdquo;), vazio e pronto. O vazio é o mais esquecido.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Isto não precisa ser estado, eu calculo a partir da lista.&rdquo; Essa frase mostra mais maturidade em React do que qualquer hook avançado.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Checklist</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="e2-1"><label for="e2-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">1 &middot; Lista de tarefas com filtro, em 30 minutos, sem consultar a solução</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-2"><label for="e2-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">2 &middot; Dados de uma API com carregando, erro, vazio e cancelamento</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-3"><label for="e2-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">3 &middot; Busca com debounce, sem resposta atrasada aparecendo na tela</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-4"><label for="e2-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">4 &middot; Formulário com validação e erros acessíveis</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-5"><label for="e2-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">5 &middot; Abas que funcionam com o teclado</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-6"><label for="e2-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">6 &middot; Tabela com ordenação e paginação, sem estado duplicado</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-7"><label for="e2-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">7 &middot; Cronômetro que não atrasa e limpa o intervalo</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-8"><label for="e2-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">8 &middot; Modal de confirmação com <code>&lt;dialog&gt;</code>, foco e Esc</span></label></li>
+    <li class="item"><input type="checkbox" id="e2-9"><label for="e2-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Um dos oito gravado em vídeo, em voz alta, em até 45 minutos</span></label></li>
+  </ul>
+
+  <div class="ex" id="lc1">
+    <div class="ex-head"><span class="ex-n">LC 1</span><h3>Lista de tarefas com filtro</h3><span class="ex-meta">30 min &middot; useState, listas, formulário</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Faça uma lista de tarefas: adicionar, marcar como feita, remover e filtrar entre todas, ativas e feitas. Mostre quantas faltam.</p>
+      <h4>Requisitos</h4>
+      <ul>
+        <li>Enter no campo adiciona. Texto vazio ou só com espaços não entra.</li>
+        <li>Mostre &ldquo;1 tarefa restante&rdquo; ou &ldquo;N tarefas restantes&rdquo;, e &ldquo;Nada por aqui.&rdquo; quando o filtro não tiver itens.</li>
+        <li>Tudo funciona pelo teclado e tem nome para o leitor de tela.</li>
+      </ul>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/learn/updating-arrays-in-state">React: atualizando listas no estado</a> &middot; <a href="https://react.dev/learn/rendering-lists">React: renderizando listas</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O estado é a lista de tarefas, o texto do campo e o filtro. A lista visível e o número de restantes <em>não</em> são estado: calcule-os a partir da lista. Use um <code>&lt;form&gt;</code> com <code>onSubmit</code>, que já dá o Enter de graça.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type Tarefa = { id: string; texto: string; feita: boolean };
+type Filtro = 'todas' | 'ativas' | 'feitas';
+
+export function ListaDeTarefas() {
+  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+  const [texto, setTexto] = useState('');
+  const [filtro, setFiltro] = useState<Filtro>('todas');
+
+  function adicionar(e: FormEvent) {
+    e.preventDefault(); // sem isto, o form recarrega a página
+    const limpo = texto.trim();
+    if (!limpo) return;
+    setTarefas((ts) => [...ts, { id: crypto.randomUUID(), texto: limpo, feita: false }]);
+    setTexto('');
+  }
+  function alternar(id: string) {
+    setTarefas((ts) => ts.map((t) => (t.id === id ? { ...t, feita: !t.feita } : t)));
+  }
+  function remover(id: string) {
+    setTarefas((ts) => ts.filter((t) => t.id !== id));
+  }
+
+  // derivados do estado: não precisam de useState
+  const visiveis = tarefas.filter((t) => filtro === 'todas' || (filtro === 'feitas' ? t.feita : !t.feita));
+  const restantes = tarefas.filter((t) => !t.feita).length;
+
+  return (
+    <div>
+      <form onSubmit={adicionar}>
+        <label htmlFor="nova-tarefa">Nova tarefa</label>
+        <input id="nova-tarefa" value={texto} onChange={(e) => setTexto(e.target.value)} />
+        <button type="submit">Adicionar</button>
+      </form>
+      <div role="group" aria-label="Filtro">
+        {(['todas', 'ativas', 'feitas'] as const).map((f) => (
+          <button key={f} type="button" aria-pressed={filtro === f} onClick={() => setFiltro(f)}>
+            {f}
+          </button>
+        ))}
+      </div>
+      {visiveis.length === 0 ? (
+        <p>Nada por aqui.</p>
+      ) : (
+        <ul>
+          {visiveis.map((t) => (
+            <li key={t.id}>
+              <label>
+                <input type="checkbox" checked={t.feita} onChange={() => alternar(t.id)} />
+                {t.texto}
+              </label>
+              <button type="button" aria-label={`Remover ${t.texto}`} onClick={() => remover(t.id)}>×</button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p>{restantes === 1 ? '1 tarefa restante' : `${restantes} tarefas restantes`}</p>
+    </div>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> a <code>key</code> é o <code>id</code>, não o índice; toda atualização cria uma lista nova; o filtro é derivado; o botão &ldquo;×&rdquo; tem <code>aria-label</code>, senão o leitor de tela diria só &ldquo;vezes&rdquo;; e o <code>aria-pressed</code> diz qual filtro está ligado.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Caça ao bug</h5>
+        <p>Um colega escreveu assim. A tela não atualiza ao marcar uma tarefa, e às vezes o item errado fica marcado depois de remover. Por quê?</p>
+<pre><code class="esc">
+function alternar(id: string) {
+  const t = tarefas.find((t) => t.id === id)!;
+  t.feita = !t.feita;
+  setTarefas(tarefas);
+}
+// ...
+{visiveis.map((t, i) => <li key={i}>...</li>)}
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>Muda o objeto no lugar e passa a mesma lista.</strong> O React compara a lista nova com a antiga pela referência. Como é o mesmo array, ele conclui que nada mudou e não redesenha.</li>
+            <li><strong><code>key</code> pelo índice.</strong> Ao remover o item 0, o item que era 1 passa a ter a chave 0, e o React reaproveita o elemento do vizinho. Tudo o que vive no elemento (um input não controlado, o foco, uma animação) vai parar no item errado.</li>
+          </ol>
+        </div></details>
+        <h5>Mude um requisito</h5>
+        <p>As tarefas precisam sobreviver ao recarregar a página. Onde você mexe?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Leia o <code>localStorage</code> no valor inicial (<code>useState(() =&gt; carregar())</code>, a forma com função, que só roda uma vez) e grave num <code>useEffect</code> que depende de <code>tarefas</code>. Envolva a leitura em <code>try/catch</code>: o dado salvo pode estar corrompido ou o navegador pode bloquear o acesso. Num app com Next, a leitura precisa esperar o navegador, porque o servidor não tem <code>localStorage</code>.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex" id="lc2">
+    <div class="ex-head"><span class="ex-n">LC 2</span><h3>Dados de uma API, com todos os estados</h3><span class="ex-meta">30 min &middot; useEffect, fetch, AbortController</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Busque os usuários em <code>https://jsonplaceholder.typicode.com/users</code> e mostre nome e e-mail. Trate carregando, erro (com &ldquo;Tentar de novo&rdquo;) e lista vazia. Se o componente sair da tela antes da resposta, o pedido é cancelado.</p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useEffect#fetching-data-with-effects">React: buscar dados com efeitos</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortController">MDN: AbortController</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um estado com três formas (carregando, erro, pronto), como no reducer do R1. O efeito busca e devolve uma limpeza que aborta. Para &ldquo;tentar de novo&rdquo;, um contador nas dependências do efeito faz ele rodar outra vez.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type Usuario = { id: number; name: string; email: string };
+type Estado = { tipo: 'carregando' } | { tipo: 'erro' } | { tipo: 'pronto'; usuarios: Usuario[] };
+
+export function ListaDeUsuarios() {
+  const [estado, setEstado] = useState<Estado>({ tipo: 'carregando' });
+  const [tentativa, setTentativa] = useState(0); // mudar o número refaz o efeito
+
+  useEffect(() => {
+    const controle = new AbortController();
+    fetch('https://jsonplaceholder.typicode.com/users', { signal: controle.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`); // fetch não falha sozinho em 404 ou 500
+        return res.json() as Promise<Usuario[]>;
+      })
+      .then((usuarios) => setEstado({ tipo: 'pronto', usuarios }))
+      .catch(() => {
+        if (!controle.signal.aborted) setEstado({ tipo: 'erro' }); // cancelado não é erro
+      });
+    return () => controle.abort(); // saiu da tela, ou vai buscar de novo: cancela este
+  }, [tentativa]);
+
+  function tentarDeNovo() {
+    setEstado({ tipo: 'carregando' });
+    setTentativa((n) => n + 1);
+  }
+
+  if (estado.tipo === 'carregando') return <p role="status">Carregando usuários…</p>;
+  if (estado.tipo === 'erro') {
+    return (
+      <div role="alert">
+        <p>Não foi possível carregar os usuários.</p>
+        <button type="button" onClick={tentarDeNovo}>Tentar de novo</button>
+      </div>
+    );
+  }
+  if (estado.usuarios.length === 0) return <p>Nenhum usuário encontrado.</p>;
+  return (
+    <ul>
+      {estado.usuarios.map((u) => <li key={u.id}>{u.name} ({u.email})</li>)}
+    </ul>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o <code>fetch</code> só rejeita em falha de rede; 404 e 500 chegam como resposta normal, por isso o <code>res.ok</code>. Em desenvolvimento, o <code>StrictMode</code> do React monta o componente duas vezes de propósito: com o <code>abort</code> na limpeza, o primeiro pedido é cancelado e nada quebra.</p>
+        <p><strong>Na vida real:</strong> num app grande, você usaria TanStack Query ou SWR, que já trazem cache, nova tentativa e cancelamento. Vale dizer isso, e mostrar que sabe o que eles fazem por baixo.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Caça ao bug</h5>
+        <p>Esta versão funciona quando tudo dá certo. Ache três problemas.</p>
+<pre><code class="esc">
+useEffect(() => {
+  fetch(URL)
+    .then((r) => r.json())
+    .then((usuarios) => setEstado({ tipo: 'pronto', usuarios }));
+}, []);
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>Sem <code>catch</code>.</strong> Se a rede cai, a tela fica em &ldquo;Carregando&rdquo; para sempre.</li>
+            <li><strong>Sem <code>res.ok</code>.</strong> Um 500 com página HTML faz o <code>json()</code> lançar erro, que também não é tratado.</li>
+            <li><strong>Sem limpeza.</strong> Saindo da tela antes da resposta, o pedido continua e ainda tenta mudar o estado de um componente que não existe mais. Em desenvolvimento, saem dois pedidos.</li>
+          </ol>
+        </div></details>
+        <h5>Mude um requisito</h5>
+        <p>A lista ganha um seletor de página (<code>?_page=2</code>). O que muda no efeito?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>A página vira estado e entra nas dependências do efeito. Ao trocar de página, a limpeza aborta o pedido da página anterior, então uma resposta lenta da página 1 não sobrescreve a página 2. É o mesmo problema de corrida do LC 3, resolvido pelo mesmo <code>abort</code>.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex" id="lc3">
+    <div class="ex-head"><span class="ex-n">LC 3</span><h3>Busca enquanto digita</h3><span class="ex-meta">40 min &middot; debounce, corrida entre pedidos</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Um campo de busca de países chama <code>GET /api/paises?q=termo</code>. Só busque 300 ms depois que a pessoa parar de digitar. Mostre &ldquo;Buscando&hellip;&rdquo;, os resultados, &ldquo;Nenhum país com X&rdquo; e o erro. Uma resposta atrasada de um termo antigo nunca pode aparecer na tela.</p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/learn/you-might-not-need-an-effect">React: você talvez não precise de um efeito</a> &middot; o exercício 13 do <a href="e01-fluencia.html#fl13">E1</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Separe em duas partes: um hook <code>useDebounce(valor, ms)</code> que devolve o valor atrasado, e um efeito que busca quando o termo atrasado muda. Para a corrida, aborte o pedido anterior na limpeza e guarde junto da resposta o termo a que ela pertence.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+export function useDebounce<T>(valor: T, ms: number): T {
+  const [atrasado, setAtrasado] = useState(valor);
+  useEffect(() => {
+    const t = setTimeout(() => setAtrasado(valor), ms);
+    return () => clearTimeout(t); // digitou de novo antes do prazo: cancela
+  }, [valor, ms]);
+  return atrasado;
+}
+
+async function buscarPaises(termo: string, signal: AbortSignal): Promise<string[]> {
+  const res = await fetch(`/api/paises?q=${encodeURIComponent(termo)}`, { signal });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+type Resposta = { termo: string; itens: string[] } | { termo: string; erro: true };
+
+export function BuscaDePaises() {
+  const [texto, setTexto] = useState('');
+  const termo = useDebounce(texto.trim(), 300);
+  const [resposta, setResposta] = useState<Resposta | null>(null);
+
+  useEffect(() => {
+    if (!termo) return;
+    const controle = new AbortController();
+    buscarPaises(termo, controle.signal)
+      .then((itens) => setResposta({ termo, itens }))
+      .catch(() => {
+        if (!controle.signal.aborted) setResposta({ termo, erro: true });
+      });
+    return () => controle.abort(); // termo mudou: a resposta antiga não interessa mais
+  }, [termo]);
+
+  // só vale a resposta do termo atual
+  const atual = resposta && resposta.termo === termo ? resposta : null;
+  const carregando = termo !== '' && atual === null;
+
+  return (
+    <div>
+      <label htmlFor="busca">Buscar país</label>
+      <input id="busca" type="search" value={texto} onChange={(e) => setTexto(e.target.value)} />
+      <div role="status">
+        {carregando && 'Buscando…'}
+        {atual && 'erro' in atual && 'Não foi possível buscar agora.'}
+        {atual && 'itens' in atual && atual.itens.length === 0 && `Nenhum país com “${termo}”.`}
+      </div>
+      {atual && 'itens' in atual && atual.itens.length > 0 && (
+        <ul>
+          {atual.itens.map((p) => <li key={p}>{p}</li>)}
+        </ul>
+      )}
+    </div>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> são duas proteções contra a corrida. O <code>abort</code> cancela o pedido velho, e a comparação <code>resposta.termo === termo</code> garante que, mesmo se ele chegar, não aparece. O &ldquo;carregando&rdquo; não é estado: é &ldquo;tenho termo e ainda não tenho a resposta dele&rdquo;. O <code>role="status"</code> faz o leitor de tela anunciar o resultado.</p>
+        <p><strong>O teste que pegaria o bug:</strong> o termo &ldquo;br&rdquo; responde em 500 ms e &ldquo;bra&rdquo; em 10 ms. Sem as proteções, &ldquo;br&rdquo; chega por último e substitui o resultado certo.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Explique em voz alta</h5>
+        <p>Por que <code>encodeURIComponent</code>? E por que o debounce fica num hook separado?</p>
+        <details class="rv"><summary>respostas</summary><div class="rv-body"><p>Sem ele, um termo como &ldquo;a&amp;b&rdquo; quebraria a URL (o <code>&amp;</code> começaria outro parâmetro). O hook separado pode ser reaproveitado e testado sozinho, e deixa o componente lendo como uma frase: &ldquo;o termo é o texto atrasado em 300 ms&rdquo;.</p></div></details>
+        <h5>Mude um requisito</h5>
+        <p>Buscar com 1 letra traz resultado demais. Só busque a partir de 2 letras, e mostre &ldquo;Digite pelo menos 2 letras&rdquo;.</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>No efeito, troque <code>if (!termo)</code> por <code>if (termo.length &lt; 2)</code>. O &ldquo;carregando&rdquo; também usa essa regra, e a mensagem nova é mais uma linha derivada: <code>termo.length === 1</code>. Repare que nenhum estado novo foi preciso.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex" id="lc4">
+    <div class="ex-head"><span class="ex-n">LC 4</span><h3>Formulário de cadastro</h3><span class="ex-meta">40 min &middot; validação, acessibilidade, envio</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Faça um cadastro com e-mail, senha e confirmação. Ao enviar, valide; se houver erro, mostre a mensagem junto do campo e leve o foco ao primeiro campo com erro. Durante o envio, o botão fica desabilitado. Se o envio falhar, avise e deixe tentar de novo.</p>
+      <h4>Regras</h4>
+      <ul>
+        <li>E-mail com formato válido. Senha com pelo menos 8 caracteres e um número. Confirmação igual à senha.</li>
+        <li>O leitor de tela precisa ouvir o erro ao chegar no campo.</li>
+      </ul>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid">MDN: aria-invalid</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby">MDN: aria-describedby</a> &middot; <a href="https://react.dev/reference/react-dom/components/input">React: input</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma função pura <code>validar(campos)</code> que devolve um objeto de erros é fácil de testar e de explicar. No campo, <code>aria-invalid</code> marca o erro e <code>aria-describedby</code> aponta para o id da mensagem. Um componente <code>Campo</code> evita repetir isso três vezes.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type Campos = { email: string; senha: string; confirmar: string };
+type Erros = Partial<Record<keyof Campos, string>>;
+
+export function validar(c: Campos): Erros {
+  const erros: Erros = {};
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) erros.email = 'Digite um e-mail válido.';
+  if (c.senha.length < 8) erros.senha = 'A senha precisa de pelo menos 8 caracteres.';
+  else if (!/\d/.test(c.senha)) erros.senha = 'A senha precisa de pelo menos um número.';
+  if (c.confirmar !== c.senha) erros.confirmar = 'As senhas não são iguais.';
+  return erros;
+}
+
+function Campo(props: {
+  nome: keyof Campos; rotulo: string; tipo: string; valor: string; erro?: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}) {
+  const idErro = `${props.nome}-erro`;
+  return (
+    <div>
+      <label htmlFor={props.nome}>{props.rotulo}</label>
+      <input
+        id={props.nome} name={props.nome} type={props.tipo} value={props.valor} onChange={props.onChange}
+        aria-invalid={props.erro ? true : undefined}
+        aria-describedby={props.erro ? idErro : undefined} // o leitor lê a mensagem junto do campo
+      />
+      {props.erro && <p id={idErro}>{props.erro}</p>}
+    </div>
+  );
+}
+
+export function Cadastro({ enviar }: { enviar: (c: Campos) => Promise<void> }) {
+  const [campos, setCampos] = useState<Campos>({ email: '', senha: '', confirmar: '' });
+  const [erros, setErros] = useState<Erros>({});
+  const [status, setStatus] = useState<'editando' | 'enviando' | 'enviado' | 'falhou'>('editando');
+
+  function mudar(e: ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setCampos((c) => ({ ...c, [name]: value }));
+  }
+
+  async function aoEnviar(e: FormEvent) {
+    e.preventDefault();
+    const novos = validar(campos);
+    setErros(novos);
+    const primeiro = Object.keys(novos)[0];
+    if (primeiro) {
+      document.getElementById(primeiro)?.focus(); // leva a pessoa ao primeiro erro
+      return;
+    }
+    setStatus('enviando');
+    try {
+      await enviar(campos);
+      setStatus('enviado');
+    } catch {
+      setStatus('falhou');
+    }
+  }
+
+  if (status === 'enviado') return <p role="status">Conta criada. Confira o seu e-mail.</p>;
+  return (
+    <form onSubmit={aoEnviar} noValidate>
+      <Campo nome="email" rotulo="E-mail" tipo="email" valor={campos.email} erro={erros.email} onChange={mudar} />
+      <Campo nome="senha" rotulo="Senha" tipo="password" valor={campos.senha} erro={erros.senha} onChange={mudar} />
+      <Campo nome="confirmar" rotulo="Confirmar senha" tipo="password" valor={campos.confirmar} erro={erros.confirmar} onChange={mudar} />
+      {status === 'falhou' && <p role="alert">Não foi possível criar a conta. Tente de novo.</p>}
+      <button type="submit" disabled={status === 'enviando'}>
+        {status === 'enviando' ? 'Criando…' : 'Criar conta'}
+      </button>
+    </form>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> a validação é uma função pura, testável sem tela; o <code>noValidate</code> desliga os balões do navegador para as mensagens serem as suas; o botão desabilitado evita envio duplo; e a validação do front é conforto, a de verdade fica no servidor.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Explique em voz alta</h5>
+        <p>Por que validar ao enviar, e não a cada tecla? Quando faria sentido validar ao sair do campo?</p>
+        <details class="rv"><summary>respostas</summary><div class="rv-body"><p>Validar a cada tecla grita &ldquo;e-mail inválido&rdquo; enquanto a pessoa ainda está digitando o e-mail. Ao sair do campo (<code>onBlur</code>) é um meio-termo bom para formulários longos: o aviso chega cedo, mas só depois de a pessoa terminar aquele campo. Depois que o erro apareceu, revalidar a cada tecla é bom, porque o aviso some assim que o campo fica certo.</p></div></details>
+        <h5>Mude um requisito</h5>
+        <p>O servidor responde que o e-mail já está em uso. Onde essa mensagem aparece?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>No próprio campo de e-mail, como os outros erros. O <code>enviar</code> passa a devolver os erros do servidor (ou a lançar um erro com eles), e o <code>catch</code> faz <code>setErros({ email: 'Este e-mail já tem conta.' })</code> e foca o campo. Um aviso genérico no topo obrigaria a pessoa a adivinhar qual campo corrigir.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex" id="lc5">
+    <div class="ex-head"><span class="ex-n">LC 5</span><h3>Abas acessíveis</h3><span class="ex-meta">30 min &middot; ARIA, teclado, refs</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Faça um componente <code>Abas</code> que recebe uma lista <code>{ id, titulo, conteudo }</code>. Clicar troca a aba. No teclado: Tab entra na aba ativa, setas trocam de aba, Home e End vão para a primeira e a última, e o próximo Tab vai para o conteúdo.</p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.w3.org/WAI/ARIA/apg/patterns/tabs/">W3C: padrão de abas</a> &middot; <a href="https://react.dev/learn/manipulating-the-dom-with-refs">React: refs e o DOM</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Papéis: <code>tablist</code> no grupo, <code>tab</code> em cada botão, <code>tabpanel</code> no conteúdo. Só a aba ativa tem <code>tabIndex={0}</code>; as outras, <code>-1</code>. Assim o Tab entra numa aba só, e as setas fazem o resto. Para mover o foco, guarde os botões num <code>useRef</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type Aba = { id: string; titulo: string; conteudo: ReactNode };
+
+export function Abas({ abas }: { abas: Aba[] }) {
+  const [ativa, setAtiva] = useState(0);
+  const botoes = useRef<(HTMLButtonElement | null)[]>([]);
+
+  function teclado(e: KeyboardEvent<HTMLDivElement>) {
+    let nova: number;
+    if (e.key === 'ArrowRight') nova = (ativa + 1) % abas.length;               // depois da última, volta à primeira
+    else if (e.key === 'ArrowLeft') nova = (ativa - 1 + abas.length) % abas.length;
+    else if (e.key === 'Home') nova = 0;
+    else if (e.key === 'End') nova = abas.length - 1;
+    else return; // outras teclas seguem normais
+    e.preventDefault();
+    setAtiva(nova);
+    botoes.current[nova]?.focus();
+  }
+
+  return (
+    <div>
+      <div role="tablist" aria-label="Seções" onKeyDown={teclado}>
+        {abas.map((aba, i) => (
+          <button
+            key={aba.id}
+            ref={(el) => { botoes.current[i] = el; }}
+            type="button"
+            role="tab"
+            id={`aba-${aba.id}`}
+            aria-selected={i === ativa}
+            aria-controls={`painel-${aba.id}`}
+            tabIndex={i === ativa ? 0 : -1} // só a ativa entra na ordem do Tab
+            onClick={() => setAtiva(i)}
+          >
+            {aba.titulo}
+          </button>
+        ))}
+      </div>
+      {abas.map((aba, i) => (
+        <div key={aba.id} role="tabpanel" id={`painel-${aba.id}`} aria-labelledby={`aba-${aba.id}`} hidden={i !== ativa} tabIndex={0}>
+          {aba.conteudo}
+        </div>
+      ))}
+    </div>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o <code>%</code> faz a seta &ldquo;dar a volta&rdquo;; o <code>+ abas.length</code> evita índice negativo; e os painéis escondidos continuam no DOM com <code>hidden</code>, então trocar de aba não perde o que foi digitado dentro deles.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Explique em voz alta</h5>
+        <p>Por que não deixar todas as abas com <code>tabIndex={0}</code>?</p>
+        <details class="rv"><summary>resposta</summary><div class="rv-body"><p>Com dez abas, a pessoa no teclado precisaria de dez Tabs para chegar ao conteúdo. O padrão do W3C trata o grupo de abas como um controle só: um Tab para entrar, setas para escolher, um Tab para sair. É o mesmo comportamento de um grupo de rádio.</p></div></details>
+        <h5>Mude um requisito</h5>
+        <p>Cada aba agora carrega dados de uma API, e só deve buscar quando for aberta pela primeira vez.</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Guarde um <code>Set</code> com as abas já abertas e renderize o conteúdo só delas (as nunca abertas ficam vazias). Cada conteúdo é um componente com o seu próprio efeito de busca, como o LC 2. Como os painéis já abertos continuam montados (com <code>hidden</code>), voltar a uma aba não busca de novo.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex" id="lc6">
+    <div class="ex-head"><span class="ex-n">LC 6</span><h3>Tabela com ordenação e paginação</h3><span class="ex-meta">40 min &middot; estado derivado, useMemo</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Mostre uma lista de pessoas (<code>{ id, nome, idade, cidade }</code>) numa tabela de 5 linhas por página. Clicar no cabeçalho ordena pela coluna; clicar de novo inverte. Ao mudar a ordem, volte para a página 1. Os botões Anterior e Próxima ficam desabilitados nas pontas.</p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useMemo">React: useMemo</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort">MDN: aria-sort</a> &middot; o exercício 8 do <a href="e01-fluencia.html#fl8">E1</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O estado é só a ordem (coluna e direção) e o número da página. A lista ordenada, a fatia da página e o total de páginas são calculados. Ordene uma cópia, e use <code>localeCompare</code> para texto com acento.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type Pessoa = { id: number; nome: string; idade: number; cidade: string };
+type Coluna = 'nome' | 'idade' | 'cidade';
+const POR_PAGINA = 5;
+const ROTULOS: Record<Coluna, string> = { nome: 'Nome', idade: 'Idade', cidade: 'Cidade' };
+
+export function TabelaDePessoas({ pessoas }: { pessoas: Pessoa[] }) {
+  const [ordem, setOrdem] = useState<{ coluna: Coluna; direcao: 'asc' | 'desc' }>({ coluna: 'nome', direcao: 'asc' });
+  const [pagina, setPagina] = useState(1);
+
+  const ordenadas = useMemo(() => {
+    const sinal = ordem.direcao === 'asc' ? 1 : -1;
+    return [...pessoas].sort((a, b) => {
+      const x = a[ordem.coluna];
+      const y = b[ordem.coluna];
+      const cmp = typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y), 'pt-BR');
+      return cmp * sinal;
+    });
+  }, [pessoas, ordem]);
+
+  const totalPaginas = Math.max(1, Math.ceil(ordenadas.length / POR_PAGINA));
+  const paginaAtual = Math.min(pagina, totalPaginas); // a lista pode ter encolhido
+  const visiveis = ordenadas.slice((paginaAtual - 1) * POR_PAGINA, paginaAtual * POR_PAGINA);
+
+  function ordenarPor(coluna: Coluna) {
+    setOrdem((o) => ({ coluna, direcao: o.coluna === coluna && o.direcao === 'asc' ? 'desc' : 'asc' }));
+    setPagina(1); // nova ordem: volta ao começo
+  }
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+            {(Object.keys(ROTULOS) as Coluna[]).map((c) => (
+              <th key={c} aria-sort={ordem.coluna === c ? (ordem.direcao === 'asc' ? 'ascending' : 'descending') : 'none'}>
+                <button type="button" onClick={() => ordenarPor(c)}>{ROTULOS[c]}</button>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {visiveis.map((p) => (
+            <tr key={p.id}><td>{p.nome}</td><td>{p.idade}</td><td>{p.cidade}</td></tr>
+          ))}
+        </tbody>
+      </table>
+      <nav aria-label="Paginação">
+        <button type="button" onClick={() => setPagina(paginaAtual - 1)} disabled={paginaAtual === 1}>Anterior</button>
+        <span>Página {paginaAtual} de {totalPaginas}</span>
+        <button type="button" onClick={() => setPagina(paginaAtual + 1)} disabled={paginaAtual === totalPaginas}>Próxima</button>
+      </nav>
+    </div>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o cabeçalho é um <code>&lt;button&gt;</code> dentro do <code>&lt;th&gt;</code> (clicável pelo teclado), e o <code>aria-sort</code> diz ao leitor de tela qual coluna está ordenada. O <code>Math.min</code> da página atual cobre a lista que encolheu: sem ele, a tela mostraria &ldquo;Página 3 de 2&rdquo;.</p>
+        <p><strong>Sobre o <code>useMemo</code>:</strong> ordenar 50 itens é rápido, e o <code>useMemo</code> poderia sair. Ele passa a valer com milhares de linhas. Dizer isso mostra que você sabe quando a otimização se paga.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Caça ao bug</h5>
+        <p>Um colega guardou a lista ordenada no estado, assim. O que dá errado quando a prop <code>pessoas</code> muda?</p>
+<pre><code class="esc">
+const [ordenadas, setOrdenadas] = useState(pessoas);
+function ordenarPor(coluna: Coluna) {
+  setOrdenadas([...ordenadas].sort(/* ... */));
+}
+</code></pre>
+        <details class="rv"><summary>o erro</summary><div class="rv-body"><p>O <code>useState(pessoas)</code> só usa o valor na primeira renderização. Se o pai mandar uma lista nova (uma pessoa cadastrada), a tabela continua mostrando a antiga. É o erro de <em>estado duplicado</em>: a mesma informação em dois lugares, que deixam de concordar. A solução é derivar a lista ordenada da prop, como na solução.</p></div></details>
+        <h5>Mude um requisito</h5>
+        <p>Os dados passam a vir paginados do servidor (<code>?pagina=2&amp;ordem=idade</code>), porque são 100 mil pessoas.</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Ordenar e fatiar saem do componente e vão para o servidor (o banco faz <code>ORDER BY</code> e <code>LIMIT</code>/<code>OFFSET</code>). A ordem e a página continuam sendo estado, mas agora entram nas dependências de um efeito de busca, como no LC 2. Pôr os dois na URL (<code>?pagina=2</code>) permite compartilhar o link e usar o botão voltar.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex" id="lc7">
+    <div class="ex-head"><span class="ex-n">LC 7</span><h3>Cronômetro</h3><span class="ex-meta">30 min &middot; setInterval, cleanup, useRef</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Faça um cronômetro <code>mm:ss.d</code> com Iniciar/Continuar, Pausar e Zerar. O tempo mostrado não pode atrasar, mesmo depois de vários minutos ou com a aba em segundo plano. Ao sair da tela, nenhum timer fica rodando.</p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useRef">React: useRef</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/setInterval">MDN: setInterval</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Não some 100 a cada tick: o navegador não garante o intervalo exato. Guarde o horário em que a contagem começou e calcule <code>Date.now() - inicio</code> a cada tick. Valores que não aparecem na tela (o início, o acumulado) ficam num <code>useRef</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function formatar(ms: number) {
+  const totalSeg = Math.floor(ms / 1000);
+  const min = String(Math.floor(totalSeg / 60)).padStart(2, '0');
+  const seg = String(totalSeg % 60).padStart(2, '0');
+  const decimo = Math.floor((ms % 1000) / 100);
+  return `${min}:${seg}.${decimo}`;
+}
+
+export function Cronometro() {
+  const [decorrido, setDecorrido] = useState(0); // o que a tela mostra
+  const [rodando, setRodando] = useState(false);
+  const acumulado = useRef(0); // tempo somado até a última pausa
+  const inicio = useRef(0);    // quando começou a rodada atual
+
+  useEffect(() => {
+    if (!rodando) return;
+    const id = setInterval(() => setDecorrido(acumulado.current + Date.now() - inicio.current), 100);
+    return () => clearInterval(id); // pausou ou saiu da tela: para o intervalo
+  }, [rodando]);
+
+  function iniciar() {
+    inicio.current = Date.now();
+    setRodando(true);
+  }
+  function pausar() {
+    acumulado.current += Date.now() - inicio.current;
+    setDecorrido(acumulado.current);
+    setRodando(false);
+  }
+  function zerar() {
+    acumulado.current = 0;
+    setDecorrido(0);
+    setRodando(false);
+  }
+
+  return (
+    <div>
+      <p>{formatar(decorrido)}</p>
+      {rodando
+        ? <button type="button" onClick={pausar}>Pausar</button>
+        : <button type="button" onClick={iniciar}>{decorrido === 0 ? 'Iniciar' : 'Continuar'}</button>}
+      <button type="button" onClick={zerar} disabled={decorrido === 0 && !rodando}>Zerar</button>
+    </div>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> <code>useState</code> é para o que aparece na tela; <code>useRef</code> é para o que só o código precisa lembrar (mudar uma ref não redesenha). E o tempo vem do relógio, não da contagem de ticks.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Caça ao bug</h5>
+        <p>Esta é a versão que quase todo mundo escreve primeiro. Ache os três problemas.</p>
+<pre><code class="esc">
+useEffect(() => {
+  if (!rodando) return;
+  setInterval(() => setDecorrido(decorrido + 100), 100);
+}, [rodando]);
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>Closure velha (<em>stale closure</em>).</strong> A função do intervalo lembra o <code>decorrido</code> do momento em que foi criada (0). Ela calcula 0 + 100 para sempre, e a tela trava em 00:00.1. Com <code>setDecorrido((d) =&gt; d + 100)</code>, esse problema some.</li>
+            <li><strong>Sem limpeza.</strong> Pausar não para o intervalo, e cada Iniciar cria mais um. Depois de três pausas, são três intervalos rodando juntos.</li>
+            <li><strong>Somar 100 a cada tick atrasa.</strong> O intervalo não é exato, e navegadores como o Chrome reduzem os timers de abas em segundo plano para no máximo um por segundo. Contando ticks, o cronômetro mostra menos tempo do que passou.</li>
+          </ol>
+        </div></details>
+        <h5>Mude um requisito</h5>
+        <p>O cronômetro ganha um botão &ldquo;Volta&rdquo;, que registra o tempo atual numa lista, como no app de relógio do celular.</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Um estado novo, <code>voltas: number[]</code>. O botão calcula o tempo atual do mesmo jeito que o intervalo (<code>acumulado.current + Date.now() - inicio.current</code>) e acrescenta à lista. O tempo de cada volta (a diferença para a anterior) é derivado na hora de mostrar, e o Zerar também limpa as voltas.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <div class="ex" id="lc8">
+    <div class="ex-head"><span class="ex-n">LC 8</span><h3>Modal de confirmação</h3><span class="ex-meta">25 min &middot; &lt;dialog&gt;, foco, teclado</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Um botão &ldquo;Excluir item&rdquo; abre um modal de confirmação. Enquanto ele está aberto, o resto da página não recebe clique nem foco. Esc e Cancelar fecham sem excluir. Ao fechar, o foco volta para o botão que abriu.</p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/dialog">MDN: &lt;dialog&gt;</a> &middot; <a href="https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/">W3C: padrão de diálogo modal</a></p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Antes de montar tudo à mão, lembre que o HTML já tem um elemento para isto. O <code>&lt;dialog&gt;</code> aberto com <code>showModal()</code> já bloqueia o fundo, fecha com Esc e devolve o foco. Um <code>&lt;form method="dialog"&gt;</code> dentro dele fecha o modal ao enviar.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+export function ConfirmarExclusao({ nome, onConfirmar }: { nome: string; onConfirmar: () => void }) {
+  const dialogo = useRef<HTMLDialogElement>(null);
+  return (
+    <>
+      <button type="button" onClick={() => dialogo.current?.showModal()}>
+        Excluir {nome}
+      </button>
+      <dialog ref={dialogo} aria-labelledby="titulo-excluir">
+        <h2 id="titulo-excluir">Excluir “{nome}”?</h2>
+        <p>Essa ação não pode ser desfeita.</p>
+        {/* method="dialog": enviar este form fecha o diálogo, sem recarregar nada */}
+        <form method="dialog">
+          <button value="cancelar">Cancelar</button>
+          <button value="excluir" onClick={onConfirmar}>Excluir</button>
+        </form>
+      </dialog>
+    </>
+  );
+}
+</code></pre>
+        <p><strong>O que mostrar ao entrevistador:</strong> o <code>showModal()</code> entrega de graça o que levaria uma tarde para fazer à mão: o resto da página fica inerte, o Esc fecha e o foco volta para quem abriu. O foco começa no primeiro botão, o Cancelar, que é o mais seguro numa ação destrutiva. Saber que o HTML já resolve, em vez de escrever 80 linhas de JavaScript, é um sinal forte de senioridade.</p>
+      </div></details>
+      <div class="revisar">
+        <h4>Revisar</h4>
+        <h5>Explique em voz alta</h5>
+        <p>Se você fizesse o modal com uma <code>&lt;div&gt;</code> e CSS, o que precisaria implementar à mão?</p>
+        <details class="rv"><summary>resposta</summary><div class="rv-body"><p>Prender o foco dentro do modal (o Tab não pode sair para a página atrás), fechar com Esc, devolver o foco ao botão que abriu, impedir clique e rolagem no fundo, e os atributos <code>role="dialog"</code> e <code>aria-modal="true"</code>. Bibliotecas como Radix e Headless UI existem justamente para isso; o <code>&lt;dialog&gt;</code> nativo cobre a maior parte.</p></div></details>
+        <h5>Mude um requisito</h5>
+        <p>A exclusão agora chama a API e pode falhar. O modal só fecha se der certo.</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>O botão Excluir sai do <code>form method="dialog"</code> (que fecha na hora) e vira um botão comum que chama a API. Enquanto espera, ele fica desabilitado com &ldquo;Excluindo&hellip;&rdquo;; se der certo, <code>dialogo.current?.close()</code>; se falhar, uma mensagem com <code>role="alert"</code> aparece dentro do modal, que continua aberto.</p></div></details>
+      </div>
+    </div>
+  </div>
+</section>

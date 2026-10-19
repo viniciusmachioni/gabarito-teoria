@@ -194,3 +194,42 @@ a explicação básica antes do detalhe. A ideia de "ver, fazer, provar" veio do
 - **Cartões de tradeoff**: ganharam `p.tresumo` ("Em uma frase") no topo. Os cinco campos e a linha "Sua vez" não mudaram.
 - **R7**: 4 cartões do Ver com `p.real` (LinkedIn Recruiter, Sonner/Emil Kowalski, ATS, STAR na Amazon). **R8**: a tabela
   "qual exercício treina qual conceito" diz onde cada conceito existe num produto real.
+
+## Fazer: escrever uma vez, revisar sempre (19/10/2026)
+
+Motivo: escrever código básico de cabeça vale menos com IA no dia a dia; revisar, achar o erro e adaptar a uma mudança
+valem mais. Mas só revisa bem quem já escreveu o núcleo, então o exercício de escrever continua, e a revisão vem em cima.
+
+- **Regra de consulta**: a `p.etapa-nota` do Fazer (R1–R6) troca "sem consultar" por "consulte a sintaxe, não a lógica" e
+  dá a ordem de ajuda (enunciado, cartão do Ver, documentação, dica, solução). Cada exercício ganhou um `p.ex-consulta`
+  com os links da documentação certa (MDN, handbook do TypeScript, Zod, Vitest, GitHub Actions, MCP...), conferidos em
+  19/10/2026.
+- **Bloco `div.revisar`** depois da solução, nos 13 exercícios (R1–R6 e o STAR do R7), com três passos, cada um com a
+  resposta recolhida em `details.rv`: (1) explicar em voz alta, (2) caça ao bug numa versão com 3 ou 4 erros realistas,
+  (3) mudar um requisito. Nos exercícios de decisão (R3, R5, R6, R7), a caça ao bug é a resposta de um colega.
+- As versões com bug em TypeScript compilam com `tsc --strict` e os erros descritos foram reproduzidos rodando: o reducer
+  do R1 (fall-through vira erro com `noFallthroughCasesInSwitch`), o Zod do R1, a promessa rejeitada sem `await` do R3
+  (derruba o Node) e os testes fracos do R4 (passam mesmo com o retry apagado; Vitest 5 falha um `rejects` sem `await`).
+- Barra de etapas: "escrever e revisar"; título da etapa: "Escrever uma vez, revisar sempre". CSS em `estilo-extra.css`
+  (`.ex-consulta`, `.revisar`, `details.rv`, cor `--blue`). O R8 ficou como estava.
+
+## Seção Entrevista e roadmap por nível: júnior avançado e pleno (19/10/2026)
+
+Motivo: o alvo passou a ser entrevista de júnior avançado e pleno. Nesse nível, o filtro mais comum é código ao vivo (muitas
+vezes sem IA), e o roadmap da mentoria, que mira front com IA e design systems, funciona como diferencial, não como base.
+
+- **Grupo novo `entrevista`** (fonte `_montagem/entrevista/`, primeiro no índice, "comece aqui" na capa e trilha
+  "Júnior avançado / Pleno · front" em primeiro): E0 plano (o que muda de júnior para pleno, etapas, divisão da semana,
+  plano de 8 semanas, checklist de prontidão), E1 fluência (16 exercícios em 4 níveis, `.ex` com ids `fl1`–`fl16`),
+  E2 live coding de front (8 componentes, `lc1`–`lc8`, com Revisar), E3 algoritmos (12 problemas por padrão, `al1`–`al12`,
+  com link do LeetCode e Big-O), E4 fundamentos (38 perguntas `details.ans` em seis temas + 12 de múltipla escolha em
+  `_montagem/entrevista/quiz/e04-fundamentos.mjs`; o build agora lê esse diretório também) e E5 projetos e comportamental
+  (pitch do Gabarita e do Ally AI só com fatos já documentados no guia, colchetes onde o dado é do usuário).
+- Checkboxes com prefixo `e0-` a `e5-`. As soluções de E1 (16), E3 (12) e E2 (7 dos 8 componentes; o `<dialog>` só compila,
+  o jsdom não tem `showModal`) passaram em testes com Vitest 5, Testing Library e React 19; os bugs dos blocos Revisar do E2
+  (mutação de estado, `key` por índice, closure velha) foram conferidos.
+- **Roadmap por nível**: cada um dos 78 tópicos de R1–R8 ganhou `span.nivel` (`n-base`, `n-dif`, `n-sr`), e cada página
+  um `div.nivel-box` depois da barra de etapas ("Domine", "Saiba explicar", "Deixe para depois"). O R0 ganhou a ordem de
+  estudo para o nível. Nenhum conteúdo do roadmap foi apagado. A capa trocou o selo "SENIOR" pelo alvo novo e a caixa do
+  roadmap virou "Diferencial".
+

@@ -22,6 +22,7 @@ const semTags = (s) => s.replace(/<[^>]+>/g, '');
 /* Registro das páginas, na ordem de leitura                          */
 /* ------------------------------------------------------------------ */
 const GRUPOS = {
+  entrevista: 'Entrevista · júnior avançado e pleno · comece aqui',
   roadmap: 'Roadmap da mentoria · First Trial · foco atual',
   nucleo: 'Núcleo · 5 semanas',
   bonus: 'Bônus · material de consulta',
@@ -31,6 +32,12 @@ const GRUPOS = {
 
 // As páginas do roadmap vêm primeiro: são o foco atual. O resto do guia continua igual logo depois.
 const PAGINAS = [
+  { slug: 'e00-plano', fonte: 'entrevista', num: 'E0', grupo: 'entrevista', titulo: 'Plano: júnior avançado e pleno', foco: 'Plano &mdash; o que a entrevista de júnior avançado e pleno cobra, a divisão da semana e quando você está pronto', tempo: '~40min' },
+  { slug: 'e01-fluencia', fonte: 'entrevista', num: 'E1', grupo: 'entrevista', titulo: 'Fluência: código à mão', foco: 'Fluência &mdash; 16 exercícios curtos de JavaScript e TypeScript, do básico ao assíncrono, para escrever sem travar', tempo: '30 min/dia' },
+  { slug: 'e02-live-coding-front', fonte: 'entrevista', num: 'E2', grupo: 'entrevista', titulo: 'Live coding de front em React', foco: 'Live coding de front &mdash; 8 componentes clássicos de entrevista: lista, busca, formulário, abas, tabela, cronômetro e modal', tempo: '~10h' },
+  { slug: 'e03-algoritmos', fonte: 'entrevista', num: 'E3', grupo: 'entrevista', titulo: 'Algoritmos que caem nesse nível', foco: 'Algoritmos &mdash; 12 problemas fáceis e médios, um por padrão, com Big-O e solução comentada', tempo: '~10h' },
+  { slug: 'e04-fundamentos', fonte: 'entrevista', num: 'E4', grupo: 'entrevista', titulo: 'Fundamentos: a conversa técnica', foco: 'Fundamentos &mdash; as perguntas de JavaScript, React, TypeScript, navegador, CSS e testes que mais caem na conversa técnica', tempo: '~8h' },
+  { slug: 'e05-projetos-comportamental', fonte: 'entrevista', num: 'E5', grupo: 'entrevista', titulo: 'Seus projetos e o comportamental', foco: 'Projetos e comportamental &mdash; contar o Gabarita e o Ally AI em 2 minutos e responder às perguntas de pleno', tempo: '~4h' },
   { slug: 'r00-mapa', fonte: 'roadmap', num: 'R0', grupo: 'roadmap', titulo: 'Mapa: roadmap × Gabarita e Ally AI', foco: 'Mapa do roadmap &mdash; cada item, o que você já fez no Gabarita e no Ally AI, e o que falta', tempo: '~30min' },
   { slug: 'r01-ai-frontend', fonte: 'roadmap', num: 'R1', grupo: 'roadmap', titulo: 'AI-Powered Frontend', foco: 'AI-Powered Frontend &mdash; streaming, tool calling, structured outputs, Generative UI', tempo: '~8h' },
   { slug: 'r02-design-systems', fonte: 'roadmap', num: 'R2', grupo: 'roadmap', titulo: 'Design Systems & Design Engineering', foco: 'Design Systems &amp; Design Engineering &mdash; tokens, variantes, Storybook, Figma, regressão visual', tempo: '~8h' },
@@ -71,6 +78,12 @@ const PAGINAS = [
 
 // Trilhas por vaga: ordem sugerida de páginas pra cada alvo.
 const TRILHAS = [
+  {
+    nome: 'Júnior avançado / Pleno · front',
+    quem: 'o seu alvo agora: produto, fintech, e-commerce, aqui e lá fora',
+    passos: ['e00-plano', 'e01-fluencia', 'e02-live-coding-front', 'e04-fundamentos', '01-javascript-react', 'b04-typescript', 'e03-algoritmos', 'r01-ai-frontend', 'r02-design-systems', 'e05-projetos-comportamental'],
+    nota: 'O filtro mais comum nesse nível é código ao vivo: um componente React ou um problema de algoritmo, muitas vezes sem IA. Fluência primeiro, roadmap como diferencial.',
+  },
   {
     nome: 'Senior Front-end · Brasil',
     quem: 'produto, fintech, e-commerce, consultoria',
@@ -149,6 +162,14 @@ const dirQuizRoadmap = path.join(MONT, 'roadmap', 'quiz');
 if (existe(dirQuizRoadmap)) {
   for (const f of fs.readdirSync(dirQuizRoadmap).filter((f) => f.endsWith('.mjs')).sort()) {
     const qs = (await import(pathToFileURL(path.join(dirQuizRoadmap, f)).href)).default;
+    quizPorPagina[f.replace(/\.mjs$/, '')] = qs;
+    quizRoadmap = quizRoadmap.concat(qs);
+  }
+}
+const dirQuizEntrevista = path.join(MONT, 'entrevista', 'quiz');
+if (existe(dirQuizEntrevista)) {
+  for (const f of fs.readdirSync(dirQuizEntrevista).filter((f) => f.endsWith('.mjs')).sort()) {
+    const qs = (await import(pathToFileURL(path.join(dirQuizEntrevista, f)).href)).default;
     quizPorPagina[f.replace(/\.mjs$/, '')] = qs;
     quizRoadmap = quizRoadmap.concat(qs);
   }
@@ -234,8 +255,8 @@ function embuteLeituras(slug, html) {
 /* Montagem das páginas                                               */
 /* ------------------------------------------------------------------ */
 function conteudoDe(p) {
-  if (p.fonte === 'novo' || p.fonte === 'roadmap') {
-    const arq = path.join(MONT, p.fonte === 'novo' ? 'novos' : 'roadmap', p.slug + '.html');
+  if (p.fonte === 'novo' || p.fonte === 'roadmap' || p.fonte === 'entrevista') {
+    const arq = path.join(MONT, p.fonte === 'novo' ? 'novos' : p.fonte, p.slug + '.html');
     return existe(arq) ? ler(arq).trim() : null;
   }
   if (p.fonte === 'star') return secoesOriginais.star;
@@ -278,7 +299,7 @@ for (const p of PAGINAS) {
   if (!c) { avisa('pendente: ' + p.slug + ' (' + p.fonte + ')'); continue; }
   let { html, n } = embuteLeituras(p.slug, c);
   let nQuiz = 0;
-  if (p.fonte === 'roadmap') {
+  if (p.fonte === 'roadmap' || (p.fonte === 'entrevista' && quizPorPagina[p.slug])) {
     const qs = quizPorPagina[p.slug] || [];
     nQuiz = qs.length;
     if (nQuiz < MIN_QUIZ_PAGINA || nQuiz > MAX_QUIZ_PAGINA) avisa(p.slug + ': ' + nQuiz + ' questões de múltipla escolha (meta: ' + MIN_QUIZ_PAGINA + ' a ' + MAX_QUIZ_PAGINA + ')');
@@ -305,6 +326,7 @@ const totais = {
   fechadasRoadmap: publicadas.reduce((s, p) => s + (p.fechadas || 0), 0),
   blocos: publicadas.filter((p) => p.grupo !== 'pratica').length,
   roadmap: publicadas.filter((p) => p.grupo === 'roadmap').length,
+  entrevista: publicadas.filter((p) => p.grupo === 'entrevista').length,
 };
 
 const HOJE = new Date().toLocaleDateString('pt-BR');
@@ -364,7 +386,7 @@ const trilhas = TRILHAS.map((t) =>
 const linhas = Object.keys(GRUPOS).map((g) => {
   const ps = publicadas.filter((p) => p.grupo === g);
   if (!ps.length) return '';
-  return '      <tr class="grupo"><td colspan="4">' + GRUPOS[g] + (g === 'roadmap' ? ' <span class="tag-novo">comece aqui</span>' : '') + '</td></tr>\n' +
+  return '      <tr class="grupo"><td colspan="4">' + GRUPOS[g] + (g === 'entrevista' ? ' <span class="tag-novo">comece aqui</span>' : '') + '</td></tr>\n' +
     ps.map((p) => {
       const attrs = p.topicos ? ' data-prefix="' + p.prefixo + '" data-total="' + p.topicos + '"' : '';
       return '      <tr' + attrs + '><td class="wk">' + p.num + '</td><td><a href="paginas/' + p.slug + '.html">' + p.foco + '</a>' +
@@ -374,12 +396,27 @@ const linhas = Object.keys(GRUPOS).map((g) => {
 
 const primeira = publicadas[0];
 
+// Caixa "comece aqui" da capa: a seção Entrevista (júnior avançado e pleno), com o progresso de cada página.
+const paginasEntrevista = publicadas.filter((p) => p.grupo === 'entrevista');
+const focoEntrevista = !paginasEntrevista.length ? '' :
+`  <section class="week foco" id="entrevista">
+    <div class="week-head"><span class="week-num">E</span><h2 style="font-size:22px;">Comece aqui: a entrevista de júnior avançado e pleno</h2></div>
+    <div class="week-meta">código à mão, live coding de front, algoritmos, fundamentos e os seus projetos &middot; o roadmap da mentoria vem logo abaixo, como diferencial</div>
+    <p class="intro">Nesse nível, o que mais elimina candidato é travar no código ao vivo, e o que mais diferencia é saber explicar o próprio trabalho. Esta seção cuida das duas coisas: exercícios curtos para recuperar a fluência, os componentes React que mais caem em live coding, os algoritmos fáceis e médios por padrão, as perguntas da conversa técnica e o roteiro para contar o Gabarita e o Ally AI. Comece pelo plano: ele divide a semana e diz quando você está pronto.</p>
+    <ol class="foco-lista">
+` + paginasEntrevista.map((p) => {
+  const attrs = p.topicos ? ' data-prefix="' + p.prefixo + '" data-total="' + p.topicos + '"' : '';
+  return '      <li' + attrs + '><a href="paginas/' + p.slug + '.html"><span class="wk-n">' + p.num + '</span> ' + esc(p.titulo) + '</a><span class="p">' + (p.topicos ? '' : '&mdash;') + '</span></li>';
+}).join('\n') + `
+    </ol>
+  </section>`;
+
 // Caixa "foco atual" da capa: as páginas do roadmap, em ordem, com o progresso de cada uma.
 const paginasRoadmap = publicadas.filter((p) => p.grupo === 'roadmap');
 const focoRoadmap = !paginasRoadmap.length ? '' :
 `  <section class="week foco" id="roadmap">
-    <div class="week-head"><span class="week-num">R</span><h2 style="font-size:22px;">Foco atual: o roadmap da mentoria</h2></div>
-    <div class="week-meta">First Trial &middot; Design Engineer / Frontend Engineer com foco em IA &middot; tudo o que já existia continua aqui embaixo</div>
+    <div class="week-head"><span class="week-num">R</span><h2 style="font-size:22px;">Diferencial: o roadmap da mentoria</h2></div>
+    <div class="week-meta">First Trial &middot; Frontend com foco em IA &middot; cada tópico com etiqueta de nível: base, diferencial ou sênior</div>
     <p class="intro">O roadmap tem sete frentes. Cada página abaixo cobre uma delas com o mesmo formato do resto do guia &mdash; tópicos, leituras resumidas, munição de entrevista e perguntas &mdash; e acrescenta três coisas: <strong>onde você já fez aquilo no Gabarita e no Ally AI</strong>, com o arquivo exato; a <strong>resposta honesta</strong> (&ldquo;não usei em produção; faria assim, por isso&rdquo;) para o que você ainda não fez; e um bloco de <strong>múltipla escolha</strong> no fim, com correção na hora. Os dois projetos ficam como estão, só de exemplo. Comece pelo mapa: ele mostra num lugar só o que já é história pra contar e o que ainda é lacuna, e a prática (R8) tem os exercícios que cobrem as lacunas.</p>
     <ol class="foco-lista">
 ` + paginasRoadmap.map((p) => {
@@ -392,15 +429,15 @@ const focoRoadmap = !paginasRoadmap.length ? '' :
 const capa = cabeca('O Gabarito da Teoria', '') +
 `<div class="wrap">
 
-  <div class="eyebrow"><span class="dot"></span>GUIA DE ESTUDO &middot; SENIOR FRONT-END &amp; SOFTWARE ENGINEER &middot; BRASIL E EXTERIOR &middot; CUSTO ZERO</div>
+  <div class="eyebrow"><span class="dot"></span>GUIA DE ESTUDO &middot; FRONT-END JÚNIOR AVANÇADO E PLENO &middot; BRASIL E EXTERIOR &middot; CUSTO ZERO</div>
   <div class="hero-mark">
     <img src="assets/img/icone.svg" alt="">
     <h1 class="title">O <em>Gabarito</em> da Teoria</h1>
   </div>
-  <p class="lede">Você já escreveu autenticação com invalidação de sessão, um scheduler SM-2, uma fila com retry e uma CSP com nonce por request. A parte que falta não é prática &mdash; é <strong>saber nomear e defender</strong> o que você já fez, e preencher os buracos ao redor. Este roteiro usa o próprio Gabarita como estudo de caso, e agora cobre o que uma vaga sênior cobra aqui e lá fora.</p>
+  <p class="lede">Você já escreveu autenticação com invalidação de sessão, um scheduler SM-2, uma fila com retry e uma CSP com nonce por request. A parte que falta não é prática &mdash; é <strong>saber nomear e defender</strong> o que você já fez, e preencher os buracos ao redor. Este roteiro usa o próprio Gabarita como estudo de caso, e agora começa pelo que uma entrevista de júnior avançado e pleno cobra, aqui e lá fora, com o roadmap da mentoria como diferencial.</p>
 
   <div class="stats">
-    <div class="stat"><div class="n">${totais.blocos}</div><div class="d">blocos: ${totais.roadmap} do roadmap da mentoria, 5 semanas de núcleo, 9 bônus e 10 lacunas de sênior</div></div>
+    <div class="stat"><div class="n">${totais.blocos}</div><div class="d">blocos: ${totais.entrevista} da seção Entrevista, ${totais.roadmap} do roadmap da mentoria, 5 semanas de núcleo, 9 bônus e 10 lacunas de sênior</div></div>
     <div class="stat"><div class="n" id="stat-total">${totais.topicos}</div><div class="d">tópicos, a maioria ancorada no seu código</div></div>
     <div class="stat"><div class="n">${totais.leituras}</div><div class="d">leituras resumidas na própria página &middot; <span id="stat-leituras-lidas">0</span> lidas</div></div>
   </div>
@@ -422,6 +459,8 @@ const capa = cabeca('O Gabarito da Teoria', '') +
       <li><span class="r-tag t-ref">Consulta</span> Referência. Não é pra estudar: é pra saber que existe e voltar quando o problema aparecer.</li>
     </ul>
   </div>
+
+${focoEntrevista}
 
 ${focoRoadmap}
 

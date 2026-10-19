@@ -5,10 +5,20 @@
 
   <ol class="etapas">
     <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
-    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>escrever e revisar</a></li>
     <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
     <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
   </ol>
+
+  <div class="nivel-box">
+    <h4>Para júnior avançado e pleno</h4>
+    <p>Esta é a frente que mais combina com vaga de front com IA, e quase tudo dela cabe no nível pleno.</p>
+    <p><span class="nivel n-base">base</span><strong>Domine:</strong> os estados da tela (enviado, chegando, pronto, erro, parado), ler a resposta aos pedaços com <code>getReader()</code>, structured output validado com Zod, e loading, erro e retry. Os dois exercícios do Fazer estão exatamente nesse nível.</p>
+    <p><span class="nivel n-dif">diferencial</span><strong>Saiba explicar:</strong> tool calling contra structured output, Generative UI e aprovação humana.</p>
+    <p><span class="nivel n-sr">sênior</span><strong>Deixe para depois:</strong> os modos <code>auto</code>/<code>any</code>/<code>none</code> de tool calling e o detalhe do <code>throttle</code> do <code>useChat</code>.</p>
+    <p class="nivel-legenda"><span class="nivel n-base">base</span>domine e faça à mão &middot; <span class="nivel n-dif">diferencial</span>saiba explicar em dois minutos &middot; <span class="nivel n-sr">sênior</span>só reconheça o nome por enquanto. A etiqueta aparece em cada tópico do checklist.</p>
+  </div>
+
 
   <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
   <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
@@ -121,15 +131,15 @@
   <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
   <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
-    <li class="item"><input type="checkbox" id="w25-1"><label for="w25-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM até o navegador: Route Handler devolvendo stream, <code>response.body.getReader()</code> no cliente, e por que streaming melhora o <strong>tempo até o primeiro token</strong> (o que o usuário percebe) sem mudar o tempo total</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-2"><label for="w25-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os estados de uma UI de IA: <code>submitted</code> &rarr; <code>streaming</code> &rarr; <code>ready</code> / <code>error</code> (o modelo do <code>useChat</code>), e <strong>cancelar</strong> (<code>stop()</code>, <code>AbortController</code>) como estado de primeira classe, não como detalhe</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-3"><label for="w25-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs: JSON Schema na chamada pra garantir o <em>formato</em>, Zod depois pra validar o <em>significado</em> &mdash; e por que a saída do modelo é entrada não confiável, mesmo com schema</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-4"><label for="w25-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tool calling: o modelo devolve um <strong>pedido</strong> de chamada (nome + argumentos), quem executa é o seu código, e o resultado volta pro modelo &mdash; os modos <code>auto</code>/<code>any</code>/<code>none</code> e validar argumento como se viesse de um formulário</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-5"><label for="w25-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs vs. tool calling: o primeiro formata a <strong>resposta final</strong>, o segundo pede uma <strong>ação no meio</strong> da conversa &mdash; saber escolher entre os dois é pergunta clássica</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-6"><label for="w25-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Generative UI: o resultado de uma ferramenta vira um <strong>componente tipado</strong> (parts <code>tool-&lt;nome&gt;</code> com estados carregando/pronto/erro) em vez de um parágrafo &mdash; e a diferença entre isso e só renderizar JSON num card fixo</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-7"><label for="w25-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Loading que respeita o tempo da IA: skeleton, mensagem de progresso, <strong>prazo de desistência</strong>, e <code>aria-live</code>/<code>role="status"</code> pra quem usa leitor de tela saber que a resposta chegou</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-8"><label for="w25-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Erro e retry: transitório (429/503/rede) vs. permanente (400/404), backoff que respeita o <code>retryDelay</code> da API, mensagem humanizada &mdash; e retry automático no servidor vs. botão de &ldquo;tentar de novo&rdquo; na UI</span></label></li>
-    <li class="item"><input type="checkbox" id="w25-9"><label for="w25-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Human-in-the-loop: aprovação <strong>antes</strong> de executar ação sensível, revisão humana <strong>antes</strong> de publicar saída da IA, e o botão de reportar do usuário como sinal que reordena a fila</span></label></li>
+    <li class="item"><input type="checkbox" id="w25-1"><label for="w25-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM até o navegador: Route Handler devolvendo stream, <code>response.body.getReader()</code> no cliente, e por que streaming melhora o <strong>tempo até o primeiro token</strong> (o que o usuário percebe) sem mudar o tempo total <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-2"><label for="w25-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os estados de uma UI de IA: <code>submitted</code> &rarr; <code>streaming</code> &rarr; <code>ready</code> / <code>error</code> (o modelo do <code>useChat</code>), e <strong>cancelar</strong> (<code>stop()</code>, <code>AbortController</code>) como estado de primeira classe, não como detalhe <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-3"><label for="w25-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs: JSON Schema na chamada pra garantir o <em>formato</em>, Zod depois pra validar o <em>significado</em> &mdash; e por que a saída do modelo é entrada não confiável, mesmo com schema <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-4"><label for="w25-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tool calling: o modelo devolve um <strong>pedido</strong> de chamada (nome + argumentos), quem executa é o seu código, e o resultado volta pro modelo &mdash; os modos <code>auto</code>/<code>any</code>/<code>none</code> e validar argumento como se viesse de um formulário <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-5"><label for="w25-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Structured outputs vs. tool calling: o primeiro formata a <strong>resposta final</strong>, o segundo pede uma <strong>ação no meio</strong> da conversa &mdash; saber escolher entre os dois é pergunta clássica <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-6"><label for="w25-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Generative UI: o resultado de uma ferramenta vira um <strong>componente tipado</strong> (parts <code>tool-&lt;nome&gt;</code> com estados carregando/pronto/erro) em vez de um parágrafo &mdash; e a diferença entre isso e só renderizar JSON num card fixo <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-7"><label for="w25-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Loading que respeita o tempo da IA: skeleton, mensagem de progresso, <strong>prazo de desistência</strong>, e <code>aria-live</code>/<code>role="status"</code> pra quem usa leitor de tela saber que a resposta chegou <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-8"><label for="w25-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Erro e retry: transitório (429/503/rede) vs. permanente (400/404), backoff que respeita o <code>retryDelay</code> da API, mensagem humanizada &mdash; e retry automático no servidor vs. botão de &ldquo;tentar de novo&rdquo; na UI <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w25-9"><label for="w25-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Human-in-the-loop: aprovação <strong>antes</strong> de executar ação sensível, revisão humana <strong>antes</strong> de publicar saída da IA, e o botão de reportar do usuário como sinal que reordena a fila <span class="nivel n-dif">diferencial</span></span></label></li>
   </ul>
 
   <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
@@ -143,8 +153,8 @@
   </ul>
 
   
-  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
-  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Os estados de um chat num reducer</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
     <div class="ex-body">
@@ -156,6 +166,7 @@
         <li>Um pedaço que chega depois de parar ou de falhar é ignorado.</li>
         <li>O tipo não pode permitir estado impossível, como texto em <code>idle</code> ou mensagem de erro em <code>ready</code>.</li>
       </ul>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions">TypeScript: discriminated unions</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/switch">MDN: switch</a> &middot; cartão 2 do Ver</p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Use uma <em>união discriminada</em>: cada estado é um objeto com um campo <code>tipo</code> e só os campos que fazem sentido nele. Aí o TypeScript não deixa você ler <code>texto</code> num estado que não tem texto.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -199,6 +210,68 @@ export function reducer(e: Estado, a: Acao): Estado {
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> o tipo impede estado impossível (não existe <code>texto</code> em <code>idle</code>), o pedaço atrasado não &ldquo;ressuscita&rdquo; uma resposta parada, e parar é um estado de verdade, não um detalhe. Na tela real, o <code>PARAR</code> também chama <code>abortController.abort()</code> para cancelar o pedido.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que o <code>Estado</code> é uma união, e não um objeto só, como <code>{ tipo: string; texto?: string; mensagem?: string }</code>?</li>
+          <li>Por que <code>PARAR</code> em <code>submitted</code> volta para <code>idle</code>, mas em <code>streaming</code> vai para <code>ready</code>?</li>
+          <li>Por que o estado <code>error</code> guarda o texto que já tinha chegado?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>No objeto único, todos os campos são opcionais. Nada impede <code>{ tipo: 'idle', mensagem: 'erro' }</code>, e o código precisa conferir <code>undefined</code> em todo lugar. Na união, cada estado tem só os seus campos, e o TypeScript sabe quais existem depois de um <code>if (e.tipo === ...)</code>.</li>
+            <li>Em <code>submitted</code> nada chegou ainda, então não existe resposta para guardar: a tela volta ao começo. Em <code>streaming</code> já existe texto, e a regra 2 manda guardá-lo, marcado como interrompido.</li>
+            <li>Para a pessoa não perder o que já leu. A tela mostra o texto parcial e, abaixo, o aviso de erro com &ldquo;Tentar de novo&rdquo;.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Esta versão compila sem erro e parece certa. Ela quebra três das quatro regras. Ache os três erros e diga qual regra cada um quebra. (O tipo <code>Acao</code> é o mesmo da solução.)</p>
+<pre><code class="esc">
+type Estado =
+  | { tipo: 'idle' }
+  | { tipo: 'submitted' }
+  | { tipo: 'streaming'; texto: string }
+  | { tipo: 'ready'; texto: string; interrompida: boolean; mensagem?: string }
+  | { tipo: 'error'; mensagem: string; texto: string };
+
+export function reducer(e: Estado, a: Acao): Estado {
+  switch (a.tipo) {
+    case 'ENVIAR':
+      return { tipo: 'submitted' };
+    case 'PEDACO':
+      if (e.tipo === 'submitted') return { tipo: 'streaming', texto: a.texto };
+      if (e.tipo === 'streaming') return { tipo: 'streaming', texto: e.texto + a.texto };
+    case 'FIM':
+      return { tipo: 'ready', texto: e.tipo === 'streaming' ? e.texto : '', interrompida: false };
+    case 'FALHA':
+      if (e.tipo !== 'submitted' && e.tipo !== 'streaming') return e;
+      return { tipo: 'error', mensagem: a.mensagem, texto: e.tipo === 'streaming' ? e.texto : '' };
+    case 'PARAR':
+      if (e.tipo === 'streaming') return { tipo: 'ready', texto: e.texto, interrompida: true };
+      if (e.tipo === 'submitted') return { tipo: 'idle' };
+      return e;
+  }
+}
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong><code>ENVIAR</code> não olha o estado</strong> (regra 1). No meio de uma resposta, um segundo envio volta para <code>submitted</code> e joga fora o texto que estava chegando.</li>
+            <li><strong><code>PEDACO</code> não termina com <code>return e</code></strong> (regra 3). Quando o estado não é <code>submitted</code> nem <code>streaming</code>, o código <em>cai</em> no <code>case 'FIM'</code> logo abaixo. Isso se chama <em>fall-through</em>. E o <code>FIM</code> também não confere o estado. Resultado: um pedaço que chega depois de um erro transforma o erro em <code>ready</code> com texto vazio, e a mensagem de erro some.</li>
+            <li><strong><code>mensagem?</code> no <code>ready</code></strong> (regra 4). O tipo passa a aceitar &ldquo;pronto com mensagem de erro&rdquo;, um estado impossível.</li>
+          </ol>
+          <p>Para o TypeScript achar o erro 2 sozinho, ligue <code>noFallthroughCasesInSwitch</code> no <code>tsconfig.json</code>. Com ela, um <code>case</code> que cai no próximo vira erro de compilação.</p>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>Agora existe o botão &ldquo;Tentar de novo&rdquo;. Ele gera a ação <code>TENTAR_DE_NOVO</code>, que só vale no estado <code>error</code> e recomeça o pedido. O que muda no tipo e no reducer? O que o TypeScript faz se você esquecer uma parte?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Duas mudanças. No tipo, mais uma opção: <code>| { tipo: 'TENTAR_DE_NOVO' }</code>. No reducer, mais um <code>case</code>: se <code>e.tipo === 'error'</code>, devolve <code>{ tipo: 'submitted' }</code>; senão, <code>return e</code>.</p>
+          <p>Se você mudar o tipo e esquecer o <code>case</code>, o TypeScript reclama que a função nem sempre devolve um <code>Estado</code>. É a união discriminada trabalhando a seu favor: ela aponta todos os lugares que precisam tratar a ação nova.</p>
+          <p>Fora do reducer: a tela precisa disparar um <code>fetch</code> novo, com um <code>AbortController</code> novo. O reducer só descreve a tela; quem faz o pedido é o componente.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
@@ -212,6 +285,7 @@ export function reducer(e: Estado, a: Acao): Estado {
         <li><code>resumo</code> e cada <code>motivo</code> não podem ser vazios. São de 4 a 5 alternativas, com letras de A a E, sem repetir.</li>
         <li>Exatamente uma alternativa correta, e ela tem de ser a letra do <code>gabarito</code>.</li>
       </ul>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://zod.dev/api">Zod: API</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse">MDN: JSON.parse</a> &middot; cartão 3 do Ver</p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Separe em três portas: <code>JSON.parse</code> dentro de <code>try</code> (o texto é JSON?), <code>safeParse</code> do Zod com <code>refine</code> (a forma e as regras estão certas?) e uma comparação com o gabarito (o sentido está certo?).</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -248,6 +322,62 @@ export function parseExplicacao(texto: string, gabarito: string): Explicacao | n
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> quando volta <code>null</code>, quem chama refaz o pedido ao modelo (até 3 vezes, como no Gabarita). Isso serve para resposta malformada. Para erro de rede ou de cota, refazer na hora não ajuda: aí entra o retry com espera do cartão 6.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que o <code>JSON.parse</code> fica dentro de um <code>try</code>?</li>
+          <li>Por que <code>safeParse</code>, e não <code>parse</code>?</li>
+          <li>Por que a comparação com o gabarito fica fora do schema?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>Porque ele <em>lança um erro</em> quando o texto não é JSON, e o modelo às vezes responde &ldquo;Claro! Aqui está:&rdquo; antes do JSON. Sem o <code>try</code>, a função quebra em vez de devolver <code>null</code>.</li>
+            <li><code>parse</code> também lança erro. <code>safeParse</code> devolve <code>{ success, data }</code> ou <code>{ success, error }</code>, e o código decide o que fazer sem precisar de outro <code>try</code>.</li>
+            <li>O schema confere a <em>forma</em>, que é igual para toda questão. O gabarito muda de questão para questão e confere o <em>sentido</em>. Separar as três portas deixa claro em qual delas a resposta falhou.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Esta versão compila e passa no caso feliz. Ache os três erros. Para cada um, escreva uma resposta do modelo que passa quando não deveria (ou que quebra a função).</p>
+<pre><code class="esc">
+const Alternativa = z.object({
+  letra: z.string(),
+  correta: z.boolean(),
+  motivo: z.string(),
+});
+
+const Explicacao = z
+  .object({
+    resumo: z.string().min(1),
+    alternativas: z.array(Alternativa).min(4).max(5),
+  })
+  .refine((x) => x.alternativas.some((a) => a.correta), 'precisa de uma correta');
+
+export function parseExplicacao(texto: string, gabarito: string) {
+  const r = Explicacao.safeParse(JSON.parse(texto));
+  if (!r.success) return null;
+  const correta = r.data.alternativas.find((a) => a.correta)!;
+  return correta.letra === gabarito ? r.data : null;
+}
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong><code>JSON.parse</code> fora do <code>try</code>.</strong> Com o texto <code>"Claro! Aqui está"</code>, a função lança <code>SyntaxError</code> em vez de devolver <code>null</code>, e quem chama não refaz o pedido.</li>
+            <li><strong><code>some</code> aceita duas corretas.</strong> Com A e C marcadas como corretas e gabarito A, o <code>find</code> pega a primeira (A) e a resposta passa. A regra pede <em>exatamente</em> uma.</li>
+            <li><strong>Campos frouxos.</strong> <code>letra</code> aceita <code>"F"</code> e letras repetidas; <code>motivo</code> aceita <code>""</code>; e <code>resumo</code> aceita <code>"   "</code>, porque o <code>min(1)</code> conta os espaços (faltou o <code>trim()</code>).</li>
+          </ol>
+          <p>Repare que a versão com bug fica verde no teste do caso feliz. É por isso que a revisão precisa pensar nas entradas ruins, uma por regra.</p>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>O modelo passou a mandar o JSON dentro de um bloco de código: <code>```json ... ```</code>. A função deve aceitar isso. Onde você mexe? E onde você <em>não</em> mexe?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Só antes da porta 1: limpe as cercas e depois faça o <code>JSON.parse</code>. Por exemplo, <code>texto.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '')</code>.</p>
+          <p>O schema e a comparação com o gabarito não mudam. A mudança está na <em>embalagem</em> da resposta, não nas regras. Afrouxar o schema para &ldquo;aceitar mais coisas&rdquo; seria o erro clássico.</p>
+          <p>A solução melhor é na origem: pedir <em>structured output</em> ao modelo (o cartão 3 do Ver). Aí ele devolve só o JSON, sem cerca.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 

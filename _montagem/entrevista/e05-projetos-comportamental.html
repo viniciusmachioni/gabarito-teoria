@@ -1,0 +1,121 @@
+<section class="week" id="ent5">
+  <div class="week-head"><span class="week-num">E5</span><h2>Seus projetos e o comportamental</h2></div>
+  <div class="week-meta">~4h &middot; contar o Gabarita e o Ally AI em 2 minutos, responder às perguntas sobre eles e às comportamentais de pleno</div>
+  <p class="intro">Em uma frase: <strong>depois do código, a entrevista quer saber como você pensa e trabalha, e a melhor prova são os seus próprios projetos contados com decisões e números.</strong> Esta página tem o roteiro para apresentar cada projeto, as perguntas que vêm logo depois e as perguntas comportamentais mais comuns em vagas de pleno. Os fatos dos projetos vêm do que já está documentado no guia (o <a href="r00-mapa.html">R0</a>, o <a href="r07-linkedin.html#contar">Contar do R7</a> e as <a href="historias.html">Histórias</a>). Os trechos entre colchetes são seus: eu não sei os seus anos de experiência, e inventar seria pior que deixar em branco.</p>
+
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. Um projeto em 2 minutos</h4>
+      <p><b class="r">O problema</b>Uma frase: para quem é e que dor resolve.</p>
+      <p><b class="r">O que você construiu</b>As partes principais e a pilha, sem lista de tecnologias solta: cada tecnologia aparece junto do que ela faz.</p>
+      <p><b class="r">Uma decisão difícil</b>O que você escolheu, o que descartou e por quê. É aqui que o entrevistador decide o seu nível.</p>
+      <p><b class="r">O resultado</b>Um número, se houver. Senão, o que funciona hoje.</p>
+      <p><b class="r">O que faria diferente</b>Uma frase. Mostra que você olha o próprio trabalho com crítica.</p>
+      <p class="frase"><b class="r">Na entrevista</b>Termine e pare. A próxima pergunta vai ser sobre o que você disse, então diga só o que consegue sustentar.</p>
+    </div>
+    <div class="bcard">
+      <h4>2. STAR, em uma linha cada</h4>
+      <p><b class="r">S, situação</b>Onde e quando, em uma ou duas frases.</p>
+      <p><b class="r">T, tarefa</b>O que <em>você</em> precisava resolver.</p>
+      <p><b class="r">A, ação</b>O que você fez, passo a passo, na primeira pessoa. É a maior parte da resposta.</p>
+      <p><b class="r">R, resultado</b>O que mudou, com número, e o que você aprendeu.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;Eu&rdquo; na ação, &ldquo;nós&rdquo; só no crédito ao time. O exercício do <a href="r07-linkedin.html#fz1">R7</a> treina a reescrita de uma resposta fraca.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Checklist</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="e5-1"><label for="e5-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O Gabarita em 2 minutos, em voz alta e gravado, com uma decisão e um número</span></label></li>
+    <li class="item"><input type="checkbox" id="e5-2"><label for="e5-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O Ally AI em 2 minutos, em voz alta e gravado, com uma decisão e um número</span></label></li>
+    <li class="item"><input type="checkbox" id="e5-3"><label for="e5-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Respondo as 6 perguntas sobre projeto sem travar</span></label></li>
+    <li class="item"><input type="checkbox" id="e5-4"><label for="e5-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tenho um caso meu, em STAR, para cada uma das 10 perguntas comportamentais</span></label></li>
+    <li class="item"><input type="checkbox" id="e5-5"><label for="e5-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tenho três perguntas prontas para fazer ao entrevistador</span></label></li>
+  </ul>
+
+  <h3 class="sub">Os seus dois projetos, em 2 minutos</h3>
+  <div class="ex" id="pj1">
+    <div class="ex-head"><span class="ex-n">PROJETO 1</span><h3>Gabarita (no ar como Certeon)</h3><span class="ex-meta">~2 min &middot; em voz alta</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Conte o Gabarita seguindo o roteiro do cartão 1. Use o nome do currículo, <strong>Certeon</strong>: é por ele que o entrevistador vai perguntar. Escreva a sua versão antes de abrir o modelo.</p>
+      <details class="sol"><summary>um modelo, com os fatos documentados</summary><div class="sol-body">
+        <p><strong>Problema:</strong> o Certeon (o nome do Gabarita no ar, e o que está no currículo) é um SaaS pago de estudo para provas de residência médica: cerca de 18 mil questões, explicação de cada alternativa e revisão espaçada, com cerca de 20 assinantes.</p>
+        <p><strong>O que eu construí:</strong> um app em Next.js com Server Actions, Prisma e Postgres, publicado na Vercel. A IA (Gemini) extrai questões de PDFs de provas e explica as alternativas. Trabalho pesado, como processar uma prova inteira, roda numa fila com worker (pg-boss), fora do pedido do usuário.</p>
+        <p><strong>Uma decisão difícil:</strong> eu não confio na saída da IA. Ela passa por validação de formato (schemas Zod) e de sentido: uma explicação que contradiz o gabarito é recusada e pedida de novo. No começo, toda questão gerada exigia revisão humana; quando vi que isso não escalava, troquei a trava pela validação e deixei a revisão como fila opcional.</p>
+        <p><strong>Resultado:</strong> quando o app ficou lento em produção, eu medi antes de mexer. A função rodava nos EUA e o banco em São Paulo: cerca de 550 ms por ida ao banco. Juntei função e banco na mesma região e reduzi as consultas da página principal de 7 para 1, com um teste que falha se elas voltarem a crescer.</p>
+        <p><strong>O que faria diferente:</strong> [a sua resposta: por exemplo, medir a latência desde o primeiro deploy].</p>
+      </div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="pj2">
+    <div class="ex-head"><span class="ex-n">PROJETO 2</span><h3>Ally AI</h3><span class="ex-meta">~2 min &middot; em voz alta</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Conte o Ally AI seguindo o mesmo roteiro. Escreva a sua versão antes de abrir o modelo.</p>
+      <details class="sol"><summary>um modelo, com os fatos documentados</summary><div class="sol-body">
+        <p><strong>Problema:</strong> o Ally AI é um SaaS de auditoria de acessibilidade: você manda uma URL e recebe as violações com a explicação e o código corrigido.</p>
+        <p><strong>O que eu construí:</strong> um monorepo com o front (<code>apps/web</code>) e a API (<code>apps/api</code>). A API abre a página num Chromium headless (Puppeteer) e roda o axe-core, que detecta as violações. O Gemini só escreve a explicação e a correção, com saída estruturada (JSON Schema) validada por Zod.</p>
+        <p><strong>Uma decisão difícil:</strong> quem <em>detecta</em> é o axe, uma ferramenta determinística, e não o modelo. A IA só entra onde texto ajuda, em cima de um fato verificado. Isso deixa o resultado confiável e mais barato.</p>
+        <p><strong>Resultado:</strong> agrupar as violações parecidas antes de mandar ao modelo cortou cerca de 60% dos tokens por auditoria. Quando uma auditoria não conclui, o crédito volta para a pessoa.</p>
+        <p><strong>O que faria diferente:</strong> [a sua resposta].</p>
+      </div></details>
+    </div>
+  </div>
+
+  <h3 class="sub">As perguntas que vêm depois do projeto</h3>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta, com um dos seus projetos &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual foi a parte mais difícil?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Um problema técnico de verdade, com o seu raciocínio, e não &ldquo;foi tudo difícil&rdquo;. Escolha um em que houve investigação: a lentidão do Gabarita (medi, achei a causa, corrigi e protegi com teste) é o caso ideal. Conte o que você tentou que <em>não</em> funcionou: isso deixa a história crível.</p></div></details></li>
+      <li>Por que você escolheu essa tecnologia?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Um motivo ligado ao problema, e o que você abriu mão. O formato, com a fila do Gabarita (ajuste ao seu motivo real): &ldquo;Processar uma prova inteira não cabe num pedido, então pus uma fila durável no próprio Postgres (pg-boss), com um worker à parte. Usar o banco que eu já tinha evitou mais um serviço para manter. O custo é que o banco também carrega a fila; com muito volume, eu avaliaria SQS ou BullMQ.&rdquo; Escolher &ldquo;porque é a mais usada&rdquo; é resposta de júnior; dizer o custo é de pleno.</p></div></details></li>
+      <li>Como você testou?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>O que você testa, e por quê naquele nível. Por exemplo: funções puras com teste unitário, componentes pela forma como a pessoa usa (Testing Library, consultando por papel acessível), e o teste que conta as consultas ao banco para a lentidão não voltar. Se testou pouco, diga onde e o que faria; fingir cobertura é pior.</p></div></details></li>
+      <li>Como isso escalaria para 100 vezes mais usuários?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Onde quebraria primeiro, e não uma lista de tecnologias. No Gabarita: o banco (conexões e consultas por página) e a cota da API de IA. As respostas: pool de conexões, cache do que é igual para todos, a fila absorvendo picos e limite de uso por usuário para proteger o custo da IA. Pleno sabe dizer o gargalo; sênior sabe medir antes.</p></div></details></li>
+      <li>O que você faria diferente se começasse hoje?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Uma ou duas coisas concretas, com o motivo. Mostra que você aprendeu com o projeto. Evite &ldquo;nada&rdquo; e evite reescrever tudo: escolha algo que te custou caro, como medir desempenho desde o primeiro deploy.</p></div></details></li>
+      <li>Como você usou IA para programar esse projeto?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Seja honesto, e mostre controle. Algo como: &ldquo;uso para rascunho e para tarefas repetitivas; reviso tudo, escrevo os testes que provam o comportamento e as decisões de arquitetura são minhas&rdquo;. Tenha um exemplo de um erro da IA que você pegou na revisão. É exatamente o que o bloco Revisar do guia treina.</p></div></details></li>
+    </ol>
+  </div>
+
+  <h3 class="sub">As perguntas comportamentais mais comuns em vagas de pleno</h3>
+  <p class="etapa-nota">As cinco perguntas do roadmap (IA que errou, acessibilidade contra estética, decisão revertida, problema em produção, o que decidiu não construir) estão no <a href="r07-linkedin.html#contar">R7</a>, com os casos documentados. Estas são as outras que mais aparecem.</p>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta, em STAR &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Fale sobre você.
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Presente, passado, futuro, em 60 a 90 segundos: o que você faz hoje (o trabalho atual, como o front do IAtrix), a prova de que sabe fazer (o portal da PUC Minas com LCP abaixo de 2 s, o Certeon e o Ally AI) e o que procura. O modelo pronto está no <a href="r07-linkedin.html">R7</a>, em português e em inglês. Para pleno, diga o tipo de problema que quer resolver, e não só o cargo.</p></div></details></li>
+      <li>Conte um erro que você cometeu.
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Um erro real, que foi seu, o que você fez para corrigir e o que mudou para não se repetir. A parte do &ldquo;para não se repetir&rdquo; é a mais importante. Material: a primeira ingestão de provas do Gabarita, em que 13 lotes falharam e a tela não dizia se era configuração ou PDF ruim (a correção separou erro passageiro de permanente). Evite falso erro (&ldquo;trabalho demais&rdquo;).</p></div></details></li>
+      <li>Conte uma vez em que você aprendeu uma tecnologia rápido.
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Como você aprende, não só o quê: documentação oficial, um protótipo pequeno, testes para confirmar que entendeu, e alguém para tirar dúvida. Termine com o que você entregou usando aquilo. Material: [um caso seu, por exemplo a primeira vez com Puppeteer e axe-core no Ally AI].</p></div></details></li>
+      <li>Conte um feedback difícil que você recebeu.
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Que você ouve sem se defender e muda alguma coisa. Estrutura: o feedback, como você reagiu na hora (com honestidade), o que fez depois e como sabe que melhorou. Material: [um caso seu]. Se for de projeto pessoal, um code review ou um teste de usabilidade também servem.</p></div></details></li>
+      <li>Conte uma vez em que você discordou de alguém.
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Que você discorda com dado, não com opinião, e que sabe ceder quando o outro lado tem razão. Mostre que entendeu o ponto da outra pessoa antes de defender o seu. O final pode ser &ldquo;fizemos do jeito dela, e eu aprendi X&rdquo;. Material: [um caso seu]; o caso de acessibilidade contra estética do R7 tem o esqueleto.</p></div></details></li>
+      <li>Conte uma vez em que você teve pouco tempo e muita coisa para entregar.
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Como você prioriza: o que cortou, com quem combinou e o que deixou registrado para depois. Material real: no Gabarita, você deixou o OCR de PDF escaneado de fora de propósito, fez a falha ficar explícita e deixou o ponto de extensão pronto (o caso &ldquo;o que decidiu não construir&rdquo; do R7). Cortar escopo com o custo anotado é prioridade, não preguiça.</p></div></details></li>
+      <li>Conte uma vez em que você ajudou alguém do time.
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Pleno também é medido por quanto faz os outros andarem. Code review cuidadoso, documentação que evitou perguntas repetidas, pareamento com alguém mais novo. Material: [um caso seu]. Num projeto pessoal, o registro das decisões (o <code>DECISOES.md</code> do Gabarita) é um bom exemplo de escrever para quem vem depois.</p></div></details></li>
+      <li>Por que você saiu do último emprego?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Que você fala do assunto com calma, sem culpar ninguém, e olha para a frente. Foi um desligamento, e dá para dizer isso com tranquilidade: &ldquo;Fui desligado depois de alguns meses. A empresa e eu tínhamos visões diferentes sobre como conduzir o produto. Saio com o front do IAtrix entregue, um CRM construído do zero e a experiência de integrar React a um back-end em .NET. Agora procuro um time em que engenharia e produto andem juntos.&rdquo;</p><p>O que <strong>não</strong> dizer: críticas à empresa, à cidade ou às pessoas (&ldquo;pensamento antigo&rdquo;), mesmo que sejam verdade. O entrevistador ouve isso como &ldquo;um dia ele vai falar assim de nós&rdquo;. Ensaie a resposta em voz alta até ela sair curta e neutra, em até 30 segundos, e volte para o que você entregou.</p></div></details></li>
+      <li>O que você fez entre o estágio e a PUC Minas?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Uma frase direta, sem se desculpar: &ldquo;Me dediquei a terminar a graduação em Ciência da Computação. O TCC foi uma extensão do Chrome que audita acessibilidade WCAG em tempo real e sugere correções com IA.&rdquo; Se o Ally AI saiu dessa ideia, diga isso também. Ligar o período a algo que você construiu transforma a pergunta numa história a seu favor.</p></div></details></li>
+      <li>Por que você quer trabalhar aqui?
+        <details class="ans"><summary>o que querem ouvir</summary><div class="ans-body"><p>Que você pesquisou: o produto, um desafio técnico que a empresa tem (blog de engenharia, vaga, entrevistas públicas) e por que ele combina com o que você já fez. &ldquo;A empresa é grande&rdquo; não serve. Uma frase ligando um projeto seu ao produto deles vale mais que três elogios.</p></div></details></li>
+    </ol>
+  </div>
+
+  <div class="gap">
+    <h4>Perguntas para você fazer no fim</h4>
+    <ul>
+      <li>&ldquo;Como é o caminho de uma tarefa, da ideia até produção? Quem revisa e como é o deploy?&rdquo;</li>
+      <li>&ldquo;O que uma pessoa nesta vaga precisa ter entregado em seis meses para você considerar que deu certo?&rdquo;</li>
+      <li>&ldquo;Qual o maior desafio técnico do time agora?&rdquo;</li>
+      <li>&ldquo;Como o time usa IA no desenvolvimento, e como revisa o que ela gera?&rdquo;</li>
+    </ul>
+    <p>Fazer perguntas mostra interesse e dá informação para você decidir. Nunca diga &ldquo;não tenho perguntas&rdquo;.</p>
+  </div>
+</section>

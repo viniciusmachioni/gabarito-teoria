@@ -13,13 +13,29 @@ Depois do roadmap, o guia continua igual: as 5 semanas de núcleo, 9 blocos bôn
 CSS moderno, performance de navegador, front-end system design, React avançado, design de APIs, produção/observabilidade,
 comportamental e o processo seletivo aqui e fora).
 
-## Como estudar (o roadmap é a espinha dorsal)
+## Como estudar
+
+O alvo agora são entrevistas de **júnior avançado e pleno** em front-end. A ordem é:
+
+1. **Seção Entrevista (E0 a E5), o "comece aqui".** E0 é o plano de 8 semanas e o checklist de "estou pronto";
+   E1 tem 16 exercícios de fluência (JS/TS à mão, do laço ao `mapComLimite`); E2, 8 componentes React clássicos de live
+   coding; E3, 12 algoritmos fáceis e médios, um por padrão; E4, 38 perguntas da conversa técnica e 12 de múltipla
+   escolha; E5, o roteiro para contar o Gabarita e o Ally AI e as perguntas comportamentais de pleno. As soluções de
+   E1, E2 e E3 foram rodadas com testes (Vitest, Testing Library).
+2. **Roadmap da mentoria (R0 a R8), como diferencial.** Cada tópico tem uma etiqueta: **base** (domine e faça à mão),
+   **diferencial** (saiba explicar em 2 minutos) ou **sênior** (só reconheça o nome por enquanto), e cada página abre com
+   o quadro "Para júnior avançado e pleno". O R0 traz a ordem: R1, R2, R4, R3, R7, R8 (só o que é base), e R5 e R6 por último.
+
+### O formato das páginas do roadmap
 
 Cada página R1 a R8 segue o mesmo caminho, com uma barra de atalhos no topo:
 
 1. **Ver**: o básico em linguagem simples. Um cartão por ideia (o problema, como funciona, a frase de entrevista), diagramas
    onde ajudam e um glossário das siglas. Depois vêm o checklist de tópicos e as leituras com resumo.
-2. **Fazer**: dois exercícios curtos (15 a 20 min) com dica e solução comentada. A versão de entrevista, maior, fica no R8.
+2. **Fazer**: escrever uma vez, revisar sempre. Dois exercícios curtos (15 a 20 min) com dica e solução comentada. Pode
+   consultar a sintaxe (cada exercício traz os links), não a lógica. Depois da solução, o bloco **Revisar** treina o que o
+   trabalho com IA mais pede: explicar o código em voz alta, achar os erros de uma versão com bug e mudar um requisito.
+   A versão de entrevista, maior, fica no R8.
 3. **Contar**: os cartões "Decisões e tradeoffs" (escolha, o que compra, o que custa, **restrição que forçou** e "quando eu
    faria diferente", **este último para você escrever**), o bloco recolhido "Onde você já aplicou" e a resposta honesta
    "Você já usou...?".

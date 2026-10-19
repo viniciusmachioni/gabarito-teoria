@@ -26,10 +26,20 @@
 
   <ol class="etapas">
     <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
-    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>escrever e revisar</a></li>
     <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
     <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
   </ol>
+
+  <div class="nivel-box">
+    <h4>Para júnior avançado e pleno</h4>
+    <p>Ninguém espera que um pleno suba Next na AWS sozinho. Espera que saiba o que o CI faz, por que cada passo existe e onde <em>não</em> pôr um segredo.</p>
+    <p><span class="nivel n-base">base</span><strong>Domine:</strong> o CI de todo PR (lint, tipos, testes e build) e ambientes e segredos, com a armadilha do <code>NEXT_PUBLIC_*</code>.</p>
+    <p><span class="nivel n-dif">diferencial</span><strong>Saiba explicar:</strong> observabilidade em três perguntas e <code>Cache-Control</code> (o FAZER 1 é do nível).</p>
+    <p><span class="nivel n-sr">sênior</span><strong>Deixe para depois:</strong> os três caminhos de Next na AWS, várias instâncias, OIDC, a cache key do CloudFront e app em vários países.</p>
+    <p class="nivel-legenda"><span class="nivel n-base">base</span>domine e faça à mão &middot; <span class="nivel n-dif">diferencial</span>saiba explicar em dois minutos &middot; <span class="nivel n-sr">sênior</span>só reconheça o nome por enquanto. A etiqueta aparece em cada tópico do checklist.</p>
+  </div>
+
 
   <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
   <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
@@ -132,15 +142,15 @@
   <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
   <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
-    <li class="item"><input type="checkbox" id="w29-1"><label for="w29-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os três caminhos de Next.js na AWS: <strong>Amplify Hosting</strong> (gerenciado, o mais perto da Vercel), <strong>OpenNext</strong> com SST/CDK (Lambda + S3 + CloudFront) e <strong>container standalone</strong> em ECS Fargate ou App Runner atrás do CloudFront &mdash; e o que cada um troca entre controle, custo e funcionalidade suportada</span></label></li>
-    <li class="item"><input type="checkbox" id="w29-2"><label for="w29-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O que quebra fora da Vercel: streaming (<code>loading.tsx</code>, Suspense) atrás de proxy ou load balancer que faz buffer, <code>after()</code> sem desligamento gracioso, otimização de imagem, e a lista de recursos que o Amplify não suporta</span></label></li>
-    <li class="item"><input type="checkbox" id="w29-3"><label for="w29-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Mais de uma instância: cache do Next guardado por instância (e <code>revalidateTag</code> que só invalida a local), <code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code> igual em todas, e <code>deploymentId</code> contra <em>version skew</em> num deploy gradual</span></label></li>
-    <li class="item"><input type="checkbox" id="w29-4"><label for="w29-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CI no GitHub Actions: lint &rarr; typecheck &rarr; teste &rarr; build em todo PR, cache do gerenciador de pacotes, <code>concurrency</code> pra cancelar execução obsoleta, e check obrigatório antes do merge</span></label></li>
-    <li class="item"><input type="checkbox" id="w29-5"><label for="w29-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Deploy na AWS sem chave de longa duração: <strong>OIDC</strong> entre GitHub e IAM, <code>permissions: id-token: write</code>, e a condição <code>sub</code> da trust policy restringindo qual repositório, branch ou environment pode assumir a role</span></label></li>
-    <li class="item"><input type="checkbox" id="w29-6"><label for="w29-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Observabilidade em três perguntas: <strong>quebrou?</strong> (erro com stack e source map), <strong>está lento?</strong> (tracing, Web Vitals de usuário real) e <strong>está sendo usado?</strong> (analytics de produto). Sentry, OpenTelemetry e CloudWatch, e a taxa de amostragem como decisão de custo</span></label></li>
-    <li class="item"><input type="checkbox" id="w29-7"><label for="w29-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Ambientes e segredos: dev / preview / staging / prod, Secrets Manager ou SSM Parameter Store em vez de variável solta, e a armadilha do <code>NEXT_PUBLIC_*</code> embutido no build: uma imagem promovida entre ambientes só funciona se o valor for lido em runtime</span></label></li>
-    <li class="item"><input type="checkbox" id="w29-8"><label for="w29-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CDN de verdade: a cache key do CloudFront (headers, cookies e query strings que entram nela), os TTLs mínimo, padrão e máximo contra o <code>Cache-Control</code> da origem, e por que um TTL mínimo maior que zero ignora <code>private</code></span></label></li>
-    <li class="item"><input type="checkbox" id="w29-9"><label for="w29-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">App pra outros países: função na mesma região do banco, estático na borda, i18n por subcaminho ou domínio, e residência de dado (LGPD/GDPR) como restrição que escolhe a região antes da latência</span></label></li>
+    <li class="item"><input type="checkbox" id="w29-1"><label for="w29-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os três caminhos de Next.js na AWS: <strong>Amplify Hosting</strong> (gerenciado, o mais perto da Vercel), <strong>OpenNext</strong> com SST/CDK (Lambda + S3 + CloudFront) e <strong>container standalone</strong> em ECS Fargate ou App Runner atrás do CloudFront &mdash; e o que cada um troca entre controle, custo e funcionalidade suportada <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-2"><label for="w29-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O que quebra fora da Vercel: streaming (<code>loading.tsx</code>, Suspense) atrás de proxy ou load balancer que faz buffer, <code>after()</code> sem desligamento gracioso, otimização de imagem, e a lista de recursos que o Amplify não suporta <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-3"><label for="w29-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Mais de uma instância: cache do Next guardado por instância (e <code>revalidateTag</code> que só invalida a local), <code>NEXT_SERVER_ACTIONS_ENCRYPTION_KEY</code> igual em todas, e <code>deploymentId</code> contra <em>version skew</em> num deploy gradual <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-4"><label for="w29-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CI no GitHub Actions: lint &rarr; typecheck &rarr; teste &rarr; build em todo PR, cache do gerenciador de pacotes, <code>concurrency</code> pra cancelar execução obsoleta, e check obrigatório antes do merge <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-5"><label for="w29-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Deploy na AWS sem chave de longa duração: <strong>OIDC</strong> entre GitHub e IAM, <code>permissions: id-token: write</code>, e a condição <code>sub</code> da trust policy restringindo qual repositório, branch ou environment pode assumir a role <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-6"><label for="w29-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Observabilidade em três perguntas: <strong>quebrou?</strong> (erro com stack e source map), <strong>está lento?</strong> (tracing, Web Vitals de usuário real) e <strong>está sendo usado?</strong> (analytics de produto). Sentry, OpenTelemetry e CloudWatch, e a taxa de amostragem como decisão de custo <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-7"><label for="w29-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Ambientes e segredos: dev / preview / staging / prod, Secrets Manager ou SSM Parameter Store em vez de variável solta, e a armadilha do <code>NEXT_PUBLIC_*</code> embutido no build: uma imagem promovida entre ambientes só funciona se o valor for lido em runtime <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-8"><label for="w29-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CDN de verdade: a cache key do CloudFront (headers, cookies e query strings que entram nela), os TTLs mínimo, padrão e máximo contra o <code>Cache-Control</code> da origem, e por que um TTL mínimo maior que zero ignora <code>private</code> <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w29-9"><label for="w29-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">App pra outros países: função na mesma região do banco, estático na borda, i18n por subcaminho ou domínio, e residência de dado (LGPD/GDPR) como restrição que escolhe a região antes da latência <span class="nivel n-sr">sênior</span></span></label></li>
   </ul>
 
   <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
@@ -341,8 +351,8 @@
   </div>
 
 
-  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
-  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Qual Cache-Control para cada resposta?</h3><span class="ex-meta">15 min &middot; decisão</span></div>
     <div class="ex-body">
@@ -354,6 +364,7 @@
         <li><code>/api/cotacao</code>: igual para todos, muda a cada minuto.</li>
         <li><code>/blog/meu-post</code>: igual para todos, pode ser corrigido de vez em quando.</li>
       </ol>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Headers/Cache-Control">MDN: Cache-Control</a> &middot; os cartões do Ver</p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p><code>max-age</code> vale para o navegador e <code>s-maxage</code> para a CDN. <code>stale-while-revalidate</code> deixa servir a cópia velha enquanto busca a nova em segundo plano.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
         <ol>
@@ -365,6 +376,48 @@
         </ol>
         <p><strong>O que mostrar ao entrevistador:</strong> a pergunta é sempre a mesma, &ldquo;quem pode ver esta cópia e por quanto tempo ela continua certa?&rdquo;.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que <code>immutable</code> é seguro para o arquivo do item 1 e perigoso para o logo?</li>
+          <li>Para uma página que pode ser corrigida, por que preferir <code>s-maxage</code> a <code>max-age</code>?</li>
+          <li>O que você troca ao usar <code>stale-while-revalidate</code>?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>O arquivo tem um hash no nome. Se o conteúdo muda, o nome muda, então a cópia antiga nunca é pedida de novo. O logo tem sempre o mesmo nome: com <code>immutable</code>, o navegador nem pergunta se mudou.</li>
+            <li>A cópia da CDN você consegue apagar (invalidar) quando quiser. A cópia no navegador de cada pessoa, não. Com <code>max-age</code> longo, a correção só chega quando o prazo vence.</li>
+            <li>Velocidade por atualidade. A pessoa recebe a cópia na hora, mesmo que um pouco velha, e a CDN busca a nova em segundo plano. Serve quando &ldquo;um pouco velho&rdquo; é aceitável, como uma cotação de um minuto atrás.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Esta foi a resposta de um colega. Três itens estão errados. Quais, e o que acontece em produção em cada um?</p>
+        <ol>
+          <li><code>main-a1b2c3.js</code>: <code>public, max-age=31536000, immutable</code></li>
+          <li><code>/logo.svg</code>: <code>public, max-age=31536000, immutable</code></li>
+          <li><code>/painel</code>: <code>public, s-maxage=60</code></li>
+          <li><code>/api/cotacao</code>: <code>public, s-maxage=60, stale-while-revalidate=30</code></li>
+          <li><code>/blog/meu-post</code>: <code>public, max-age=86400</code></li>
+        </ol>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li>Certo.</li>
+            <li><strong>Errado.</strong> No redesign, quem já visitou o site continua vendo o logo antigo por até um ano, e não existe botão para limpar o navegador dos outros.</li>
+            <li><strong>Errado, e é o mais grave.</strong> A CDN guarda o painel do primeiro usuário e serve para os próximos durante 60 s. Um vazamento de dados por configuração de cabeçalho.</li>
+            <li>Certo.</li>
+            <li><strong>Errado.</strong> O post fica guardado um dia no navegador de cada leitor. Quando você corrige um erro e invalida a CDN, quem já leu continua vendo a versão errada até o dia seguinte.</li>
+          </ol>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p><code>/api/cotacao</code> passa a devolver também a carteira de quem está logado. O que acontece com o cache?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>A resposta agora depende de quem pede, então ela vira <code>private, no-store</code>, e toda pessoa passa a ir até a origem. Mil acessos voltam a ser mil pedidos ao servidor.</p>
+          <p>A saída melhor é separar em duas rotas: <code>/api/cotacao</code>, igual para todos e com cache na CDN, e <code>/api/carteira</code>, privada. A tela junta as duas. Misturar dado público com dado pessoal na mesma resposta faz você perder o cache do dado público.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
@@ -372,6 +425,7 @@
     <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Um CI mínimo no GitHub Actions</h3><span class="ex-meta">20 min &middot; YAML</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">Escreva <code>.github/workflows/ci.yml</code> para um app Next com pnpm. Ele roda em todo pull request: instala com cache, depois lint, checagem de tipos, testes e build. Um commit novo no mesmo PR cancela a execução anterior. O workflow só pode ler o repositório.</p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax">GitHub: sintaxe de workflow</a> &middot; <a href="https://pnpm.io/continuous-integration">pnpm: CI</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Você vai precisar de <code>on: pull_request</code>, <code>permissions: contents: read</code>, <code>concurrency</code> com <code>cancel-in-progress: true</code>, e das actions <code>actions/checkout</code>, <code>pnpm/action-setup</code> e <code>actions/setup-node</code> (com <code>cache: pnpm</code>).</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code>name: CI
@@ -403,6 +457,64 @@ jobs:
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> <code>--frozen-lockfile</code> falha se o lockfile não bate com o <code>package.json</code>, então o CI instala exatamente o que foi testado. O <code>pnpm/action-setup</code> lê a versão do campo <code>packageManager</code>. O deploy fica num workflow separado, que roda só na <code>main</code> e é o único com <code>id-token: write</code> para o OIDC (veja o <a href="r08-pratica.html#ex7">exercício 7 do R8</a>).</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que <code>permissions: contents: read</code>, se o job só roda testes?</li>
+          <li>Por que o grupo de <code>concurrency</code> usa <code>github.ref</code>?</li>
+          <li>Por que a ordem é lint, tipos, testes e build, e não o contrário?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>O job roda o <code>pnpm install</code>, que executa código de pacotes de terceiros. Se um deles for malicioso, o token do GitHub só consegue ler o repositório. Sem a linha, as permissões dependem da configuração do repositório, e podem incluir escrita.</li>
+            <li>Cada pull request tem o seu <code>ref</code>. Assim, um commit novo cancela só a execução antiga <em>do mesmo PR</em>, e não a dos outros.</li>
+            <li>Do mais rápido para o mais lento. Se o lint falha em 10 s, ninguém espera 3 minutos de build para descobrir.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Este workflow foi gerado por uma IA. Ache os quatro problemas.</p>
+<pre><code>name: CI
+on:
+  pull_request:
+
+concurrency:
+  group: ci
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>Falta <code>permissions</code>.</strong> O token fica com as permissões padrão do repositório, que podem incluir escrita.</li>
+            <li><strong><code>group: ci</code> é fixo.</strong> Todos os PRs caem no mesmo grupo: um commit no PR do colega cancela o CI do seu.</li>
+            <li><strong>Ordem errada das actions.</strong> O <code>setup-node</code> com <code>cache: pnpm</code> precisa do pnpm já instalado para achar a pasta do cache. Nesta ordem, o passo falha antes de instalar qualquer coisa.</li>
+            <li><strong>Falta <code>pnpm typecheck</code>.</strong> O enunciado pede checagem de tipos. Sem ela, o <code>build</code> do Next até confere os tipos, mas o erro aparece só no fim e misturado com o resto.</li>
+          </ol>
+          <p>O erro 3 só aparece rodando. Os erros 1 e 2 nem aparecem: o CI fica verde e o problema só se mostra quando alguém explora o token, ou quando dois PRs se cancelam. Por isso eles são os que a revisão precisa pegar.</p>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>Os testes passam a rodar em Node 20 e 22. O que muda no arquivo, e o que você <em>não</em> repete?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Use uma matriz: <code>strategy: matrix: node-version: [20, 22]</code> no job, e <code>node-version: ${{ matrix.node-version }}</code> no <code>setup-node</code>. O GitHub cria um job para cada versão, rodando em paralelo.</p>
+          <p>Lint e checagem de tipos não dependem da versão do Node. Repeti-los nas duas versões só gasta minutos. O comum é separar em dois jobs: um que roda lint e tipos uma vez só, e outro com a matriz, que roda os testes (e o build, se ele puder mudar entre versões).</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
@@ -625,7 +737,7 @@ output: process.env.VERCEL ? undefined : "standalone",</code></pre>
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 33 blocos &middot; 246 tópicos &middot; 159 leituras resumidas &middot; 177 perguntas abertas com gabarito &middot; 226 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 16/10/2026
+    O Gabarito da Teoria &middot; 39 blocos &middot; 289 tópicos &middot; 159 leituras resumidas &middot; 231 perguntas abertas com gabarito &middot; 238 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 19/10/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

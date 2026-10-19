@@ -5,10 +5,20 @@
 
   <ol class="etapas">
     <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
-    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>escrever e revisar</a></li>
     <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
     <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
   </ol>
+
+  <div class="nivel-box">
+    <h4>Para júnior avançado e pleno</h4>
+    <p>Aqui o pleno precisa mostrar que entende o caminho do dado do navegador até o banco, e que sabe testar sem chamar o modelo.</p>
+    <p><span class="nivel n-base">base</span><strong>Domine:</strong> autenticação com cookie <code>httpOnly</code> e rate limit, e testes com um provedor fake.</p>
+    <p><span class="nivel n-dif">diferencial</span><strong>Saiba explicar:</strong> Next full stack contra back-end separado, fila e <code>after()</code>, upload com URL pré-assinada, e embeddings/RAG explicados em dois minutos.</p>
+    <p><span class="nivel n-sr">sênior</span><strong>Deixe para depois:</strong> nada nesta página é só de sênior, mas a profundidade de índice HNSW pode esperar.</p>
+    <p class="nivel-legenda"><span class="nivel n-base">base</span>domine e faça à mão &middot; <span class="nivel n-dif">diferencial</span>saiba explicar em dois minutos &middot; <span class="nivel n-sr">sênior</span>só reconheça o nome por enquanto. A etiqueta aparece em cada tópico do checklist.</p>
+  </div>
+
 
   <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
   <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
@@ -106,14 +116,14 @@
   <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
   <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
-    <li class="item"><input type="checkbox" id="w28-1"><label for="w28-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As duas formas de ligar Next.js a um back-end Node: <strong>Next full stack</strong> (Server Actions + Route Handlers + worker separado, como o Gabarita) vs. <strong>Next como cliente de uma API Express</strong> (como o Ally AI) &mdash; o que cada uma ganha em deploy, CORS, cookie e tipos compartilhados</span></label></li>
-    <li class="item"><input type="checkbox" id="w28-2"><label for="w28-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM ponta a ponta: o provider entrega em pedaços, o Route Handler devolve um <code>ReadableStream</code> (ou SSE), o cliente lê com <code>getReader()</code> &mdash; e por que streaming muda a percepção de latência sem mudar a latência total</span></label></li>
-    <li class="item"><input type="checkbox" id="w28-3"><label for="w28-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Trabalho que não cabe num request: <code>after()</code> do Next, fila com worker (pg-boss/SQS/BullMQ) e semáforo em memória &mdash; o que cada um aguenta quando o processo reinicia, e como o cliente fica sabendo que terminou (polling, SSE, WebSocket)</span></label></li>
-    <li class="item"><input type="checkbox" id="w28-4"><label for="w28-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Upload: passar o arquivo pelo seu servidor vs. <strong>URL pré-assinada</strong> direto pro S3/R2 &mdash; limite de corpo, custo de memória da função, e quem valida tipo e tamanho em cada caso</span></label></li>
-    <li class="item"><input type="checkbox" id="w28-5"><label for="w28-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Auth em app de IA: sessão/JWT em cookie <code>httpOnly</code>, a mesma autenticação valendo pro WebSocket, e rate limit por usuário como proteção de <strong>custo</strong> (cada request é dinheiro de token), não só de abuso</span></label></li>
-    <li class="item"><input type="checkbox" id="w28-6"><label for="w28-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Embeddings e RAG no Postgres: o que é um embedding, coluna <code>vector(n)</code> do pgvector, distância de cosseno <code>&lt;=&gt;</code>, índice HNSW vs. IVFFlat, e por que filtro + índice aproximado pode devolver menos linhas do que você pediu</span></label></li>
-    <li class="item"><input type="checkbox" id="w28-7"><label for="w28-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Grounding sem vetor: quando dar ao modelo os <em>fatos</em> (achados do axe, questões reais do banco, texto completo da fonte) e verificar a saída contra eles resolve o problema melhor que RAG</span></label></li>
-    <li class="item"><input type="checkbox" id="w28-8"><label for="w28-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Testar fluxo de IA de forma determinística: <strong>fake provider</strong> atrás de uma interface, mock do SDK, stream simulado, fake timers pra polling &mdash; e Playwright com <code>page.route</code> pra rodar o E2E sem chamar o modelo</span></label></li>
+    <li class="item"><input type="checkbox" id="w28-1"><label for="w28-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As duas formas de ligar Next.js a um back-end Node: <strong>Next full stack</strong> (Server Actions + Route Handlers + worker separado, como o Gabarita) vs. <strong>Next como cliente de uma API Express</strong> (como o Ally AI) &mdash; o que cada uma ganha em deploy, CORS, cookie e tipos compartilhados <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w28-2"><label for="w28-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Streaming de resposta de LLM ponta a ponta: o provider entrega em pedaços, o Route Handler devolve um <code>ReadableStream</code> (ou SSE), o cliente lê com <code>getReader()</code> &mdash; e por que streaming muda a percepção de latência sem mudar a latência total <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w28-3"><label for="w28-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Trabalho que não cabe num request: <code>after()</code> do Next, fila com worker (pg-boss/SQS/BullMQ) e semáforo em memória &mdash; o que cada um aguenta quando o processo reinicia, e como o cliente fica sabendo que terminou (polling, SSE, WebSocket) <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w28-4"><label for="w28-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Upload: passar o arquivo pelo seu servidor vs. <strong>URL pré-assinada</strong> direto pro S3/R2 &mdash; limite de corpo, custo de memória da função, e quem valida tipo e tamanho em cada caso <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w28-5"><label for="w28-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Auth em app de IA: sessão/JWT em cookie <code>httpOnly</code>, a mesma autenticação valendo pro WebSocket, e rate limit por usuário como proteção de <strong>custo</strong> (cada request é dinheiro de token), não só de abuso <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w28-6"><label for="w28-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Embeddings e RAG no Postgres: o que é um embedding, coluna <code>vector(n)</code> do pgvector, distância de cosseno <code>&lt;=&gt;</code>, índice HNSW vs. IVFFlat, e por que filtro + índice aproximado pode devolver menos linhas do que você pediu <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w28-7"><label for="w28-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Grounding sem vetor: quando dar ao modelo os <em>fatos</em> (achados do axe, questões reais do banco, texto completo da fonte) e verificar a saída contra eles resolve o problema melhor que RAG <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w28-8"><label for="w28-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Testar fluxo de IA de forma determinística: <strong>fake provider</strong> atrás de uma interface, mock do SDK, stream simulado, fake timers pra polling &mdash; e Playwright com <code>page.route</code> pra rodar o E2E sem chamar o modelo <span class="nivel n-base">base</span></span></label></li>
   </ul>
 
   <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
@@ -129,8 +139,8 @@
 
 
   
-  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
-  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Esperar um job, com prazo</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
     <div class="ex-body">
@@ -141,6 +151,7 @@
         <li><code>pronto</code> devolve o resultado. <code>falhou</code> lança um erro com a mensagem do job.</li>
         <li>Desiste depois de 60 s no total. O <code>signal</code> cancela tudo, inclusive a espera.</li>
       </ul>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal">MDN: AbortSignal</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">MDN: Promise</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Faça uma função <code>dormir(ms, signal)</code> que devolve uma Promise e rejeita se o signal abortar. Assim o cancelamento interrompe a espera, e não só o <code>fetch</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -175,6 +186,58 @@ export async function esperarJob<T>(id: string, signal?: AbortSignal): Promise<T
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> o tipo do job deixa o TypeScript saber que <code>resultado</code> só existe em <code>pronto</code>; o cancelamento interrompe a espera, e não só o <code>fetch</code>; e o prazo é conferido antes de dormir, para não passar de 60 s. Num componente, quem chama cria um <code>AbortController</code> e aborta no cleanup do <code>useEffect</code>.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que o prazo é conferido <em>antes</em> de dormir?</li>
+          <li>Por que o <code>dormir</code> precisa receber o <code>signal</code>, se o <code>fetch</code> já recebe?</li>
+          <li>Para que serve o <code>removeEventListener</code> dentro do <code>setTimeout</code>?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>Para não começar uma espera que vai passar do limite. Conferindo depois, a função dorme 8 s, passa dos 60 s e só então desiste.</li>
+            <li>Porque a maior parte do tempo é gasta dormindo, não buscando. Se a pessoa cancela no meio de uma espera de 8 s, sem o <code>signal</code> no <code>dormir</code> o código só percebe quando a espera acaba e o próximo <code>fetch</code> é chamado.</li>
+            <li>Cada volta do laço adiciona um ouvinte de <code>abort</code> no mesmo <code>signal</code>. Sem remover, eles se acumulam enquanto o job roda. É um vazamento pequeno, mas é o tipo de detalhe que a revisão procura.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Esta versão compila e funciona no caso feliz. Ache os três erros. (O tipo <code>Job</code> é o mesmo da solução.)</p>
+<pre><code class="esc">
+function dormir(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
+export async function esperarJob<T>(id: string, signal?: AbortSignal): Promise<T> {
+  const inicio = Date.now();
+  let espera = 1000;
+  while (Date.now() - inicio < 60_000) {
+    const res = await fetch(`/api/jobs/${id}`, { signal });
+    const job: Job<T> = await res.json();
+    if (job.status === 'pronto') return job.resultado;
+    if (job.status === 'falhou') throw new Error(job.erro);
+    await dormir(espera);
+    espera = espera * 2;
+  }
+  throw new Error('O job demorou demais.');
+}
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>O <code>dormir</code> ignora o cancelamento.</strong> A pessoa clica em cancelar e a função continua dormindo até o fim da espera.</li>
+            <li><strong>A espera não tem teto.</strong> Ela vai a 1, 2, 4, 8, 16 e 32 s, quebrando a regra dos 8 s. E como o prazo só é conferido no começo do laço, a última espera de 32 s leva o total para mais de 60 s.</li>
+            <li><strong>Não confere <code>res.ok</code>.</strong> Se o servidor responde 500 com uma página HTML, o <code>res.json()</code> lança um erro confuso de JSON. Se responde 404 com <code>{ "erro": "não existe" }</code>, o <code>status</code> vem <code>undefined</code>, e a função fica perguntando até dar o prazo.</li>
+          </ol>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>O servidor passou a mandar o cabeçalho <code>Retry-After</code> (em segundos) dizendo quanto esperar. Quando ele existir, respeite. O que muda, e o que continua igual?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Antes de dormir, leia o cabeçalho: <code>const s = Number(res.headers.get('Retry-After'))</code>. Se for um número maior que zero, durma <code>s * 1000</code>. Senão, use a espera exponencial de sempre.</p>
+          <p>Continuam iguais o prazo de 60 s (o servidor pode pedir para esperar mais do que você aceita) e o cancelamento. Cuidado: <code>Retry-After</code> também pode vir como data. Aí o <code>Number()</code> dá <code>NaN</code>, e o código precisa cair na espera padrão em vez de dormir <code>NaN</code>. Veja o <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Retry-After">MDN: Retry-After</a>.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
@@ -196,6 +259,7 @@ export async function resumir(texto: string, ia: ProvedorIA): Promise<string> {
   throw new Error('resposta inválida do modelo');
 }
 </code></pre>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://vitest.dev/api/mock">Vitest: mock functions</a> &middot; <a href="https://vitest.dev/api/expect">Vitest: expect</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O fake pode ser um objeto com <code>gerar: vi.fn()</code>. Use <code>mockResolvedValueOnce</code> em sequência para devolver uma resposta diferente a cada chamada, e confira <code>toHaveBeenCalledTimes</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -230,6 +294,57 @@ describe('resumir', () => {
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> os testes rodam em milissegundos, não gastam cota e dão sempre o mesmo resultado. O terceiro caso usa um resumo vazio e um campo errado: dois jeitos diferentes de a resposta ser inválida mesmo sendo JSON.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Qual a diferença entre <code>mockResolvedValueOnce</code> e <code>mockResolvedValue</code>?</li>
+          <li>Se o resultado já está certo, por que conferir <code>toHaveBeenCalledTimes</code>?</li>
+          <li>Por que o <code>expect(...).rejects</code> precisa de <code>await</code>?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li><code>Once</code> vale para uma chamada só. Vários em sequência montam um roteiro: a primeira chamada recebe a primeira resposta, a segunda recebe a segunda. Sem <code>Once</code>, todas as chamadas recebem a mesma resposta.</li>
+            <li>Porque o resultado não prova o caminho. A contagem mostra que o retry aconteceu (2 chamadas), ou que não houve chamada a mais (cada chamada ao modelo custa dinheiro).</li>
+            <li>A verificação é assíncrona. Sem <code>await</code>, o teste pode terminar antes dela. As versões recentes do Vitest (testei na 5) detectam isso e falham com um aviso claro; outros executores de teste podem deixar passar em silêncio.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Estes três testes passam. Mesmo assim, se alguém apagar o retry de <code>resumir</code> (trocando <code>tentativa &lt;= 2</code> por <code>tentativa &lt;= 1</code>), <em>os três continuam passando</em>. Por quê? Ache os problemas.</p>
+<pre><code class="esc">
+it('devolve o resumo quando a primeira resposta é válida', async () => {
+  const ia = fake('{"resumo":"Texto curto"}');
+  await expect(resumir('...', ia)).resolves.toBe('Texto curto');
+});
+
+it('tenta de novo quando a resposta vem quebrada', async () => {
+  const ia = { gerar: vi.fn<ProvedorIA['gerar']>().mockResolvedValue('{"resumo":"Agora sim"}') };
+  await expect(resumir('...', ia)).resolves.toBe('Agora sim');
+});
+
+it('desiste depois de duas respostas inválidas', async () => {
+  const ia = fake('isto não é JSON', 'isto não é JSON');
+  await expect(resumir('...', ia)).rejects.toThrow();
+});
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>O teste do retry nunca manda uma resposta quebrada.</strong> O <code>mockResolvedValue</code> devolve a resposta válida já na primeira chamada. O nome do teste promete o retry, mas o código não passa por ele.</li>
+            <li><strong>Nenhum teste confere quantas chamadas houve.</strong> Sem <code>toHaveBeenCalledTimes(2)</code>, uma versão que desiste na primeira tentativa também &ldquo;desiste depois de duas respostas inválidas&rdquo;.</li>
+            <li><strong><code>toThrow()</code> sem mensagem aceita qualquer erro.</strong> Um <code>TypeError</code> causado por um bug dentro de <code>resumir</code> também faria o teste passar.</li>
+            <li><strong>Só um tipo de resposta inválida.</strong> As duas são texto que não é JSON. O caminho &ldquo;é JSON, mas o <code>resumo</code> está vazio&rdquo; nunca é testado.</li>
+          </ol>
+          <p>É assim que se revisa um teste: pergunte &ldquo;se eu quebrar o código de propósito, este teste fica vermelho?&rdquo;. Se não fica, ele não protege nada.</p>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p><code>resumir</code> passa a fazer até 3 tentativas. Quais testes da solução precisam mudar, e qual teste novo vale escrever?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>O terceiro teste quebra, e é bom que quebre: ele confere <code>toHaveBeenCalledTimes(2)</code>. Atualize-o para três respostas inválidas e 3 chamadas. Escreva também um teste novo: &ldquo;quebrada, quebrada, válida&rdquo;, que deve funcionar com 3 chamadas.</p>
+          <p>Repare que o teste que falhou foi justamente o que conferia a contagem. Um teste que quebra quando o comportamento muda de propósito está fazendo o trabalho dele: avisando que a mudança foi percebida.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 

@@ -1,0 +1,144 @@
+<section class="week" id="ent4">
+  <div class="week-head"><span class="week-num">E4</span><h2>Fundamentos: a conversa técnica</h2></div>
+  <div class="week-meta">~8h &middot; 38 perguntas com gabarito, em seis temas &middot; responda em voz alta antes de abrir</div>
+  <p class="intro">Em uma frase: <strong>além do código ao vivo, quase toda entrevista de júnior avançado e pleno tem uma conversa técnica, e as perguntas se repetem.</strong> Elas não querem a definição de livro. Querem ver se você entende o porquê e se já viu aquilo na prática. As respostas abaixo são curtas de propósito: é o tamanho certo para falar em um ou dois minutos. Para cada tema, o aprofundamento está numa página do guia (indicada no título).</p>
+
+  <div class="basico">
+    <div class="bcard">
+      <h4>Como usar esta página</h4>
+      <p><b class="r">Em voz alta</b>Leia a pergunta, responda falando, e só depois abra o gabarito. Reconhecer a resposta lendo é muito mais fácil do que produzi-la sob pressão, e só a segunda é avaliada.</p>
+      <p><b class="r">O formato</b>Definição em uma frase, um exemplo e, se tiver, onde você usou. &ldquo;Closure é&hellip;; por exemplo, o debounce&hellip;; no Gabarita, eu&hellip;&rdquo;.</p>
+      <p><b class="r">Não sabe?</b>Diga o que sabe e como descobriria. &ldquo;Não lembro a diferença exata, mas sei que um deles&hellip;; eu confirmaria na documentação.&rdquo; Inventar é pior que admitir.</p>
+      <p class="frase"><b class="r">Na entrevista</b>Uma resposta com exemplo próprio vale mais que uma definição perfeita decorada.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Checklist</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="e4-1"><label for="e4-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">JavaScript: respondo as 9 em voz alta, com um exemplo em cada</span></label></li>
+    <li class="item"><input type="checkbox" id="e4-2"><label for="e4-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">React: respondo as 9 em voz alta, com um exemplo em cada</span></label></li>
+    <li class="item"><input type="checkbox" id="e4-3"><label for="e4-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">TypeScript: respondo as 5 em voz alta</span></label></li>
+    <li class="item"><input type="checkbox" id="e4-4"><label for="e4-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Navegador, HTTP e segurança: respondo as 7 em voz alta</span></label></li>
+    <li class="item"><input type="checkbox" id="e4-5"><label for="e4-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">CSS: respondo as 4 em voz alta</span></label></li>
+    <li class="item"><input type="checkbox" id="e4-6"><label for="e4-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Testes, acessibilidade, Git e code review: respondo as 4 em voz alta</span></label></li>
+    <li class="item"><input type="checkbox" id="e4-7"><label for="e4-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acertei pelo menos 10 de 12 na múltipla escolha do fim da página</span></label></li>
+  </ul>
+
+  <h3 class="sub">JavaScript &middot; aprofunde em <a href="01-javascript-react.html">01</a> e <a href="04-concorrencia.html">04</a></h3>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual a diferença entre <code>var</code>, <code>let</code> e <code>const</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><code>var</code> vale para a função inteira e pode ser usada antes da linha em que foi declarada (vale <code>undefined</code>). <code>let</code> e <code>const</code> valem só dentro do bloco <code>{ }</code> e dão erro se usadas antes da declaração. <code>const</code> não deixa <em>reatribuir</em> a variável, mas o objeto dentro dela pode mudar: <code>const lista = []; lista.push(1)</code> funciona.</p><p>Na prática: <code>const</code> por padrão, <code>let</code> quando o valor muda, e <code>var</code> nunca em código novo.</p></div></details></li>
+      <li>O que é closure? Dê um exemplo.
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>É uma função que lembra as variáveis do lugar onde foi criada, mesmo depois que aquele lugar terminou de rodar. Exemplo: no <a href="e01-fluencia.html#fl13">debounce</a>, a função devolvida lembra a variável <code>timer</code> entre as chamadas. Os hooks do React também dependem disso, e é por isso que existe o bug da &ldquo;closure velha&rdquo; num <code>setInterval</code> (veja o <a href="e02-live-coding-front.html#lc7">LC 7</a>).</p></div></details></li>
+      <li>Em que ordem isto imprime? <code>console.log(1); setTimeout(() =&gt; console.log(2), 0); Promise.resolve().then(() =&gt; console.log(3)); console.log(4);</code>
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><strong>1, 4, 3, 2.</strong> Primeiro roda todo o código síncrono (1 e 4). Quando a pilha esvazia, o event loop roda todas as <em>microtarefas</em> (os <code>then</code> das Promises: 3) e só depois a próxima <em>tarefa</em> (o <code>setTimeout</code>: 2). O <code>0</code> do <code>setTimeout</code> quer dizer &ldquo;assim que der&rdquo;, não &ldquo;agora&rdquo;.</p><p>Por isso um laço pesado trava a página: enquanto ele roda, nada mais roda, nem o clique, nem a pintura da tela.</p></div></details></li>
+      <li>Qual a diferença entre <code>==</code> e <code>===</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><code>===</code> compara valor e tipo. <code>==</code> converte os tipos antes de comparar, com regras difíceis de lembrar: <code>0 == ''</code> é <code>true</code>, e <code>null == undefined</code> também. Use sempre <code>===</code>. A exceção aceita por muitos times é <code>x == null</code>, que pega <code>null</code> e <code>undefined</code> de uma vez.</p></div></details></li>
+      <li>Como o valor de <code>this</code> é definido? E na arrow function?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Numa função comum, o <code>this</code> depende de <em>como</em> ela é chamada: em <code>obj.metodo()</code>, é <code>obj</code>; passada como callback solta, ele se perde (fica <code>undefined</code> no modo estrito). A arrow function não tem <code>this</code> próprio: usa o do lugar onde foi escrita. Por isso arrow functions são a escolha natural para callbacks.</p></div></details></li>
+      <li>Qual a diferença entre <code>Promise.all</code>, <code>allSettled</code>, <code>race</code> e <code>any</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><code>all</code>: espera todas e falha se uma falhar (buscar dados que a página inteira precisa). <code>allSettled</code>: espera todas e diz o resultado de cada uma, sem falhar (enviar 10 fotos e mostrar quais deram erro). <code>race</code>: devolve a primeira que terminar, com sucesso ou erro (um prazo, como o <a href="e01-fluencia.html#fl15">comTimeout</a>). <code>any</code>: devolve a primeira que der certo (tentar dois servidores).</p></div></details></li>
+      <li>O que é cópia rasa e cópia profunda?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>A cópia rasa (<code>{ ...obj }</code>, <code>[...lista]</code>) cria um objeto novo, mas os objetos de dentro continuam sendo os mesmos. Mudar <code>copia.endereco.cidade</code> muda o original também. A cópia profunda copia tudo, em todos os níveis: <code>structuredClone(obj)</code> faz isso.</p><p>No React, isso explica por que atualizar estado aninhado exige espalhar cada nível: <code>{ ...user, endereco: { ...user.endereco, cidade } }</code>.</p></div></details></li>
+      <li>O que é hoisting?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Antes de rodar, o JavaScript registra as declarações do escopo. Funções declaradas com <code>function nome()</code> podem ser chamadas antes da linha onde estão. <code>var</code> existe antes da linha, mas vale <code>undefined</code>. <code>let</code> e <code>const</code> também são registradas, mas usá-las antes da linha dá erro: o trecho até a declaração se chama <em>temporal dead zone</em>.</p></div></details></li>
+      <li>O que é propagação de eventos (<em>bubbling</em>) e delegação?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Um clique num botão dispara o evento no botão e depois em cada elemento pai, até o documento: o evento &ldquo;sobe&rdquo;. Delegação aproveita isso: em vez de um ouvinte em cada um dos 500 itens da lista, um ouvinte só, na lista, que olha <code>event.target</code> para saber qual item foi clicado. <code>event.stopPropagation()</code> interrompe a subida. O próprio React usa delegação: ele põe os ouvintes na raiz da aplicação.</p></div></details></li>
+    </ol>
+  </div>
+
+  <h3 class="sub">React &middot; aprofunde em <a href="01-javascript-react.html">01</a> e <a href="b15-react-estado.html">B15</a></h3>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Para que serve a <code>key</code> numa lista? Por que não usar o índice?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>A <code>key</code> diz ao React qual item é qual entre uma renderização e outra, para ele reaproveitar o elemento certo. Com o índice, remover ou reordenar itens faz um item herdar a chave do vizinho, e o estado interno (um input, o foco) vai parar no item errado. Use um id estável do dado. O índice só é aceitável numa lista que nunca muda de ordem nem de tamanho.</p></div></details></li>
+      <li>Qual a diferença entre props e estado? Como você decide se algo deve ser estado?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Props chegam do pai e o componente não as muda. Estado pertence ao componente e muda com <code>setState</code>, o que redesenha a tela. Antes de criar um estado, pergunte: dá para calcular a partir de props ou de outro estado? Se dá (a lista filtrada, o total do carrinho), não é estado: é uma variável calculada na renderização. Estado duplicado é a fonte de bug mais comum em React.</p></div></details></li>
+      <li>Quando o <code>useEffect</code> roda, e para que serve a função que ele devolve?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Ele roda depois que a tela é atualizada: na primeira vez e sempre que uma dependência do array mudar. A função devolvida é a limpeza: roda antes do efeito rodar de novo e quando o componente sai da tela. Serve para cancelar o <code>fetch</code>, limpar o <code>setInterval</code> ou remover o ouvinte de evento.</p><p>E o principal: efeito é para sincronizar com algo <em>de fora</em> do React. Calcular um valor a partir do estado não precisa de efeito.</p></div></details></li>
+      <li>O que faz um componente renderizar de novo? Quando usar <code>React.memo</code>, <code>useMemo</code> e <code>useCallback</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Ele renderiza de novo quando o próprio estado muda, quando o pai renderiza ou quando um contexto que ele usa muda. Renderizar não é ruim: na maioria das vezes, é barato. <code>React.memo</code> pula a renderização se as props não mudaram. <code>useMemo</code> guarda um cálculo caro. <code>useCallback</code> guarda a mesma função entre renderizações, o que só importa se ela vai para um componente com <code>memo</code> ou para as dependências de um efeito.</p><p>A regra: meça primeiro (React DevTools Profiler), otimize depois. O React Compiler já faz boa parte disso sozinho.</p></div></details></li>
+      <li>O que é input controlado e não controlado?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Controlado: o valor vem do estado (<code>value={texto}</code> mais <code>onChange</code>), e o React é a fonte da verdade. Bom quando você precisa reagir a cada tecla (validar, formatar, habilitar um botão). Não controlado: o próprio DOM guarda o valor, e você lê quando precisa (com <code>ref</code>, ou com <code>FormData</code> no envio). Mais simples e com menos renderizações, bom para formulários grandes. Bibliotecas como React Hook Form usam essa ideia.</p></div></details></li>
+      <li>Quando usar Context? E quando usar uma biblioteca de estado?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Context serve para passar um valor a muitos componentes sem repassar prop por prop: tema, idioma, usuário logado. O cuidado: quando o valor muda, todos os componentes que o usam renderizam de novo. Para estado que muda muito e é usado em muitos lugares, Zustand ou Redux deixam cada componente assinar só o pedaço que usa. E dado que vem do servidor fica melhor em TanStack Query ou SWR, que cuidam de cache e de nova busca.</p></div></details></li>
+      <li>Qual a diferença entre Server Component e Client Component no Next.js?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>O Server Component roda só no servidor: pode buscar no banco direto e não manda o seu JavaScript ao navegador. Não pode ter estado, efeito nem evento de clique. O Client Component (com <code>'use client'</code> no topo do arquivo) roda também no navegador e pode ser interativo. A regra prática: tudo é servidor por padrão, e só as &ldquo;folhas&rdquo; interativas (o botão, o formulário) viram cliente.</p></div></details></li>
+      <li>Por que o meu efeito roda duas vezes em desenvolvimento?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>É o <code>StrictMode</code>. Em desenvolvimento, o React monta, desmonta e monta de novo cada componente, de propósito, para revelar efeitos sem limpeza. Se rodar duas vezes quebra algo (dois pedidos, dois ouvintes), falta a função de limpeza. Em produção, roda uma vez só. A resposta errada é tirar o <code>StrictMode</code>.</p></div></details></li>
+      <li>Uma lista com 10 mil itens está lenta. O que você faria?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Primeiro, medir com o Profiler para ver se o custo é renderizar ou outra coisa. As saídas mais comuns: <strong>virtualização</strong> (desenhar só os itens visíveis na tela, com TanStack Virtual ou react-window), paginação ou &ldquo;carregar mais&rdquo;, e <code>React.memo</code> no item para ele não renderizar de novo quando outro item muda. Em busca sobre a lista, <code>useDeferredValue</code> mantém o campo de texto rápido enquanto a lista atualiza.</p></div></details></li>
+    </ol>
+  </div>
+
+  <h3 class="sub">TypeScript &middot; aprofunde em <a href="b04-typescript.html">B4</a></h3>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Qual a diferença entre <code>type</code> e <code>interface</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Para descrever o formato de um objeto, os dois servem quase igual. <code>type</code> também descreve uniões (<code>'a' | 'b'</code>) e outros tipos compostos, que a <code>interface</code> não consegue. A <code>interface</code> pode ser declarada de novo e as declarações se juntam, o que é útil para estender tipos de bibliotecas. O mais importante é o time escolher um padrão e seguir.</p></div></details></li>
+      <li>Qual a diferença entre <code>any</code> e <code>unknown</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><code>any</code> desliga a checagem: você pode fazer qualquer coisa com o valor, e os erros passam. <code>unknown</code> diz &ldquo;não sei o que é&rdquo;, e o TypeScript obriga a conferir antes de usar. Para dado de fora (resposta de API, <code>JSON.parse</code>), use <code>unknown</code> e valide (com Zod, por exemplo).</p></div></details></li>
+      <li>O que é uma união discriminada?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Uma união de objetos em que todos têm um campo com valor fixo diferente, como <code>tipo: 'carregando' | 'erro' | 'pronto'</code>. Ao conferir esse campo, o TypeScript sabe quais outros campos existem: dentro de <code>if (e.tipo === 'pronto')</code>, ele deixa ler <code>e.dados</code>. Isso impede estados impossíveis, como &ldquo;carregando com mensagem de erro&rdquo;. É a base do reducer do <a href="r01-ai-frontend.html#fz1">R1</a>.</p></div></details></li>
+      <li>O que são generics? Dê um exemplo.
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>São tipos com parâmetro, para uma função servir a vários tipos sem perder a informação. <code>function primeiro&lt;T&gt;(lista: T[]): T | undefined</code>: com uma lista de números devolve número; com uma de usuários, usuário. Sem generic, você teria de escolher entre repetir a função ou usar <code>any</code>. O <code>useState&lt;Tarefa[]&gt;</code> que você usa todo dia é um generic.</p></div></details></li>
+      <li>Para que servem <code>Partial</code>, <code>Pick</code>, <code>Omit</code> e <code>Record</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Criam tipos novos a partir de um existente, sem repetir campos. <code>Partial&lt;User&gt;</code>: todos os campos opcionais (bom para um formulário de edição). <code>Pick&lt;User, 'id' | 'nome'&gt;</code>: só esses campos. <code>Omit&lt;User, 'senha'&gt;</code>: todos menos esse (o que vai para o cliente). <code>Record&lt;string, number&gt;</code>: um objeto usado como dicionário.</p></div></details></li>
+    </ol>
+  </div>
+
+  <h3 class="sub">Navegador, HTTP e segurança &middot; aprofunde em <a href="b05-http-redes.html">B5</a>, <a href="b13-navegador-performance.html">B13</a> e <a href="05-seguranca-historia.html">05</a></h3>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>O que acontece quando você digita uma URL e aperta Enter?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Em ordem: o DNS traduz o domínio em um endereço IP; o navegador abre a conexão (TCP e, em HTTPS, a negociação TLS); manda o pedido HTTP; recebe o HTML e começa a ler. Ao achar CSS e JavaScript, busca esses arquivos; monta a árvore do DOM e a do CSS, calcula o layout e pinta a tela. Na entrevista, o bom é dizer onde cada etapa pode ficar lenta: DNS, servidor longe, JavaScript que bloqueia a leitura do HTML, imagem grande.</p></div></details></li>
+      <li>Qual a diferença entre GET e POST? E entre 401 e 403?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>GET lê e não deve mudar nada no servidor; pode ser guardado em cache e repetido. POST cria ou executa algo; repetir pode duplicar (dois pedidos, duas cobranças). PUT e DELETE devem ser <em>idempotentes</em>: repetir dá o mesmo resultado. <strong>401</strong>: &ldquo;não sei quem você é&rdquo; (falta login). <strong>403</strong>: &ldquo;sei quem você é e você não pode&rdquo;. A família 4xx é erro de quem pediu; a 5xx, erro do servidor.</p></div></details></li>
+      <li>O que é CORS?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>É a regra do navegador que impede uma página de um site ler a resposta de outro site, a não ser que o outro autorize, com o cabeçalho <code>Access-Control-Allow-Origin</code>. Quem bloqueia é o navegador, não o servidor: por isso a mesma chamada funciona no Postman e falha na página. A correção é no servidor da API (liberar a origem) ou passar a chamada pelo seu próprio back-end.</p></div></details></li>
+      <li>Cookie, <code>localStorage</code> ou <code>sessionStorage</code>: onde guardar o token de login?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>O mais seguro é um cookie <code>httpOnly</code>, <code>Secure</code> e <code>SameSite</code>. Com <code>httpOnly</code>, o JavaScript da página não consegue ler o cookie, então um ataque XSS não rouba o token. No <code>localStorage</code>, qualquer script na página lê. <code>localStorage</code> fica até ser apagado; <code>sessionStorage</code> some quando a aba fecha. Os dois servem para preferência (tema, rascunho), não para segredo.</p></div></details></li>
+      <li>Qual a diferença entre CSR, SSR e geração estática?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>CSR: o servidor manda um HTML quase vazio, e o JavaScript monta a página no navegador (primeira tela mais lenta, ruim para SEO). SSR: o servidor monta o HTML a cada pedido (dado sempre atual, custo a cada visita). Estática: o HTML é gerado no build e servido pela CDN (o mais rápido, para conteúdo que muda pouco); com ISR, ele é refeito de tempos em tempos ou quando o dado muda. O exercício de decisão do <a href="r03-arquitetura-frontend.html#fz1">R3</a> treina essa escolha.</p></div></details></li>
+      <li>O que são os Core Web Vitals e como você melhoraria cada um?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><strong>LCP</strong>: quanto demora o maior elemento visível (em geral, a imagem principal). Melhora com imagem otimizada e carregada com prioridade, e servidor mais rápido. <strong>INP</strong>: quanto a página demora para responder a um clique ou tecla. Melhora com menos JavaScript rodando no clique e quebrando tarefas longas. <strong>CLS</strong>: o quanto o layout pula enquanto carrega. Melhora reservando espaço para imagens e anúncios (<code>width</code> e <code>height</code>).</p></div></details></li>
+      <li>O que é XSS e o que é CSRF?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><strong>XSS</strong>: o atacante consegue rodar o script dele na sua página, por exemplo com um comentário que contém <code>&lt;script&gt;</code>. O React escapa o texto por padrão; o risco volta com <code>dangerouslySetInnerHTML</code>. A CSP é a segunda linha de defesa. <strong>CSRF</strong>: outro site faz o navegador da vítima mandar um pedido ao seu, levando o cookie junto. Defesa: cookie <code>SameSite</code>, token anti-CSRF e nunca mudar dado com GET.</p></div></details></li>
+    </ol>
+  </div>
+
+  <h3 class="sub">CSS &middot; aprofunde em <a href="b12-css.html">B12</a></h3>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>O que é o box model? Para que serve <code>box-sizing: border-box</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Todo elemento é uma caixa com conteúdo, <code>padding</code>, borda e <code>margin</code>. No padrão antigo, a <code>width</code> vale só para o conteúdo: uma caixa de 200px com 20px de padding ocupa 240px. Com <code>border-box</code>, a <code>width</code> inclui padding e borda, e 200px são 200px. Quase todo projeto aplica <code>border-box</code> em tudo logo no começo.</p></div></details></li>
+      <li>Quando usar Flexbox e quando usar Grid?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Flexbox organiza numa direção (uma linha ou uma coluna): uma barra de navegação, botões lado a lado, centralizar algo. Grid organiza em duas direções ao mesmo tempo: o layout da página, uma galeria de cartões alinhados em linhas e colunas. Eles se combinam: Grid para a página, Flexbox dentro de cada cartão.</p></div></details></li>
+      <li>Como o navegador decide qual regra CSS vale quando duas se aplicam ao mesmo elemento?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Pela cascata. Primeiro a origem e o <code>!important</code>; depois a <em>especificidade</em> do seletor (id vale mais que classe, que vale mais que tag); por último, a ordem: a regra que vem depois ganha. Hoje, <code>@layer</code> deixa organizar camadas inteiras (reset, componentes, utilitários) sem brigar por especificidade. O <code>!important</code> é sinal de que a briga já começou.</p></div></details></li>
+      <li>Qual a diferença entre <code>position</code> <code>relative</code>, <code>absolute</code>, <code>fixed</code> e <code>sticky</code>?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><code>relative</code>: fica no lugar normal e pode ser deslocado; também serve de referência para filhos com <code>absolute</code>. <code>absolute</code>: sai do fluxo e se posiciona em relação ao ancestral posicionado mais próximo (um selo no canto de um cartão). <code>fixed</code>: preso à janela, não rola (um botão de chat). <code>sticky</code>: rola normalmente até um ponto e então gruda (um cabeçalho de tabela).</p></div></details></li>
+    </ol>
+  </div>
+
+  <h3 class="sub">Testes, acessibilidade, Git e code review &middot; aprofunde em <a href="b10-testes.html">B10</a> e <a href="b11-acessibilidade.html">B11</a></h3>
+  <div class="quiz">
+    <div class="quiz-head">Responda em voz alta &middot; s&oacute; depois abra o gabarito</div>
+    <ol>
+      <li>Teste unitário, de integração e e2e: o que você testa em cada um no front?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><strong>Unitário</strong>: uma função pura (validar um formulário, formatar um preço). <strong>Integração</strong>: um componente com seus filhos, como a pessoa usa (digitar, clicar, ver o resultado), com a rede simulada; com Testing Library, é onde fica a maior parte dos testes de front. <strong>E2E</strong>: o fluxo inteiro num navegador de verdade, com Playwright (cadastro, compra), em poucos casos, porque é mais lento e mais frágil.</p></div></details></li>
+      <li>Qual o mínimo de acessibilidade que todo componente precisa?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Usar o elemento certo (<code>&lt;button&gt;</code> para ação, <code>&lt;a&gt;</code> para navegação); tudo funcionar pelo teclado, com foco visível; todo campo com <code>&lt;label&gt;</code>; imagem com <code>alt</code>; informação que não dependa só de cor; contraste suficiente. E testar: navegar só com o teclado e passar o axe (a extensão do navegador) leva cinco minutos.</p></div></details></li>
+      <li>Qual a diferença entre <code>merge</code> e <code>rebase</code>? O que você faz quando dá conflito?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p><code>merge</code> junta dois ramos e cria um commit de junção, mantendo a história como aconteceu. <code>rebase</code> reaplica os seus commits em cima do ramo atualizado, deixando a história em linha reta. Regra: não faça rebase de um ramo que outras pessoas já usam. No conflito: abrir os arquivos marcados, entender as duas mudanças (e perguntar a quem fez a outra, se precisar), juntar, rodar os testes e só então concluir.</p></div></details></li>
+      <li>O que você olha quando revisa o PR de um colega?
+        <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Primeiro, se o PR faz o que promete (li a descrição, rodei, se for o caso). Depois: os casos de erro e de borda, se há teste para o comportamento novo, nomes claros, código duplicado, e segurança (dado de fora sendo confiado). Escrevo o comentário como pergunta ou sugestão, com o porquê, e separo o que bloqueia do que é preferência. Essa pergunta mede maturidade: pleno revisa código, não só escreve.</p></div></details></li>
+    </ol>
+  </div>
+</section>

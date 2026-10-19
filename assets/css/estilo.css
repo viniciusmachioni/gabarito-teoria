@@ -1226,6 +1226,30 @@
   .dica-body p, .sol-body p { font-size: 14px; margin: 0 0 8px; max-width: none; }
   .sol-body h5 { margin: 14px 0 6px; font-size: 13px; }
   .sol-body h5:first-child { margin-top: 0; }
+
+  /* Fazer: o que pode consultar e o bloco Revisar (explicar, caçar o bug, mudar um requisito) */
+  .ex-body > p.ex-consulta { font-size: 13.5px; color: var(--ink-soft); }
+  .ex-consulta b { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); margin-right: 6px; }
+  .revisar { margin-top: 18px; padding-top: 2px; border-top: 1px dashed var(--line); }
+  .revisar > h4 { color: var(--blue); }
+  .revisar > p { font-size: 14.5px; margin: 0 0 10px; max-width: none; }
+  .revisar h5 { margin: 16px 0 6px; font-size: 14px; }
+  details.rv { margin-top: 6px; }
+  details.rv > summary {
+    list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; font-weight: 600;
+    padding: 3px 9px; border-radius: 20px;
+    color: var(--blue); border: 1px solid color-mix(in srgb, var(--blue) 35%, var(--line)); background: var(--blue-soft);
+  }
+  details.rv > summary::-webkit-details-marker { display: none; }
+  details.rv > summary::after { content: '\25B8'; transition: transform .15s; display: inline-block; }
+  details.rv[open] > summary::after { transform: rotate(90deg); }
+  .rv-body {
+    margin-top: 8px; padding: 11px 14px; background: var(--paper-sunken);
+    border-left: 2px solid var(--blue); border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    font-size: 14px; line-height: 1.6;
+  }
+  .rv-body p { font-size: 14px; margin: 0 0 8px; max-width: none; }
   .roteiro { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 6px 0 12px; }
   .roteiro th, .roteiro td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--line); }
   .roteiro th { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }
@@ -1336,3 +1360,22 @@
   .tcard .tresumo { margin: -2px 0 10px; font-size: 14.5px; color: var(--ink); font-weight: 400; }
   .tcard .tresumo strong { font-weight: 600; }
   .tcard .real { margin: 10px 0 8px; font-size: 14px; font-weight: 400; }
+
+  /* ---------- Nível dos tópicos do roadmap (júnior avançado / pleno) ---------- */
+  .nivel {
+    display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 20px; vertical-align: 1px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+    border: 1px solid var(--line); white-space: nowrap;
+  }
+  .nivel.n-base { color: var(--teal); background: var(--teal-soft); border-color: color-mix(in srgb, var(--teal) 35%, var(--line)); }
+  .nivel.n-dif { color: var(--blue); background: var(--blue-soft); border-color: color-mix(in srgb, var(--blue) 35%, var(--line)); }
+  .nivel.n-sr { color: var(--ink-faint); background: var(--paper-sunken); }
+  .nivel-box {
+    margin: 18px 0; padding: 14px 16px; border: 1px solid var(--line); border-left: 3px solid var(--teal);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0; background: var(--paper-raised);
+  }
+  .nivel-box h4 { margin: 0 0 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--teal); }
+  .nivel-box p { font-size: 14.5px; margin: 0 0 8px; max-width: none; }
+  .nivel-box p:last-child { margin-bottom: 0; }
+  .nivel-box .nivel { margin-left: 0; margin-right: 4px; }
+  .nivel-legenda { font-size: 13px !important; color: var(--ink-soft); }

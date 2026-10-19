@@ -1,0 +1,434 @@
+<section class="week" id="ent3">
+  <div class="week-head"><span class="week-num">E3</span><h2>Algoritmos que caem nesse nível</h2></div>
+  <div class="week-meta">~10h, em sessões de 45 min &middot; 12 problemas fáceis e médios, um por padrão &middot; base: <a href="b08-algoritmos.html">B8</a></div>
+  <p class="intro">Em uma frase: <strong>para júnior avançado e pleno, a etapa de algoritmo pede problemas fáceis e médios, e quase todos usam um punhado de padrões.</strong> Vagas no exterior e empresas grandes de tecnologia, aqui e lá fora, costumam ter essa etapa. Empresas de produto menores preferem um componente ou um desafio para casa (o <a href="e02-live-coding-front.html">E2</a>). Esta página tem um problema por padrão, cada um com o link para treinar no LeetCode, a solução comentada e o custo em Big-O. Antes de cada um, faça o <a href="e01-fluencia.html">E1</a> até o nível 3.</p>
+
+  <div class="basico">
+    <div class="bcard">
+      <h4>1. Big-O em linguagem simples</h4>
+      <p><b class="r">O que é</b>Big-O diz como o tempo (ou a memória) cresce quando a entrada cresce. Não é o tempo em segundos.</p>
+      <p><b class="r">Os que importam</b><code>O(1)</code>: não depende do tamanho (ler <code>mapa.get(x)</code>). <code>O(log n)</code>: corta pela metade a cada passo (busca binária). <code>O(n)</code>: passa uma vez por tudo. <code>O(n log n)</code>: ordenar. <code>O(n²)</code>: um laço dentro de outro.</p>
+      <p><b class="r">A conta que convence</b>Com um milhão de itens, O(n) são um milhão de passos. O(n²) são um trilhão: o que levaria um segundo passa a levar dias.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;A força bruta é O(n²) porque compara cada par. Com um Map, eu troco memória por tempo e fico em O(n).&rdquo;</p>
+    </div>
+    <div class="bcard">
+      <h4>2. Como resolver na frente de alguém</h4>
+      <p><b class="r">Entenda</b>Repita o problema com as suas palavras. Pergunte o tamanho da entrada, se pode ter repetidos, negativos ou lista vazia.</p>
+      <p><b class="r">Exemplo à mão</b>Resolva um exemplo pequeno no papel antes do código. O algoritmo costuma aparecer aí.</p>
+      <p><b class="r">Força bruta primeiro</b>Diga a solução mais simples e o custo dela, mesmo que seja lenta. Depois pergunte-se: &ldquo;que trabalho estou repetindo?&rdquo;.</p>
+      <p><b class="r">Teste de mesa</b>Ao terminar, rode o exemplo linha por linha, em voz alta. Depois, um caso de borda (vazio, um item só).</p>
+      <p class="frase"><b class="r">Na entrevista</b>Uma solução O(n²) que funciona, explicada e com a ideia da otimização, vale mais que uma O(n) pela metade.</p>
+    </div>
+    <div class="bcard">
+      <h4>3. Os padrões e o sinal de cada um</h4>
+      <table class="roteiro">
+        <thead><tr><th>Padrão</th><th>Quando o enunciado diz&hellip;</th><th>Problemas</th></tr></thead>
+        <tbody>
+          <tr><td>Map / contagem</td><td>&ldquo;já vi isto antes?&rdquo;, &ldquo;quantas vezes?&rdquo;, &ldquo;agrupe&rdquo;</td><td>1, 2, 3</td></tr>
+          <tr><td>Dois ponteiros</td><td>lista ordenada, comparar as pontas, juntar duas listas</td><td>4, 5</td></tr>
+          <tr><td>Janela deslizante</td><td>&ldquo;o maior trecho contínuo que&hellip;&rdquo;</td><td>6</td></tr>
+          <tr><td>Pilha</td><td>abrir e fechar, desfazer, o último que entrou</td><td>7</td></tr>
+          <tr><td>Busca binária</td><td>lista ordenada e &ldquo;ache rápido&rdquo;</td><td>8</td></tr>
+          <tr><td>Recursão / árvore</td><td>estrutura que contém a si mesma</td><td>9</td></tr>
+          <tr><td>Grade (DFS / BFS)</td><td>mapa, labirinto, regiões vizinhas</td><td>10</td></tr>
+          <tr><td>Ordenar e varrer</td><td>intervalos, horários, sobreposição</td><td>11</td></tr>
+          <tr><td>Programação dinâmica simples</td><td>&ldquo;a melhor soma&rdquo;, decisão a cada passo</td><td>12</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3 class="sub">Checklist</h3>
+  <ul class="checklist">
+    <li class="item"><input type="checkbox" id="e3-1"><label for="e3-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Explico Big-O de uma solução minha sem consultar: O(1), O(log n), O(n), O(n log n) e O(n²)</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-2"><label for="e3-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Problemas 1 a 3 (Map e contagem) resolvidos sem dica</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-3"><label for="e3-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Problemas 4 a 6 (dois ponteiros e janela deslizante) resolvidos sem dica</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-4"><label for="e3-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Problemas 7 e 8 (pilha e busca binária) resolvidos sem dica</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-5"><label for="e3-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Problemas 9 e 10 (recursão e grade) resolvidos sem dica</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-6"><label for="e3-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Problemas 11 e 12 (intervalos e maior soma) resolvidos sem dica</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-7"><label for="e3-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Um problema novo do LeetCode (fácil) resolvido em 20 minutos, falando em voz alta, sem ter visto antes</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-8"><label for="e3-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Um problema médio resolvido em 35 minutos, com força bruta primeiro e a otimização depois</span></label></li>
+  </ul>
+
+  <h3 class="sub">Map e contagem</h3>
+
+  <div class="ex" id="al1">
+    <div class="ex-head"><span class="ex-n">1</span><h3>Dois números que somam o alvo</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/two-sum/">LeetCode 1</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Dada uma lista de números e um alvo, devolva os índices dos dois números que somam o alvo. Existe no máximo uma resposta; se não existir, devolva <code>null</code>.</p>
+<pre><code class="esc">
+doisSomam([2, 7, 11, 15], 9)  // [0, 1]
+doisSomam([3, 2, 4], 6)       // [1, 2]
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>A força bruta testa todos os pares: O(n²). Para cada número, você sabe exatamente qual outro precisa achar: <code>alvo - numero</code>. Um <code>Map</code> responde &ldquo;já vi esse número?&rdquo; em O(1).</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function doisSomam(nums: number[], alvo: number): [number, number] | null {
+  const vistos = new Map<number, number>(); // valor -> índice
+  for (let i = 0; i < nums.length; i++) {
+    const falta = alvo - nums[i];
+    if (vistos.has(falta)) return [vistos.get(falta)!, i];
+    vistos.set(nums[i], i); // guarda depois de procurar: o número não faz par consigo mesmo
+  }
+  return null;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n) de tempo e O(n) de memória. É a troca clássica: memória extra para não repetir trabalho.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;a lista viesse ordenada?</strong> Dá para fazer sem memória extra, com dois ponteiros: um no começo, outro no fim. Se a soma é menor que o alvo, avance o da esquerda; se é maior, recue o da direita. O(n) de tempo, O(1) de memória.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="al2">
+    <div class="ex-head"><span class="ex-n">2</span><h3>Primeiro caractere que não se repete</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/first-unique-character-in-a-string/">LeetCode 387</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Devolva o índice do primeiro caractere que aparece uma vez só no texto, ou <code>-1</code> se não houver.</p>
+<pre><code class="esc">
+primeiroUnico('leetcode')      // 0 ('l')
+primeiroUnico('loveleetcode')  // 2 ('v')
+primeiroUnico('aabb')          // -1
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Duas passadas. Na primeira, conte cada caractere. Na segunda, ache o primeiro com contagem 1.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function primeiroUnico(s: string): number {
+  const conta = new Map<string, number>();
+  for (const c of s) conta.set(c, (conta.get(c) ?? 0) + 1); // 1ª passada: contar
+  for (let i = 0; i < s.length; i++) {
+    if (conta.get(s[i]) === 1) return i;                     // 2ª passada: achar
+  }
+  return -1;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n). Duas passadas continuam sendo O(n): 2n e n crescem do mesmo jeito.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;o texto chegasse um caractere por vez, como num chat, e você precisasse responder a cada caractere?</strong> Guarde a contagem e uma fila com os candidatos. A cada caractere novo, tire da frente da fila os que já se repetiram. A resposta é a frente da fila.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="al3">
+    <div class="ex-head"><span class="ex-n">3</span><h3>Agrupar anagramas</h3><span class="ex-meta">médio &middot; <a href="https://leetcode.com/problems/group-anagrams/">LeetCode 49</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Agrupe as palavras que são anagramas umas das outras (mesmas letras, em outra ordem).</p>
+<pre><code class="esc">
+agruparAnagramas(['amor', 'gato', 'roma', 'toga', 'sol'])
+// [['amor', 'roma'], ['gato', 'toga'], ['sol']]
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Anagramas ficam iguais quando você ordena as letras: &ldquo;amor&rdquo; e &ldquo;roma&rdquo; viram &ldquo;amor&rdquo;. Use isso como chave de um <code>Map</code>.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function agruparAnagramas(palavras: string[]): string[][] {
+  const grupos = new Map<string, string[]>();
+  for (const p of palavras) {
+    const chave = [...p].sort().join(''); // a "assinatura" do anagrama
+    if (!grupos.has(chave)) grupos.set(chave, []);
+    grupos.get(chave)!.push(p);
+  }
+  return [...grupos.values()];
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n &middot; k log k), em que n é o número de palavras e k o tamanho da maior. Cada palavra é ordenada uma vez.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;as palavras fossem muito longas?</strong> Troque a ordenação por uma contagem de letras como chave (por exemplo, &ldquo;a1m1o1r1&rdquo;). Montar a contagem é O(k), e o total cai para O(n &middot; k).</p></div></details>
+    </div>
+  </div>
+
+  <h3 class="sub">Dois ponteiros e janela deslizante</h3>
+
+  <div class="ex" id="al4">
+    <div class="ex-head"><span class="ex-n">4</span><h3>É palíndromo?</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/valid-palindrome/">LeetCode 125</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">O texto é igual lido de trás para a frente, considerando só letras e números e ignorando maiúsculas?</p>
+<pre><code class="esc">
+ehPalindromo('A man, a plan, a canal: Panama')  // true
+ehPalindromo('race a car')                      // false
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Limpe o texto e compare as pontas: um ponteiro no começo, outro no fim, andando um em direção ao outro.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function ehPalindromo(s: string): boolean {
+  const limpo = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  let esq = 0;
+  let dir = limpo.length - 1;
+  while (esq < dir) {
+    if (limpo[esq] !== limpo[dir]) return false;
+    esq++;
+    dir--;
+  }
+  return true;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n). A versão <code>limpo === [...limpo].reverse().join('')</code> também é O(n) e vale citar, mas o entrevistador quase sempre quer ver os dois ponteiros, porque o padrão volta em outros problemas.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;não pudesse criar o texto limpo (memória O(1))?</strong> Os ponteiros pulam sozinhos o que não é letra nem número, com um <code>while</code> dentro do laço principal, antes de comparar.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="al5">
+    <div class="ex-head"><span class="ex-n">5</span><h3>Juntar duas listas ordenadas</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/merge-sorted-array/">LeetCode 88</a>, versão simplificada</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Junte duas listas já ordenadas numa lista ordenada, sem usar <code>sort</code>.</p>
+<pre><code class="esc">
+juntarOrdenados([1, 3, 5], [2, 3, 6, 8])  // [1, 2, 3, 3, 5, 6, 8]
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um ponteiro em cada lista. A cada passo, pegue o menor dos dois e avance só aquele ponteiro. Quando uma lista acabar, copie o resto da outra.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function juntarOrdenados(a: number[], b: number[]): number[] {
+  const saida: number[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] <= b[j]) saida.push(a[i++]); // i++ usa o valor e depois avança
+    else saida.push(b[j++]);
+  }
+  while (i < a.length) saida.push(a[i++]); // sobrou em a
+  while (j < b.length) saida.push(b[j++]); // sobrou em b
+  return saida;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n + m). Juntar com <code>[...a, ...b].sort()</code> custaria O((n + m) log(n + m)) e jogaria fora a informação de que as listas já estavam ordenadas.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;fossem k listas?</strong> Por exemplo, os resultados de busca de k servidores. Junte de duas em duas, em pares, como num torneio. Essa é a ideia do <em>merge sort</em>.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="al6">
+    <div class="ex-head"><span class="ex-n">6</span><h3>Maior trecho sem letra repetida</h3><span class="ex-meta">médio &middot; <a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/">LeetCode 3</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Devolva o tamanho do maior trecho contínuo do texto em que nenhum caractere se repete.</p>
+<pre><code class="esc">
+maiorSemRepetir('abcabcbb')  // 3 ('abc')
+maiorSemRepetir('bbbbb')     // 1
+maiorSemRepetir('pwwkew')    // 3 ('wke')
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma janela com <code>inicio</code> e <code>fim</code>. O fim anda sempre. Quando o caractere novo já está dentro da janela, o início pula para logo depois da última vez em que ele apareceu. Um <code>Map</code> guarda essa última posição.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function maiorSemRepetir(s: string): number {
+  const ultimo = new Map<string, number>(); // caractere -> último índice
+  let inicio = 0;
+  let melhor = 0;
+  for (let fim = 0; fim < s.length; fim++) {
+    const c = s[fim];
+    // só conta se a repetição está DENTRO da janela atual
+    if (ultimo.has(c) && ultimo.get(c)! >= inicio) inicio = ultimo.get(c)! + 1;
+    ultimo.set(c, fim);
+    melhor = Math.max(melhor, fim - inicio + 1);
+  }
+  return melhor;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n). Cada caractere entra na janela uma vez.</p>
+        <p><strong>Erro comum:</strong> esquecer o <code>&gt;= inicio</code>. Com &ldquo;abba&rdquo;, o segundo &ldquo;a&rdquo; puxaria o início para trás, e a resposta sairia 3 em vez de 2.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;cada caractere pudesse aparecer até 2 vezes?</strong> Troque a última posição por uma contagem dentro da janela. Quando uma contagem passar de 2, avance o início, descontando, até ela voltar a 2. É o mesmo esqueleto de janela.</p></div></details>
+    </div>
+  </div>
+
+  <h3 class="sub">Pilha e busca binária</h3>
+
+  <div class="ex" id="al7">
+    <div class="ex-head"><span class="ex-n">7</span><h3>Parênteses válidos</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/valid-parentheses/">LeetCode 20</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">O texto tem <code>()</code>, <code>[]</code> e <code>{}</code>. Ele é válido se cada um que abre fecha com o tipo certo, na ordem certa.</p>
+<pre><code class="esc">
+parentesesValidos('({[]})')  // true
+parentesesValidos('([)]')    // false
+parentesesValidos('((')      // false
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>O último que abriu é o primeiro que precisa fechar. Isso é uma pilha: <code>push</code> ao abrir, <code>pop</code> ao fechar, e confira se combinam.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function parentesesValidos(s: string): boolean {
+  const par: Record<string, string> = { ')': '(', ']': '[', '}': '{' };
+  const pilha: string[] = [];
+  for (const c of s) {
+    if (c === '(' || c === '[' || c === '{') pilha.push(c);
+    else if (c in par) {
+      if (pilha.pop() !== par[c]) return false; // fechou o tipo errado, ou nada estava aberto
+    }
+  }
+  return pilha.length === 0; // sobrou algo aberto?
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n). No mundo real, é como um editor de código confere se as chaves do seu arquivo fecham, e como o &ldquo;desfazer&rdquo; funciona: a última ação é a primeira a ser desfeita.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;existisse só um tipo, <code>()</code>?</strong> Não precisa de pilha: um contador basta. Soma 1 ao abrir, tira 1 ao fechar, e falha se ficar negativo. Saber quando a estrutura é desnecessária também conta.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="al8">
+    <div class="ex-head"><span class="ex-n">8</span><h3>Busca binária</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/binary-search/">LeetCode 704</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Numa lista ordenada, devolva o índice do alvo, ou <code>-1</code>. Precisa ser O(log n).</p>
+<pre><code class="esc">
+buscaBinaria([1, 3, 5, 7, 9, 11], 7)  // 3
+buscaBinaria([1, 3, 5, 7, 9, 11], 4)  // -1
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Olhe o meio. Se o alvo é maior, ele só pode estar na metade da direita; se é menor, na da esquerda. Repita até achar ou a faixa ficar vazia.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function buscaBinaria(nums: number[], alvo: number): number {
+  let esq = 0;
+  let dir = nums.length - 1;
+  while (esq <= dir) {                       // <= : a faixa de um item só ainda conta
+    const meio = Math.floor((esq + dir) / 2);
+    if (nums[meio] === alvo) return meio;
+    if (nums[meio] < alvo) esq = meio + 1;   // +1 e -1: o meio já foi testado
+    else dir = meio - 1;
+  }
+  return -1;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(log n). Com um milhão de itens, são no máximo 20 passos. Os erros clássicos são de borda: <code>&lt;</code> no lugar de <code>&lt;=</code>, ou <code>esq = meio</code> sem o <code>+ 1</code>, que pode entrar em laço infinito.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;houvesse repetidos e você quisesse a primeira posição do alvo?</strong> Ao achar, não pare: guarde a posição e continue procurando à esquerda (<code>dir = meio - 1</code>). É o mesmo esqueleto com uma linha a mais.</p></div></details>
+    </div>
+  </div>
+
+  <h3 class="sub">Recursão, árvore e grade</h3>
+
+  <div class="ex" id="al9">
+    <div class="ex-head"><span class="ex-n">9</span><h3>Profundidade de uma árvore</h3><span class="ex-meta">fácil &middot; <a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/">LeetCode 104</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Cada nó tem <code>{ valor, esq, dir }</code>, e os filhos podem ser <code>null</code>. Devolva quantos níveis tem o caminho mais longo, da raiz até uma folha.</p>
+<pre><code class="esc">
+//      3
+//     / \
+//    9  20
+//       / \
+//      15  7
+profundidade(raiz)  // 3
+profundidade(null)  // 0
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>A profundidade de uma árvore é 1 (o próprio nó) mais a maior profundidade entre os dois filhos. A árvore vazia tem profundidade 0, e é aí que a recursão para.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+type No = { valor: number; esq: No | null; dir: No | null };
+
+function profundidade(raiz: No | null): number {
+  if (raiz === null) return 0; // caso base
+  return 1 + Math.max(profundidade(raiz.esq), profundidade(raiz.dir));
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n), porque visita cada nó uma vez. A memória é a altura da árvore (as chamadas empilhadas).</p>
+        <p><strong>Para o front:</strong> o DOM é uma árvore, e o React também. &ldquo;Percorrer a árvore de componentes&rdquo; é exatamente isto.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;pedissem os valores nível por nível (<code>[[3], [9, 20], [15, 7]]</code>)?</strong> Troque a recursão por uma fila: tire os nós do nível atual, ponha os filhos deles. Isso é busca em largura (BFS).</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="al10">
+    <div class="ex-head"><span class="ex-n">10</span><h3>Contar ilhas</h3><span class="ex-meta">médio &middot; <a href="https://leetcode.com/problems/number-of-islands/">LeetCode 200</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Numa grade de <code>'1'</code> (terra) e <code>'0'</code> (água), conte as ilhas. Uma ilha é um grupo de terra ligado na horizontal ou na vertical. A grade de entrada não pode ser alterada.</p>
+<pre><code class="esc">
+contarIlhas([
+  ['1', '1', '0', '0', '0'],
+  ['1', '1', '0', '0', '0'],
+  ['0', '0', '1', '0', '0'],
+  ['0', '0', '0', '1', '1'],
+])  // 3
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Percorra a grade. Ao achar terra, conte uma ilha e &ldquo;afunde&rdquo; a ilha inteira (marque como água), visitando os vizinhos com recursão. Assim ela não é contada de novo. Trabalhe numa cópia.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function contarIlhas(grade: string[][]): number {
+  const linhas = grade.length;
+  const colunas = grade[0]?.length ?? 0;
+  const g = grade.map((l) => [...l]); // cópia: a entrada não muda
+  let ilhas = 0;
+
+  function afundar(l: number, c: number) {
+    if (l < 0 || c < 0 || l >= linhas || c >= colunas || g[l][c] !== '1') return; // fora ou água
+    g[l][c] = '0';
+    afundar(l + 1, c);
+    afundar(l - 1, c);
+    afundar(l, c + 1);
+    afundar(l, c - 1);
+  }
+
+  for (let l = 0; l < linhas; l++) {
+    for (let c = 0; c < colunas; c++) {
+      if (g[l][c] === '1') {
+        ilhas++;
+        afundar(l, c);
+      }
+    }
+  }
+  return ilhas;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(linhas &times; colunas): cada célula é visitada um número fixo de vezes. É o mesmo algoritmo do balde de tinta do Paint e do Photoshop (<em>flood fill</em>).</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;a grade tivesse um milhão de células de terra seguidas?</strong> A recursão pode estourar a pilha de chamadas (<code>Maximum call stack size exceeded</code>). Troque por uma pilha ou fila explícita, num <code>while</code>: o algoritmo é o mesmo, sem recursão.</p></div></details>
+    </div>
+  </div>
+
+  <h3 class="sub">Ordenar e varrer, e a maior soma</h3>
+
+  <div class="ex" id="al11">
+    <div class="ex-head"><span class="ex-n">11</span><h3>Juntar intervalos</h3><span class="ex-meta">médio &middot; <a href="https://leetcode.com/problems/merge-intervals/">LeetCode 56</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Junte os intervalos que se sobrepõem. Pense em reuniões na agenda: <code>[1, 3]</code> e <code>[2, 6]</code> ocupam juntas de 1 a 6.</p>
+<pre><code class="esc">
+juntarIntervalos([[8, 10], [1, 3], [2, 6], [15, 18]])  // [[1, 6], [8, 10], [15, 18]]
+juntarIntervalos([[1, 4], [4, 5]])                     // [[1, 5]]
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Ordene pelo começo. Depois, cada intervalo ou encosta no último que você guardou (aí estique o fim dele), ou começa um novo.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function juntarIntervalos(intervalos: [number, number][]): [number, number][] {
+  const ordenados = [...intervalos].sort((a, b) => a[0] - b[0]);
+  const saida: [number, number][] = [];
+  for (const [ini, fim] of ordenados) {
+    const ultimo = saida[saida.length - 1];
+    if (ultimo && ini <= ultimo[1]) ultimo[1] = Math.max(ultimo[1], fim); // sobrepõe: estica
+    else saida.push([ini, fim]);                                          // não sobrepõe: novo
+  }
+  return saida;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n log n), por causa da ordenação. O <code>Math.max</code> cobre um intervalo inteiro dentro do outro (<code>[1, 10]</code> e <code>[2, 3]</code>).</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;a pergunta fosse &ldquo;quantas salas de reunião preciso, no mínimo?&rdquo;</strong> Separe os começos e os fins, ordene os dois e varra: cada começo ocupa uma sala, cada fim libera uma. A resposta é o maior número de salas ocupadas ao mesmo tempo.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="al12">
+    <div class="ex-head"><span class="ex-n">12</span><h3>Maior soma de um trecho</h3><span class="ex-meta">médio &middot; <a href="https://leetcode.com/problems/maximum-subarray/">LeetCode 53</a></span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Devolva a maior soma possível de um trecho contínuo da lista (com pelo menos um número).</p>
+<pre><code class="esc">
+maiorSomaContigua([-2, 1, -3, 4, -1, 2, 1, -5, 4])  // 6 ([4, -1, 2, 1])
+maiorSomaContigua([-3, -1, -2])                     // -1
+</code></pre>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Em cada posição, decida: vale mais continuar o trecho anterior ou começar um novo aqui? Se a soma acumulada ficou menor que o número atual, recomece.</p></div></details>
+      <details class="sol"><summary>solução comentada</summary><div class="sol-body">
+<pre><code class="esc">
+function maiorSomaContigua(nums: number[]): number {
+  let atual = nums[0];  // a melhor soma de um trecho que TERMINA aqui
+  let melhor = nums[0]; // a melhor de todas até agora
+  for (let i = 1; i < nums.length; i++) {
+    atual = Math.max(nums[i], atual + nums[i]); // recomeçar ou continuar
+    melhor = Math.max(melhor, atual);
+  }
+  return melhor;
+}
+</code></pre>
+        <p><strong>Custo:</strong> O(n). Tem nome, <em>algoritmo de Kadane</em>, e é a porta de entrada da programação dinâmica: guardar a melhor resposta parcial e decidir passo a passo. Começar em <code>nums[0]</code>, e não em 0, é o que acerta a lista só de negativos.</p>
+      </div></details>
+      <details class="rv"><summary>e se&hellip;</summary><div class="rv-body"><p><strong>&hellip;quisessem também onde o trecho começa e termina?</strong> Guarde o índice em que o trecho atual começou (muda quando você recomeça) e, sempre que <code>melhor</code> mudar, salve o início e o fim.</p></div></details>
+    </div>
+  </div>
+
+  <div class="gap">
+    <h4>Depois destes 12</h4>
+    <ul>
+      <li>Resolva a lista <a href="https://neetcode.io/practice">NeetCode 150</a> só nos fáceis dos mesmos padrões, uns três por semana. A <a href="b08-algoritmos.html">B8</a> tem o roteiro e as outras fontes.</li>
+      <li>Treine com cronômetro: 20 minutos para fácil e 35 para médio, falando em voz alta. Se passar do tempo, leia a solução, feche e refaça dois dias depois.</li>
+      <li>Em vaga de front, o problema às vezes vem &ldquo;disfarçado&rdquo;: achatar um menu, agrupar notificações, juntar horários de uma agenda. O padrão é o mesmo.</li>
+    </ul>
+  </div>
+</section>

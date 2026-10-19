@@ -5,10 +5,20 @@
 
   <ol class="etapas">
     <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
-    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>escrever e revisar</a></li>
     <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
     <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
   </ol>
+
+  <div class="nivel-box">
+    <h4>Para júnior avançado e pleno</h4>
+    <p>Esta página é diferencial puro. Leia depois das outras, e mire em conseguir explicar cada ideia em dois minutos.</p>
+    <p><span class="nivel n-base">base</span><strong>Domine:</strong> nenhum tópico. Os dois exercícios do Fazer ainda valem como treino de raciocínio.</p>
+    <p><span class="nivel n-dif">diferencial</span><strong>Saiba explicar:</strong> MCP em uma frase, tool calling contra MCP e AI UX de confiança e de agente.</p>
+    <p><span class="nivel n-sr">sênior</span><strong>Deixe para depois:</strong> as primitivas e os transportes do MCP, as 18 diretrizes HAX, microfrontends, multi-cloud e MCP Apps.</p>
+    <p class="nivel-legenda"><span class="nivel n-base">base</span>domine e faça à mão &middot; <span class="nivel n-dif">diferencial</span>saiba explicar em dois minutos &middot; <span class="nivel n-sr">sênior</span>só reconheça o nome por enquanto. A etiqueta aparece em cada tópico do checklist.</p>
+  </div>
+
 
   <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
   <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
@@ -106,16 +116,16 @@
   <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
   <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
-    <li class="item"><input type="checkbox" id="w30-1"><label for="w30-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP em uma frase: um protocolo padrão (JSON-RPC 2.0) pra um <strong>host</strong> de IA (Claude Code, VS Code) plugar ferramentas e contexto de qualquer <strong>servidor</strong>, com um <strong>client</strong> dedicado por servidor &mdash; e por que isso transforma N&times;M integrações em N+M</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-2"><label for="w30-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As primitivas do servidor: <strong>tools</strong> (ação que o modelo invoca, descrita por <code>inputSchema</code> em JSON Schema), <strong>resources</strong> (dado de contexto) e <strong>prompts</strong> (templates) &mdash; o ciclo <code>tools/list</code> &rarr; <code>tools/call</code>, e a primitiva do cliente, <strong>elicitation</strong> (o servidor pede input ou confirmação ao usuário)</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-3"><label for="w30-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Transportes e segurança: <strong>stdio</strong> (processo local, um cliente) vs. <strong>Streamable HTTP</strong> (remoto, POST + SSE opcional, OAuth recomendado) &mdash; e os ataques que a spec nomeia: token passthrough, confused deputy, SSRF, servidor local malicioso, escopo amplo demais</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-4"><label for="w30-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tool calling vs. MCP: o primeiro é o <em>mecanismo</em> do modelo (a API devolve &ldquo;quero chamar <code>x</code> com estes argumentos&rdquo;); o segundo é o <em>protocolo</em> pra distribuir essas ferramentas entre aplicações &mdash; ver <a href="r01-ai-frontend.html">R1</a> pro lado do front e o loop agentic no <a href="b02-ia-agentes.html">B2</a></span></label></li>
-    <li class="item"><input type="checkbox" id="w30-5"><label for="w30-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">AI UX &mdash; calibrar confiança, não maximizar: mostrar a <strong>fonte</strong> (citação), ligar a explicação à ação do usuário, e preferir confiança <strong>categórica</strong> (alta/média/baixa com ação associada) ou <strong>N-best</strong> a uma porcentagem crua</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-6"><label for="w30-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As 18 diretrizes de interação humano-IA da Microsoft (HAX) nas quatro fases &mdash; no início, durante, quando a IA erra, ao longo do tempo &mdash; e as que mais caem em revisão de produto: deixar claro o que o sistema faz e <em>quão bem</em> (G1/G2), correção e descarte eficientes (G8/G9), feedback granular (G15)</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-7"><label for="w30-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">AI UX de agente: mostrar <strong>progresso por etapa</strong> (não só um spinner), pedir <strong>aprovação humana</strong> antes de ação com efeito colateral, marcar o que é gerado por IA, e degradar com aviso quando a IA falha &mdash; nunca em silêncio</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-8"><label for="w30-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Microfrontends: as cinco formas de integrar (template no servidor, build-time, iframe, JavaScript em runtime, Web Components), o que se ganha (deploy e time independentes, migração incremental) e o que se paga (payload duplicado, governança) &mdash; e por que <a href="r03-arquitetura-frontend.html">monorepo/monolito modular</a> costuma vir antes (o mesmo argumento de &ldquo;monolito modular primeiro&rdquo; do <a href="b09-arquiteturas.html">B9</a>)</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-9"><label for="w30-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Multi-cloud: a tabela de equivalência AWS/Azure/GCP pra uma app web, e a diferença entre <strong>multi-cloud</strong> (a mesma carga rodando em duas nuvens) e <strong>portabilidade multi-fornecedor</strong> (interfaces que deixam trocar uma peça) &mdash; o segundo é o que quase todo mundo deveria querer (escala e cache em camadas no <a href="b01-system-design.html">B1</a>)</span></label></li>
-    <li class="item"><input type="checkbox" id="w30-10"><label for="w30-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP Apps (extensão oficial): a ferramenta aponta pra um recurso <code>ui://</code>, o host o renderiza num iframe isolado dentro da conversa, e a interface conversa com o host por <code>postMessage</code> &mdash; quando vale mais que texto ou um link</span></label></li>
+    <li class="item"><input type="checkbox" id="w30-1"><label for="w30-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP em uma frase: um protocolo padrão (JSON-RPC 2.0) pra um <strong>host</strong> de IA (Claude Code, VS Code) plugar ferramentas e contexto de qualquer <strong>servidor</strong>, com um <strong>client</strong> dedicado por servidor &mdash; e por que isso transforma N&times;M integrações em N+M <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-2"><label for="w30-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As primitivas do servidor: <strong>tools</strong> (ação que o modelo invoca, descrita por <code>inputSchema</code> em JSON Schema), <strong>resources</strong> (dado de contexto) e <strong>prompts</strong> (templates) &mdash; o ciclo <code>tools/list</code> &rarr; <code>tools/call</code>, e a primitiva do cliente, <strong>elicitation</strong> (o servidor pede input ou confirmação ao usuário) <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-3"><label for="w30-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Transportes e segurança: <strong>stdio</strong> (processo local, um cliente) vs. <strong>Streamable HTTP</strong> (remoto, POST + SSE opcional, OAuth recomendado) &mdash; e os ataques que a spec nomeia: token passthrough, confused deputy, SSRF, servidor local malicioso, escopo amplo demais <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-4"><label for="w30-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tool calling vs. MCP: o primeiro é o <em>mecanismo</em> do modelo (a API devolve &ldquo;quero chamar <code>x</code> com estes argumentos&rdquo;); o segundo é o <em>protocolo</em> pra distribuir essas ferramentas entre aplicações &mdash; ver <a href="r01-ai-frontend.html">R1</a> pro lado do front e o loop agentic no <a href="b02-ia-agentes.html">B2</a> <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-5"><label for="w30-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">AI UX &mdash; calibrar confiança, não maximizar: mostrar a <strong>fonte</strong> (citação), ligar a explicação à ação do usuário, e preferir confiança <strong>categórica</strong> (alta/média/baixa com ação associada) ou <strong>N-best</strong> a uma porcentagem crua <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-6"><label for="w30-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As 18 diretrizes de interação humano-IA da Microsoft (HAX) nas quatro fases &mdash; no início, durante, quando a IA erra, ao longo do tempo &mdash; e as que mais caem em revisão de produto: deixar claro o que o sistema faz e <em>quão bem</em> (G1/G2), correção e descarte eficientes (G8/G9), feedback granular (G15) <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-7"><label for="w30-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">AI UX de agente: mostrar <strong>progresso por etapa</strong> (não só um spinner), pedir <strong>aprovação humana</strong> antes de ação com efeito colateral, marcar o que é gerado por IA, e degradar com aviso quando a IA falha &mdash; nunca em silêncio <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-8"><label for="w30-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Microfrontends: as cinco formas de integrar (template no servidor, build-time, iframe, JavaScript em runtime, Web Components), o que se ganha (deploy e time independentes, migração incremental) e o que se paga (payload duplicado, governança) &mdash; e por que <a href="r03-arquitetura-frontend.html">monorepo/monolito modular</a> costuma vir antes (o mesmo argumento de &ldquo;monolito modular primeiro&rdquo; do <a href="b09-arquiteturas.html">B9</a>) <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-9"><label for="w30-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Multi-cloud: a tabela de equivalência AWS/Azure/GCP pra uma app web, e a diferença entre <strong>multi-cloud</strong> (a mesma carga rodando em duas nuvens) e <strong>portabilidade multi-fornecedor</strong> (interfaces que deixam trocar uma peça) &mdash; o segundo é o que quase todo mundo deveria querer (escala e cache em camadas no <a href="b01-system-design.html">B1</a>) <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w30-10"><label for="w30-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">MCP Apps (extensão oficial): a ferramenta aponta pra um recurso <code>ui://</code>, o host o renderiza num iframe isolado dentro da conversa, e a interface conversa com o host por <code>postMessage</code> &mdash; quando vale mais que texto ou um link <span class="nivel n-sr">sênior</span></span></label></li>
   </ul>
 
   <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
@@ -143,8 +153,8 @@
   </div>
 
 
-  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
-  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Uma ferramenta MCP, no papel</h3><span class="ex-meta">15 min &middot; JSON</span></div>
     <div class="ex-body">
@@ -154,6 +164,7 @@
         <li><code>tema</code> é texto e obrigatório. <code>limite</code> é inteiro de 1 a 20, com padrão 5.</li>
         <li>A descrição precisa dizer ao modelo <strong>quando</strong> usar a ferramenta.</li>
       </ul>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://modelcontextprotocol.io/specification/2025-06-18/server/tools">MCP: tools</a> &middot; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Os argumentos são descritos por um JSON Schema no campo <code>inputSchema</code>. As mensagens seguem o JSON-RPC 2.0: <code>jsonrpc</code>, <code>id</code>, <code>method</code> e <code>params</code> no pedido; <code>result</code> na resposta.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -184,6 +195,56 @@
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> o modelo decide usar a ferramenta lendo o <code>name</code>, a <code>description</code> e o <code>inputSchema</code>, então a descrição é parte do produto. O servidor valida os argumentos de novo antes de consultar o banco (o schema descreve, mas não protege). E erro da ferramenta volta como <code>isError: true</code> com um texto útil, para o modelo poder explicar o que houve.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que a descrição diz <em>quando</em> usar a ferramenta, e não só o que ela faz?</li>
+          <li>Se o <code>inputSchema</code> já diz que <code>limite</code> vai de 1 a 20, por que o servidor valida de novo?</li>
+          <li>Qual a diferença entre responder com <code>isError: true</code> e responder com um <code>error</code> do JSON-RPC?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>Porque o modelo escolhe a ferramenta lendo a descrição. &ldquo;Busca questões&rdquo; não diz em que situação ela serve; &ldquo;use quando a pessoa pedir questões para treinar um assunto&rdquo; diz.</li>
+            <li>O schema <em>descreve</em> o que é esperado, mas não impede nada: qualquer cliente pode mandar <code>limite: 5000</code>. O servidor trata o argumento como um formulário vindo de fora.</li>
+            <li><code>isError: true</code> quer dizer &ldquo;a ferramenta rodou e falhou&rdquo; (o banco caiu, o tema não existe). O texto volta para o modelo, que pode explicar ou tentar outra coisa. O <code>error</code> do JSON-RPC é problema de protocolo: ferramenta que não existe, pedido malformado.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Esta definição e este pedido foram escritos às pressas. Ache os quatro problemas.</p>
+<pre><code class="esc">
+{
+  "name": "buscar_questoes",
+  "description": "Busca questões.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "tema": { "type": "string" },
+      "limite": { "type": "number", "maximum": 20, "default": 5 }
+    }
+  }
+}
+
+{ "jsonrpc": "2.0", "method": "tools/call",
+  "params": { "name": "buscar_questoes", "arguments": { "tema": "cardiologia", "limite": 3 } } }
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>A descrição não diz quando usar.</strong> O modelo tem menos informação para escolher esta ferramenta, ou escolhe na hora errada.</li>
+            <li><strong><code>limite</code> é <code>number</code> e não tem mínimo.</strong> Aceita <code>2.5</code>, <code>0</code> e <code>-1</code>. O certo é <code>integer</code> com <code>minimum: 1</code>.</li>
+            <li><strong>Falta <code>"required": ["tema"]</code>.</strong> O modelo pode chamar a ferramenta sem tema.</li>
+            <li><strong>O pedido não tem <code>id</code>.</strong> No JSON-RPC, uma mensagem sem <code>id</code> é uma <em>notificação</em>: quem recebe não manda resposta. O host fica esperando um resultado que nunca chega.</li>
+          </ol>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>A ferramenta passa a aceitar uma dificuldade opcional: fácil, média ou difícil. O que muda na definição? Clientes antigos quebram?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Uma propriedade nova: <code>"dificuldade": { "type": "string", "enum": ["facil", "media", "dificil"], "description": "Use só se a pessoa pedir um nível" }</code>. Ela não entra no <code>required</code>. O <code>enum</code> mostra ao modelo os valores válidos, e o servidor valida de novo.</p>
+          <p>Ninguém quebra: quem não manda a dificuldade continua funcionando, porque o campo é opcional. Essa é a regra para evoluir uma ferramenta (ou uma API): adicionar campo opcional é seguro; tornar obrigatório ou mudar o tipo de um campo existente quebra quem já usa.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
@@ -191,6 +252,7 @@
     <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Revise esta tela de IA</h3><span class="ex-meta">15 min &middot; crítica de produto</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">Um assistente resume contratos. A tela mostra o resumo com o selo &ldquo;Confiança: 87%&rdquo;, sem dizer de onde saiu cada frase. O botão &ldquo;Aplicar sugestões&rdquo; altera o contrato na hora. Quando a IA falha, o resumo simplesmente some. Proponha pelo menos quatro melhorias e diga qual problema cada uma resolve.</p>
+      <p class="ex-consulta"><b>Pode consultar</b>os cartões 5 e 6 do Ver &middot; <a href="https://pair.withgoogle.com/guidebook/">Google PAIR: People + AI Guidebook</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Releia os cartões 5 e 6: fonte, confiança, aprovação antes de agir, marcação do que é IA, falha com aviso e feedback específico.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
         <ol>
@@ -202,6 +264,45 @@
         </ol>
         <p><strong>O que mostrar ao entrevistador:</strong> cada melhoria resolve um problema de confiança. A pessoa precisa saber de onde veio a resposta, quando desconfiar, o que vai mudar antes de mudar e o que fazer quando falha.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que &ldquo;confiança baixa nesta cláusula: confira o original&rdquo; é melhor que &ldquo;87%&rdquo;?</li>
+          <li>Por que &ldquo;aplicar&rdquo; precisa de prévia e de desfazer, e não só de uma confirmação?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>O número não diz o que fazer, nem <em>onde</em> está a dúvida. A categoria aponta o trecho e a ação. E 87% passa uma precisão que o modelo não tem.</li>
+            <li>A confirmação pergunta &ldquo;tem certeza?&rdquo; sem mostrar o que vai mudar, e as pessoas aprendem a clicar &ldquo;sim&rdquo; sem ler. A prévia mostra a mudança; o desfazer protege quando, mesmo assim, algo passa.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Um colega propôs estas quatro melhorias. Cada uma tem um problema. Qual?</p>
+        <ol>
+          <li>&ldquo;Melhorar o prompt para a confiança subir de 87% para 92%.&rdquo;</li>
+          <li>&ldquo;Pôr um modal &lsquo;Tem certeza?&rsquo; antes de Aplicar sugestões.&rdquo;</li>
+          <li>&ldquo;Quando a IA falhar, mostrar o último resumo que deu certo.&rdquo;</li>
+          <li>&ldquo;Pôr um 👍 e um 👎 no fim do resumo.&rdquo;</li>
+        </ol>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li>O problema nunca foi o valor, foi mostrar um número cru. 92% continua sem dizer o que conferir.</li>
+            <li>Confirmar sem mostrar a mudança não protege (veja a pergunta 2 do passo 1). Faltam a prévia, o aceite de uma mudança por vez e o desfazer.</li>
+            <li>O resumo antigo pode ser de outra versão do contrato. A pessoa lê um resumo errado achando que é o atual: é pior que a tela vazia. Se mostrar o antigo, diga claramente de quando ele é.</li>
+            <li>Ajuda pouco. O 👎 não diz <em>qual</em> frase está errada, então ninguém consegue corrigir a partir dele. O feedback útil fica no trecho.</li>
+          </ol>
+          <p>Todas as quatro <em>parecem</em> melhorias. A pergunta da revisão é a mesma do exercício: qual problema de confiança isto resolve de verdade?</p>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>O assistente passa a enviar o contrato revisado por e-mail para o cliente. O que muda no desenho da tela?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>E-mail enviado não se desfaz. Então a aprovação humana fica obrigatória: a tela mostra o e-mail exato (destinatários, assunto, texto, anexo) e só envia depois de um clique explícito em &ldquo;Enviar&rdquo;. A IA nunca envia sozinha.</p>
+          <p>Para dar uma rede de proteção, faça como o Gmail no &ldquo;desfazer envio&rdquo;: segure o envio por alguns segundos depois do clique. E registre quem aprovou e quando. A regra geral: quanto menos reversível a ação, mais forte o controle humano.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 

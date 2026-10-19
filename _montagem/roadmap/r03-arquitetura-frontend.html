@@ -5,10 +5,20 @@
 
   <ol class="etapas">
     <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
-    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>escrever e revisar</a></li>
     <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
     <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
   </ol>
+
+  <div class="nivel-box">
+    <h4>Para júnior avançado e pleno</h4>
+    <p>Arquitetura de front, para pleno, é decidir bem dentro de uma página: como renderizar e como buscar dados. Monorepo e microfrontends são decisões de time.</p>
+    <p><span class="nivel n-base">base</span><strong>Domine:</strong> estático, dinâmico ou ISR por rota; cascata de requisições e <code>Promise.all</code>; quando buscar no Server Component, no <code>useEffect</code> ou com TanStack Query.</p>
+    <p><span class="nivel n-dif">diferencial</span><strong>Saiba explicar:</strong> monorepo com Turborepo, o cache do Next e os Web Vitals (LCP, INP, CLS).</p>
+    <p><span class="nivel n-sr">sênior</span><strong>Deixe para depois:</strong> tipos de pacote interno, fronteiras entre pacotes e as formas de integrar microfrontends. Basta saber dizer quando <em>não</em> usar microfrontend.</p>
+    <p class="nivel-legenda"><span class="nivel n-base">base</span>domine e faça à mão &middot; <span class="nivel n-dif">diferencial</span>saiba explicar em dois minutos &middot; <span class="nivel n-sr">sênior</span>só reconheça o nome por enquanto. A etiqueta aparece em cada tópico do checklist.</p>
+  </div>
+
 
   <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
   <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
@@ -101,15 +111,15 @@
   <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
   <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
-    <li class="item"><input type="checkbox" id="w27-1"><label for="w27-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Monorepo com pnpm workspaces + Turborepo: grafo de tasks (<code>dependsOn: ["^build"]</code>), cache por hash de entradas, <code>outputs</code>, e por que variável de ambiente que muda o build precisa estar em <code>env</code> no <code>turbo.json</code></span></label></li>
-    <li class="item"><input type="checkbox" id="w27-2"><label for="w27-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Internal packages: Just-in-Time vs. Compiled vs. Publishable &mdash; quem transpila, o que o Turborepo consegue cachear, e o que muda quando o pacote compartilhado deixa de ser só tipo e vira biblioteca de UI</span></label></li>
-    <li class="item"><input type="checkbox" id="w27-3"><label for="w27-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Boundaries: o que vai pra <code>packages/</code> (UI burra, tipos, config de lint/TS) e o que nunca vai (regra de negócio) &mdash; e como impor a fronteira com <code>exports</code> no <code>package.json</code> em vez de confiar em disciplina</span></label></li>
-    <li class="item"><input type="checkbox" id="w27-4"><label for="w27-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Microfrontends &ldquo;quando houver necessidade real&rdquo;: os sinais (times autônomos, deploy independente, legado migrando aos pedaços) e a conta (dependência duplicada no payload, ambientes divergentes, governança)</span></label></li>
-    <li class="item"><input type="checkbox" id="w27-5"><label for="w27-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As formas de integrar: build-time (pacote npm &mdash; e por que o artigo do Fowler desaconselha), runtime via JS/Module Federation, Web Components, iframe &mdash; e multi-zones do Next como a versão por rota, com <code>assetPrefix</code>, rewrites e hard navigation entre zonas</span></label></li>
-    <li class="item"><input type="checkbox" id="w27-6"><label for="w27-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Rendering por rota: o que força dinâmico (cookies, headers, <strong>nonce de CSP</strong>), o que se perde junto (estático, ISR, cache de CDN, PPR) e o que se ganha com streaming via <code>loading.tsx</code>/Suspense</span></label></li>
-    <li class="item"><input type="checkbox" id="w27-7"><label for="w27-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Cache no Next 15 vs. 16: <code>cache()</code> do React (dedupe dentro de um request), <code>revalidatePath</code>/<code>revalidateTag</code> depois de mutação, e o modelo novo de <code>"use cache"</code> + Cache Components (base na <a href="02-nextjs-tailwind.html">Semana 2</a>)</span></label></li>
-    <li class="item"><input type="checkbox" id="w27-8"><label for="w27-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Data fetching: Server Component buscando no servidor vs. <code>useEffect</code> no cliente vs. TanStack Query (<a href="b15-react-estado.html">B15</a>) &mdash; waterfall, <code>Promise.all</code>, e o que muda quando a API mora em outro domínio</span></label></li>
-    <li class="item"><input type="checkbox" id="w27-9"><label for="w27-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Performance de produção: Web Vitals medidos em campo (p75 de LCP, INP e CLS), análise de bundle (<code>next experimental-analyze</code> no Turbopack, <code>@next/bundle-analyzer</code> no webpack) e tirar biblioteca pesada do cliente movendo o trabalho pra Server Component</span></label></li>
+    <li class="item"><input type="checkbox" id="w27-1"><label for="w27-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Monorepo com pnpm workspaces + Turborepo: grafo de tasks (<code>dependsOn: ["^build"]</code>), cache por hash de entradas, <code>outputs</code>, e por que variável de ambiente que muda o build precisa estar em <code>env</code> no <code>turbo.json</code> <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-2"><label for="w27-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Internal packages: Just-in-Time vs. Compiled vs. Publishable &mdash; quem transpila, o que o Turborepo consegue cachear, e o que muda quando o pacote compartilhado deixa de ser só tipo e vira biblioteca de UI <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-3"><label for="w27-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Boundaries: o que vai pra <code>packages/</code> (UI burra, tipos, config de lint/TS) e o que nunca vai (regra de negócio) &mdash; e como impor a fronteira com <code>exports</code> no <code>package.json</code> em vez de confiar em disciplina <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-4"><label for="w27-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Microfrontends &ldquo;quando houver necessidade real&rdquo;: os sinais (times autônomos, deploy independente, legado migrando aos pedaços) e a conta (dependência duplicada no payload, ambientes divergentes, governança) <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-5"><label for="w27-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As formas de integrar: build-time (pacote npm &mdash; e por que o artigo do Fowler desaconselha), runtime via JS/Module Federation, Web Components, iframe &mdash; e multi-zones do Next como a versão por rota, com <code>assetPrefix</code>, rewrites e hard navigation entre zonas <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-6"><label for="w27-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Rendering por rota: o que força dinâmico (cookies, headers, <strong>nonce de CSP</strong>), o que se perde junto (estático, ISR, cache de CDN, PPR) e o que se ganha com streaming via <code>loading.tsx</code>/Suspense <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-7"><label for="w27-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Cache no Next 15 vs. 16: <code>cache()</code> do React (dedupe dentro de um request), <code>revalidatePath</code>/<code>revalidateTag</code> depois de mutação, e o modelo novo de <code>"use cache"</code> + Cache Components (base na <a href="02-nextjs-tailwind.html">Semana 2</a>) <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-8"><label for="w27-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Data fetching: Server Component buscando no servidor vs. <code>useEffect</code> no cliente vs. TanStack Query (<a href="b15-react-estado.html">B15</a>) &mdash; waterfall, <code>Promise.all</code>, e o que muda quando a API mora em outro domínio <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w27-9"><label for="w27-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Performance de produção: Web Vitals medidos em campo (p75 de LCP, INP e CLS), análise de bundle (<code>next experimental-analyze</code> no Turbopack, <code>@next/bundle-analyzer</code> no webpack) e tirar biblioteca pesada do cliente movendo o trabalho pra Server Component <span class="nivel n-dif">diferencial</span></span></label></li>
   </ul>
 
   <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
@@ -123,8 +133,8 @@
   </ul>
 
   
-  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
-  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Estática, dinâmica ou ISR?</h3><span class="ex-meta">15 min &middot; decisão, sem código</span></div>
     <div class="ex-body">
@@ -136,6 +146,7 @@
         <li><code>/busca?q=...</code>: resultado depende do texto digitado.</li>
         <li><code>/blog/[slug]</code>: posts novos toda semana, os antigos quase nunca mudam.</li>
       </ol>
+      <p class="ex-consulta"><b>Pode consultar</b>os cartões do Ver &middot; <a href="https://nextjs.org/docs/app/getting-started/caching-and-revalidating">Next.js: caching e revalidação</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Faça duas perguntas para cada rota: o conteúdo depende de <strong>quem</strong> pede ou do que vem <strong>no pedido</strong>? E quando o dado muda, eu sei o momento exato?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
         <ol>
@@ -147,6 +158,46 @@
         </ol>
         <p><strong>O que mostrar ao entrevistador:</strong> a decisão é por rota, e o critério é &ldquo;depende de quem pede?&rdquo;. Quando você sabe o momento em que o dado muda, revalidar sob demanda é melhor que revalidar por tempo.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que <code>/questoes/[id]</code> usa revalidação sob demanda, e não <code>revalidate: 60</code>?</li>
+          <li>O que pode dar errado se <code>/painel</code> for parar num cache compartilhado?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>Porque você sabe o momento exato da mudança: quando o admin salva. Com tempo fixo, ou a correção demora até 60 s para aparecer, ou a página é refeita a cada minuto sem ter mudado.</li>
+            <li>Uma pessoa vê o painel de outra. A página depende de <em>quem</em> pede, e uma cópia guardada para um usuário serve para qualquer um que pedir depois. É um vazamento de dados, não só um bug de tela.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Esta foi a resposta de um colega. Três itens estão errados. Quais, e por quê?</p>
+        <ol>
+          <li><code>/precos</code>: dinâmica, para sempre mostrar o preço atual.</li>
+          <li><code>/painel</code>: estática com <code>revalidate: 60</code>, para não sobrecarregar o banco.</li>
+          <li><code>/questoes/[id]</code>: ISR com <code>revalidate: 1</code>, para a correção aparecer logo.</li>
+          <li><code>/busca?q=...</code>: dinâmica, porque depende do texto digitado.</li>
+          <li><code>/blog/[slug]</code>: estática com ISR.</li>
+        </ol>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>Errado.</strong> O preço muda duas vezes por ano. Gerar a página a cada pedido custa servidor o ano inteiro para resolver algo que um deploy resolve.</li>
+            <li><strong>Errado, e é o mais grave.</strong> É o vazamento da pergunta 2: o painel de um usuário guardado e servido para outro. Para aliviar o banco, ponha em cache os <em>dados</em> que são iguais para todos, nunca a página de uma pessoa.</li>
+            <li><strong>Errado.</strong> Com <code>revalidate: 1</code>, a página é refeita quase a cada segundo: na prática, virou dinâmica, sem o nome. O certo é sob demanda, no momento em que o admin salva.</li>
+            <li>Certo.</li>
+            <li>Certo.</li>
+          </ol>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p><code>/questoes/[id]</code> agora mostra &ldquo;você acertou esta questão&rdquo; para quem está logado. A página inteira vira dinâmica?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Não precisa. A questão continua igual para todos e pode continuar estática. Só o selo depende de quem pede. Separe os dois: a página estática com a questão, e um componente pequeno que busca o status da pessoa. Ele pode ser um componente de cliente, ou um trecho dinâmico dentro de <code>&lt;Suspense&gt;</code>.</p>
+          <p>Transformar a página inteira em dinâmica por causa de um selo é o erro comum: todo mundo perde o cache para um detalhe que só alguns veem.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
@@ -163,6 +214,7 @@ export default async function Painel({ params }: { params: Promise<{ id: string 
   return <Tela usuario={usuario} stats={stats} recomendadas={recomendadas} />;
 }
 </code></pre>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">MDN: Promise.all</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Desenhe as dependências: <code>stats</code> não depende de ninguém, e <code>recomendadas</code> depende de <code>usuario</code>. Qual é o caminho mais longo?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -179,6 +231,58 @@ export default async function Painel({ params }: { params: Promise<{ id: string 
         <p>O tempo cai de 750 ms para 550 ms. O caminho mais longo é <code>usuario</code> e depois <code>recomendadas</code> (300 + 250). <code>stats</code> roda em paralelo e não entra na conta.</p>
         <p><strong>Próximo passo:</strong> se as recomendações são a parte lenta e menos importante, mova-as para um componente próprio dentro de <code>&lt;Suspense&gt;</code>. A página aparece em 300 ms e as recomendações chegam depois, por streaming.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que o tempo cai para 550 ms, e não para 300 ms?</li>
+          <li>Por que dois <code>await</code> seguidos esperam um de cada vez, mas o <code>Promise.all</code> não?</li>
+          <li>O que acontece com a página se <code>getEstatisticas</code> falhar?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>Porque <code>recomendadas</code> precisa do nível do usuário, então só começa depois que <code>getUsuario</code> termina: 300 + 250. Paralelizar só ajuda o que não depende de nada.</li>
+            <li>A busca começa quando a função é <em>chamada</em>, e o <code>await</code> só pausa até ela terminar. Com dois <code>await</code> seguidos, a segunda chamada só acontece depois da primeira terminar. No <code>Promise.all</code>, as duas chamadas acontecem antes de qualquer pausa.</li>
+            <li>A página inteira falha. O <code>Promise.all</code> rejeita assim que uma das promessas rejeita. Se as estatísticas forem opcionais, é preciso tratar isso (veja o passo 3).</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Três colegas mandaram versões diferentes. Calcule o tempo de cada uma e diga qual tem problema.</p>
+<pre><code class="esc">
+// Versão A
+const usuario = await getUsuario(id);
+const recomendadas = await getRecomendadas(usuario.nivel);
+const [stats] = await Promise.all([getEstatisticas(id)]);
+
+// Versão B
+const usuario = await getUsuario(id);
+const [stats, recomendadas] = await Promise.all([
+  getEstatisticas(id),
+  getRecomendadas(usuario.nivel),
+]);
+
+// Versão C
+const statsPromessa = getEstatisticas(id); // começa já, sem await
+const usuario = await getUsuario(id);
+const recomendadas = await getRecomendadas(usuario.nivel);
+const stats = await statsPromessa;
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ul>
+            <li><strong>A: 750 ms, errada.</strong> Um <code>Promise.all</code> com um item só não paraleliza nada. As três buscas continuam em fila. Ela <em>parece</em> otimizada porque tem <code>Promise.all</code>.</li>
+            <li><strong>B: 550 ms, certa.</strong> É outro jeito de chegar no mesmo caminho mais longo: usuário (300) e depois o maior entre stats (200) e recomendadas (250).</li>
+            <li><strong>C: 550 ms, mas com uma armadilha.</strong> Se <code>getEstatisticas</code> falhar aos 200 ms, ninguém está esperando por ela ainda (o <code>await</code> só vem aos 550 ms). O Node trata isso como <em>rejeição não tratada</em>: num script Node puro, o processo cai, mesmo que um <code>try</code> pegue o erro depois. O <code>Promise.all</code> evita isso, porque ele já está esperando todas desde o começo.</li>
+          </ul>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>As estatísticas passam a ser opcionais: se <code>getEstatisticas</code> falhar, a página abre sem os números. Se <code>getUsuario</code> falhar, a página continua mostrando erro. O que muda?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>A falha precisa ser tratada <em>só</em> nas estatísticas: <code>getEstatisticas(id).catch(() =&gt; null)</code> dentro do <code>Promise.all</code>. O <code>Tela</code> passa a aceitar <code>stats</code> nulo e mostra &ldquo;estatísticas indisponíveis&rdquo;. Outra saída é <code>Promise.allSettled</code>, que nunca rejeita e diz o resultado de cada uma.</p>
+          <p>A saída mais limpa no Next é mover as estatísticas para um componente próprio, com <code>&lt;Suspense&gt;</code> e uma <em>error boundary</em> em volta. Elas carregam e falham sozinhas, sem segurar nem derrubar o resto da página.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 

@@ -5,10 +5,20 @@
 
   <ol class="etapas">
     <li><a href="#ver"><b>1 &middot; Ver</b>o básico, em linguagem simples</a></li>
-    <li><a href="#fazer"><b>2 &middot; Fazer</b>exercícios curtos, com solução</a></li>
+    <li><a href="#fazer"><b>2 &middot; Fazer</b>escrever e revisar</a></li>
     <li><a href="#contar"><b>3 &middot; Contar</b>as suas decisões e exemplos</a></li>
     <li><a href="#provar"><b>4 &middot; Provar</b>perguntas e múltipla escolha</a></li>
   </ol>
+
+  <div class="nivel-box">
+    <h4>Para júnior avançado e pleno</h4>
+    <p>De um pleno, a entrevista espera componente bem feito e acessível. A infraestrutura do design system é assunto de quem já cuida de uma.</p>
+    <p><span class="nivel n-base">base</span><strong>Domine:</strong> tokens primitivo &rarr; semântico, composição com <code>children</code> em vez de dezenas de props, e acessibilidade de componente (botão de verdade, foco visível, contraste, não depender só de cor).</p>
+    <p><span class="nivel n-dif">diferencial</span><strong>Saiba explicar:</strong> variantes com <code>cva</code>, Storybook, acessibilidade automatizada e container queries.</p>
+    <p><span class="nivel n-sr">sênior</span><strong>Deixe para depois:</strong> o formato de tokens do W3C, Code Connect do Figma, regressão visual e acabamento de movimento.</p>
+    <p class="nivel-legenda"><span class="nivel n-base">base</span>domine e faça à mão &middot; <span class="nivel n-dif">diferencial</span>saiba explicar em dois minutos &middot; <span class="nivel n-sr">sênior</span>só reconheça o nome por enquanto. A etiqueta aparece em cada tópico do checklist.</p>
+  </div>
+
 
   <h3 class="sub etapa" id="ver"><span class="etapa-n">1 &middot; Ver</span>O básico, em linguagem simples</h3>
   <p class="etapa-nota">Leia isto antes do resto. Cada cartão responde a três perguntas: qual é o problema, como se resolve e o que você diz na entrevista.</p>
@@ -107,17 +117,17 @@
   <h3 class="sub">Checklist: o que você precisa saber explicar</h3>
   <p class="etapa-nota">Marque cada item quando conseguir explicá-lo em voz alta, sem olhar. Os cartões acima são a base, e as leituras abaixo têm o detalhe.</p>
   <ul class="checklist">
-    <li class="item"><input type="checkbox" id="w26-1"><label for="w26-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tokens em camadas: primitivo (<code>orange-560</code>) &rarr; semântico (<code>color-brand</code>, <code>color-ink-soft</code>) &rarr; de componente (<code>button-bg</code>) &mdash; e por que o componente só deve enxergar o semântico (é o que deixa trocar tema sem tocar em componente)</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-2"><label for="w26-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O formato padrão de tokens do W3C Design Tokens Community Group (<code>$value</code>, <code>$type</code>, aliases <code>{color.brand}</code>) e o caminho JSON &rarr; CSS custom properties / <code>@theme</code> do Tailwind v4</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-3"><label for="w26-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Variantes tipadas com <code>cva</code>: <code>variants</code>, <code>compoundVariants</code>, <code>defaultVariants</code> e <code>VariantProps</code> &mdash; o salto de &ldquo;classe <code>.btn-primary</code> no CSS&rdquo; pra &ldquo;<code>&lt;Button intent=&quot;danger&quot; size=&quot;sm&quot;&gt;</code> que o TypeScript valida&rdquo;</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-4"><label for="w26-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição sobre configuração: compound components e <code>children</code>/slots em vez de um componente com 15 props booleanas (ponte com <a href="b15-react-estado.html">B15</a>)</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-5"><label for="w26-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Storybook e o Component Story Format: meta + stories nomeadas, <code>args</code>, <code>decorators</code> (tema claro/escuro), <code>play</code> functions &mdash; a story como documentação <em>e</em> como caso de teste</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-6"><label for="w26-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Figma &harr; código com Code Connect: mapear propriedades do componente do Figma (<code>figma.enum</code>, <code>figma.boolean</code>) pras props reais, pra o Dev Mode mostrar o seu código e não um CSS gerado</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-7"><label for="w26-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Regressão visual: <code>toHaveScreenshot()</code> do Playwright (ou Chromatic sobre o Storybook), baseline versionada, tolerância (<code>maxDiffPixels</code>) e por que a baseline tem de ser gerada no mesmo SO/navegador do CI</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-8"><label for="w26-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acessibilidade automatizada em dois níveis: por componente (<code>@storybook/addon-a11y</code>) e por página/fluxo (<code>@axe-core/playwright</code> com <code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) &mdash; e o limite honesto: o axe pega só uma parte dos critérios</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-9"><label for="w26-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">WCAG 2.1 na prática de componente: 1.4.1 (não depender só de cor), 1.4.3 / 1.4.11 (contraste de texto e de componente), 2.1.1 (teclado), 2.4.7 (foco visível), 1.4.10 (reflow sem rolagem horizontal) &mdash; e o que a 2.2 acrescentou (alvo mínimo, foco não encoberto)</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-10"><label for="w26-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição (compound components e <code>asChild</code>), documentação gerada do código e responsivo em componente: container queries, <code>clamp()</code>, alvo de toque e reflow a 320 px</span></label></li>
-    <li class="item"><input type="checkbox" id="w26-11"><label for="w26-11"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acabamento de movimento e interação: durações e easing, animar só <code>transform</code> e <code>opacity</code>, spring vs. easing, <code>prefers-reduced-motion</code>, <code>document.startViewTransition</code> e estados de foco e hover</span></label></li>
+    <li class="item"><input type="checkbox" id="w26-1"><label for="w26-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Tokens em camadas: primitivo (<code>orange-560</code>) &rarr; semântico (<code>color-brand</code>, <code>color-ink-soft</code>) &rarr; de componente (<code>button-bg</code>) &mdash; e por que o componente só deve enxergar o semântico (é o que deixa trocar tema sem tocar em componente) <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-2"><label for="w26-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">O formato padrão de tokens do W3C Design Tokens Community Group (<code>$value</code>, <code>$type</code>, aliases <code>{color.brand}</code>) e o caminho JSON &rarr; CSS custom properties / <code>@theme</code> do Tailwind v4 <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-3"><label for="w26-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Variantes tipadas com <code>cva</code>: <code>variants</code>, <code>compoundVariants</code>, <code>defaultVariants</code> e <code>VariantProps</code> &mdash; o salto de &ldquo;classe <code>.btn-primary</code> no CSS&rdquo; pra &ldquo;<code>&lt;Button intent=&quot;danger&quot; size=&quot;sm&quot;&gt;</code> que o TypeScript valida&rdquo; <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-4"><label for="w26-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição sobre configuração: compound components e <code>children</code>/slots em vez de um componente com 15 props booleanas (ponte com <a href="b15-react-estado.html">B15</a>) <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-5"><label for="w26-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Storybook e o Component Story Format: meta + stories nomeadas, <code>args</code>, <code>decorators</code> (tema claro/escuro), <code>play</code> functions &mdash; a story como documentação <em>e</em> como caso de teste <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-6"><label for="w26-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Figma &harr; código com Code Connect: mapear propriedades do componente do Figma (<code>figma.enum</code>, <code>figma.boolean</code>) pras props reais, pra o Dev Mode mostrar o seu código e não um CSS gerado <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-7"><label for="w26-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Regressão visual: <code>toHaveScreenshot()</code> do Playwright (ou Chromatic sobre o Storybook), baseline versionada, tolerância (<code>maxDiffPixels</code>) e por que a baseline tem de ser gerada no mesmo SO/navegador do CI <span class="nivel n-sr">sênior</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-8"><label for="w26-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acessibilidade automatizada em dois níveis: por componente (<code>@storybook/addon-a11y</code>) e por página/fluxo (<code>@axe-core/playwright</code> com <code>withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa'])</code>) &mdash; e o limite honesto: o axe pega só uma parte dos critérios <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-9"><label for="w26-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">WCAG 2.1 na prática de componente: 1.4.1 (não depender só de cor), 1.4.3 / 1.4.11 (contraste de texto e de componente), 2.1.1 (teclado), 2.4.7 (foco visível), 1.4.10 (reflow sem rolagem horizontal) &mdash; e o que a 2.2 acrescentou (alvo mínimo, foco não encoberto) <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-10"><label for="w26-10"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Composição (compound components e <code>asChild</code>), documentação gerada do código e responsivo em componente: container queries, <code>clamp()</code>, alvo de toque e reflow a 320 px <span class="nivel n-dif">diferencial</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w26-11"><label for="w26-11"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Acabamento de movimento e interação: durações e easing, animar só <code>transform</code> e <code>opacity</code>, spring vs. easing, <code>prefers-reduced-motion</code>, <code>document.startViewTransition</code> e estados de foco e hover <span class="nivel n-sr">sênior</span></span></label></li>
   </ul>
 
   <h3 class="sub">Pra aprofundar: leituras com resumo aqui na página</h3>
@@ -199,8 +209,8 @@ comTransicao(() => setAberto(true));
   </div>
 
 
-  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Exercícios curtos, com solução</h3>
-  <p class="etapa-nota">De 15 a 20 minutos cada, sem consultar. Tente antes de abrir a dica. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
+  <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
+  <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
     <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Tokens em camadas com tema escuro</h3><span class="ex-meta">15 min &middot; CSS</span></div>
     <div class="ex-body">
@@ -212,6 +222,7 @@ comTransicao(() => setAberto(true));
   --orange-400: #FF8A3D; --orange-560: #E8590C;
 }
 </code></pre>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/CSS/Using_CSS_custom_properties">MDN: variáveis CSS</a> &middot; <a href="https://webaim.org/resources/contrastchecker/">WebAIM: contraste</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Dê nome pelo <strong>uso</strong>, não pela cor: <code>--color-bg</code>, <code>--color-text</code>, <code>--color-text-soft</code>, <code>--color-brand</code>, <code>--color-border</code>. No tema escuro, só esses cinco mudam de valor.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -238,6 +249,60 @@ body { background: var(--color-bg); color: var(--color-text); }
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> o <code>.button</code> não sabe que existe tema escuro. E a troca de laranja no escuro não é estética: é contraste. Confira os pares (marca sobre fundo, texto secundário sobre fundo) com uma ferramenta de contraste antes de fechar a paleta.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que o <code>.button</code> usa <code>--color-brand</code>, e não <code>--orange-560</code> direto?</li>
+          <li>Por que o tema escuro muda os tokens semânticos, e não os primitivos?</li>
+          <li>Por que a marca troca de laranja no tema escuro?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>Para o componente não saber que existe tema. Ele pede &ldquo;a cor da marca&rdquo;, e o tema decide qual é. Com <code>--orange-560</code> direto, cada componente precisaria de uma regra própria para o escuro.</li>
+            <li>O primitivo é a paleta: <code>--gray-50</code> é sempre aquele cinza claro. Se o tema escuro mudar o valor dele, o nome passa a mentir, e tudo que usa esse primitivo muda junto, inclusive o que não deveria.</li>
+            <li>Por contraste. O laranja escuro, que funciona no fundo claro, fica apagado no fundo escuro. O laranja mais claro mantém a leitura.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Um colega mandou este CSS. O <code>data-theme</code> fica na tag <code>&lt;html&gt;</code>, a mesma onde está o <code>:root</code>. Ache os quatro erros e diga o que a pessoa vê em cada um.</p>
+<pre><code class="esc">
+:root {
+  --color-bg: var(--gray-50);
+  --color-text: var(--gray-900);
+  --color-text-soft: var(--gray-600);
+  --color-brand: var(--orange-560);
+  --color-border: var(--gray-300);
+}
+[data-theme="dark"] {
+  --gray-50: #121110;
+  --color-text: var(--gray-50);
+  --color-border: var(--gray-700);
+}
+.button {
+  background: var(--orange-560);
+  color: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong>O tema escuro redefine um primitivo</strong> (<code>--gray-50</code>). O fundo escurece, mas o <code>--color-text</code> também aponta para <code>--gray-50</code>, então texto e fundo ficam da <em>mesma cor</em>. O texto some.</li>
+            <li><strong>Falta o <code>--color-text-soft</code> no escuro.</strong> Ele continua <code>--gray-600</code>, um cinza escuro sobre fundo escuro: contraste baixo.</li>
+            <li><strong>Falta o <code>--color-brand</code> no escuro.</strong> A marca fica no laranja escuro, que perde contraste.</li>
+            <li><strong>O <code>.button</code> usa o primitivo <code>--orange-560</code>.</strong> Mesmo se o tema trocasse a marca, o botão não mudaria.</li>
+          </ol>
+          <p>Os erros 2 e 3 são o tipo de coisa que passa na revisão de código e só aparece na tela. Por isso o design system testa os pares de contraste de cada tema, e não só o CSS.</p>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>O produto vai ganhar um tema de alto contraste, com <code>[data-theme="contrast"]</code>. Quantos arquivos de componente você precisa mudar?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Nenhum. Você escreve um bloco novo, <code>[data-theme="contrast"] { ... }</code>, com os mesmos cinco tokens semânticos apontando para outros primitivos. Se faltar uma cor na paleta (preto puro, por exemplo), você cria um primitivo novo primeiro, em vez de escrever o hexadecimal direto no tema.</p>
+          <p>Se algum componente precisar mudar, a camada de tokens estava vazando: o componente usava primitivo ou cor solta. Esse é o teste de que a arquitetura funciona.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
@@ -257,6 +322,7 @@ function Opcao({ letra, texto, estado, onEscolher }) {
 }
 /* no CSS: .opcao:focus { outline: none; } */
 </code></pre>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/button">MDN: &lt;button&gt;</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible">MDN: :focus-visible</a> &middot; <a href="https://webaim.org/resources/contrastchecker/">WebAIM: contraste</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Pense em quem usa só o teclado, em quem usa leitor de tela, em quem não distingue verde de vermelho e em quem enxerga pouco. Cada um encontra um problema diferente.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
         <p><strong>Os problemas:</strong> (1) <code>div</code> com <code>onClick</code> não recebe foco nem responde a Enter ou Espaço; (2) o leitor de tela não sabe que é um botão; (3) certo e errado são só cor; (4) <code>outline: none</code> esconde o foco; (5) o cinza <code>#9a9a9a</code> no branco tem contraste de cerca de 2,8:1, abaixo de 4,5:1.</p>
@@ -280,6 +346,51 @@ function Opcao({ letra, texto, estado, onEscolher }: {
 </code></pre>
         <p><strong>O que mostrar ao entrevistador:</strong> <code>&lt;button&gt;</code> resolve foco, teclado e papel de uma vez só. O resultado aparece como texto (&ldquo;Correta&rdquo;) e como ícone, além da cor. E o foco ganhou um estilo próprio em vez de sumir.</p>
       </div></details>
+      <div class="revisar">
+        <h4>Revisar &middot; depois da solução</h4>
+        <h5>1 &middot; Explique em voz alta</h5>
+        <ol>
+          <li>Por que <code>&lt;button&gt;</code>, e não uma <code>div</code> com <code>role="button"</code>?</li>
+          <li>Por que o ícone tem <code>aria-hidden</code>, e existe um texto &ldquo;Correta&rdquo; ao lado?</li>
+          <li>Por que <code>:focus-visible</code>, e não <code>:focus</code>?</li>
+        </ol>
+        <details class="rv"><summary>respostas</summary><div class="rv-body">
+          <ol>
+            <li>O <code>&lt;button&gt;</code> já vem com tudo: recebe foco pelo Tab, responde a Enter e Espaço, é anunciado como botão e aceita <code>disabled</code>. Com a <code>div</code>, você teria de recriar cada uma dessas partes à mão, e é fácil esquecer uma.</li>
+            <li>O leitor de tela leria o ícone de um jeito estranho (&ldquo;marca de seleção&rdquo;) ou não leria nada. O texto diz o resultado em palavras, e o ícone fica só para quem enxerga.</li>
+            <li><code>:focus-visible</code> mostra o anel de foco quando a pessoa navega pelo teclado, e não quando clica com o mouse. Assim ninguém tem motivo para apagar o foco com <code>outline: none</code>.</li>
+          </ol>
+        </div></details>
+
+        <h5>2 &middot; Caça ao bug</h5>
+        <p>Um assistente de IA &ldquo;corrigiu&rdquo; o componente assim. Ele ainda tem três problemas. Quais?</p>
+<pre><code class="esc">
+function Opcao({ letra, texto, estado, onEscolher }: Props) {
+  return (
+    <div role="button" className={`opcao opcao--${estado}`} onClick={onEscolher}>
+      <span>{estado === 'certa' ? '✓' : estado === 'errada' ? '✗' : ''}</span>
+      <span>{letra}) {texto}</span>
+    </div>
+  );
+}
+/* CSS: .opcao:focus-visible { outline: 2px solid var(--color-brand); } */
+</code></pre>
+        <details class="rv"><summary>os erros</summary><div class="rv-body">
+          <ol>
+            <li><strong><code>role="button"</code> sem <code>tabIndex</code> e sem teclado.</strong> O leitor de tela anuncia &ldquo;botão&rdquo;, mas o Tab nunca chega nele, e Enter não faz nada. O estilo de <code>:focus-visible</code> nunca aparece, porque a <code>div</code> nunca recebe foco. O <code>role</code> só muda o que é <em>anunciado</em>, não o que o elemento <em>faz</em>.</li>
+            <li><strong>O resultado é só ícone.</strong> Não existe texto &ldquo;Correta&rdquo; ou &ldquo;Incorreta&rdquo;, e o ícone não tem <code>aria-hidden</code>. Quem usa leitor de tela ouve um símbolo, ou nada.</li>
+            <li><strong>Continua clicável depois de responder.</strong> Sem <code>disabled</code>, a pessoa clica de novo e responde outra vez.</li>
+          </ol>
+          <p>Esse é um erro típico de código gerado: a correção <em>parece</em> acessível porque tem <code>role</code> e <code>:focus-visible</code>. Só testando com o teclado aparece que nada funciona.</p>
+        </div></details>
+
+        <h5>3 &middot; Mude um requisito</h5>
+        <p>Agora a pessoa pode trocar de alternativa à vontade e só vê o resultado depois de clicar em &ldquo;Confirmar&rdquo;. Botão ainda é o elemento certo?</p>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body">
+          <p>Não. Agora é &ldquo;escolher uma entre várias&rdquo;, que é o papel do <em>grupo de rádio</em>: <code>&lt;fieldset&gt;</code> com <code>&lt;legend&gt;</code> (o enunciado) e um <code>&lt;input type="radio"&gt;</code> com <code>&lt;label&gt;</code> para cada alternativa. O navegador já entrega as setas para trocar de opção e o anúncio &ldquo;2 de 5, selecionado&rdquo;.</p>
+          <p>O resultado aparece só depois do Confirmar, dentro de um <code>role="status"</code>, para o leitor de tela anunciar. A mudança de requisito trocou o elemento, e é isso que se espera ouvir na entrevista: o HTML segue o comportamento. Veja o <a href="https://www.w3.org/WAI/ARIA/apg/patterns/radio/">padrão de rádio do W3C</a>.</p>
+        </div></details>
+      </div>
     </div>
   </div>
 
