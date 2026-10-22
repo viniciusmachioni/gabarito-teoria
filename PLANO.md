@@ -249,3 +249,32 @@ erro técnicas e comentários), porque é assim que se escreve código no mercad
   componentes; R1: reducer e Zod; R4: `waitForJob` e o próprio teste do exercício; R8: os testes do leitor SSE e do
   `fetchWithRetry` que vêm na página). Corrigido junto: o `\u0300-\u036f` do slug do E1 estava gravado como caractere
   invisível, e a B16 tinha um `</span>` sobrando.
+
+## Certificação AWS Cloud Practitioner (21/10/2026)
+
+Motivo: o aluno decidiu tirar a CLF-C02, **em português**, em paralelo com a seção Entrevista, com 3h por dia e sem esperar 4 semanas.
+
+- **Grupo novo `certificacao`** (fonte `_montagem/certificacao/`, logo depois de Entrevista no índice): C1 `c01-aws-cloud-practitioner`,
+  checkboxes `c1-1` a `c1-18` (12 dias de estudo + 6 itens de prontidão). Plano de 12 dias de 3h, prova no dia 14, agendada no dia 7
+  (remarcar é grátis até 24h antes, no máximo duas vezes). Código de manhã continua; roadmap e E4 pausam até a prova.
+- Conteúdo: formato e regras da prova, material grátis (Skill Builder: Cloud Practitioner Essentials e Official Practice Question Set)
+  e o único gasto sugerido (um pacote de simulados), 7 cartões por domínio com `p.real`, a tabela "Os pares que confundem", glossário,
+  10 perguntas abertas e 14 de múltipla escolha em `_montagem/certificacao/quiz/` (tema `cert-aws`; o build lê esse diretório junto
+  com o da Entrevista).
+- **Fatos conferidos em 21/10/2026** no site oficial e no guia do exame: CLF-C02, US$ 100, 65 questões (50 valem nota), 90 min,
+  700/1000, português disponível, 50% de desconto na próxima prova, espera de 14 dias para refazer. **Os planos de suporte mudaram**:
+  Developer, Business e Enterprise On-Ramp acabam em 01/01/2027, e o guia já cobra Basic, Business Support+, Enterprise e Unified
+  Operations. Se o guia do exame mudar de versão, revisar a página inteira.
+
+## Cronograma semanal (21/10/2026)
+
+- Página `e00-cronograma` (grupo `entrevista`, número CR, logo depois do E0), checkboxes `cr-1` a `cr-24` (código, teoria e AWS/extra
+  em cada uma das 8 semanas). Fase 1 (semanas 1–2): código 1h30 de manhã, C1 3h à tarde, candidaturas 1h, E4 45 min à noite.
+  Fase 2 (semanas 3–8): código 2h, teoria 2h, candidaturas 1h, simulado no sábado. Segue a ordem do plano de 8 semanas do E0.
+- Datas de exemplo na página: começo em 26/10/2026, prova da AWS em 10/11, fim em 19/12. Se o início mudar, atualizar essa frase.
+- C1 e E0 passaram a dizer que o E4 continua, em 45 minutos à noite, durante a AWS (antes: pausado).
+- **Ajuste (21/10/2026, a pedido do aluno):** candidaturas foram para logo cedo (vagas das últimas 24h), com a regra "onde se candidatar"
+  (site da empresa e plataformas como InHire/Gupy/Indeed; LinkedIn para busca e para ser encontrado). O E1 fecha na semana 1; o E3 caiu
+  para 6 problemas (1, 2, 4, 6, 7, 8); entrou uma trilha de design system no código (R2 Fazer 1 e 2, R8 EX 4, 10 e 12), o R2 subiu para a
+  teoria da semana 4 e a semana 6 é um desafio para casa (repositório `felipefialho/frontend-challenges`). Os ids `cr-1` a `cr-24` não mudaram.
+- A fonte `_montagem/entrevista/e00-cronograma.html` foi gerada por um script descartável; edite o HTML direto daqui em diante.

@@ -22,6 +22,8 @@ O alvo agora são entrevistas de **júnior avançado e pleno** em front-end. A o
    coding; E3, 12 algoritmos fáceis e médios, um por padrão; E4, 38 perguntas da conversa técnica e 12 de múltipla
    escolha; E5, o roteiro para contar o Gabarita e o Ally AI e as perguntas comportamentais de pleno. As soluções de
    E1, E2 e E3 foram rodadas com testes (Vitest, Testing Library).
+   Em paralelo, por duas semanas: **C1, a certificação AWS Cloud Practitioner** (CLF-C02), 3h por dia. O **Cronograma
+   semanal (CR)** junta código, teoria e a C1 em 8 semanas, para quem tem o dia livre.
 2. **Roadmap da mentoria (R0 a R8), como diferencial.** Cada tópico tem uma etiqueta: **base** (domine e faça à mão),
    **diferencial** (saiba explicar em 2 minutos) ou **sênior** (só reconheça o nome por enquanto), e cada página abre com
    o quadro "Para júnior avançado e pleno". O R0 traz a ordem: R1, R2, R4, R3, R7, R8 (só o que é base), e R5 e R6 por último.

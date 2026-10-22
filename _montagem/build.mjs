@@ -23,6 +23,7 @@ const semTags = (s) => s.replace(/<[^>]+>/g, '');
 /* ------------------------------------------------------------------ */
 const GRUPOS = {
   entrevista: 'Entrevista · júnior avançado e pleno · comece aqui',
+  certificacao: 'Certificação · em paralelo com a Entrevista',
   roadmap: 'Roadmap da mentoria · First Trial · foco atual',
   nucleo: 'Núcleo · 5 semanas',
   bonus: 'Bônus · material de consulta',
@@ -33,11 +34,13 @@ const GRUPOS = {
 // As páginas do roadmap vêm primeiro: são o foco atual. O resto do guia continua igual logo depois.
 const PAGINAS = [
   { slug: 'e00-plano', fonte: 'entrevista', num: 'E0', grupo: 'entrevista', titulo: 'Plano: júnior avançado e pleno', foco: 'Plano &mdash; o que a entrevista de júnior avançado e pleno cobra, a divisão da semana e quando você está pronto', tempo: '~40min' },
+  { slug: 'e00-cronograma', fonte: 'entrevista', num: 'CR', grupo: 'entrevista', titulo: 'Cronograma semanal', foco: 'Cronograma semanal &mdash; 8 semanas com o dia livre: candidaturas logo cedo, código de manhã, AWS ou teoria à tarde', tempo: '8 semanas' },
   { slug: 'e01-fluencia', fonte: 'entrevista', num: 'E1', grupo: 'entrevista', titulo: 'Fluência: código à mão', foco: 'Fluência &mdash; 16 exercícios curtos de JavaScript e TypeScript, do básico ao assíncrono, para escrever sem travar', tempo: '30 min/dia' },
   { slug: 'e02-live-coding-front', fonte: 'entrevista', num: 'E2', grupo: 'entrevista', titulo: 'Live coding de front em React', foco: 'Live coding de front &mdash; 8 componentes clássicos de entrevista: lista, busca, formulário, abas, tabela, cronômetro e modal', tempo: '~10h' },
   { slug: 'e03-algoritmos', fonte: 'entrevista', num: 'E3', grupo: 'entrevista', titulo: 'Algoritmos que caem nesse nível', foco: 'Algoritmos &mdash; 12 problemas fáceis e médios, um por padrão, com Big-O e solução comentada', tempo: '~10h' },
   { slug: 'e04-fundamentos', fonte: 'entrevista', num: 'E4', grupo: 'entrevista', titulo: 'Fundamentos: a conversa técnica', foco: 'Fundamentos &mdash; as perguntas de JavaScript, React, TypeScript, navegador, CSS e testes que mais caem na conversa técnica', tempo: '~8h' },
   { slug: 'e05-projetos-comportamental', fonte: 'entrevista', num: 'E5', grupo: 'entrevista', titulo: 'Seus projetos e o comportamental', foco: 'Projetos e comportamental &mdash; contar o Gabarita e o Ally AI em 2 minutos e responder às perguntas de pleno', tempo: '~4h' },
+  { slug: 'c01-aws-cloud-practitioner', fonte: 'certificacao', num: 'C1', grupo: 'certificacao', titulo: 'AWS Cloud Practitioner em 2 semanas', foco: 'AWS Cloud Practitioner &mdash; a prova CLF-C02 em 12 dias de 3h: plano, conteúdo por domínio, os pares que confundem e simulado', tempo: '~36h' },
   { slug: 'r00-mapa', fonte: 'roadmap', num: 'R0', grupo: 'roadmap', titulo: 'Mapa: roadmap × Gabarita e Ally AI', foco: 'Mapa do roadmap &mdash; cada item, o que você já fez no Gabarita e no Ally AI, e o que falta', tempo: '~30min' },
   { slug: 'r01-ai-frontend', fonte: 'roadmap', num: 'R1', grupo: 'roadmap', titulo: 'AI-Powered Frontend', foco: 'AI-Powered Frontend &mdash; streaming, tool calling, structured outputs, Generative UI', tempo: '~8h' },
   { slug: 'r02-design-systems', fonte: 'roadmap', num: 'R2', grupo: 'roadmap', titulo: 'Design Systems & Design Engineering', foco: 'Design Systems &amp; Design Engineering &mdash; tokens, variantes, Storybook, Figma, regressão visual', tempo: '~8h' },
@@ -166,10 +169,10 @@ if (existe(dirQuizRoadmap)) {
     quizRoadmap = quizRoadmap.concat(qs);
   }
 }
-const dirQuizEntrevista = path.join(MONT, 'entrevista', 'quiz');
-if (existe(dirQuizEntrevista)) {
-  for (const f of fs.readdirSync(dirQuizEntrevista).filter((f) => f.endsWith('.mjs')).sort()) {
-    const qs = (await import(pathToFileURL(path.join(dirQuizEntrevista, f)).href)).default;
+for (const dirQuizExtra of [path.join(MONT, 'entrevista', 'quiz'), path.join(MONT, 'certificacao', 'quiz')]) {
+  if (!existe(dirQuizExtra)) continue;
+  for (const f of fs.readdirSync(dirQuizExtra).filter((f) => f.endsWith('.mjs')).sort()) {
+    const qs = (await import(pathToFileURL(path.join(dirQuizExtra, f)).href)).default;
     quizPorPagina[f.replace(/\.mjs$/, '')] = qs;
     quizRoadmap = quizRoadmap.concat(qs);
   }
@@ -255,7 +258,7 @@ function embuteLeituras(slug, html) {
 /* Montagem das páginas                                               */
 /* ------------------------------------------------------------------ */
 function conteudoDe(p) {
-  if (p.fonte === 'novo' || p.fonte === 'roadmap' || p.fonte === 'entrevista') {
+  if (p.fonte === 'novo' || p.fonte === 'roadmap' || p.fonte === 'entrevista' || p.fonte === 'certificacao') {
     const arq = path.join(MONT, p.fonte === 'novo' ? 'novos' : p.fonte, p.slug + '.html');
     return existe(arq) ? ler(arq).trim() : null;
   }
@@ -299,7 +302,7 @@ for (const p of PAGINAS) {
   if (!c) { avisa('pendente: ' + p.slug + ' (' + p.fonte + ')'); continue; }
   let { html, n } = embuteLeituras(p.slug, c);
   let nQuiz = 0;
-  if (p.fonte === 'roadmap' || (p.fonte === 'entrevista' && quizPorPagina[p.slug])) {
+  if (p.fonte === 'roadmap' || ((p.fonte === 'entrevista' || p.fonte === 'certificacao') && quizPorPagina[p.slug])) {
     const qs = quizPorPagina[p.slug] || [];
     nQuiz = qs.length;
     if (nQuiz < MIN_QUIZ_PAGINA || nQuiz > MAX_QUIZ_PAGINA) avisa(p.slug + ': ' + nQuiz + ' questões de múltipla escolha (meta: ' + MIN_QUIZ_PAGINA + ' a ' + MAX_QUIZ_PAGINA + ')');
@@ -327,6 +330,7 @@ const totais = {
   blocos: publicadas.filter((p) => p.grupo !== 'pratica').length,
   roadmap: publicadas.filter((p) => p.grupo === 'roadmap').length,
   entrevista: publicadas.filter((p) => p.grupo === 'entrevista').length,
+  certificacao: publicadas.filter((p) => p.grupo === 'certificacao').length,
 };
 
 const HOJE = new Date().toLocaleDateString('pt-BR');
@@ -402,7 +406,7 @@ const focoEntrevista = !paginasEntrevista.length ? '' :
 `  <section class="week foco" id="entrevista">
     <div class="week-head"><span class="week-num">E</span><h2 style="font-size:22px;">Comece aqui: a entrevista de júnior avançado e pleno</h2></div>
     <div class="week-meta">código à mão, live coding de front, algoritmos, fundamentos e os seus projetos &middot; o roadmap da mentoria vem logo abaixo, como diferencial</div>
-    <p class="intro">Nesse nível, o que mais elimina candidato é travar no código ao vivo, e o que mais diferencia é saber explicar o próprio trabalho. Esta seção cuida das duas coisas: exercícios curtos para recuperar a fluência, os componentes React que mais caem em live coding, os algoritmos fáceis e médios por padrão, as perguntas da conversa técnica e o roteiro para contar o Gabarita e o Ally AI. Comece pelo plano: ele divide a semana e diz quando você está pronto.</p>
+    <p class="intro">Nesse nível, o que mais elimina candidato é travar no código ao vivo, e o que mais diferencia é saber explicar o próprio trabalho. Esta seção cuida das duas coisas: exercícios curtos para recuperar a fluência, os componentes React que mais caem em live coding, os algoritmos fáceis e médios por padrão, as perguntas da conversa técnica e o roteiro para contar o Gabarita e o Ally AI. Comece pelo plano: ele divide a semana e diz quando você está pronto. Em paralelo, por duas semanas: a <a href="paginas/c01-aws-cloud-practitioner.html">certificação AWS Cloud Practitioner (C1)</a>, 3 horas por dia, sem parar o código.</p>
     <ol class="foco-lista">
 ` + paginasEntrevista.map((p) => {
   const attrs = p.topicos ? ' data-prefix="' + p.prefixo + '" data-total="' + p.topicos + '"' : '';
@@ -437,7 +441,7 @@ const capa = cabeca('O Gabarito da Teoria', '') +
   <p class="lede">Você já escreveu autenticação com invalidação de sessão, um scheduler SM-2, uma fila com retry e uma CSP com nonce por request. A parte que falta não é prática &mdash; é <strong>saber nomear e defender</strong> o que você já fez, e preencher os buracos ao redor. Este roteiro usa o próprio Gabarita como estudo de caso, e agora começa pelo que uma entrevista de júnior avançado e pleno cobra, aqui e lá fora, com o roadmap da mentoria como diferencial.</p>
 
   <div class="stats">
-    <div class="stat"><div class="n">${totais.blocos}</div><div class="d">blocos: ${totais.entrevista} da seção Entrevista, ${totais.roadmap} do roadmap da mentoria, 5 semanas de núcleo, 9 bônus e 10 lacunas de sênior</div></div>
+    <div class="stat"><div class="n">${totais.blocos}</div><div class="d">blocos: ${totais.entrevista} da seção Entrevista, ${totais.certificacao} de certificação, ${totais.roadmap} do roadmap da mentoria, 5 semanas de núcleo, 9 bônus e 10 lacunas de sênior</div></div>
     <div class="stat"><div class="n" id="stat-total">${totais.topicos}</div><div class="d">tópicos, a maioria ancorada no seu código</div></div>
     <div class="stat"><div class="n">${totais.leituras}</div><div class="d">leituras resumidas na própria página &middot; <span id="stat-leituras-lidas">0</span> lidas</div></div>
   </div>
