@@ -1,7 +1,7 @@
 <section class="week" id="ent3">
   <div class="week-head"><span class="week-num">E3</span><h2>Algoritmos que caem nesse nível</h2></div>
   <div class="week-meta">~10h, em sessões de 45 min &middot; 12 problemas fáceis e médios, um por padrão &middot; base: <a href="b08-algoritmos.html">B8</a></div>
-  <p class="intro">Em uma frase: <strong>para júnior avançado e pleno, a etapa de algoritmo pede problemas fáceis e médios, e quase todos usam um punhado de padrões.</strong> Vagas no exterior e empresas grandes de tecnologia, aqui e lá fora, costumam ter essa etapa. Empresas de produto menores preferem um componente ou um desafio para casa (o <a href="e02-live-coding-front.html">E2</a>). Esta página tem um problema por padrão, cada um com o link para treinar no LeetCode, a solução comentada e o custo em Big-O. Antes de cada um, faça o <a href="e01-fluencia.html">E1</a> até o nível 3.</p>
+  <p class="intro">Em uma frase: <strong>para júnior avançado e pleno, a etapa de algoritmo pede problemas fáceis e médios, e quase todos usam um punhado de padrões.</strong> Vagas no exterior e empresas grandes de tecnologia, aqui e lá fora, costumam ter essa etapa. Empresas de produto menores preferem um componente ou um desafio para casa (o <a href="e02-live-coding-front.html">E2</a>). Esta página tem um problema por padrão, cada um com o link para treinar no LeetCode, a solução comentada e o custo em Big-O. Antes de cada um, faça o <a href="e01-fluencia.html">E1</a> até o nível 3. Logo antes dos problemas, há uma seção para <strong>calcular</strong> o Big-O de um código, com dez trechos para treinar.</p>
 
   <div class="basico">
     <div class="bcard">
@@ -48,7 +48,210 @@
     <li class="item"><input type="checkbox" id="e3-6"><label for="e3-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Problemas 11 e 12 (intervalos e maior soma) resolvidos sem dica</span></label></li>
     <li class="item"><input type="checkbox" id="e3-7"><label for="e3-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Um problema novo do LeetCode (fácil) resolvido em 20 minutos, falando em voz alta, sem ter visto antes</span></label></li>
     <li class="item"><input type="checkbox" id="e3-8"><label for="e3-8"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Um problema médio resolvido em 35 minutos, com força bruta primeiro e a otimização depois</span></label></li>
+    <li class="item"><input type="checkbox" id="e3-9"><label for="e3-9"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Os dez trechos do &ldquo;Qual o Big-O deste código?&rdquo; respondidos em voz alta, com o &ldquo;porque&rdquo;, sem abrir a resposta</span></label></li>
   </ul>
+
+  <h3 class="sub">Big-O de verdade: como contar</h3>
+  <p class="etapa-nota">O cartão 1 diz o que cada custo significa. Aqui você aprende a <strong>calcular</strong> o custo de um código que nunca viu, que é o que a entrevista pergunta: &ldquo;qual a complexidade do que você escreveu?&rdquo;.</p>
+
+  <div class="basico">
+    <div class="bcard">
+      <h4>Como contar, em quatro regras</h4>
+      <p><b class="r">1 &middot; Em sequência, soma</b>Dois laços um depois do outro: n + n = 2n. Continua O(n).</p>
+      <p><b class="r">2 &middot; Um dentro do outro, multiplica</b>Laço de n dentro de laço de n: n &times; n = O(n²). Com listas diferentes, é n &times; m.</p>
+      <p><b class="r">3 &middot; Dividir ao meio, log n</b>Quando cada passo joga fora metade do que sobra (busca binária), o custo é O(log n).</p>
+      <p><b class="r">4 &middot; Jogue fora o que cresce menos</b>2n é n. n² + n é n². Big-O descreve a <em>forma</em> do crescimento, não o tempo em segundos.</p>
+      <p class="frase"><b class="r">Na entrevista</b>Salvo se pedirem outra coisa, a resposta é o <strong>pior caso</strong>: o item procurado está no fim, ou nem existe.</p>
+    </div>
+    <div class="bcard">
+      <h4>O custo escondido no JavaScript</h4>
+      <p><b class="r">Fácil (O(1))</b><code>push</code>, <code>pop</code>, <code>arr[i]</code>, <code>map.get</code>, <code>map.set</code>, <code>set.has</code>, <code>obj[key]</code>.</p>
+      <p><b class="r">Percorre tudo (O(n))</b><code>includes</code>, <code>indexOf</code>, <code>find</code>, <code>filter</code>, <code>map</code>, <code>slice</code>, <code>concat</code>, <code>[...arr]</code>, <code>{ ...obj }</code>, <code>Object.keys</code>, <code>JSON.stringify</code>.</p>
+      <p><b class="r">Pode ser O(n)</b><code>shift</code> e <code>unshift</code> (movem todos os itens). Para fila grande, use um índice que avança, ou outra estrutura.</p>
+      <p><b class="r">Ordenar (O(n log n))</b><code>sort</code>. Lembre que ele <em>muda</em> a lista: copie antes se precisar da original.</p>
+      <p class="frase"><b class="r">A armadilha</b>Um <code>for</code> com um desses métodos dentro é um laço dentro de outro, mesmo que só apareça um <code>for</code>. É assim que um código &ldquo;de um laço só&rdquo; vira O(n²).</p>
+    </div>
+    <div class="bcard">
+      <h4>Memória (espaço) e como falar</h4>
+      <p><b class="r">O que conta</b>A memória <em>extra</em> que você cria: um <code>Map</code>, uma cópia, uma lista de saída. A entrada em si não entra na conta.</p>
+      <p><b class="r">Troca clássica</b>Gastar memória para ganhar tempo: o <code>Map</code> que leva o two sum de O(n²) para O(n) custa O(n) de memória.</p>
+      <p><b class="r">Recursão tem custo</b>Cada chamada empilhada ocupa memória. Uma recursão de profundidade n gasta O(n) de pilha, e pode estourar com n muito grande.</p>
+      <p class="frase"><b class="r">Na entrevista</b>&ldquo;A força bruta é O(n²) de tempo e O(1) de memória, porque compara cada par. Com um Map, eu pago O(n) de memória e fico em O(n) de tempo.&rdquo;</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Qual o Big-O deste código?</h3>
+  <p class="etapa-nota">Dez trechos curtos, 3 minutos cada. Olhe o código, diga o custo e o &ldquo;porque&rdquo; em voz alta, e só então abra a resposta. Errou? Releia as quatro regras e o cartão do custo escondido.</p>
+
+  <div class="ex" id="bo1">
+    <div class="ex-head"><span class="ex-n">BO 1</span><h3>Dois laços, um depois do outro</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function minMax(nums) {
+  let min = Infinity;
+  for (const n of nums) if (n < min) min = n;
+  let max = -Infinity;
+  for (const n of nums) if (n > max) max = n;
+  return [min, max];
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n)</strong> de tempo, O(1) de memória. Laços em sequência <em>somam</em>: n + n = 2n, e a constante 2 cai. Dois laços não viram O(n²); só o laço <em>dentro</em> de outro multiplica.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo2">
+    <div class="ex-head"><span class="ex-n">BO 2</span><h3>Duas listas diferentes</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function allPairs(a, b) {
+  const pairs = [];
+  for (const x of a) {
+    for (const y of b) pairs.push([x, y]);
+  }
+  return pairs;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n &middot; m)</strong>, em que n é o tamanho de <code>a</code> e m o de <code>b</code>. Entradas diferentes ganham letras diferentes: responder O(n²) é um erro comum. Só vira O(n²) se as duas listas tiverem o mesmo tamanho. A memória também é O(n &middot; m), porque guarda todos os pares.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo3">
+    <div class="ex-head"><span class="ex-n">BO 3</span><h3>O laço de dentro depende do de fora</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function countPairs(nums) {
+  let count = 0;
+  for (let i = 0; i < nums.length; i++) {
+    for (let j = 0; j < i; j++) count++;
+  }
+  return count;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n²)</strong>. O de dentro roda 0, 1, 2, &hellip;, n&minus;1 vezes: a soma é n(n&minus;1)/2, que é n²/2 menos n/2. Jogando fora a constante e o termo menor, sobra n². Mesmo sem passar por todos os pares, o crescimento é quadrático.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo4">
+    <div class="ex-head"><span class="ex-n">BO 4</span><h3>Cortar ao meio</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function halvings(n) {
+  let steps = 0;
+  while (n > 1) {
+    n = Math.floor(n / 2);
+    steps++;
+  }
+  return steps;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(log n)</strong>. A cada volta, n cai pela metade. Com n = 1.000.000, são cerca de 20 voltas. É o mesmo custo da busca binária. Pergunta de bolso: &ldquo;quantas vezes dá para dividir n por 2 até chegar a 1?&rdquo;. A resposta é log₂ n.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo5">
+    <div class="ex-head"><span class="ex-n">BO 5</span><h3>Um laço com um laço que dobra</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function doubling(n) {
+  let total = 0;
+  for (let i = 0; i < n; i++) {
+    for (let j = 1; j < n; j *= 2) total++;
+  }
+  return total;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n log n)</strong>. O de fora roda n vezes. O de dentro dobra <code>j</code> a cada volta, então roda cerca de log n vezes. Multiplica: n &times; log n. É o custo de um bom algoritmo de ordenação.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo6">
+    <div class="ex-head"><span class="ex-n">BO 6</span><h3>O custo escondido do <code>includes</code></h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function unique(list) {
+  const out = [];
+  for (const x of list) {
+    if (!out.includes(x)) out.push(x);
+  }
+  return out;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n²)</strong>. Só há um <code>for</code> à vista, mas o <code>includes</code> é um laço escondido: ele percorre <code>out</code> inteiro a cada item. Com 10 mil itens diferentes, são cerca de 50 milhões de comparações. Com um <code>Set</code> (<code>has</code> é O(1)), cai para <strong>O(n)</strong> de tempo, com O(n) de memória extra. É a troca clássica de memória por tempo.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo7">
+    <div class="ex-head"><span class="ex-n">BO 7</span><h3>O custo escondido do <code>...</code></h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function collect(list) {
+  let acc = [];
+  for (const x of list) {
+    acc = [...acc, x]; // new array on every turn
+  }
+  return acc;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n²)</strong>. O <code>[...acc, x]</code> cria um array novo e copia todos os itens que já estavam lá: 1 + 2 + 3 + &hellip; + n cópias. Com <code>acc.push(x)</code>, cada volta custa O(1), e o total cai para <strong>O(n)</strong>. O mesmo vale para <code>concat</code> e para <code>{ ...obj }</code> dentro de laço, e é um erro comum em <code>reduce</code>.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo8">
+    <div class="ex-head"><span class="ex-n">BO 8</span><h3>Ordenar e varrer</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function hasCloseValues(nums, gap) {
+  const sorted = [...nums].sort((a, b) => a - b);
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] - sorted[i - 1] <= gap) return true;
+  }
+  return false;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n log n)</strong> de tempo e O(n) de memória (a cópia). O laço é O(n), mas o <code>sort</code> é O(n log n), e <em>manda o termo maior</em>: n log n + n continua n log n. A cópia <code>[...nums]</code> custa memória extra, mas protege a lista original, porque o <code>sort</code> muda o array.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo9">
+    <div class="ex-head"><span class="ex-n">BO 9</span><h3>A recursão que se repete</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function fib(n) {
+  if (n < 2) return n;
+  return fib(n - 1) + fib(n - 2);
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(2<sup>n</sup>)</strong>. Cada chamada gera duas, e as duas refazem o mesmo trabalho (<code>fib(3)</code> é calculado várias vezes). Com n = 50, são bilhões de chamadas. Guardar os resultados já calculados num <code>Map</code> (o <code>memoize</code> do E1) corta para <strong>O(n)</strong>. A recursão também gasta memória de pilha: O(n) de profundidade.</p></div></details>
+    </div>
+  </div>
+
+  <div class="ex" id="bo10">
+    <div class="ex-head"><span class="ex-n">BO 10</span><h3>Tempo e memória, juntos</h3><span class="ex-meta">3 min</span></div>
+    <div class="ex-body">
+      <p class="ex-enunciado">Qual o custo em tempo? Responda em voz alta, com o &ldquo;porque&rdquo;, antes de abrir a resposta.</p>
+<pre><code class="esc">
+function twoSum(nums, target) {
+  const seen = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const missing = target - nums[i];
+    if (seen.has(missing)) return [seen.get(missing), i];
+    seen.set(nums[i], i);
+  }
+  return null;
+}
+</code></pre>
+      <details class="sol"><summary>resposta</summary><div class="sol-body"><p><strong>O(n) de tempo e O(n) de memória</strong>. Um passe só, e cada <code>has</code>, <code>get</code> e <code>set</code> do <code>Map</code> é O(1) em média. O <code>Map</code> pode guardar até n itens, e é isso que paga a velocidade. A versão de força bruta (dois laços) tem O(n²) de tempo e O(1) de memória. Na entrevista, diga as duas, e diga qual troca você fez.</p></div></details>
+    </div>
+  </div>
 
   <h3 class="sub">Map e contagem</h3>
 
