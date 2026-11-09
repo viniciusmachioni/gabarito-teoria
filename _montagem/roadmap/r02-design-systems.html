@@ -327,11 +327,10 @@ function Option({ letter, text, state, onSelect }) {
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
         <p><strong>Os problemas:</strong> (1) <code>div</code> com <code>onClick</code> não recebe foco nem responde a Enter ou Espaço; (2) o leitor de tela não sabe que é um botão; (3) certo e errado são só cor; (4) <code>outline: none</code> esconde o foco; (5) o cinza <code>#9a9a9a</code> no branco tem contraste de cerca de 2,8:1, abaixo de 4,5:1.</p>
 <pre><code class="esc">
-const LABEL = { correct: 'Correta', wrong: 'Incorreta' } as const;
+const LABEL = { correct: 'Correta', wrong: 'Incorreta' };
 
-function Option({ letter, text, state, onSelect }: {
-  letter: string; text: string; state: 'neutral' | 'correct' | 'wrong'; onSelect: () => void;
-}) {
+// state: 'neutral' | 'correct' | 'wrong'
+function Option({ letter, text, state, onSelect }) {
   const answered = state !== 'neutral';
   return (
     <button type="button" className={`option option--${state}`} onClick={onSelect} disabled={answered}>
@@ -365,7 +364,7 @@ function Option({ letter, text, state, onSelect }: {
         <h5>2 &middot; Caça ao bug</h5>
         <p>Um assistente de IA &ldquo;corrigiu&rdquo; o componente assim. Ele ainda tem três problemas. Quais?</p>
 <pre><code class="esc">
-function Option({ letter, text, state, onSelect }: Props) {
+function Option({ letter, text, state, onSelect }) {
   return (
     <div role="button" className={`option option--${state}`} onClick={onSelect}>
       <span>{state === 'correct' ? '✓' : state === 'wrong' ? '✗' : ''}</span>

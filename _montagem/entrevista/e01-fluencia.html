@@ -7,7 +7,7 @@
     <div class="bcard">
       <h4>Como treinar</h4>
       <p><b class="r">Sem IA</b>Desligue o autocomplete de IA do editor (Copilot, Cursor Tab). Na entrevista, ele não vai estar lá.</p>
-      <p><b class="r">Onde</b>Um arquivo <code>practice.ts</code> e o terminal: com Node 24, <code>node practice.ts</code> já roda TypeScript. Sem instalar nada, use o <a href="https://www.typescriptlang.org/play">TypeScript Playground</a>.</p>
+      <p><b class="r">Onde</b>Um arquivo <code>practice.js</code> e o terminal: <code>node practice.js</code> roda direto. Sem instalar nada, abra o console do navegador (F12) ou um editor online como o <a href="https://stackblitz.com/">StackBlitz</a>. Aqui é só JavaScript, de propósito: sem tipos, o código fica curto e dá para ver o raciocínio.</p>
       <p><b class="r">Como conferir</b>Cada exercício traz exemplos de entrada e saída. Escreva-os como <code>console.log(fn(input)) // expected: ...</code> antes de começar.</p>
       <p><b class="r">Consulta</b>Pode consultar a sintaxe (os links estão em cada exercício). Não consulte a lógica. Travou por 10 minutos? Abra a dica.</p>
       <p><b class="r">Repetição</b>No dia seguinte, reescreva de memória o exercício de ontem antes do de hoje. É a repetição que tira a trava.</p>
@@ -41,7 +41,7 @@ sumEvens([])             // 0
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um número é par quando o resto da divisão por 2 é zero: <code>n % 2 === 0</code>. Guarde a soma numa variável que começa em zero.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function sumEvens(nums: number[]): number {
+function sumEvens(nums) {
   let sum = 0;             // starts at zero: an empty list already returns the right answer
   for (const n of nums) {
     if (n % 2 === 0) sum += n;
@@ -67,7 +67,7 @@ countVowels('xyz')          // 0
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Passe tudo para minúscula com <code>toLowerCase()</code>. Para o acento, <code>normalize('NFD')</code> separa &ldquo;ã&rdquo; em &ldquo;a&rdquo; + o til, e aí o &ldquo;a&rdquo; é contado.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function countVowels(text: string): number {
+function countVowels(text) {
   const vowels = 'aeiou';
   let total = 0;
   // NFD splits the letter from its accent: 'ã' becomes 'a' + '~'
@@ -95,9 +95,9 @@ reverseWords('  olá   mundo bonito ')   // 'bonito mundo olá'
       <details class="dica"><summary>dica</summary><div class="dica-body"><p><code>trim()</code> tira os espaços das pontas, e <code>split(/\s+/)</code> separa por um ou mais espaços. Depois, um <code>for</code> que anda de trás para a frente: <code>for (let i = list.length - 1; i &gt;= 0; i--)</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function reverseWords(sentence: string): string {
+function reverseWords(sentence) {
   const words = sentence.trim().split(/\s+/); // one or more spaces count as one
-  const reversed: string[] = [];
+  const reversed = [];
   for (let i = words.length - 1; i >= 0; i--) reversed.push(words[i]);
   return reversed.join(' ');
 }
@@ -120,8 +120,8 @@ fizzBuzz(15)  // [..., '13', '14', 'FizzBuzz']
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A ordem dos <code>if</code> importa. Qual teste precisa vir primeiro para o 15 não virar só &ldquo;Fizz&rdquo;?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function fizzBuzz(n: number): string[] {
-  const output: string[] = [];
+function fizzBuzz(n) {
+  const output = [];
   for (let i = 1; i <= n; i++) {
     if (i % 15 === 0) output.push('FizzBuzz'); // the most specific case comes first
     else if (i % 3 === 0) output.push('Fizz');
@@ -152,14 +152,12 @@ groupByCategory([
 ])
 // { peripherals: [Keyboard, Mouse], displays: [Monitor] }
 </code></pre>
-      <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type">TypeScript: Record</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Working_with_objects">MDN: objetos</a></p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/for...in">MDN: for...in</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Working_with_objects">MDN: objetos</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Comece com <code>{}</code>. Para cada produto: se a categoria ainda não existe no objeto, crie uma lista vazia para ela; depois, ponha o produto na lista.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Product = { name: string; category: string; price: number };
-
-function groupByCategory(products: Product[]): Record<string, Product[]> {
-  const groups: Record<string, Product[]> = {};
+function groupByCategory(products) {
+  const groups = {};
   for (const p of products) {
     if (!groups[p.category]) groups[p.category] = []; // first time this category shows up
     groups[p.category].push(p);
@@ -185,9 +183,7 @@ cartTotal([{ name: 'Book', priceCents: 1999, quantity: 1 }], 10)    // 1799
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Primeiro o subtotal (preço vezes quantidade, somado). Depois o desconto, com <code>Math.round</code>. Por que o preço está em centavos, e não em reais?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Item = { name: string; priceCents: number; quantity: number };
-
-function cartTotal(items: Item[], couponPct = 0): number {
+function cartTotal(items, couponPct = 0) {
   const subtotal = items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
   const discount = Math.round((subtotal * couponPct) / 100);
   return subtotal - discount;
@@ -207,13 +203,13 @@ function cartTotal(items: Item[], couponPct = 0): number {
 removeDuplicates([{ id: 1, n: 'a' }, { id: 2, n: 'b' }, { id: 1, n: 'c' }])
 // [{ id: 1, n: 'a' }, { id: 2, n: 'b' }]
 </code></pre>
-      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Set">MDN: Set</a> &middot; <a href="https://www.typescriptlang.org/docs/handbook/2/generics.html">TypeScript: generics</a></p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Set">MDN: Set</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/continue">MDN: continue</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um <code>Set</code> guarda os ids já vistos, e <code>has()</code> responde na hora se um id já apareceu. Procurar com <code>find</code> na lista de saída também funciona, mas fica lento com listas grandes.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function removeDuplicates<T extends { id: number }>(list: T[]): T[] {
-  const seen = new Set<number>();
-  const result: T[] = [];
+function removeDuplicates(list) {
+  const seen = new Set();
+  const result = [];
   for (const item of list) {
     if (seen.has(item.id)) continue; // already seen: skip
     seen.add(item.id);
@@ -222,7 +218,7 @@ function removeDuplicates<T extends { id: number }>(list: T[]): T[] {
   return result;
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o <code>Set</code> deixa a função em O(n). Com <code>find</code> dentro do laço, ela vira O(n²): com 10 mil itens, são cerca de 50 milhões de comparações. O <code>T extends { id: number }</code> faz a função servir para qualquer objeto que tenha <code>id</code>.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> o <code>Set</code> deixa a função em O(n). Com <code>find</code> dentro do laço, ela vira O(n²): com 10 mil itens, são cerca de 50 milhões de comparações. Como não há tipos, a função serve para qualquer objeto que tenha <code>id</code>.</p>
       </div></details>
       <details class="rv"><summary>variação</summary><div class="rv-body"><p>Mantenha a <strong>última</strong> ocorrência, que é a versão mais nova do item. Um <code>Map</code> de id para item resolve: cada <code>set</code> sobrescreve o anterior. Repare que a ordem passa a ser a da primeira aparição de cada id.</p></div></details>
     </div>
@@ -238,11 +234,11 @@ sortBy(people, 'name')          // Ana, Bia
 sortBy(people, 'age', 'desc')   // Bia (30), Ana (25)
 people[0].name                  // 'Bia': the original did not change
 </code></pre>
-      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN: Array.sort</a> &middot; <a href="https://www.typescriptlang.org/docs/handbook/2/keyof-types.html">TypeScript: keyof</a></p>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">MDN: Array.sort</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Property_accessors">MDN: acessar propriedades</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O <code>sort</code> <em>muda</em> a lista original. Copie antes: <code>[...list]</code>. A função de comparação devolve um número negativo (a vem antes), positivo (b vem antes) ou zero.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function sortBy<T>(list: T[], key: keyof T, direction: 'asc' | 'desc' = 'asc'): T[] {
+function sortBy(list, key, direction = 'asc') {
   const sign = direction === 'asc' ? 1 : -1;
   return [...list].sort((a, b) => {   // copy: sort mutates the array it is called on
     if (a[key] < b[key]) return -1 * sign;
@@ -272,8 +268,8 @@ topWords('O gato e o rato. O rato fugiu!', 2)
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Três passos: separar as palavras (<code>match(/\p{L}+/gu)</code> pega sequências de letras, com acento), contar num <code>Map</code> e ordenar as entradas pela contagem.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function topWords(text: string, n: number): [string, number][] {
-  const counts = new Map<string, number>();
+function topWords(text, n) {
+  const counts = new Map();
   // \p{L} = any letter, accented ones included; the 'u' flag enables it
   for (const word of text.toLowerCase().match(/\p{L}+/gu) ?? []) {
     counts.set(word, (counts.get(word) ?? 0) + 1);
@@ -302,12 +298,12 @@ areAnagrams('dormitory', 'dirty room')  // true
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Conte as letras da primeira palavra num <code>Map</code>. Depois, para cada letra da segunda, desconte. Se alguma faltar, não são anagramas.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function areAnagrams(a: string, b: string): boolean {
-  const clean = (s: string) => s.toLowerCase().replace(/\s/g, '');
+function areAnagrams(a, b) {
+  const clean = (s) => s.toLowerCase().replace(/\s/g, '');
   const x = clean(a);
   const y = clean(b);
   if (x.length !== y.length) return false; // shortcut: different lengths never match
-  const counts = new Map<string, number>();
+  const counts = new Map();
   for (const c of x) counts.set(c, (counts.get(c) ?? 0) + 1);
   for (const c of y) {
     const n = counts.get(c);
@@ -334,7 +330,7 @@ slugify('  Olá, Mundo! Ação 2026  ')  // 'ola-mundo-acao-2026'
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma corrente de passos: <code>normalize('NFD')</code>, tirar os acentos (<code>/[\u0300-\u036f]/g</code>), minúscula, trocar tudo que não é letra ou número por hífen, e tirar os hífens das pontas.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function slugify(text: string): string {
+function slugify(text) {
   return text
     .normalize('NFD')                 // 'ã' becomes 'a' + tilde
     .replace(/[\u0300-\u036f]/g, '')  // drop the loose accents
@@ -360,10 +356,8 @@ flatten([1, [2, [3, [4]], 5], []])  // [1, 2, 3, 4, 5]
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Recursão: se o item é uma lista, achate essa lista com a própria função e junte o resultado. Se é um número, ponha direto na saída.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type Nested = number | Nested[];
-
-function flatten(list: Nested[]): number[] {
-  const output: number[] = [];
+function flatten(list) {
+  const output = [];
   for (const item of list) {
     if (Array.isArray(item)) output.push(...flatten(item)); // the function calls itself
     else output.push(item);
@@ -371,7 +365,7 @@ function flatten(list: Nested[]): number[] {
   return output;
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o caso que para a recursão é o número (não tem mais o que abrir). O tipo <code>Nested</code> também é recursivo: ele se usa na própria definição. Na vida real, esse padrão aparece ao percorrer um menu com submenus ou uma árvore de comentários.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> o caso que para a recursão é o número (não tem mais o que abrir). Na vida real, esse padrão aparece ao percorrer um menu com submenus ou uma árvore de comentários.</p>
       </div></details>
       <details class="rv"><summary>variação</summary><div class="rv-body"><p>Receba uma profundidade máxima: <code>flatten([1, [2, [3]]], 1)</code> dá <code>[1, 2, [3]]</code>. Passe a profundidade para a chamada de dentro, menos 1, e pare de abrir quando chegar a zero.</p></div></details>
     </div>
@@ -385,7 +379,7 @@ function flatten(list: Nested[]): number[] {
     <div class="ex-body">
       <p class="ex-enunciado">Escreva <code>debounce(fn, ms)</code>. Ele devolve uma função nova que só chama <code>fn</code> depois de <code>ms</code> milissegundos <strong>sem nenhuma chamada nova</strong>, com os argumentos da última chamada. É o que um campo de busca usa para não chamar a API a cada tecla.</p>
 <pre><code class="esc">
-const search = debounce((query: string) => console.log('searching', query), 300);
+const search = debounce((query) => console.log('searching', query), 300);
 search('r'); search('re'); search('rea'); search('react');
 // 300 ms after the last call: 'searching react' (only once)
 </code></pre>
@@ -393,9 +387,9 @@ search('r'); search('re'); search('rea'); search('react');
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Guarde o timer numa variável <em>fora</em> da função devolvida (é a closure). A cada chamada, cancele o timer anterior com <code>clearTimeout</code> e crie outro.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number) {
-  let timer: ReturnType<typeof setTimeout> | undefined; // lives between calls: closure
-  return (...args: A) => {
+function debounce(fn, ms) {
+  let timer; // lives between calls: closure
+  return (...args) => {
     clearTimeout(timer);                              // cancel the previous wait
     timer = setTimeout(() => fn(...args), ms);        // start counting again
   };
@@ -413,7 +407,7 @@ function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number) {
     <div class="ex-body">
       <p class="ex-enunciado">Escreva <code>memoize(fn)</code> para uma função que recebe um número. A versão nova guarda os resultados: chamada de novo com o mesmo número, ela devolve o resultado guardado sem chamar <code>fn</code>.</p>
 <pre><code class="esc">
-const slowDouble = (n: number) => { /* heavy computation */ return n * 2; };
+const slowDouble = (n) => { /* heavy computation */ return n * 2; };
 const double = memoize(slowDouble);
 double(4); // computes: 8
 double(4); // returns the cached 8 without calling slowDouble
@@ -422,10 +416,10 @@ double(4); // returns the cached 8 without calling slowDouble
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A mesma ideia do debounce: um <code>Map</code> fora da função devolvida, como cache. Confira com <code>has</code> antes de calcular.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function memoize<R>(fn: (n: number) => R): (n: number) => R {
-  const cache = new Map<number, R>();
+function memoize(fn) {
+  const cache = new Map();
   return (n) => {
-    if (cache.has(n)) return cache.get(n)!; // has, not get: the cached result may be 0 or undefined
+    if (cache.has(n)) return cache.get(n); // has, not get: the cached result may be 0 or undefined
     const r = fn(n);
     cache.set(n, r);
     return r;
@@ -450,9 +444,9 @@ await withTimeout(Promise.resolve(1), 100);   // 1
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Crie uma segunda promessa que só rejeita, depois de <code>ms</code>. <code>Promise.race</code> devolve a que terminar primeiro. No <code>finally</code>, limpe o timer.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const deadline = new Promise<never>((_, reject) => {
+function withTimeout(promise, ms) {
+  let timer;
+  const deadline = new Promise((_, reject) => {
     timer = setTimeout(() => reject(new Error(`Timed out after ${ms} ms`)), ms);
   });
   return Promise.race([promise, deadline]).finally(() => clearTimeout(timer));
@@ -476,8 +470,8 @@ const urls = await mapWithLimit(photos, 3, (photo) => upload(photo));
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Crie <code>limit</code> &ldquo;trabalhadores&rdquo; (<em>workers</em>). Cada um é um laço que pega o próximo índice livre, espera a tarefa e repete até acabar a lista. Guarde o resultado na posição do índice, não com <code>push</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-async function mapWithLimit<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
-  const results: R[] = new Array(items.length);
+async function mapWithLimit(items, limit, fn) {
+  const results = new Array(items.length);
   let next = 0; // index of the next free item, shared by all workers
 
   async function worker() {

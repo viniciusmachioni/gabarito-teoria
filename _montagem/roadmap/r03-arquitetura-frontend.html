@@ -202,11 +202,11 @@
   </div>
 
   <div class="ex" id="fz2">
-    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Tire a cascata desta página</h3><span class="ex-meta">15 min &middot; Next.js + TS</span></div>
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Tire a cascata desta página</h3><span class="ex-meta">15 min &middot; Next.js</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">Esta página demora 750 ms para começar a responder. <code>getUser</code> leva 300 ms, <code>getStats</code> leva 200 ms e <code>getRecommendations</code> leva 250 ms. As recomendações dependem do nível do usuário. Reescreva para que a página fique o mais rápida possível.</p>
 <pre><code class="esc">
-export default async function Dashboard({ params }: { params: Promise<{ id: string }> }) {
+export default async function Dashboard({ params }) {
   const { id } = await params;
   const user = await getUser(id);
   const stats = await getStats(id);
@@ -218,7 +218,7 @@ export default async function Dashboard({ params }: { params: Promise<{ id: stri
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Desenhe as dependências: <code>stats</code> não depende de ninguém, e <code>recommendations</code> depende de <code>user</code>. Qual é o caminho mais longo?</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-export default async function Dashboard({ params }: { params: Promise<{ id: string }> }) {
+export default async function Dashboard({ params }) {
   const { id } = await params;
   const [user, stats] = await Promise.all([
     getUser(id),    // 300 ms

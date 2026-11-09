@@ -350,34 +350,28 @@ while (true) {
   <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
   <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
-    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Os estados de um chat num reducer</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Os estados de um chat num reducer</h3><span class="ex-meta">20 min &middot; JavaScript</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">Escreva o tipo <code>State</code> e a função <code>reducer(state, action)</code> de uma tela de chat com IA. As ações são <code>SEND</code> (enviar), <code>CHUNK</code> (chegou um pedaço de texto), <code>DONE</code> (a resposta terminou), <code>FAIL</code> (falhou, com uma mensagem) e <code>STOP</code> (o usuário clicou em Parar).</p>
+      <p class="ex-enunciado">Descreva os estados e escreva a função <code>reducer(state, action)</code> de uma tela de chat com IA. As ações são <code>SEND</code> (enviar), <code>CHUNK</code> (chegou um pedaço de texto), <code>DONE</code> (a resposta terminou), <code>FAIL</code> (falhou, com uma mensagem) e <code>STOP</code> (o usuário clicou em Parar).</p>
       <h4>Regras</h4>
       <ul>
         <li>Não dá para <code>SEND</code> enquanto uma resposta ainda está chegando.</li>
         <li><code>STOP</code> no meio guarda o texto que já chegou e marca a resposta como interrompida.</li>
         <li>Um pedaço que chega depois de parar ou de falhar é ignorado.</li>
-        <li>O tipo não pode permitir estado impossível, como texto em <code>idle</code> ou mensagem de erro em <code>ready</code>.</li>
+        <li>Cada estado carrega só os campos que fazem sentido nele: nada de texto em <code>idle</code> nem de mensagem de erro em <code>ready</code>.</li>
       </ul>
-      <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions">TypeScript: discriminated unions</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/switch">MDN: switch</a> &middot; cartão 2 do Ver</p>
-      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Use uma <em>união discriminada</em>: cada estado é um objeto com um campo <code>status</code> e só os campos que fazem sentido nele. Aí o TypeScript não deixa você ler <code>text</code> num estado que não tem texto.</p></div></details>
+      <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/switch">MDN: switch</a> &middot; cartão 2 do Ver</p>
+      <details class="dica"><summary>dica</summary><div class="dica-body"><p>Cada estado é um objeto com um campo <code>status</code> e só os campos que fazem sentido nele. É o <code>status</code> que o <code>switch</code> e os <code>if</code> conferem antes de ler o resto.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type State =
-  | { status: 'idle' }
-  | { status: 'submitted' }
-  | { status: 'streaming'; text: string }
-  | { status: 'ready'; text: string; interrupted: boolean }
-  | { status: 'error'; message: string; text: string };
+<pre><code>// states:  { status: 'idle' }
+//            { status: 'submitted' }
+//            { status: 'streaming', text }
+//            { status: 'ready', text, interrupted }
+//            { status: 'error', message, text }
+// actions:  { type: 'SEND' }, { type: 'CHUNK', text }, { type: 'DONE' },
+//           { type: 'FAIL', message }, { type: 'STOP' }
 
-type Action =
-  | { type: 'SEND' }
-  | { type: 'CHUNK'; text: string }
-  | { type: 'DONE' }
-  | { type: 'FAIL'; message: string }
-  | { type: 'STOP' };
-
-export function reducer(s: State, a: Action): State {
+export function reducer(s, a) {
   switch (a.type) {
     case 'SEND':
       // while a response is arriving, a second send is ignored
@@ -398,37 +392,32 @@ export function reducer(s: State, a: Action): State {
       if (s.status === 'streaming') return { status: 'ready', text: s.text, interrupted: true };
       if (s.status === 'submitted') return { status: 'idle' };
       return s;
+    default:
+      throw new Error('unknown action: ' + a.type); // a forgotten case shows up on the first test
   }
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o tipo impede estado impossível (não existe <code>text</code> em <code>idle</code>), o pedaço atrasado não &ldquo;ressuscita&rdquo; uma resposta parada, e parar é um estado de verdade, não um detalhe. Na tela real, o <code>STOP</code> também chama <code>abortController.abort()</code> para cancelar o pedido.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> cada estado tem só os seus campos (não existe <code>text</code> em <code>idle</code>), o pedaço atrasado não &ldquo;ressuscita&rdquo; uma resposta parada, e parar é um estado de verdade, não um detalhe. Na tela real, o <code>STOP</code> também chama <code>abortController.abort()</code> para cancelar o pedido.</p>
       </div></details>
       <div class="revisar">
         <h4>Revisar &middot; depois da solução</h4>
         <h5>1 &middot; Explique em voz alta</h5>
         <ol>
-          <li>Por que o <code>State</code> é uma união, e não um objeto só, como <code>{ status: string; text?: string; message?: string }</code>?</li>
+          <li>Por que cada estado tem só os seus campos, e não um objeto só com tudo, como <code>{ status, text, message }</code>?</li>
           <li>Por que <code>STOP</code> em <code>submitted</code> volta para <code>idle</code>, mas em <code>streaming</code> vai para <code>ready</code>?</li>
           <li>Por que o estado <code>error</code> guarda o texto que já tinha chegado?</li>
         </ol>
         <details class="rv"><summary>respostas</summary><div class="rv-body">
           <ol>
-            <li>No objeto único, todos os campos são opcionais. Nada impede <code>{ status: 'idle', message: 'erro' }</code>, e o código precisa conferir <code>undefined</code> em todo lugar. Na união, cada estado tem só os seus campos, e o TypeScript sabe quais existem depois de um <code>if (s.status === ...)</code>.</li>
+            <li>No objeto único, todos os campos existem o tempo todo. Nada impede <code>{ status: 'idle', message: 'erro' }</code>, e o código precisa conferir <code>undefined</code> em todo lugar. Com cada estado só com os seus campos, o <code>status</code> diz quais existem depois de um <code>if (s.status === ...)</code>.</li>
             <li>Em <code>submitted</code> nada chegou ainda, então não existe resposta para guardar: a tela volta ao começo. Em <code>streaming</code> já existe texto, e a regra 2 manda guardá-lo, marcado como interrompido.</li>
             <li>Para a pessoa não perder o que já leu. A tela mostra o texto parcial e, abaixo, o aviso de erro com &ldquo;Tentar de novo&rdquo;.</li>
           </ol>
         </div></details>
 
         <h5>2 &middot; Caça ao bug</h5>
-        <p>Esta versão compila sem erro e parece certa. Ela quebra três das quatro regras. Ache os três erros e diga qual regra cada um quebra. (O tipo <code>Action</code> é o mesmo da solução.)</p>
-<pre><code>type State =
-  | { status: 'idle' }
-  | { status: 'submitted' }
-  | { status: 'streaming'; text: string }
-  | { status: 'ready'; text: string; interrupted: boolean; message?: string }
-  | { status: 'error'; message: string; text: string };
-
-export function reducer(s: State, a: Action): State {
+        <p>Esta versão roda sem erro e parece certa. Ela quebra três das quatro regras. Ache os três erros e diga qual regra cada um quebra. (Os estados e as ações são os mesmos da solução.)</p>
+<pre><code>export function reducer(s, a) {
   switch (a.type) {
     case 'SEND':
       return { status: 'submitted' };
@@ -436,7 +425,7 @@ export function reducer(s: State, a: Action): State {
       if (s.status === 'submitted') return { status: 'streaming', text: a.text };
       if (s.status === 'streaming') return { status: 'streaming', text: s.text + a.text };
     case 'DONE':
-      return { status: 'ready', text: s.status === 'streaming' ? s.text : '', interrupted: false };
+      return { ...s, status: 'ready', text: s.status === 'streaming' ? s.text : '', interrupted: false };
     case 'FAIL':
       if (s.status !== 'submitted' &amp;&amp; s.status !== 'streaming') return s;
       return { status: 'error', message: a.message, text: s.status === 'streaming' ? s.text : '' };
@@ -450,17 +439,17 @@ export function reducer(s: State, a: Action): State {
         <details class="rv"><summary>os erros</summary><div class="rv-body">
           <ol>
             <li><strong><code>SEND</code> não olha o estado</strong> (regra 1). No meio de uma resposta, um segundo envio volta para <code>submitted</code> e joga fora o texto que estava chegando.</li>
-            <li><strong><code>CHUNK</code> não termina com <code>return s</code></strong> (regra 3). Quando o estado não é <code>submitted</code> nem <code>streaming</code>, o código <em>cai</em> no <code>case 'DONE'</code> logo abaixo. Isso se chama <em>fall-through</em>. E o <code>DONE</code> também não confere o estado. Resultado: um pedaço que chega depois de um erro transforma o erro em <code>ready</code> com texto vazio, e a mensagem de erro some.</li>
-            <li><strong><code>message?</code> no <code>ready</code></strong> (regra 4). O tipo passa a aceitar &ldquo;pronto com mensagem de erro&rdquo;, um estado impossível.</li>
+            <li><strong><code>CHUNK</code> não termina com <code>return s</code></strong> (regra 3). Quando o estado não é <code>submitted</code> nem <code>streaming</code>, o código <em>cai</em> no <code>case 'DONE'</code> logo abaixo. Isso se chama <em>fall-through</em>. E o <code>DONE</code> também não confere o estado. Resultado: um pedaço que chega depois de um erro transforma o erro em <code>ready</code>, e o aviso de erro some da tela.</li>
+            <li><strong><code>...s</code> no <code>DONE</code></strong> (regra 4). Ele copia tudo do estado antigo. Se o estado era <code>error</code>, o <code>ready</code> nasce com a <code>message</code> do erro: &ldquo;pronto com mensagem de erro&rdquo;, um estado impossível.</li>
           </ol>
-          <p>Para o TypeScript achar o erro 2 sozinho, ligue <code>noFallthroughCasesInSwitch</code> no <code>tsconfig.json</code>. Com ela, um <code>case</code> que cai no próximo vira erro de compilação.</p>
+          <p>Para achar o erro 2 sozinho, ligue a regra <code>no-fallthrough</code> do ESLint. Com ela, um <code>case</code> que cai no próximo vira aviso no editor.</p>
         </div></details>
 
         <h5>3 &middot; Mude um requisito</h5>
-        <p>Agora existe o botão &ldquo;Tentar de novo&rdquo;. Ele gera a ação <code>RETRY</code>, que só vale no estado <code>error</code> e recomeça o pedido. O que muda no tipo e no reducer? O que o TypeScript faz se você esquecer uma parte?</p>
+        <p>Agora existe o botão &ldquo;Tentar de novo&rdquo;. Ele gera a ação <code>RETRY</code>, que só vale no estado <code>error</code> e recomeça o pedido. O que muda no reducer? E o que acontece se você esquecer de tratar a ação nova?</p>
         <details class="rv"><summary>o que muda</summary><div class="rv-body">
-          <p>Duas mudanças. No tipo, mais uma opção: <code>| { type: 'RETRY' }</code>. No reducer, mais um <code>case</code>: se <code>s.status === 'error'</code>, devolve <code>{ status: 'submitted' }</code>; senão, <code>return s</code>.</p>
-          <p>Se você mudar o tipo e esquecer o <code>case</code>, o TypeScript reclama que a função nem sempre devolve um <code>State</code>. É a união discriminada trabalhando a seu favor: ela aponta todos os lugares que precisam tratar a ação nova.</p>
+          <p>Uma mudança, no reducer: mais um <code>case 'RETRY'</code>. Se <code>s.status === 'error'</code>, devolve <code>{ status: 'submitted' }</code>; senão, <code>return s</code>.</p>
+          <p>Se você esquecer o <code>case</code>, a ação nova cai no <code>default</code> da solução, que lança um erro. Sem o <code>default</code>, o <code>switch</code> não devolveria nada, e a tela quebraria sem aviso. É por isso que o <code>default</code> que lança erro vale a linha a mais.</p>
           <p>Fora do reducer: a tela precisa disparar um <code>fetch</code> novo, com um <code>AbortController</code> novo. O reducer só descreve a tela; quem faz o pedido é o componente.</p>
         </div></details>
       </div>
@@ -468,7 +457,7 @@ export function reducer(s: State, a: Action): State {
   </div>
 
   <div class="ex" id="fz2">
-    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Validar a resposta do modelo com Zod</h3><span class="ex-meta">15 min &middot; TypeScript + Zod</span></div>
+    <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Validar a resposta do modelo com Zod</h3><span class="ex-meta">15 min &middot; JavaScript + Zod</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">O modelo devolve um texto que deveria ser este JSON: <code>{ "summary": "...", "options": [{ "letter": "A", "correct": false, "reason": "..." }, ...] }</code>. Escreva <code>parseExplanation(text, answerKey)</code>, que devolve os dados validados ou <code>null</code>.</p>
       <h4>Regras</h4>
@@ -496,10 +485,8 @@ const Explanation = z
   .refine((x) =&gt; x.options.filter((o) =&gt; o.correct).length === 1, 'needs exactly one correct option')
   .refine((x) =&gt; new Set(x.options.map((o) =&gt; o.letter)).size === x.options.length, 'duplicate letter');
 
-export type Explanation = z.infer&lt;typeof Explanation&gt;;
-
-export function parseExplanation(text: string, answerKey: string): Explanation | null {
-  let raw: unknown;
+export function parseExplanation(text, answerKey) {
+  let raw;
   try {
     raw = JSON.parse(text); // gate 1: is it JSON?
   } catch {
@@ -507,7 +494,7 @@ export function parseExplanation(text: string, answerKey: string): Explanation |
   }
   const r = Explanation.safeParse(raw); // gate 2: shape and rules
   if (!r.success) return null;
-  const correct = r.data.options.find((o) =&gt; o.correct)!;
+  const correct = r.data.options.find((o) =&gt; o.correct);
   return correct.letter === answerKey ? r.data : null; // gate 3: does it match the answer key?
 }
 </code></pre>
@@ -530,7 +517,7 @@ export function parseExplanation(text: string, answerKey: string): Explanation |
         </div></details>
 
         <h5>2 &middot; Caça ao bug</h5>
-        <p>Esta versão compila e passa no caso feliz. Ache os três erros. Para cada um, escreva uma resposta do modelo que passa quando não deveria (ou que quebra a função).</p>
+        <p>Esta versão roda e passa no caso feliz. Ache os três erros. Para cada um, escreva uma resposta do modelo que passa quando não deveria (ou que quebra a função).</p>
 <pre><code>const Option = z.object({
   letter: z.string(),
   correct: z.boolean(),
@@ -544,10 +531,10 @@ const Explanation = z
   })
   .refine((x) =&gt; x.options.some((o) =&gt; o.correct), 'needs a correct option');
 
-export function parseExplanation(text: string, answerKey: string) {
+export function parseExplanation(text, answerKey) {
   const r = Explanation.safeParse(JSON.parse(text));
   if (!r.success) return null;
-  const correct = r.data.options.find((o) =&gt; o.correct)!;
+  const correct = r.data.options.find((o) =&gt; o.correct);
   return correct.letter === answerKey ? r.data : null;
 }
 </code></pre>
@@ -806,7 +793,7 @@ export function parseExplanation(text: string, answerKey: string) {
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 21/10/2026
+    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 09/11/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

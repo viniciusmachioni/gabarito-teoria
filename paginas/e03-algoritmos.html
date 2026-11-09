@@ -82,11 +82,11 @@ twoSum([3, 2, 4], 6)       // [1, 2]
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A força bruta testa todos os pares: O(n²). Para cada número, você sabe exatamente qual outro precisa achar: <code>target - num</code>. Um <code>Map</code> responde &ldquo;já vi esse número?&rdquo; em O(1).</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function twoSum(nums: number[], target: number): [number, number] | null {
-  const seen = new Map&lt;number, number&gt;(); // value -&gt; index
+<pre><code>function twoSum(nums, target) {
+  const seen = new Map(); // value -&gt; index
   for (let i = 0; i &lt; nums.length; i++) {
     const missing = target - nums[i];
-    if (seen.has(missing)) return [seen.get(missing)!, i];
+    if (seen.has(missing)) return [seen.get(missing), i];
     seen.set(nums[i], i); // store after looking up: a number cannot pair with itself
   }
   return null;
@@ -108,8 +108,8 @@ firstUniqChar('aabb')          // -1
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Duas passadas. Na primeira, conte cada caractere. Na segunda, ache o primeiro com contagem 1.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function firstUniqChar(s: string): number {
-  const counts = new Map&lt;string, number&gt;();
+<pre><code>function firstUniqChar(s) {
+  const counts = new Map();
   for (const c of s) counts.set(c, (counts.get(c) ?? 0) + 1); // 1st pass: count
   for (let i = 0; i &lt; s.length; i++) {
     if (counts.get(s[i]) === 1) return i;                      // 2nd pass: find
@@ -132,12 +132,12 @@ firstUniqChar('aabb')          // -1
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Anagramas ficam iguais quando você ordena as letras: &ldquo;amor&rdquo; e &ldquo;roma&rdquo; viram &ldquo;amor&rdquo;. Use isso como chave de um <code>Map</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function groupAnagrams(words: string[]): string[][] {
-  const groups = new Map&lt;string, string[]&gt;();
+<pre><code>function groupAnagrams(words) {
+  const groups = new Map();
   for (const w of words) {
     const key = [...w].sort().join(''); // the anagram's "signature"
     if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)!.push(w);
+    groups.get(key).push(w);
   }
   return [...groups.values()];
 }
@@ -159,7 +159,7 @@ isPalindrome('race a car')                      // false
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Limpe o texto e compare as pontas: um ponteiro no começo, outro no fim, andando um em direção ao outro.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function isPalindrome(s: string): boolean {
+<pre><code>function isPalindrome(s) {
   const clean = s.toLowerCase().replace(/[^a-z0-9]/g, '');
   let left = 0;
   let right = clean.length - 1;
@@ -185,8 +185,8 @@ isPalindrome('race a car')                      // false
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um ponteiro em cada lista. A cada passo, pegue o menor dos dois e avance só aquele ponteiro. Quando uma lista acabar, copie o resto da outra.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function mergeSorted(a: number[], b: number[]): number[] {
-  const output: number[] = [];
+<pre><code>function mergeSorted(a, b) {
+  const output = [];
   let i = 0;
   let j = 0;
   while (i &lt; a.length &amp;&amp; j &lt; b.length) {
@@ -214,14 +214,14 @@ lengthOfLongestSubstring('pwwkew')    // 3 ('wke')
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma janela com <code>start</code> e <code>end</code>. O fim anda sempre. Quando o caractere novo já está dentro da janela, o início pula para logo depois da última vez em que ele apareceu. Um <code>Map</code> guarda essa última posição.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function lengthOfLongestSubstring(s: string): number {
-  const lastSeen = new Map&lt;string, number&gt;(); // char -&gt; last index
+<pre><code>function lengthOfLongestSubstring(s) {
+  const lastSeen = new Map(); // char -&gt; last index
   let start = 0;
   let best = 0;
   for (let end = 0; end &lt; s.length; end++) {
     const c = s[end];
     // only counts if the repeat is INSIDE the current window
-    if (lastSeen.has(c) &amp;&amp; lastSeen.get(c)! &gt;= start) start = lastSeen.get(c)! + 1;
+    if (lastSeen.has(c) &amp;&amp; lastSeen.get(c) &gt;= start) start = lastSeen.get(c) + 1;
     lastSeen.set(c, end);
     best = Math.max(best, end - start + 1);
   }
@@ -247,9 +247,9 @@ isValid('((')      // false
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O último que abriu é o primeiro que precisa fechar. Isso é uma pilha: <code>push</code> ao abrir, <code>pop</code> ao fechar, e confira se combinam.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function isValid(s: string): boolean {
-  const pairs: Record&lt;string, string&gt; = { ')': '(', ']': '[', '}': '{' };
-  const stack: string[] = [];
+<pre><code>function isValid(s) {
+  const pairs = { ')': '(', ']': '[', '}': '{' };
+  const stack = [];
   for (const c of s) {
     if (c === '(' || c === '[' || c === '{') stack.push(c);
     else if (c in pairs) {
@@ -274,7 +274,7 @@ binarySearch([1, 3, 5, 7, 9, 11], 4)  // -1
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Olhe o meio. Se o alvo é maior, ele só pode estar na metade da direita; se é menor, na da esquerda. Repita até achar ou a faixa ficar vazia.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function binarySearch(nums: number[], target: number): number {
+<pre><code>function binarySearch(nums, target) {
   let left = 0;
   let right = nums.length - 1;
   while (left &lt;= right) {                     // &lt;= : a one-item range still counts
@@ -308,9 +308,8 @@ maxDepth(null)  // 0
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A profundidade de uma árvore é 1 (o próprio nó) mais a maior profundidade entre os dois filhos. A árvore vazia tem profundidade 0, e é aí que a recursão para.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type TreeNode = { val: number; left: TreeNode | null; right: TreeNode | null };
-
-function maxDepth(root: TreeNode | null): number {
+<pre><code>// a node is { val, left, right }, and the children may be null
+function maxDepth(root) {
   if (root === null) return 0; // base case
   return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
 }
@@ -335,13 +334,13 @@ function maxDepth(root: TreeNode | null): number {
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Percorra a grade. Ao achar terra, conte uma ilha e &ldquo;afunde&rdquo; a ilha inteira (marque como água), visitando os vizinhos com recursão. Assim ela não é contada de novo. Trabalhe numa cópia.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function numIslands(grid: string[][]): number {
+<pre><code>function numIslands(grid) {
   const rows = grid.length;
   const cols = grid[0]?.length ?? 0;
   const g = grid.map((row) =&gt; [...row]); // copy: the input does not change
   let islands = 0;
 
-  function sink(r: number, c: number) {
+  function sink(r, c) {
     if (r &lt; 0 || c &lt; 0 || r &gt;= rows || c &gt;= cols || g[r][c] !== '1') return; // outside, or water
     g[r][c] = '0';
     sink(r + 1, c);
@@ -378,9 +377,9 @@ mergeIntervals([[1, 4], [4, 5]])                     // [[1, 5]]
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Ordene pelo começo. Depois, cada intervalo ou encosta no último que você guardou (aí estique o fim dele), ou começa um novo.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function mergeIntervals(intervals: [number, number][]): [number, number][] {
+<pre><code>function mergeIntervals(intervals) {
   const sorted = [...intervals].sort((a, b) =&gt; a[0] - b[0]);
-  const output: [number, number][] = [];
+  const output = [];
   for (const [start, end] of sorted) {
     const last = output[output.length - 1];
     if (last &amp;&amp; start &lt;= last[1]) last[1] = Math.max(last[1], end); // overlaps: stretch it
@@ -404,7 +403,7 @@ maxSubArray([-3, -1, -2])                     // -1
 </code></pre>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Em cada posição, decida: vale mais continuar o trecho anterior ou começar um novo aqui? Se a soma acumulada ficou menor que o número atual, recomece.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function maxSubArray(nums: number[]): number {
+<pre><code>function maxSubArray(nums) {
   let current = nums[0]; // best sum of a run that ENDS here
   let best = nums[0];    // best of all so far
   for (let i = 1; i &lt; nums.length; i++) {
@@ -436,7 +435,7 @@ maxSubArray([-3, -1, -2])                     // -1
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 21/10/2026
+    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 09/11/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

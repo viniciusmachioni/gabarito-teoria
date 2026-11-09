@@ -67,7 +67,7 @@
           <tr><td><a href="#ex1">EX 1</a></td><td>ler streaming (SSE) pedaço por pedaço <span class="termo">&middot; como o ChatGPT recebe a resposta</span></td><td>R1</td></tr>
           <tr><td><a href="#ex2">EX 2</a></td><td>estados de um chat e o botão Parar <span class="termo">&middot; o botão de parar do ChatGPT e do Claude</span></td><td>R1</td></tr>
           <tr><td><a href="#ex3">EX 3</a></td><td>retry com espera crescente <span class="termo">&middot; o que os SDKs da AWS e da OpenAI fazem</span></td><td>R1</td></tr>
-          <tr><td><a href="#ex4">EX 4</a></td><td>botão com variantes tipadas <span class="termo">&middot; como o Button do shadcn/ui</span></td><td>R2</td></tr>
+          <tr><td><a href="#ex4">EX 4</a></td><td>botão com variantes <span class="termo">&middot; como o Button do shadcn/ui</span></td><td>R2</td></tr>
           <tr><td><a href="#ex5">EX 5</a></td><td>Generative UI com aprovação humana <span class="termo">&middot; como as permissões do Claude Code</span></td><td>R1</td></tr>
           <tr><td><a href="#ex6">EX 6</a></td><td>teste de ponta a ponta sem chamar a IA <span class="termo">&middot; o Playwright é usado nos testes do VS Code</span></td><td>R4</td></tr>
           <tr><td><a href="#ex7">EX 7</a></td><td>CI e deploy na AWS com OIDC <span class="termo">&middot; deploy sem chave, como recomenda o GitHub</span></td><td>R5</td></tr>
@@ -87,7 +87,7 @@
     <li class="item"><input type="checkbox" id="w32-1"><label for="w32-1"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 1 &mdash; leitor de stream SSE feito do zero em até 40 min, sem consultar, tratando evento e caractere partidos entre pedaços <span class="nivel n-dif">diferencial</span></span></label></li>
     <li class="item"><input type="checkbox" id="w32-2"><label for="w32-2"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 2 &mdash; hook <code>useChat</code> com os quatro estados, parar, tentar de novo e sem condição de corrida entre requisições <span class="nivel n-base">base</span></span></label></li>
     <li class="item"><input type="checkbox" id="w32-3"><label for="w32-3"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 3 &mdash; <code>fetchWithRetry</code> com backoff exponencial, jitter, <code>Retry-After</code> e cancelamento que também interrompe a espera <span class="nivel n-dif">diferencial</span></span></label></li>
-    <li class="item"><input type="checkbox" id="w32-4"><label for="w32-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 4 &mdash; <code>&lt;Button&gt;</code> com cva, variantes tipadas, carregamento acessível e botão só de ícone que não compila sem <code>aria-label</code> <span class="nivel n-base">base</span></span></label></li>
+    <li class="item"><input type="checkbox" id="w32-4"><label for="w32-4"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 4 &mdash; <code>&lt;Button&gt;</code> com cva, variantes, carregamento acessível e botão só de ícone que avisa quando falta o <code>aria-label</code> <span class="nivel n-base">base</span></span></label></li>
     <li class="item"><input type="checkbox" id="w32-5"><label for="w32-5"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">Exercício 5 &mdash; renderizar <code>parts</code> de uma resposta de IA por tipo e por estado, com cartão de aprovação humana pra ação sensível <span class="nivel n-dif">diferencial</span></span></label></li>
     <li class="item"><input type="checkbox" id="w32-6"><label for="w32-6"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">System design &mdash; a interface de um assistente de IA em 45 min, em voz alta e gravado, cobrindo as cinco etapas do RADIO <span class="nivel n-dif">diferencial</span></span></label></li>
     <li class="item"><input type="checkbox" id="w32-7"><label for="w32-7"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="txt">As três variações de system design (agente de tarefa longa, autocomplete com IA, resumo com citações) em 20 min cada <span class="nivel n-sr">sênior</span></span></label></li>
@@ -249,17 +249,19 @@ expect(await streamChat('x')).toEqual({ text: 'olá', complete: false });
 
   <!-- ===================== EXERCÍCIO 2 ===================== -->
   <div class="ex" id="ex2">
-    <div class="ex-head"><span class="ex-n">EX 2</span><h3>Um <code>useChat</code> simplificado</h3><span class="ex-meta">45 min &middot; React + TS &middot; R1</span></div>
+    <div class="ex-head"><span class="ex-n">EX 2</span><h3>Um <code>useChat</code> simplificado</h3><span class="ex-meta">45 min &middot; React &middot; R1</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;Implemente um hook <code>useChat()</code> que guarda a conversa, envia a pergunta, mostra a resposta chegando em streaming e deixa o usuário parar e tentar de novo. Use o <code>streamChat</code> do exercício anterior.&rdquo;</p>
 <pre><code class="esc">
-type Status = 'ready' | 'submitted' | 'streaming' | 'error';
-type Msg = { id: string; role: 'user' | 'assistant'; text: string; incomplete?: boolean };
-
-function useChat(): {
-  messages: Msg[]; status: Status; error: Error | null;
-  send(text: string): boolean; stop(): void; retry(): void; // send tells whether it accepted the message
-};
+// useChat() returns:
+// {
+//   messages,    // [{ id, role: 'user' | 'assistant', text, incomplete? }]
+//   status,      // 'ready' | 'submitted' | 'streaming' | 'error'
+//   error,       // an Error, or null
+//   send(text),  // returns true if it accepted the message
+//   stop(),
+//   retry(),
+// }
 </code></pre>
       <h4>Requisitos</h4>
       <ul>
@@ -282,19 +284,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { streamChat } from './stream-chat';
 
 export function useChat() {
-  const [messages, setMessages] = useState<Msg[]>([]);
-  const [status, setStatus] = useState<Status>('ready');
-  const [error, setError] = useState<Error | null>(null);
-  const ctrlRef = useRef<AbortController | null>(null);
+  const [messages, setMessages] = useState([]);
+  const [status, setStatus] = useState('ready');
+  const [error, setError] = useState(null);
+  const ctrlRef = useRef(null);
   const messagesRef = useRef(messages);
   useEffect(() => { messagesRef.current = messages; }, [messages]);
 
-  const run = useCallback(async (question: string) => {
+  const run = useCallback(async (question) => {
     const ctrl = new AbortController();
     ctrlRef.current = ctrl; // before any await: blocks the double click
     const id = crypto.randomUUID();
     // updates only the message of THIS request
-    const patch = (fn: (m: Msg) => Msg) =>
+    const patch = (fn) =>
       setMessages((ms) => ms.map((m) => (m.id === id ? fn(m) : m)));
 
     setError(null);
@@ -303,7 +305,7 @@ export function useChat() {
       let first = true;
       const { complete } = await streamChat(question, {
         signal: ctrl.signal,
-        onDelta: (delta: string) => {
+        onDelta: (delta) => {
           if (first) {
             first = false;
             setStatus('streaming');
@@ -325,7 +327,7 @@ export function useChat() {
         patch((m) => ({ ...m, incomplete: true })); // stopping keeps the partial text
         setStatus('ready');
       } else {
-        setError(e as Error);
+        setError(e);
         setStatus('error');
       }
     } finally {
@@ -333,7 +335,7 @@ export function useChat() {
     }
   }, []);
 
-  const send = useCallback((text: string): boolean => {
+  const send = useCallback((text) => {
     const t = text.trim();
     if (!t || ctrlRef.current) return false; // one request at a time
     setMessages((ms) => [...ms, { id: crypto.randomUUID(), role: 'user', text: t }]);
@@ -417,7 +419,7 @@ function Chat() {
 
   <!-- ===================== EXERCÍCIO 3 ===================== -->
   <div class="ex" id="ex3">
-    <div class="ex-head"><span class="ex-n">EX 3</span><h3><code>fetchWithRetry</code> com backoff, jitter e <code>Retry-After</code></h3><span class="ex-meta">35 min &middot; TS &middot; R1/R4</span></div>
+    <div class="ex-head"><span class="ex-n">EX 3</span><h3><code>fetchWithRetry</code> com backoff, jitter e <code>Retry-After</code></h3><span class="ex-meta">35 min &middot; JS &middot; R1/R4</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;A API do modelo devolve 429 e 503 de vez em quando. Escreva <code>fetchWithRetry(url, init, opcoes)</code>: repete com backoff exponencial, respeita o <code>Retry-After</code> quando vier, não repete o que não adianta repetir, e o chamador consegue cancelar a qualquer momento &mdash; inclusive durante a espera.&rdquo;</p>
       <h4>Requisitos</h4>
@@ -439,18 +441,16 @@ function Chat() {
 <pre><code class="esc">
 const RETRYABLE = new Set([408, 429, 500, 502, 503, 504]);
 
-type Options = { attempts?: number; baseMs?: number; capMs?: number };
-
 export async function fetchWithRetry(
-  url: string,
-  init: RequestInit = {},
-  { attempts = 3, baseMs = 500, capMs = 8_000 }: Options = {},
-): Promise<Response> {
+  url,
+  init = {},
+  { attempts = 3, baseMs = 500, capMs = 8_000 } = {},
+) {
   // full jitter: spreads out the clients that failed together
-  const backoff = (i: number) => Math.random() * Math.min(capMs, baseMs * 2 ** (i - 1));
+  const backoff = (i) => Math.random() * Math.min(capMs, baseMs * 2 ** (i - 1));
 
   for (let i = 1; ; i++) {
-    let res: Response;
+    let res;
     try {
       res = await fetch(url, init);
     } catch (e) {
@@ -472,7 +472,7 @@ export async function fetchWithRetry(
   }
 }
 
-function retryAfterMs(value: string | null): number | null {
+function retryAfterMs(value) {
   if (!value) return null;
   const seconds = Number(value);
   if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
@@ -480,10 +480,10 @@ function retryAfterMs(value: string | null): number | null {
   return Number.isNaN(date) ? null : Math.max(0, date - Date.now());
 }
 
-function sleep(ms: number, signal?: AbortSignal | null): Promise<void> {
+function sleep(ms, signal) {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) return reject(signal.reason);
-    const onAbort = () => { clearTimeout(t); reject(signal!.reason); };
+    const onAbort = () => { clearTimeout(t); reject(signal.reason); };
     const t = setTimeout(() => {
       signal?.removeEventListener('abort', onAbort);
       resolve();
@@ -527,28 +527,27 @@ expect(fetchMock).toHaveBeenCalledTimes(2);
 
   <!-- ===================== EXERCÍCIO 4 ===================== -->
   <div class="ex" id="ex4">
-    <div class="ex-head"><span class="ex-n">EX 4</span><h3>O <code>&lt;Button&gt;</code> do design system</h3><span class="ex-meta">40 min &middot; React + TS + Tailwind &middot; R2</span></div>
+    <div class="ex-head"><span class="ex-n">EX 4</span><h3>O <code>&lt;Button&gt;</code> do design system</h3><span class="ex-meta">40 min &middot; React + Tailwind &middot; R2</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">&ldquo;Crie o botão do nosso design system: variantes <code>intent</code> (primary, secondary, danger, ghost) e <code>size</code> (sm, md, lg), estado de carregamento e uma versão só com ícone. Tem que ser tipado: <code>intent="danjer"</code> não pode compilar. E acessível.&rdquo;</p>
+      <p class="ex-enunciado">&ldquo;Crie o botão do nosso design system: variantes <code>intent</code> (primary, secondary, danger, ghost) e <code>size</code> (sm, md, lg), estado de carregamento e uma versão só com ícone. Uma variante que não existe (<code>intent="danjer"</code>) tem que avisar no console em desenvolvimento, e não passar em silêncio. E acessível.&rdquo;</p>
       <h4>Requisitos que você deve levantar</h4>
       <ul>
         <li><code>type="button"</code> por padrão (dentro de um <code>&lt;form&gt;</code>, o padrão do HTML é <code>submit</code>).</li>
         <li>Carregando: não aceita clique, mas continua focável e com o mesmo nome acessível.</li>
-        <li>Só ícone: o TypeScript exige <code>aria-label</code>; o ícone fica escondido do leitor de tela.</li>
+        <li>Só ícone: sem <code>aria-label</code>, avisa no console em desenvolvimento; o ícone fica escondido do leitor de tela.</li>
         <li>Classes vindas de tokens semânticos (<code>bg-brand</code>), nunca de cor crua (<code>bg-orange-500</code>).</li>
       </ul>
       <h4>O que o entrevistador observa</h4>
       <ul>
-        <li>Se você conhece <code>compoundVariants</code> e <code>defaultVariants</code>, e deriva o tipo com <code>VariantProps</code>.</li>
+        <li>Se você conhece <code>compoundVariants</code> e <code>defaultVariants</code>, e sabe que o <code>cva</code> ignora em silêncio uma variante que não existe.</li>
         <li>A diferença entre <code>disabled</code> e <code>aria-disabled</code>.</li>
-        <li>Se a regra &ldquo;só ícone precisa de nome&rdquo; está no tipo, e não num comentário.</li>
+        <li>Se a regra &ldquo;só ícone precisa de nome&rdquo; está no código (um aviso em desenvolvimento), e não só num comentário.</li>
       </ul>
       <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>disabled</code> nativo tira o botão da ordem de tabulação: no meio de um carregamento, o foco do teclado some. <code>aria-disabled="true"</code> mantém o foco e anuncia o estado; aí é você quem bloqueia o clique no handler.</p></div></details>
-      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>Uma união discriminada resolve o caso do ícone: <code>{ children: ReactNode }</code> ou <code>{ children?: never; icon: ReactNode; 'aria-label': string }</code>.</p></div></details>
+      <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>Sem tipos, a regra do ícone vira uma checagem em desenvolvimento: se não há <code>children</code> nem <code>aria-label</code>, um <code>console.warn</code>. O lint (<code>jsx-a11y</code>) e um teste fecham o resto.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-import { cva, type VariantProps } from 'class-variance-authority';
-import type { ComponentProps, ReactNode } from 'react';
+import { cva } from 'class-variance-authority';
 
 const button = cva(
   'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors ' +
@@ -575,20 +574,24 @@ const button = cva(
   },
 );
 
-type Base = Omit<ComponentProps<'button'>, 'children'> &
-  Omit<VariantProps<typeof button>, 'iconOnly'> & { loading?: boolean };
-type WithText = Base & { children: ReactNode; icon?: ReactNode };
-type IconOnly = Base & { children?: never; icon: ReactNode; 'aria-label': string };
-export type ButtonProps = WithText | IconOnly;
+const INTENTS = ['primary', 'secondary', 'danger', 'ghost'];
 
 export function Button({
   intent, size, loading = false, icon, children, className, type = 'button', onClick, ...rest
-}: ButtonProps) {
+}) {
+  const iconOnly = children == null;
+
+  // no types here, so the rules become warnings while you develop
+  if (process.env.NODE_ENV !== 'production') {
+    if (intent !== undefined && !INTENTS.includes(intent)) console.warn(`<Button>: unknown intent "${intent}"`);
+    if (iconOnly && !rest['aria-label'] && !rest['aria-labelledby']) console.warn('<Button>: an icon-only button needs an aria-label');
+  }
+
   return (
     <button
       {...rest}
       type={type}
-      className={button({ intent, size, iconOnly: children == null, className })}
+      className={button({ intent, size, iconOnly, className })}
       aria-disabled={loading || undefined}
       aria-busy={loading || undefined}
       onClick={(e) => {
@@ -610,15 +613,14 @@ function Spinner() {
   );
 }
 </code></pre>
-<h5>O contrato, provado pelo compilador</h5>
+<h5>O contrato, avisado em desenvolvimento</h5>
 <pre><code class="esc">
 <Button intent="danger" onClick={handleDelete}>Excluir</Button>
 <Button icon={<TrashIcon />} aria-label="Excluir questão" intent="ghost" size="sm" />
 
-// @ts-expect-error variant that does not exist
-<Button intent="danjer">Excluir</Button>
-// @ts-expect-error icon-only button without an accessible name
-<Button icon={<TrashIcon />} />
+// both of these log a warning in development:
+<Button intent="danjer">Excluir</Button>   // variant that does not exist
+<Button icon={<TrashIcon />} />            // icon-only button without an accessible name
 </code></pre>
 <p><strong>Detalhes pra mencionar:</strong> no React 19, <code>ref</code> é prop comum e passa pelo <code>...rest</code> (no 18 seria <code>forwardRef</code>); <code>{...rest}</code> vem primeiro pra que <code>type</code>, <code>className</code> e <code>onClick</code> não sejam sobrescritos sem querer; e quando duas classes do Tailwind conflitam (<code>px-4</code> do tamanho e <code>px-2</code> passado por fora), quem resolve é o <code>tailwind-merge</code> num <code>cn()</code>, não a ordem no atributo.</p>
       </div></details>
@@ -632,7 +634,7 @@ function Spinner() {
             <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Não de forma confiável: o suporte a <code>aria-busy</code> varia entre leitores. O botão comunica o estado; o <em>resultado</em> (&ldquo;Questão excluída&rdquo;, &ldquo;Falhou, tente de novo&rdquo;) é anunciado numa região <code>role="status"</code> ou <code>role="alert"</code> que já existe na página, como o Gabarita faz no card de correção.</p></div></details>
           </li>
           <li>Como você garante que ninguém quebra esse botão depois?
-            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Três camadas: o <strong>tipo</strong> (variante e <code>aria-label</code> obrigatórios); uma <strong>story por variante</strong> no Storybook com o addon de acessibilidade em <code>test: 'error'</code>; e <strong>regressão visual</strong> (<code>toHaveScreenshot()</code> ou Chromatic) das combinações nos temas claro e escuro. O teste de componente cobre o comportamento: clique ignorado durante o carregamento e foco mantido.</p></div></details>
+            <details class="ans"><summary>ver resposta</summary><div class="ans-body"><p>Três camadas: o <strong>aviso em desenvolvimento</strong> e o lint <code>jsx-a11y</code> (variante errada, botão sem <code>aria-label</code>); uma <strong>story por variante</strong> no Storybook com o addon de acessibilidade em <code>test: 'error'</code>; e <strong>regressão visual</strong> (<code>toHaveScreenshot()</code> ou Chromatic) das combinações nos temas claro e escuro. O teste de componente cobre o comportamento: clique ignorado durante o carregamento e foco mantido.</p></div></details>
           </li>
         </ol>
       </div>
@@ -641,23 +643,23 @@ function Spinner() {
 
   <!-- ===================== EXERCÍCIO 5 ===================== -->
   <div class="ex" id="ex5">
-    <div class="ex-head"><span class="ex-n">EX 5</span><h3>Generative UI com aprovação humana</h3><span class="ex-meta">45 min &middot; React + TS &middot; R1/R6</span></div>
+    <div class="ex-head"><span class="ex-n">EX 5</span><h3>Generative UI com aprovação humana</h3><span class="ex-meta">45 min &middot; React &middot; R1/R6</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;A resposta do assistente chega como uma lista de <code>parts</code>. Renderize cada uma: texto, ferramenta rodando, resultado e erro. Temos duas ferramentas: <code>searchFlights</code> e <code>bookFlight</code>. Reservar cobra no cartão, então precisa da aprovação do usuário antes de executar.&rdquo;</p>
 <pre><code class="esc">
-type Flight = { id: string; airline: string; departure: string; price: number };
-
-type ToolState<I, O> =
-  | { state: 'input-available'; input: I }                    // running
-  | { state: 'approval-requested'; input: I }                 // waiting for the user
-  | { state: 'output-available'; input: I; output: O }
-  | { state: 'output-error'; input: I; errorText: string }
-  | { state: 'output-denied'; input: I };                     // the user declined
-
-type Part =
-  | { type: 'text'; text: string }
-  | ({ type: 'tool-searchFlights'; id: string } & ToolState<{ origin: string; destination: string }, Flight[]>)
-  | ({ type: 'tool-bookFlight'; id: string } & ToolState<{ flightId: string; passengers: number }, { confirmationCode: string }>);
+// A part is one of:
+//   { type: 'text', text }
+//   { type: 'tool-searchFlights', id, state, input: { origin, destination }, output?, errorText? }
+//   { type: 'tool-bookFlight',    id, state, input: { flightId, passengers }, output?, errorText? }
+//
+// state: 'input-available'     running
+//        'approval-requested'  waiting for the user
+//        'output-available'    output is set
+//        'output-error'        errorText is set
+//        'output-denied'       the user declined
+//
+// searchFlights output: [{ id, airline, departure, price }]
+// bookFlight output:    { confirmationCode }
 </code></pre>
       <h4>Requisitos</h4>
       <ul>
@@ -667,11 +669,11 @@ type Part =
       </ul>
       <h4>O que o entrevistador observa</h4>
       <ul>
-        <li>Se o <code>switch</code> no <code>type</code> e no <code>state</code> deixa o TypeScript estreitar o tipo (sem <code>as</code>).</li>
+        <li>Se o <code>switch</code> no <code>type</code> e no <code>state</code> cobre todos os casos, com um <code>default</code> seguro para o que o front não conhece.</li>
         <li>De onde vêm os dados do cartão de aprovação: dos argumentos que o modelo escreveu ou de uma fonte confiável.</li>
         <li>Se o texto do modelo é renderizado com segurança.</li>
       </ul>
-      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>Extract&lt;Part, { type: 'tool-bookFlight' }&gt;</code> dá o tipo da prop de cada componente de ferramenta. Dentro dele, um <code>switch (part.state)</code> estreita o resto.</p></div></details>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p>Um componente por ferramenta, e dentro dele um <code>switch (part.state)</code>: cada <code>case</code> é uma tela. O <code>state</code> diz quais campos existem (<code>output</code> só em <code>output-available</code>, <code>errorText</code> só em <code>output-error</code>).</p></div></details>
       <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>O modelo pode escrever qualquer coisa nos argumentos, inclusive um preço falso induzido por prompt injection. Mostre o voo pelo <code>flightId</code>, buscado no resultado da sua própria ferramenta de busca, e não um &ldquo;resumo&rdquo; que o modelo mandou.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
@@ -680,15 +682,12 @@ import { useId, useState } from 'react';
 const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
-export function AssistantMessage({ parts, onApprove }: {
-  parts: Part[];
-  onApprove: (toolCallId: string, approved: boolean) => void;
-}) {
+export function AssistantMessage({ parts, onApprove }) { // onApprove(toolCallId, approved)
   // flights returned by OUR tool: the trusted source for the approval card
   const flights = new Map(
     parts.flatMap((p) =>
       p.type === 'tool-searchFlights' && p.state === 'output-available'
-        ? p.output.map((f) => [f.id, f] as const)
+        ? p.output.map((f) => [f.id, f])
         : [],
     ),
   );
@@ -712,7 +711,7 @@ export function AssistantMessage({ parts, onApprove }: {
   );
 }
 
-function FlightResults({ part }: { part: Extract<Part, { type: 'tool-searchFlights' }> }) {
+function FlightResults({ part }) {
   const route = `${part.input.origin} → ${part.input.destination}`;
   switch (part.state) {
     case 'input-available':
@@ -733,14 +732,10 @@ function FlightResults({ part }: { part: Extract<Part, { type: 'tool-searchFligh
   }
 }
 
-function Booking({ part, flight, onApprove }: {
-  part: Extract<Part, { type: 'tool-bookFlight' }>;
-  flight: Flight | undefined;
-  onApprove: (toolCallId: string, approved: boolean) => void;
-}) {
+function Booking({ part, flight, onApprove }) { // flight may be undefined
   const [answered, setAnswered] = useState(false);
   const titleId = useId();
-  const respond = (ok: boolean) => { setAnswered(true); onApprove(part.id, ok); };
+  const respond = (ok) => { setAnswered(true); onApprove(part.id, ok); };
 
   switch (part.state) {
     case 'approval-requested':
@@ -791,7 +786,7 @@ function Booking({ part, flight, onApprove }: {
 
   <!-- ===================== EXERCÍCIO 6 ===================== -->
   <div class="ex" id="ex6">
-    <div class="ex-head"><span class="ex-n">EX 6</span><h3>Teste end-to-end do chat com Playwright e axe</h3><span class="ex-meta">40 min &middot; Playwright + TS &middot; R2/R4</span></div>
+    <div class="ex-head"><span class="ex-n">EX 6</span><h3>Teste end-to-end do chat com Playwright e axe</h3><span class="ex-meta">40 min &middot; Playwright &middot; R2/R4</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;Escreva o teste end-to-end do chat dos exercícios 1 e 2. O CI não pode chamar o modelo de verdade. Quero um teste em que a resposta aparece, outro em que o servidor devolve 503 e o usuário consegue tentar de novo, e uma checagem de acessibilidade da tela com a resposta na página.&rdquo;</p>
       <h4>Requisitos que você deve levantar</h4>
@@ -816,10 +811,10 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 // builds the SSE body the real endpoint would return
-const sse = (...deltas: string[]) =>
+const sse = (...deltas) =>
   deltas.map((d) => `data: ${JSON.stringify({ delta: d })}\n\n`).join('') + 'data: [DONE]\n\n';
 
-const response = (body: string) => ({
+const response = (body) => ({
   status: 200,
   headers: { 'content-type': 'text/event-stream' },
   body,
@@ -865,7 +860,7 @@ test('503 shows "Tentar de novo" and the second attempt works', async ({ page })
 </code></pre>
 <h5>Configuração mínima</h5>
 <pre><code class="esc">
-// playwright.config.ts
+// playwright.config.js
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -1007,9 +1002,9 @@ jobs:
 
   <!-- ===================== EXERCÍCIO 8 ===================== -->
   <div class="ex" id="ex8">
-    <div class="ex-head"><span class="ex-n">EX 8</span><h3>Um servidor MCP mínimo com uma ferramenta</h3><span class="ex-meta">40 min &middot; Node + TS &middot; R6</span></div>
+    <div class="ex-head"><span class="ex-n">EX 8</span><h3>Um servidor MCP mínimo com uma ferramenta</h3><span class="ex-meta">40 min &middot; Node &middot; R6</span></div>
     <div class="ex-body">
-      <p class="ex-enunciado">&ldquo;Exponha a auditoria de acessibilidade como ferramenta pra um agente de código. Crie um servidor MCP com uma tool <code>audit_url</code>: recebe uma URL, roda a auditoria e devolve as violações mais graves. Use o SDK oficial em TypeScript e o transporte stdio. Cuidado com o que o modelo pode pedir.&rdquo;</p>
+      <p class="ex-enunciado">&ldquo;Exponha a auditoria de acessibilidade como ferramenta pra um agente de código. Crie um servidor MCP com uma tool <code>audit_url</code>: recebe uma URL, roda a auditoria e devolve as violações mais graves. Use o SDK oficial e o transporte stdio. Cuidado com o que o modelo pode pedir.&rdquo;</p>
       <h4>Requisitos que você deve levantar</h4>
       <ul>
         <li>O <code>inputSchema</code> é um schema Zod, e a <strong>descrição</strong> diz quando usar e quando não usar: é o que o modelo lê pra decidir.</li>
@@ -1073,8 +1068,7 @@ main().catch((e) => {
 <h5>Plugando num agente</h5>
 <pre><code class="esc">
 npm install @modelcontextprotocol/server zod
-npm run build
-claude mcp add ally-audit -- node dist/server.js
+claude mcp add ally-audit -- node server.js
 </code></pre>
 <p><strong>Detalhes pra mencionar:</strong> a descrição da ferramenta é <em>prompt</em>: ela decide se o modelo escolhe a tool. Versões anteriores do SDK (1.x) usam o pacote <code>@modelcontextprotocol/sdk</code>, então confira a documentação da versão que você instalou. E o filtro de SSRF precisa resolver o DNS e conferir o IP final, senão <code>meusite.com</code> apontando pra <code>169.254.169.254</code> passa.</p>
       </div></details>
@@ -1097,7 +1091,7 @@ claude mcp add ally-audit -- node dist/server.js
 
   <!-- ===================== EXERCÍCIO 9 ===================== -->
   <div class="ex" id="ex9">
-    <div class="ex-head"><span class="ex-n">EX 9</span><h3>Questões parecidas com pgvector</h3><span class="ex-meta">45 min &middot; SQL + TS &middot; R4</span></div>
+    <div class="ex-head"><span class="ex-n">EX 9</span><h3>Questões parecidas com pgvector</h3><span class="ex-meta">45 min &middot; SQL + JS &middot; R4</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;Temos a tabela <code>questions(id, stem, specialty)</code> no Postgres. Quero o endpoint <code>GET /api/similar?id=...</code> que devolve as 5 questões mais parecidas com a pedida, da mesma especialidade, sem repetir a própria. Use o Gemini pra gerar os embeddings e o pgvector pra buscar. Crie a coluna, o índice, a consulta e o endpoint.&rdquo;</p>
       <h4>Requisitos que você deve levantar</h4>
@@ -1131,13 +1125,12 @@ CREATE INDEX questions_embedding_hnsw
 <h5>O job que gera o embedding (no worker, na criação da questão)</h5>
 <pre><code class="esc">
 import { GoogleGenAI } from '@google/genai';
-import type { Pool } from 'pg';
 import pgvector from 'pgvector';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const MODEL = 'gemini-embedding-001';
 
-async function embed(text: string, taskType: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY') {
+async function embed(text, taskType) { // taskType: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY'
   const res = await ai.models.embedContent({
     model: MODEL,
     contents: text,
@@ -1148,7 +1141,7 @@ async function embed(text: string, taskType: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_Q
   return values;
 }
 
-export async function indexQuestion(db: Pool, id: number, stem: string) {
+export async function indexQuestion(db, id, stem) { // db is a pg Pool
   const v = await embed(stem, 'RETRIEVAL_DOCUMENT');
   await db.query(
     'UPDATE questions SET embedding = $1::vector, embedding_model = $2 WHERE id = $3',
@@ -1158,11 +1151,11 @@ export async function indexQuestion(db: Pool, id: number, stem: string) {
 </code></pre>
 <h5>A consulta e o endpoint</h5>
 <pre><code class="esc">
-// app/api/similar/route.ts
+// app/api/similar/route.js
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-export async function GET(req: Request) {
+export async function GET(req) {
   const id = Number(new URL(req.url).searchParams.get('id'));
   if (!Number.isInteger(id)) return NextResponse.json({ error: 'invalid id' }, { status: 400 });
 
@@ -1210,12 +1203,12 @@ export async function GET(req: Request) {
 
   <!-- ===================== EXERCÍCIO 10 ===================== -->
   <div class="ex" id="ex10">
-    <div class="ex-head"><span class="ex-n">EX 10</span><h3>As stories do <code>&lt;Button&gt;</code> com teste de interação e de acessibilidade</h3><span class="ex-meta">35 min &middot; Storybook + TS &middot; R2</span></div>
+    <div class="ex-head"><span class="ex-n">EX 10</span><h3>As stories do <code>&lt;Button&gt;</code> com teste de interação e de acessibilidade</h3><span class="ex-meta">35 min &middot; Storybook &middot; R2</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;Pegue o <code>&lt;Button&gt;</code> do exercício 4 e escreva as stories. Quero uma por variante que importa, uma do estado de carregamento que <em>prove</em> que o clique é ignorado e o foco continua no botão, e o Storybook tem que falhar o CI se aparecer violação de acessibilidade. Documentação gerada, sem escrever à mão.&rdquo;</p>
       <h4>Requisitos que você deve levantar</h4>
       <ul>
-        <li>CSF com <code>satisfies Meta&lt;typeof Button&gt;</code>: os <code>args</code> ficam tipados pelo componente.</li>
+        <li>CSF (<em>Component Story Format</em>): um <code>meta</code> com o componente e os <code>args</code> padrão, e uma story por <code>export</code>.</li>
         <li>O addon de acessibilidade em <code>test: 'error'</code> (e não só como painel de aviso).</li>
         <li>Uma <code>play</code> function que simula o clique e <strong>assere</strong> o comportamento.</li>
         <li>Uma maneira de ver os dois temas (claro e escuro).</li>
@@ -1226,11 +1219,10 @@ export async function GET(req: Request) {
         <li>Se você sabe o que o <code>test: 'error'</code> muda em relação ao padrão (que só mostra violação na interface).</li>
         <li>Se pensa em quais combinações valem uma story, em vez de uma por combinação possível.</li>
       </ul>
-      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>tags: ['autodocs']</code> no <code>meta</code> gera a página de documentação a partir dos tipos das props e das próprias stories.</p></div></details>
+      <details class="dica"><summary>dica 1</summary><div class="dica-body"><p><code>tags: ['autodocs']</code> no <code>meta</code> gera a página de documentação a partir do componente e das próprias stories.</p></div></details>
       <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>No contexto da <code>play</code> function você recebe <code>canvas</code> (consultas escopadas à story), <code>userEvent</code> e <code>args</code>. <code>fn()</code> de <code>storybook/test</code> cria um mock que dá pra assertar com <code>expect</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn } from 'storybook/test';
 import { Button } from './button';
 import { TrashIcon } from '../icons';
@@ -1238,25 +1230,24 @@ import { TrashIcon } from '../icons';
 const meta = {
   title: 'Design System/Button',
   component: Button,
-  tags: ['autodocs'],                       // docs generated from the types and the stories
+  tags: ['autodocs'],                       // docs generated from the component and the stories
   parameters: {
     a11y: { test: 'error' },                // an accessibility violation FAILS the test
   },
   args: { children: 'Salvar', onClick: fn() },
-} satisfies Meta<typeof Button>;
+};
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {};
-export const Secondary: Story = { args: { intent: 'secondary' } };
-export const Danger: Story = { args: { intent: 'danger', children: 'Excluir' } };
-export const Small: Story = { args: { size: 'sm' } };
+export const Primary = {};
+export const Secondary = { args: { intent: 'secondary' } };
+export const Danger = { args: { intent: 'danger', children: 'Excluir' } };
+export const Small = { args: { size: 'sm' } };
 
-export const IconOnly: Story = {
+export const IconOnly = {
   args: { children: undefined, icon: <TrashIcon />, 'aria-label': 'Excluir questão', intent: 'ghost' },
 };
 
-export const Loading: Story = {
+export const Loading = {
   args: { loading: true },
   play: async ({ canvas, args, userEvent }) => {
     const button = canvas.getByRole('button', { name: 'Salvar' });
@@ -1269,7 +1260,7 @@ export const Loading: Story = {
 };
 
 // same story in the dark theme: the decorator only changes the attribute the tokens read
-export const PrimaryDark: Story = {
+export const PrimaryDark = {
   decorators: [
     (Story) => (
       <div data-theme="dark" style={{ padding: 16, background: 'var(--paper)' }}>
@@ -1279,7 +1270,7 @@ export const PrimaryDark: Story = {
   ],
 };
 </code></pre>
-<p><strong>O que muda a vida do time:</strong> o <code>test: 'error'</code>. Com ele, rodar as stories como testes (o addon de testes do Storybook com Vitest) reprova a story que tiver violação, e o CI barra o PR. Salve este arquivo como <code>button.stories.tsx</code>.</p>
+<p><strong>O que muda a vida do time:</strong> o <code>test: 'error'</code>. Com ele, rodar as stories como testes (o addon de testes do Storybook com Vitest) reprova a story que tiver violação, e o CI barra o PR. Salve este arquivo como <code>button.stories.jsx</code>.</p>
       </div></details>
       <div class="quiz">
         <div class="quiz-head">Perguntas que vêm depois</div>
@@ -1300,7 +1291,7 @@ export const PrimaryDark: Story = {
 
   <!-- ===================== EXERCÍCIO 11 ===================== -->
   <div class="ex" id="ex11">
-    <div class="ex-head"><span class="ex-n">EX 11</span><h3>Refatorar uma busca no cliente pra Server Component com cache</h3><span class="ex-meta">40 min &middot; Next 16 + TS &middot; R3</span></div>
+    <div class="ex-head"><span class="ex-n">EX 11</span><h3>Refatorar uma busca no cliente pra Server Component com cache</h3><span class="ex-meta">40 min &middot; Next 16 &middot; R3</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">&ldquo;Esta página de questões foi escrita toda no cliente: busca no <code>useEffect</code>, tem estado de carregamento e de erro à mão, e as duas buscas acontecem uma depois da outra. A tela pisca &lsquo;carregando&rsquo; a cada visita e o LCP está ruim. Reescreva pro App Router do Next 16 e explique o que muda.&rdquo;</p>
 <pre><code class="esc">
@@ -1308,8 +1299,8 @@ export const PrimaryDark: Story = {
 import { useEffect, useState } from 'react';
 
 export default function QuestionsPage() {
-  const [questions, setQuestions] = useState<Question[] | null>(null);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [questions, setQuestions] = useState(null);
+  const [stats, setStats] = useState(null);
   const [error, setError] = useState(false);
   const [specialty, setSpecialty] = useState('all');
 
@@ -1348,16 +1339,12 @@ export default function QuestionsPage() {
       <details class="dica"><summary>dica 2</summary><div class="dica-body"><p>A página pode receber <code>searchParams</code> como <em>promessa</em> e repassá-la a um componente que a resolve lá dentro, atrás do <code>Suspense</code>. Assim a casca (título e esqueleto) é estática e sai na hora.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-// app/questions/page.tsx  (Server Component: no 'use client')
+// app/questions/page.jsx  (Server Component: no 'use client')
 import { Suspense } from 'react';
 import { Filter } from './filter';
 import { listQuestions, getUserStats } from '@/lib/questions';
 
-export default function QuestionsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ specialty?: string }>;
-}) {
+export default function QuestionsPage({ searchParams }) { // searchParams is a promise
   return (
     <>
       <h1>Questões</h1>                         {/* static shell: goes out right away */}
@@ -1368,7 +1355,7 @@ export default function QuestionsPage({
   );
 }
 
-async function Content({ searchParams }: { searchParams: Promise<{ specialty?: string }> }) {
+async function Content({ searchParams }) {
   const { specialty = 'all' } = await searchParams;
   // independent: in parallel, not one after the other
   const [questions, stats] = await Promise.all([listQuestions(specialty), getUserStats()]);
@@ -1381,11 +1368,11 @@ async function Content({ searchParams }: { searchParams: Promise<{ specialty?: s
 }
 </code></pre>
 <pre><code class="esc">
-// lib/questions.ts
+// lib/questions.js
 import { cacheLife, cacheTag } from 'next/cache';
 import { cookies } from 'next/headers';
 
-export async function listQuestions(specialty: string) {
+export async function listQuestions(specialty) {
   'use cache';                 // SHARED data: can be cached
   cacheLife('minutes');
   cacheTag('questions');       // a Server Action invalidates this tag when a question is edited
@@ -1399,11 +1386,11 @@ export async function getUserStats() {
 }
 </code></pre>
 <pre><code class="esc">
-// app/questions/filter.tsx: the only client island, because it needs an event
+// app/questions/filter.jsx: the only client island, because it needs an event
 'use client';
 import { useRouter } from 'next/navigation';
 
-export function Filter({ current }: { current: string }) {
+export function Filter({ current }) {
   const router = useRouter();
   return (
     <select aria-label="Especialidade" value={current} onChange={(e) => router.push(`?specialty=${e.target.value}`)}>
@@ -1413,7 +1400,7 @@ export function Filter({ current }: { current: string }) {
   );
 }
 </code></pre>
-<p><strong>O que melhorou, em ordem do que o usuário sente:</strong> a casca e o título saem do servidor sem esperar dado; a lista chega no HTML (sem cadeia JavaScript &rarr; <code>fetch</code> &rarr; render), o que ajuda o LCP; as duas buscas rodam juntas (o tempo é o da mais lenta, não a soma); a lista compartilhada vem do cache e as estatísticas, que são da pessoa, ficam dinâmicas; e o estado de erro vira um <code>error.tsx</code> da rota. O filtro na URL funciona com voltar e com link compartilhado.</p>
+<p><strong>O que melhorou, em ordem do que o usuário sente:</strong> a casca e o título saem do servidor sem esperar dado; a lista chega no HTML (sem cadeia JavaScript &rarr; <code>fetch</code> &rarr; render), o que ajuda o LCP; as duas buscas rodam juntas (o tempo é o da mais lenta, não a soma); a lista compartilhada vem do cache e as estatísticas, que são da pessoa, ficam dinâmicas; e o estado de erro vira um <code>error.jsx</code> da rota. O filtro na URL funciona com voltar e com link compartilhado.</p>
       </div></details>
       <div class="quiz">
         <div class="quiz-head">Perguntas que vêm depois</div>
@@ -1467,33 +1454,23 @@ export function Filter({ current }: { current: string }) {
 <pre><code class="esc">
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-export type Toast = {
-  id: string;
-  kind: 'info' | 'error';
-  title: string;
-  description?: string;
-  undo?: () => void;
-  leaving?: boolean;
-};
-
+// a toast is { id, kind: 'info' | 'error', title, description?, undo?, leaving? }
 export function useToasts() {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-  const show = useCallback((t: Omit<Toast, 'id' | 'leaving'>) => {
+  const [toasts, setToasts] = useState([]);
+  const show = useCallback((t) => { // t has everything except id and leaving
     setToasts((ts) => [...ts, { ...t, id: crypto.randomUUID() }]);
   }, []);
-  const dismiss = useCallback((id: string) => {          // step 1: mark it to animate out
+  const dismiss = useCallback((id) => {          // step 1: mark it to animate out
     setToasts((ts) => ts.map((t) => (t.id === id ? { ...t, leaving: true } : t)));
   }, []);
-  const remove = useCallback((id: string) => {           // step 2: take it out of the DOM
+  const remove = useCallback((id) => {           // step 2: take it out of the DOM
     setToasts((ts) => ts.filter((t) => t.id !== id));
   }, []);
   return { toasts, show, dismiss, remove };
 }
 
-export function Toaster({ toasts, dismiss, remove }: {
-  toasts: Toast[]; dismiss: (id: string) => void; remove: (id: string) => void;
-}) {
-  const list = (kind: Toast['kind']) =>
+export function Toaster({ toasts, dismiss, remove }) {
+  const list = (kind) =>
     toasts.filter((t) => t.kind === kind).map((t) => (
       <ToastItem key={t.id} toast={t} dismiss={dismiss} remove={remove} />
     ));
@@ -1506,9 +1483,7 @@ export function Toaster({ toasts, dismiss, remove }: {
   );
 }
 
-function ToastItem({ toast, dismiss, remove }: {
-  toast: Toast; dismiss: (id: string) => void; remove: (id: string) => void;
-}) {
+function ToastItem({ toast, dismiss, remove }) {
   const [paused, setPaused] = useState(false);
   const remaining = useRef(5000);
   const startedAt = useRef(0);
@@ -1672,22 +1647,22 @@ function ToastItem({ toast, dismiss, remove }: {
 
       <h4>3 &middot; Modelo de dados</h4>
 <pre><code class="esc">
-type Conversation = { id: string; title: string | null; updatedAt: string };
+Conversation = { id, title (may be null), updatedAt }
 
-type Message = {
-  id: string;
-  conversationId: string;
-  role: 'user' | 'assistant';
-  parts: Part[];                 // text, tool calls and tool results (exercise 5)
-  status: 'streaming' | 'complete' | 'incomplete' | 'error';
-  parentId: string | null;       // regenerating creates a sibling, it does not overwrite
-  createdAt: string;
-};
+Message = {
+  id,
+  conversationId,
+  role,        // 'user' | 'assistant'
+  parts,       // text, tool calls and tool results (exercise 5)
+  status,      // 'streaming' | 'complete' | 'incomplete' | 'error'
+  parentId,    // null for the first one; regenerating creates a sibling, it does not overwrite
+  createdAt,
+}
 
 // client only
-type ChatUiState = {
-  drafts: Record<string, string>;                // draft per conversation (persisted)
-  activeStreams: Record<string, AbortController>; // by messageId
+ChatUiState = {
+  drafts,         // draft per conversation, keyed by conversationId (persisted)
+  activeStreams,  // AbortController per messageId
 };
 </code></pre>
       <p><strong>Divisão de estado:</strong> lista de conversas e mensagens já gravadas são <em>estado de servidor</em> (cache, paginação, revalidação ao focar a aba). A mensagem que está chegando vive no store do cliente e, ao terminar, é reconciliada com o cache pelo mesmo <code>id</code>, que o cliente gera antes de enviar: é isso que deixa a mensagem otimista virar a definitiva sem piscar.</p>

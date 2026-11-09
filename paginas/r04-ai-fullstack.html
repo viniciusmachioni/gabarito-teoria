@@ -315,7 +315,7 @@ SELECT id FROM questions ORDER BY embedding &lt;=&gt; $1 LIMIT 5; -- the 5 most 
   <h3 class="sub etapa" id="fazer"><span class="etapa-n">2 &middot; Fazer</span>Escrever uma vez, revisar sempre</h3>
   <p class="etapa-nota">De 15 a 20 minutos cada. Pode consultar a <strong>sintaxe</strong> (os links estão em cada exercício), mas não a lógica. Se travar, siga esta ordem: enunciado, cartão do Ver, documentação, dica e, por último, a solução. Depois da solução vem o <strong>Revisar</strong>: explicar o código, achar os erros de uma versão com bug e mudar um requisito. É o que mais se faz no trabalho com IA, e só funciona se você escreveu o núcleo antes. A versão de entrevista, maior, está no <a href="r08-pratica.html">R8</a>.</p>
   <div class="ex" id="fz1">
-    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Esperar um job, com prazo</h3><span class="ex-meta">20 min &middot; TypeScript</span></div>
+    <div class="ex-head"><span class="ex-n">FAZER 1</span><h3>Esperar um job, com prazo</h3><span class="ex-meta">20 min &middot; JavaScript</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">O <code>GET /api/jobs/:id</code> devolve <code>{ status: 'queued' | 'running' | 'done' | 'failed', result?, error? }</code>. Escreva <code>waitForJob(id, signal)</code>, que pergunta pelo status até o job terminar.</p>
       <h4>Regras</h4>
@@ -327,27 +327,24 @@ SELECT id FROM questions ORDER BY embedding &lt;=&gt; $1 LIMIT 5; -- the 5 most 
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal">MDN: AbortSignal</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">MDN: Promise</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Faça uma função <code>sleep(ms, signal)</code> que devolve uma Promise e rejeita se o signal abortar. Assim o cancelamento interrompe a espera, e não só o <code>fetch</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Job&lt;T&gt; =
-  | { status: 'queued' | 'running' }
-  | { status: 'done'; result: T }
-  | { status: 'failed'; error: string };
+<pre><code>// the job is { status: 'queued' | 'running' }, { status: 'done', result } or { status: 'failed', error }
 
-function sleep(ms: number, signal?: AbortSignal) {
-  return new Promise&lt;void&gt;((resolve, reject) =&gt; {
+function sleep(ms, signal) {
+  return new Promise((resolve, reject) =&gt; {
     if (signal?.aborted) return reject(signal.reason);
     const t = setTimeout(() =&gt; { signal?.removeEventListener('abort', onAbort); resolve(); }, ms);
-    function onAbort() { clearTimeout(t); reject(signal!.reason); }
+    function onAbort() { clearTimeout(t); reject(signal.reason); }
     signal?.addEventListener('abort', onAbort, { once: true });
   });
 }
 
-export async function waitForJob&lt;T&gt;(id: string, signal?: AbortSignal): Promise&lt;T&gt; {
+export async function waitForJob(id, signal) {
   const deadline = Date.now() + 60_000;
   let delay = 1000;
   while (true) {
     const res = await fetch(`/api/jobs/${id}`, { signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const job: Job&lt;T&gt; = await res.json();
+    const job = await res.json();
     if (job.status === 'done') return job.result;
     if (job.status === 'failed') throw new Error(job.error);
     if (Date.now() + delay &gt; deadline) throw new Error('The job took too long. Try again later.');
@@ -356,7 +353,7 @@ export async function waitForJob&lt;T&gt;(id: string, signal?: AbortSignal): Pro
   }
 }
 </code></pre>
-        <p><strong>O que mostrar ao entrevistador:</strong> o tipo do job deixa o TypeScript saber que <code>result</code> só existe em <code>done</code>; o cancelamento interrompe a espera, e não só o <code>fetch</code>; e o prazo é conferido antes de dormir, para não passar de 60 s. Num componente, quem chama cria um <code>AbortController</code> e aborta no cleanup do <code>useEffect</code>.</p>
+        <p><strong>O que mostrar ao entrevistador:</strong> o <code>result</code> só existe quando o status é <code>done</code>, e o código só o lê nesse caso; o cancelamento interrompe a espera, e não só o <code>fetch</code>; e o prazo é conferido antes de dormir, para não passar de 60 s. Num componente, quem chama cria um <code>AbortController</code> e aborta no cleanup do <code>useEffect</code>.</p>
       </div></details>
       <div class="revisar">
         <h4>Revisar &middot; depois da solução</h4>
@@ -375,17 +372,17 @@ export async function waitForJob&lt;T&gt;(id: string, signal?: AbortSignal): Pro
         </div></details>
 
         <h5>2 &middot; Caça ao bug</h5>
-        <p>Esta versão compila e funciona no caso feliz. Ache os três erros. (O tipo <code>Job</code> é o mesmo da solução.)</p>
-<pre><code>function sleep(ms: number) {
-  return new Promise&lt;void&gt;((resolve) =&gt; setTimeout(resolve, ms));
+        <p>Esta versão roda e funciona no caso feliz. Ache os três erros. (O formato do job é o mesmo da solução.)</p>
+<pre><code>function sleep(ms) {
+  return new Promise((resolve) =&gt; setTimeout(resolve, ms));
 }
 
-export async function waitForJob&lt;T&gt;(id: string, signal?: AbortSignal): Promise&lt;T&gt; {
+export async function waitForJob(id, signal) {
   const start = Date.now();
   let delay = 1000;
   while (Date.now() - start &lt; 60_000) {
     const res = await fetch(`/api/jobs/${id}`, { signal });
-    const job: Job&lt;T&gt; = await res.json();
+    const job = await res.json();
     if (job.status === 'done') return job.result;
     if (job.status === 'failed') throw new Error(job.error);
     await sleep(delay);
@@ -416,9 +413,8 @@ export async function waitForJob&lt;T&gt;(id: string, signal?: AbortSignal): Pro
     <div class="ex-head"><span class="ex-n">FAZER 2</span><h3>Testar sem chamar o modelo</h3><span class="ex-meta">20 min &middot; Vitest</span></div>
     <div class="ex-body">
       <p class="ex-enunciado">A função abaixo pede um resumo ao modelo, valida o JSON e tenta mais uma vez se a resposta vier quebrada. Escreva três testes com um provedor <em>fake</em>: resposta válida de primeira; resposta quebrada e depois válida (duas chamadas); e resposta sempre quebrada (lança erro).</p>
-<pre><code>export interface AIProvider { generate(prompt: string): Promise&lt;string&gt;; }
-
-export async function summarize(text: string, ai: AIProvider): Promise&lt;string&gt; {
+<pre><code>// ai is any object with generate(prompt), which returns a promise of text
+export async function summarize(text, ai) {
   for (let attempt = 1; attempt &lt;= 2; attempt++) {
     const raw = await ai.generate(`Summarize as JSON {"summary": string}: ${text}`);
     try {
@@ -433,10 +429,10 @@ export async function summarize(text: string, ai: AIProvider): Promise&lt;string
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O fake pode ser um objeto com <code>generate: vi.fn()</code>. Use <code>mockResolvedValueOnce</code> em sequência para devolver uma resposta diferente a cada chamada, e confira <code>toHaveBeenCalledTimes</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code>import { describe, it, expect, vi } from 'vitest';
-import { summarize, type AIProvider } from './summarize';
+import { summarize } from './summarize';
 
-function fake(...responses: string[]) {
-  const generate = vi.fn&lt;AIProvider['generate']&gt;();
+function fake(...responses) {
+  const generate = vi.fn();
   for (const r of responses) generate.mockResolvedValueOnce(r);
   return { generate };
 }
@@ -487,7 +483,7 @@ describe('summarize', () =&gt; {
 });
 
 it('retries when the response is broken', async () =&gt; {
-  const ai = { generate: vi.fn&lt;AIProvider['generate']&gt;().mockResolvedValue('{"summary":"Now it works"}') };
+  const ai = { generate: vi.fn().mockResolvedValue('{"summary":"Now it works"}') };
   await expect(summarize('...', ai)).resolves.toBe('Now it works');
 });
 
@@ -741,7 +737,7 @@ expect(screen.getByText(/não foi possível gerar a explicação agora/i)).toBeI
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 21/10/2026
+    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 09/11/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

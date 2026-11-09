@@ -34,7 +34,7 @@
     </div>
     <div class="bcard">
       <h4>2. Como treinar</h4>
-      <p><b class="r">Projeto</b><code>npm create vite@latest treino -- --template react-ts</code>, e um arquivo por exercício. Ou abra um projeto React no StackBlitz.</p>
+      <p><b class="r">Projeto</b><code>npm create vite@latest treino -- --template react</code>, e um arquivo por exercício. Ou abra um projeto React no StackBlitz.</p>
       <p><b class="r">Cronômetro</b>45 minutos. Passou do tempo? Pare, leia a solução, feche e refaça do zero dois dias depois.</p>
       <p><b class="r">Em voz alta</b>Explique cada decisão enquanto escreve. Grave um dos exercícios e assista: os silêncios longos são o que mais pesa contra.</p>
       <p><b class="r">Teste rápido</b>No fim, use o componente só com o teclado (Tab, Enter, setas). É o teste de acessibilidade mais barato que existe.</p>
@@ -75,26 +75,24 @@
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/learn/updating-arrays-in-state">React: atualizando listas no estado</a> &middot; <a href="https://react.dev/learn/rendering-lists">React: renderizando listas</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O estado é a lista de tarefas, o texto do campo e o filtro. A lista visível e o número de restantes <em>não</em> são estado: calcule-os a partir da lista. Use um <code>&lt;form&gt;</code> com <code>onSubmit</code>, que já dá o Enter de graça.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Todo = { id: string; text: string; done: boolean };
-type Filter = 'all' | 'active' | 'done';
-const FILTER_LABELS: Record&lt;Filter, string&gt; = { all: 'todas', active: 'ativas', done: 'feitas' };
+<pre><code>const FILTER_LABELS = { all: 'todas', active: 'ativas', done: 'feitas' };
 
 export function TodoList() {
-  const [todos, setTodos] = useState&lt;Todo[]&gt;([]);
+  const [todos, setTodos] = useState([]); // each todo is { id, text, done }
   const [text, setText] = useState('');
-  const [filter, setFilter] = useState&lt;Filter&gt;('all');
+  const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'done'
 
-  function add(e: FormEvent) {
+  function add(e) {
     e.preventDefault(); // without this, the form reloads the page
     const trimmed = text.trim();
     if (!trimmed) return;
     setTodos((ts) =&gt; [...ts, { id: crypto.randomUUID(), text: trimmed, done: false }]);
     setText('');
   }
-  function toggle(id: string) {
+  function toggle(id) {
     setTodos((ts) =&gt; ts.map((t) =&gt; (t.id === id ? { ...t, done: !t.done } : t)));
   }
-  function remove(id: string) {
+  function remove(id) {
     setTodos((ts) =&gt; ts.filter((t) =&gt; t.id !== id));
   }
 
@@ -110,7 +108,7 @@ export function TodoList() {
         &lt;button type="submit"&gt;Adicionar&lt;/button&gt;
       &lt;/form&gt;
       &lt;div role="group" aria-label="Filtro"&gt;
-        {(['all', 'active', 'done'] as const).map((f) =&gt; (
+        {['all', 'active', 'done'].map((f) =&gt; (
           &lt;button key={f} type="button" aria-pressed={filter === f} onClick={() =&gt; setFilter(f)}&gt;
             {FILTER_LABELS[f]}
           &lt;/button&gt;
@@ -142,8 +140,8 @@ export function TodoList() {
         <h4>Revisar</h4>
         <h5>Caça ao bug</h5>
         <p>Um colega escreveu assim. A tela não atualiza ao marcar uma tarefa, e às vezes o item errado fica marcado depois de remover. Por quê?</p>
-<pre><code>function toggle(id: string) {
-  const t = todos.find((t) =&gt; t.id === id)!;
+<pre><code>function toggle(id) {
+  const t = todos.find((t) =&gt; t.id === id);
   t.done = !t.done;
   setTodos(todos);
 }
@@ -170,11 +168,9 @@ export function TodoList() {
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useEffect#fetching-data-with-effects">React: buscar dados com efeitos</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortController">MDN: AbortController</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um estado com três formas (carregando, erro, pronto), como no reducer do R1. O efeito busca e devolve uma limpeza que aborta. Para &ldquo;tentar de novo&rdquo;, um contador nas dependências do efeito faz ele rodar outra vez.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type User = { id: number; name: string; email: string };
-type State = { status: 'loading' } | { status: 'error' } | { status: 'ready'; users: User[] };
-
-export function UserList() {
-  const [state, setState] = useState&lt;State&gt;({ status: 'loading' });
+<pre><code>export function UserList() {
+  // state is { status: 'loading' }, { status: 'error' } or { status: 'ready', users }
+  const [state, setState] = useState({ status: 'loading' });
   const [attempt, setAttempt] = useState(0); // changing the number re-runs the effect
 
   useEffect(() =&gt; {
@@ -182,7 +178,7 @@ export function UserList() {
     fetch('https://jsonplaceholder.typicode.com/users', { signal: controller.signal })
       .then((res) =&gt; {
         if (!res.ok) throw new Error(`HTTP ${res.status}`); // fetch does not reject on 404 or 500
-        return res.json() as Promise&lt;User[]&gt;;
+        return res.json();
       })
       .then((users) =&gt; setState({ status: 'ready', users }))
       .catch(() =&gt; {
@@ -247,7 +243,7 @@ export function UserList() {
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/learn/you-might-not-need-an-effect">React: você talvez não precise de um efeito</a> &middot; o exercício 13 do <a href="e01-fluencia.html#fl13">E1</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Separe em duas partes: um hook <code>useDebounce(value, ms)</code> que devolve o valor atrasado, e um efeito que busca quando o termo atrasado muda. Para a corrida, aborte o pedido anterior na limpeza e guarde junto da resposta o termo a que ela pertence.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>export function useDebounce&lt;T&gt;(value: T, ms: number): T {
+<pre><code>export function useDebounce(value, ms) {
   const [delayed, setDelayed] = useState(value);
   useEffect(() =&gt; {
     const t = setTimeout(() =&gt; setDelayed(value), ms);
@@ -256,18 +252,16 @@ export function UserList() {
   return delayed;
 }
 
-async function fetchCountries(query: string, signal: AbortSignal): Promise&lt;string[]&gt; {
+async function fetchCountries(query, signal) {
   const res = await fetch(`/api/countries?q=${encodeURIComponent(query)}`, { signal });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-type SearchResult = { query: string; items: string[] } | { query: string; error: true };
-
 export function CountrySearch() {
   const [text, setText] = useState('');
   const query = useDebounce(text.trim(), 300);
-  const [result, setResult] = useState&lt;SearchResult | null&gt;(null);
+  const [result, setResult] = useState(null); // { query, items } or { query, error: true }
 
   useEffect(() =&gt; {
     if (!query) return;
@@ -329,11 +323,8 @@ export function CountrySearch() {
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid">MDN: aria-invalid</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby">MDN: aria-describedby</a> &middot; <a href="https://react.dev/reference/react-dom/components/input">React: input</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma função pura <code>validate(fields)</code> que devolve um objeto de erros é fácil de testar e de explicar. No campo, <code>aria-invalid</code> marca o erro e <code>aria-describedby</code> aponta para o id da mensagem. Um componente <code>Field</code> evita repetir isso três vezes.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Fields = { email: string; password: string; confirm: string };
-type Errors = Partial&lt;Record&lt;keyof Fields, string&gt;&gt;;
-
-export function validate(f: Fields): Errors {
-  const errors: Errors = {};
+<pre><code>export function validate(f) {
+  const errors = {}; // { email?, password?, confirm? }, each one a message
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) errors.email = 'Digite um e-mail válido.';
   if (f.password.length &lt; 8) errors.password = 'A senha precisa de pelo menos 8 caracteres.';
   else if (!/\d/.test(f.password)) errors.password = 'A senha precisa de pelo menos um número.';
@@ -341,10 +332,7 @@ export function validate(f: Fields): Errors {
   return errors;
 }
 
-function Field(props: {
-  name: keyof Fields; label: string; type: string; value: string; error?: string;
-  onChange: (e: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void;
-}) {
+function Field(props) { // name, label, type, value, error, onChange
   const errorId = `${props.name}-error`;
   return (
     &lt;div&gt;
@@ -359,17 +347,17 @@ function Field(props: {
   );
 }
 
-export function SignUpForm({ submit }: { submit: (f: Fields) =&gt; Promise&lt;void&gt; }) {
-  const [fields, setFields] = useState&lt;Fields&gt;({ email: '', password: '', confirm: '' });
-  const [errors, setErrors] = useState&lt;Errors&gt;({});
-  const [status, setStatus] = useState&lt;'editing' | 'submitting' | 'done' | 'failed'&gt;('editing');
+export function SignUpForm({ submit }) { // submit(fields) returns a promise
+  const [fields, setFields] = useState({ email: '', password: '', confirm: '' });
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState('editing'); // 'editing' | 'submitting' | 'done' | 'failed'
 
-  function handleChange(e: ChangeEvent&lt;HTMLInputElement&gt;) {
+  function handleChange(e) {
     const { name, value } = e.target;
     setFields((f) =&gt; ({ ...f, [name]: value }));
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const found = validate(fields);
     setErrors(found);
@@ -422,14 +410,12 @@ export function SignUpForm({ submit }: { submit: (f: Fields) =&gt; Promise&lt;vo
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://www.w3.org/WAI/ARIA/apg/patterns/tabs/">W3C: padrão de abas</a> &middot; <a href="https://react.dev/learn/manipulating-the-dom-with-refs">React: refs e o DOM</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Papéis: <code>tablist</code> no grupo, <code>tab</code> em cada botão, <code>tabpanel</code> no conteúdo. Só a aba ativa tem <code>tabIndex={0}</code>; as outras, <code>-1</code>. Assim o Tab entra numa aba só, e as setas fazem o resto. Para mover o foco, guarde os botões num <code>useRef</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Tab = { id: string; title: string; content: ReactNode };
-
-export function Tabs({ tabs }: { tabs: Tab[] }) {
+<pre><code>export function Tabs({ tabs }) { // each tab is { id, title, content }
   const [active, setActive] = useState(0);
-  const buttons = useRef&lt;(HTMLButtonElement | null)[]&gt;([]);
+  const buttons = useRef([]);
 
-  function handleKeyDown(e: KeyboardEvent&lt;HTMLDivElement&gt;) {
-    let next: number;
+  function handleKeyDown(e) {
+    let next;
     if (e.key === 'ArrowRight') next = (active + 1) % tabs.length;               // after the last, wrap to the first
     else if (e.key === 'ArrowLeft') next = (active - 1 + tabs.length) % tabs.length;
     else if (e.key === 'Home') next = 0;
@@ -489,13 +475,11 @@ export function Tabs({ tabs }: { tabs: Tab[] }) {
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useMemo">React: useMemo</a> &middot; <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort">MDN: aria-sort</a> &middot; o exercício 8 do <a href="e01-fluencia.html#fl8">E1</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O estado é só a ordem (coluna e direção) e o número da página. A lista ordenada, a fatia da página e o total de páginas são calculados. Ordene uma cópia, e use <code>localeCompare</code> para texto com acento.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>type Person = { id: number; name: string; age: number; city: string };
-type Column = 'name' | 'age' | 'city';
-const PAGE_SIZE = 5;
-const LABELS: Record&lt;Column, string&gt; = { name: 'Nome', age: 'Idade', city: 'Cidade' };
+<pre><code>const PAGE_SIZE = 5;
+const LABELS = { name: 'Nome', age: 'Idade', city: 'Cidade' };
 
-export function PeopleTable({ people }: { people: Person[] }) {
-  const [sort, setSort] = useState&lt;{ column: Column; direction: 'asc' | 'desc' }&gt;({ column: 'name', direction: 'asc' });
+export function PeopleTable({ people }) { // each person is { id, name, age, city }
+  const [sort, setSort] = useState({ column: 'name', direction: 'asc' });
   const [page, setPage] = useState(1);
 
   const sorted = useMemo(() =&gt; {
@@ -512,7 +496,7 @@ export function PeopleTable({ people }: { people: Person[] }) {
   const currentPage = Math.min(page, totalPages); // the list may have shrunk
   const visible = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  function sortByColumn(column: Column) {
+  function sortByColumn(column) {
     setSort((s) =&gt; ({ column, direction: s.column === column &amp;&amp; s.direction === 'asc' ? 'desc' : 'asc' }));
     setPage(1); // new order: back to the start
   }
@@ -522,7 +506,7 @@ export function PeopleTable({ people }: { people: Person[] }) {
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
-            {(Object.keys(LABELS) as Column[]).map((c) =&gt; (
+            {Object.keys(LABELS).map((c) =&gt; (
               &lt;th key={c} aria-sort={sort.column === c ? (sort.direction === 'asc' ? 'ascending' : 'descending') : 'none'}&gt;
                 &lt;button type="button" onClick={() =&gt; sortByColumn(c)}&gt;{LABELS[c]}&lt;/button&gt;
               &lt;/th&gt;
@@ -552,7 +536,7 @@ export function PeopleTable({ people }: { people: Person[] }) {
         <h5>Caça ao bug</h5>
         <p>Um colega guardou a lista ordenada no estado, assim. O que dá errado quando a prop <code>people</code> muda?</p>
 <pre><code>const [sorted, setSorted] = useState(people);
-function sortByColumn(column: Column) {
+function sortByColumn(column) {
   setSorted([...sorted].sort(/* ... */));
 }
 </code></pre>
@@ -571,7 +555,7 @@ function sortByColumn(column: Column) {
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://react.dev/reference/react/useRef">React: useRef</a> &middot; <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/setInterval">MDN: setInterval</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Não some 100 a cada tick: o navegador não garante o intervalo exato. Guarde o horário em que a contagem começou e calcule <code>Date.now() - startedAt</code> a cada tick. Valores que não aparecem na tela (o início, o acumulado) ficam num <code>useRef</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>function format(ms: number) {
+<pre><code>function format(ms) {
   const totalSec = Math.floor(ms / 1000);
   const min = String(Math.floor(totalSec / 60)).padStart(2, '0');
   const sec = String(totalSec % 60).padStart(2, '0');
@@ -637,7 +621,7 @@ export function Stopwatch() {
         </div></details>
         <h5>Mude um requisito</h5>
         <p>O cronômetro ganha um botão &ldquo;Volta&rdquo;, que registra o tempo atual numa lista, como no app de relógio do celular.</p>
-        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Um estado novo, <code>laps: number[]</code>. O botão calcula o tempo atual do mesmo jeito que o intervalo (<code>accumulated.current + Date.now() - startedAt.current</code>) e acrescenta à lista. O tempo de cada volta (a diferença para a anterior) é derivado na hora de mostrar, e o Zerar também limpa as voltas.</p></div></details>
+        <details class="rv"><summary>o que muda</summary><div class="rv-body"><p>Um estado novo, <code>laps</code>, uma lista de números. O botão calcula o tempo atual do mesmo jeito que o intervalo (<code>accumulated.current + Date.now() - startedAt.current</code>) e acrescenta à lista. O tempo de cada volta (a diferença para a anterior) é derivado na hora de mostrar, e o Zerar também limpa as voltas.</p></div></details>
       </div>
     </div>
   </div>
@@ -649,8 +633,8 @@ export function Stopwatch() {
       <p class="ex-consulta"><b>Pode consultar</b><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/dialog">MDN: &lt;dialog&gt;</a> &middot; <a href="https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/">W3C: padrão de diálogo modal</a></p>
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Antes de montar tudo à mão, lembre que o HTML já tem um elemento para isto. O <code>&lt;dialog&gt;</code> aberto com <code>showModal()</code> já bloqueia o fundo, fecha com Esc e devolve o foco. Um <code>&lt;form method="dialog"&gt;</code> dentro dele fecha o modal ao enviar.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
-<pre><code>export function ConfirmDelete({ name, onConfirm }: { name: string; onConfirm: () =&gt; void }) {
-  const dialogRef = useRef&lt;HTMLDialogElement&gt;(null);
+<pre><code>export function ConfirmDelete({ name, onConfirm }) {
+  const dialogRef = useRef(null);
   return (
     &lt;&gt;
       &lt;button type="button" onClick={() =&gt; dialogRef.current?.showModal()}&gt;
@@ -690,7 +674,7 @@ export function Stopwatch() {
   </nav>
 
   <footer>
-    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 21/10/2026
+    O Gabarito da Teoria &middot; 41 blocos &middot; 331 tópicos &middot; 159 leituras resumidas &middot; 241 perguntas abertas com gabarito &middot; 252 de múltipla escolha<br>progresso salvo só neste navegador &mdash; faça backup pela <a href="../index.html#backup">capa</a> &middot; montado em 09/11/2026
   </footer>
 </div>
 <script src="../assets/js/app.js"></script>

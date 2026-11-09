@@ -63,11 +63,11 @@ twoSum([3, 2, 4], 6)       // [1, 2]
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A força bruta testa todos os pares: O(n²). Para cada número, você sabe exatamente qual outro precisa achar: <code>target - num</code>. Um <code>Map</code> responde &ldquo;já vi esse número?&rdquo; em O(1).</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function twoSum(nums: number[], target: number): [number, number] | null {
-  const seen = new Map<number, number>(); // value -> index
+function twoSum(nums, target) {
+  const seen = new Map(); // value -> index
   for (let i = 0; i < nums.length; i++) {
     const missing = target - nums[i];
-    if (seen.has(missing)) return [seen.get(missing)!, i];
+    if (seen.has(missing)) return [seen.get(missing), i];
     seen.set(nums[i], i); // store after looking up: a number cannot pair with itself
   }
   return null;
@@ -91,8 +91,8 @@ firstUniqChar('aabb')          // -1
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Duas passadas. Na primeira, conte cada caractere. Na segunda, ache o primeiro com contagem 1.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function firstUniqChar(s: string): number {
-  const counts = new Map<string, number>();
+function firstUniqChar(s) {
+  const counts = new Map();
   for (const c of s) counts.set(c, (counts.get(c) ?? 0) + 1); // 1st pass: count
   for (let i = 0; i < s.length; i++) {
     if (counts.get(s[i]) === 1) return i;                      // 2nd pass: find
@@ -117,12 +117,12 @@ groupAnagrams(['amor', 'gato', 'roma', 'toga', 'sol'])
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Anagramas ficam iguais quando você ordena as letras: &ldquo;amor&rdquo; e &ldquo;roma&rdquo; viram &ldquo;amor&rdquo;. Use isso como chave de um <code>Map</code>.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function groupAnagrams(words: string[]): string[][] {
-  const groups = new Map<string, string[]>();
+function groupAnagrams(words) {
+  const groups = new Map();
   for (const w of words) {
     const key = [...w].sort().join(''); // the anagram's "signature"
     if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)!.push(w);
+    groups.get(key).push(w);
   }
   return [...groups.values()];
 }
@@ -146,7 +146,7 @@ isPalindrome('race a car')                      // false
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Limpe o texto e compare as pontas: um ponteiro no começo, outro no fim, andando um em direção ao outro.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function isPalindrome(s: string): boolean {
+function isPalindrome(s) {
   const clean = s.toLowerCase().replace(/[^a-z0-9]/g, '');
   let left = 0;
   let right = clean.length - 1;
@@ -174,8 +174,8 @@ mergeSorted([1, 3, 5], [2, 3, 6, 8])  // [1, 2, 3, 3, 5, 6, 8]
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Um ponteiro em cada lista. A cada passo, pegue o menor dos dois e avance só aquele ponteiro. Quando uma lista acabar, copie o resto da outra.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function mergeSorted(a: number[], b: number[]): number[] {
-  const output: number[] = [];
+function mergeSorted(a, b) {
+  const output = [];
   let i = 0;
   let j = 0;
   while (i < a.length && j < b.length) {
@@ -205,14 +205,14 @@ lengthOfLongestSubstring('pwwkew')    // 3 ('wke')
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Uma janela com <code>start</code> e <code>end</code>. O fim anda sempre. Quando o caractere novo já está dentro da janela, o início pula para logo depois da última vez em que ele apareceu. Um <code>Map</code> guarda essa última posição.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function lengthOfLongestSubstring(s: string): number {
-  const lastSeen = new Map<string, number>(); // char -> last index
+function lengthOfLongestSubstring(s) {
+  const lastSeen = new Map(); // char -> last index
   let start = 0;
   let best = 0;
   for (let end = 0; end < s.length; end++) {
     const c = s[end];
     // only counts if the repeat is INSIDE the current window
-    if (lastSeen.has(c) && lastSeen.get(c)! >= start) start = lastSeen.get(c)! + 1;
+    if (lastSeen.has(c) && lastSeen.get(c) >= start) start = lastSeen.get(c) + 1;
     lastSeen.set(c, end);
     best = Math.max(best, end - start + 1);
   }
@@ -240,9 +240,9 @@ isValid('((')      // false
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>O último que abriu é o primeiro que precisa fechar. Isso é uma pilha: <code>push</code> ao abrir, <code>pop</code> ao fechar, e confira se combinam.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function isValid(s: string): boolean {
-  const pairs: Record<string, string> = { ')': '(', ']': '[', '}': '{' };
-  const stack: string[] = [];
+function isValid(s) {
+  const pairs = { ')': '(', ']': '[', '}': '{' };
+  const stack = [];
   for (const c of s) {
     if (c === '(' || c === '[' || c === '{') stack.push(c);
     else if (c in pairs) {
@@ -269,7 +269,7 @@ binarySearch([1, 3, 5, 7, 9, 11], 4)  // -1
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Olhe o meio. Se o alvo é maior, ele só pode estar na metade da direita; se é menor, na da esquerda. Repita até achar ou a faixa ficar vazia.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function binarySearch(nums: number[], target: number): number {
+function binarySearch(nums, target) {
   let left = 0;
   let right = nums.length - 1;
   while (left <= right) {                     // <= : a one-item range still counts
@@ -305,9 +305,8 @@ maxDepth(null)  // 0
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>A profundidade de uma árvore é 1 (o próprio nó) mais a maior profundidade entre os dois filhos. A árvore vazia tem profundidade 0, e é aí que a recursão para.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-type TreeNode = { val: number; left: TreeNode | null; right: TreeNode | null };
-
-function maxDepth(root: TreeNode | null): number {
+// a node is { val, left, right }, and the children may be null
+function maxDepth(root) {
   if (root === null) return 0; // base case
   return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
 }
@@ -334,13 +333,13 @@ numIslands([
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Percorra a grade. Ao achar terra, conte uma ilha e &ldquo;afunde&rdquo; a ilha inteira (marque como água), visitando os vizinhos com recursão. Assim ela não é contada de novo. Trabalhe numa cópia.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function numIslands(grid: string[][]): number {
+function numIslands(grid) {
   const rows = grid.length;
   const cols = grid[0]?.length ?? 0;
   const g = grid.map((row) => [...row]); // copy: the input does not change
   let islands = 0;
 
-  function sink(r: number, c: number) {
+  function sink(r, c) {
     if (r < 0 || c < 0 || r >= rows || c >= cols || g[r][c] !== '1') return; // outside, or water
     g[r][c] = '0';
     sink(r + 1, c);
@@ -379,9 +378,9 @@ mergeIntervals([[1, 4], [4, 5]])                     // [[1, 5]]
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Ordene pelo começo. Depois, cada intervalo ou encosta no último que você guardou (aí estique o fim dele), ou começa um novo.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function mergeIntervals(intervals: [number, number][]): [number, number][] {
+function mergeIntervals(intervals) {
   const sorted = [...intervals].sort((a, b) => a[0] - b[0]);
-  const output: [number, number][] = [];
+  const output = [];
   for (const [start, end] of sorted) {
     const last = output[output.length - 1];
     if (last && start <= last[1]) last[1] = Math.max(last[1], end); // overlaps: stretch it
@@ -407,7 +406,7 @@ maxSubArray([-3, -1, -2])                     // -1
       <details class="dica"><summary>dica</summary><div class="dica-body"><p>Em cada posição, decida: vale mais continuar o trecho anterior ou começar um novo aqui? Se a soma acumulada ficou menor que o número atual, recomece.</p></div></details>
       <details class="sol"><summary>solução comentada</summary><div class="sol-body">
 <pre><code class="esc">
-function maxSubArray(nums: number[]): number {
+function maxSubArray(nums) {
   let current = nums[0]; // best sum of a run that ENDS here
   let best = nums[0];    // best of all so far
   for (let i = 1; i < nums.length; i++) {
